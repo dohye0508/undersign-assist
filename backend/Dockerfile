@@ -13,8 +13,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app ./app
 
+# OMP_THREAD_LIMIT=1: Tesseract 스레드가 여럿이면 저사양 호스팅(Render 무료 0.1 CPU)에서 서로 싸워 한 장에 3분이 넘었다. 결과는 같다
 ENV OCR_PROVIDER=tesseract \
     TESSERACT_CMD=tesseract \
+    OMP_THREAD_LIMIT=1 \
     PORT=7860
 
 # Hugging Face Spaces는 7860, Cloud Run은 PORT 환경 변수를 준다
