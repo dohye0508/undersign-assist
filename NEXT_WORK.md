@@ -144,19 +144,24 @@ HapticGuide.pulseByDistance(d: number): void
 - 종이 서식 손글씨 데이터 180장: `C:\Users\User\Downloads\rne\New_Sample (1)`. OCR 정확도 측정용으로만
   필요하며, 지금은 Groq 비전 모델을 API로 쓰기 때문에 학습 용도로는 필요 없다.
 
-## 5. 판단(2단계 문서 분석) 쪽 현재 상태 — 참고용
+## 5. 판단(2단계 문서 분석) 쪽 현재 상태 — 참고용 (2026-10-24 갱신)
 
-오늘 `backend/app/services/judge/`에 판단 파이프라인을 구현 완료했다 (근로계약서 경로로 end-to-end
-확인됨). 아래는 아직 안 된 부분이며, 2단계 "문서 분석"이 완전해지려면 이것도 필요하다:
+`backend/app/services/judge/`에 판단 파이프라인 구현 완료, 아래 항목까지 전부 반영됨
+(근로계약서/주택임대차/개인정보동의서/가정통신문 4종 모두 `backend/tests/smoke_judge.py`로
+end-to-end 확인됨, `python3 backend/tests/smoke_judge.py`로 재실행 가능):
 
-- 주택임대차 세부 종류: 규칙은 있으나 `extract.py`에 `rent_increase_ratio`(차임 인상률),
-  `region`(지역, 소액임차인 기준용) 값 추출이 없어 숫자 비교가 거의 안 됨.
-- 개인정보보호법 조문이 법률 DB에 전혀 없음. `check_rules.json` 45개 중 `consent`/`notice` 대상
-  규칙이 0개. 가정통신문·개인정보동의서는 사실상 판단 불가 상태.
-- `judge_panel.dart`가 새 Finding 모양(근거조문/rule_id/severity)에 맞게 아직 안 고쳐짐. 2단계
-  문서 분석 요약 음성·화면 둘 다 이걸 통해 나가야 하므로, 3단계 서명 작업 전에 먼저 해두는 게 낫다.
-- `check_rules.json`의 tts 문구 중 16/45개가 단정적인 어투("무효예요" 등)를 포함. "~로 보여요,
-  확인이 필요해요"로 다듬는 검토가 아직 안 됨 (문구마다 맥락 판단 필요, 자동화 불가).
+- 주택임대차: `rent_increase_ratio`, `region` 등 값 추출 완료. 차임 5% 초과 인상, 소액임차인
+  최우선변제 체크 동작 확인.
+- 개인정보보호법 조문(`personal_info_act.json`, `personal_info_decree.json`) 수집 완료.
+  `check_rules.json`이 45->55개로 늘었고 `consent`(동의서 4가지 고지, 제3자 제공 고지)·
+  `notice`(가정통신문 날짜·장소 등) 대상 규칙이 생김.
+- `judge_panel.dart` 새 Finding 모양(근거·rule_id·severity)에 맞게 다시 작성됨. 근거 듣기,
+  질문 답하기(예: workplace_size) UI 포함.
+- `check_rules.json`의 tts 문구 전부 "~로 보여요, 확인이 필요해요" 톤으로 통일됨.
+
+**남은 것**: 이 네 종류 체크리스트가 실제 OCR 사진(가짜 데이터 아님)으로도 똑같이 동작하는지는
+아직 `samples/` 사진으로 검증 안 됨. 서명(3단계) 작업 들어가기 전에, 혹은 데모 리허설 때 한 번은
+실물 사진으로 돌려봐야 한다.
 
 ## 6. 기타 UI 백로그 (서명 작업과 별개, 시간 남으면)
 
