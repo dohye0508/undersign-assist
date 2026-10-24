@@ -390,18 +390,22 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
 }
 
 class _TopBar extends StatelessWidget {
-  const _TopBar({required this.title, required this.onRepeat, this.trailing});
+  const _TopBar({required this.title, required this.onRepeat, this.leading, this.trailing});
 
   final String title;
   final VoidCallback onRepeat;
+
+  /// 제목 앞에 붙는 버튼 (촬영 화면: 들리는 받아쓰기)
+  final Widget? leading;
   final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 8, 16, 8),
+      padding: EdgeInsets.fromLTRB(leading == null ? 20 : 8, 8, 16, 8),
       child: Row(
         children: [
+          if (leading case final leading?) ...[leading, const SizedBox(width: 4)],
           Semantics(
             header: true,
             child: Text(title, style: Theme.of(context).textTheme.titleLarge),

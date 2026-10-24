@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 
 import '../../services/speech.dart';
 import '../../theme/app_theme.dart';
-import '../../widgets/soft_blob_background.dart';
 import '../../widgets/tap_feedback.dart';
 
 /// 들리는 받아쓰기 화면들의 공통 틀: 배경, 위쪽 줄(뒤로, 제목, 다시 듣기), 키보드.
@@ -48,7 +47,6 @@ class PracticeFrame extends StatelessWidget {
         child: Scaffold(
           body: Stack(
             children: [
-              const Positioned.fill(child: SoftBlobBackground()),
               SafeArea(
                 child: Center(
                   child: ConstrainedBox(
