@@ -1,0 +1,1090 @@
+{
+ "source_commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+ "laws": [
+  {
+   "law_id": "labor_standards_act",
+   "law_name": "근로기준법",
+   "law_kind": "법률",
+   "category": "근로",
+   "doc_types": [
+    "labor_full_time",
+    "labor_part_time"
+   ],
+   "ministry": [
+    "고용노동부"
+   ],
+   "promulgation_date": "2026-08-04",
+   "promulgation_no": "21857",
+   "effective_date": "2026-10-02",
+   "status": "시행",
+   "law_mst": "290781",
+   "official_url": "https://www.law.go.kr/법령/근로기준법",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/근로기준법/법률(법률).md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/근로기준법/법률(법률).md"
+   },
+   "article_count": 128,
+   "file": "full/labor_standards_act.json"
+  },
+  {
+   "law_id": "labor_standards_decree",
+   "law_name": "근로기준법 시행령",
+   "law_kind": "대통령령",
+   "category": "근로",
+   "doc_types": [
+    "labor_full_time",
+    "labor_part_time"
+   ],
+   "ministry": [
+    "고용노동부"
+   ],
+   "promulgation_date": "2025-04-08",
+   "promulgation_no": "35436",
+   "effective_date": "2025-10-23",
+   "status": "시행",
+   "law_mst": "270551",
+   "official_url": "https://www.law.go.kr/법령/근로기준법시행령",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/근로기준법/시행령.md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/근로기준법/시행령.md"
+   },
+   "article_count": 75,
+   "file": "full/labor_standards_decree.json"
+  },
+  {
+   "law_id": "labor_standards_rule",
+   "law_name": "근로기준법 시행규칙",
+   "law_kind": "고용노동부령",
+   "category": "근로",
+   "doc_types": [
+    "labor_full_time",
+    "labor_part_time"
+   ],
+   "ministry": [
+    "고용노동부"
+   ],
+   "promulgation_date": "2025-02-21",
+   "promulgation_no": "00436",
+   "effective_date": "2025-02-23",
+   "status": "시행",
+   "law_mst": "269393",
+   "official_url": "https://www.law.go.kr/법령/근로기준법시행규칙",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/근로기준법/시행규칙.md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/근로기준법/시행규칙.md"
+   },
+   "article_count": 21,
+   "file": "full/labor_standards_rule.json"
+  },
+  {
+   "law_id": "minimum_wage_act",
+   "law_name": "최저임금법",
+   "law_kind": "법률",
+   "category": "근로",
+   "doc_types": [
+    "labor_full_time",
+    "labor_part_time"
+   ],
+   "ministry": [
+    "고용노동부"
+   ],
+   "promulgation_date": "2026-04-07",
+   "promulgation_no": "21534",
+   "effective_date": "2026-12-08",
+   "status": "시행",
+   "law_mst": "285389",
+   "official_url": "https://www.law.go.kr/법령/최저임금법",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/최저임금법/법률.md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/최저임금법/법률.md"
+   },
+   "article_count": 32,
+   "file": "full/minimum_wage_act.json"
+  },
+  {
+   "law_id": "minimum_wage_decree",
+   "law_name": "최저임금법 시행령",
+   "law_kind": "대통령령",
+   "category": "근로",
+   "doc_types": [
+    "labor_full_time",
+    "labor_part_time"
+   ],
+   "ministry": [
+    "고용노동부"
+   ],
+   "promulgation_date": "2018-12-31",
+   "promulgation_no": "29469",
+   "effective_date": "2019-01-01",
+   "status": "시행",
+   "law_mst": "206564",
+   "official_url": "https://www.law.go.kr/법령/최저임금법시행령",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/최저임금법/시행령.md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/최저임금법/시행령.md"
+   },
+   "article_count": 26,
+   "file": "full/minimum_wage_decree.json"
+  },
+  {
+   "law_id": "retirement_benefit_act",
+   "law_name": "근로자퇴직급여 보장법",
+   "law_kind": "법률",
+   "category": "근로",
+   "doc_types": [
+    "labor_full_time",
+    "labor_part_time"
+   ],
+   "ministry": [
+    "고용노동부"
+   ],
+   "promulgation_date": "2026-03-17",
+   "promulgation_no": "21475",
+   "effective_date": "2026-07-01",
+   "status": "시행",
+   "law_mst": "284455",
+   "official_url": "https://www.law.go.kr/법령/근로자퇴직급여보장법",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/근로자퇴직급여보장법/법률.md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/근로자퇴직급여보장법/법률.md"
+   },
+   "article_count": 68,
+   "file": "full/retirement_benefit_act.json"
+  },
+  {
+   "law_id": "fixed_term_part_time_act",
+   "law_name": "기간제 및 단시간근로자 보호 등에 관한 법률",
+   "law_kind": "법률",
+   "category": "근로",
+   "doc_types": [
+    "labor_full_time",
+    "labor_part_time"
+   ],
+   "ministry": [
+    "고용노동부"
+   ],
+   "promulgation_date": "2026-04-07",
+   "promulgation_no": "21534",
+   "effective_date": "2026-12-08",
+   "status": "시행",
+   "law_mst": "285375",
+   "official_url": "https://www.law.go.kr/법령/기간제및단시간근로자보호등에관한법률",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/기간제및단시간근로자보호등에관한법률/법률.md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/기간제및단시간근로자보호등에관한법률/법률.md"
+   },
+   "article_count": 26,
+   "file": "full/fixed_term_part_time_act.json"
+  },
+  {
+   "law_id": "equal_employment_act",
+   "law_name": "남녀고용평등과 일ㆍ가정 양립 지원에 관한 법률",
+   "law_kind": "법률",
+   "category": "근로",
+   "doc_types": [
+    "labor_full_time",
+    "labor_part_time"
+   ],
+   "ministry": [
+    "고용노동부"
+   ],
+   "promulgation_date": "2026-05-26",
+   "promulgation_no": "21700",
+   "effective_date": "2026-11-27",
+   "status": "시행",
+   "law_mst": "286255",
+   "official_url": "https://www.law.go.kr/법령/남녀고용평등과일ㆍ가정양립지원에관한법률",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/남녀고용평등과일ㆍ가정양립지원에관한법률/법률.md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/남녀고용평등과일ㆍ가정양립지원에관한법률/법률.md"
+   },
+   "article_count": 72,
+   "file": "full/equal_employment_act.json"
+  },
+  {
+   "law_id": "dispatched_workers_act",
+   "law_name": "파견근로자 보호 등에 관한 법률",
+   "law_kind": "법률",
+   "category": "근로",
+   "doc_types": [
+    "labor_dispatch"
+   ],
+   "ministry": [
+    "고용노동부"
+   ],
+   "promulgation_date": "2026-05-26",
+   "promulgation_no": "21701",
+   "effective_date": "2026-05-26",
+   "status": "시행",
+   "law_mst": "286257",
+   "official_url": "https://www.law.go.kr/법령/파견근로자보호등에관한법률",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/파견근로자보호등에관한법률/법률.md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/파견근로자보호등에관한법률/법률.md"
+   },
+   "article_count": 50,
+   "file": "full/dispatched_workers_act.json"
+  },
+  {
+   "law_id": "retirement_benefit_decree",
+   "law_name": "근로자퇴직급여 보장법 시행령",
+   "law_kind": "대통령령",
+   "category": "근로",
+   "doc_types": [
+    "labor_full_time",
+    "labor_part_time"
+   ],
+   "ministry": [
+    "고용노동부"
+   ],
+   "promulgation_date": "2026-03-24",
+   "promulgation_no": "36220",
+   "effective_date": "2026-03-24",
+   "status": "시행",
+   "law_mst": "284693",
+   "official_url": "https://www.law.go.kr/법령/근로자퇴직급여보장법시행령",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/근로자퇴직급여보장법/시행령.md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/근로자퇴직급여보장법/시행령.md"
+   },
+   "article_count": 79,
+   "file": "full/retirement_benefit_decree.json"
+  },
+  {
+   "law_id": "fixed_term_part_time_decree",
+   "law_name": "기간제 및 단시간근로자 보호 등에 관한 법률 시행령",
+   "law_kind": "대통령령",
+   "category": "근로",
+   "doc_types": [
+    "labor_full_time",
+    "labor_part_time"
+   ],
+   "ministry": [
+    "고용노동부"
+   ],
+   "promulgation_date": "2021-04-06",
+   "promulgation_no": "31611",
+   "effective_date": "2021-04-08",
+   "status": "시행",
+   "law_mst": "230833",
+   "official_url": "https://www.law.go.kr/법령/기간제및단시간근로자보호등에관한법률시행령",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/기간제및단시간근로자보호등에관한법률/시행령.md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/기간제및단시간근로자보호등에관한법률/시행령.md"
+   },
+   "article_count": 7,
+   "file": "full/fixed_term_part_time_decree.json"
+  },
+  {
+   "law_id": "private_rental_housing_decree",
+   "law_name": "민간임대주택에 관한 특별법 시행령",
+   "law_kind": "대통령령",
+   "category": "주거임대차",
+   "doc_types": [
+    "lease_housing"
+   ],
+   "ministry": [
+    "국토교통부"
+   ],
+   "promulgation_date": "2025-10-01",
+   "promulgation_no": "35811",
+   "effective_date": "2025-10-01",
+   "status": "시행",
+   "law_mst": "277959",
+   "official_url": "https://www.law.go.kr/법령/민간임대주택에관한특별법시행령",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/민간임대주택에관한특별법/시행령.md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/민간임대주택에관한특별법/시행령.md"
+   },
+   "article_count": 78,
+   "file": "full/private_rental_housing_decree.json"
+  },
+  {
+   "law_id": "licensed_realtors_decree",
+   "law_name": "공인중개사법 시행령",
+   "law_kind": "대통령령",
+   "category": "주거임대차",
+   "doc_types": [
+    "lease_housing",
+    "lease_commercial"
+   ],
+   "ministry": [
+    "국토교통부"
+   ],
+   "promulgation_date": "2026-08-18",
+   "promulgation_no": "36590",
+   "effective_date": "2026-08-28",
+   "status": "시행",
+   "law_mst": "288933",
+   "official_url": "https://www.law.go.kr/법령/공인중개사법시행령",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/공인중개사법/시행령.md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/공인중개사법/시행령.md"
+   },
+   "article_count": 52,
+   "file": "full/licensed_realtors_decree.json"
+  },
+  {
+   "law_id": "licensed_realtors_rule",
+   "law_name": "공인중개사법 시행규칙",
+   "law_kind": "국토교통부령",
+   "category": "주거임대차",
+   "doc_types": [
+    "lease_housing",
+    "lease_commercial"
+   ],
+   "ministry": [
+    "국토교통부"
+   ],
+   "promulgation_date": "2026-08-11",
+   "promulgation_no": "01611",
+   "effective_date": "2026-08-28",
+   "status": "시행",
+   "law_mst": "288753",
+   "official_url": "https://www.law.go.kr/법령/공인중개사법시행규칙",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/공인중개사법/시행규칙.md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/공인중개사법/시행규칙.md"
+   },
+   "article_count": 30,
+   "file": "full/licensed_realtors_rule.json"
+  },
+  {
+   "law_id": "money_lending_decree",
+   "law_name": "대부업 등의 등록 및 금융이용자 보호에 관한 법률 시행령",
+   "law_kind": "대통령령",
+   "category": "금전",
+   "doc_types": [
+    "loan_lender"
+   ],
+   "ministry": [
+    "금융위원회"
+   ],
+   "promulgation_date": "2026-09-29",
+   "promulgation_no": "36728",
+   "effective_date": "2026-10-02",
+   "status": "시행",
+   "law_mst": "290377",
+   "official_url": "https://www.law.go.kr/법령/대부업등의등록및금융이용자보호에관한법률시행령",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/대부업등의등록및금융이용자보호에관한법률/시행령.md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/대부업등의등록및금융이용자보호에관한법률/시행령.md"
+   },
+   "article_count": 52,
+   "file": "full/money_lending_decree.json"
+  },
+  {
+   "law_id": "housing_lease_act",
+   "law_name": "주택임대차보호법",
+   "law_kind": "법률",
+   "category": "주거임대차",
+   "doc_types": [
+    "lease_housing"
+   ],
+   "ministry": [
+    "법무부"
+   ],
+   "promulgation_date": "2025-10-01",
+   "promulgation_no": "21065",
+   "effective_date": "2026-01-02",
+   "status": "시행",
+   "law_mst": "276291",
+   "official_url": "https://www.law.go.kr/법령/주택임대차보호법",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/주택임대차보호법/법률.md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/주택임대차보호법/법률.md"
+   },
+   "article_count": 41,
+   "file": "full/housing_lease_act.json"
+  },
+  {
+   "law_id": "housing_lease_decree",
+   "law_name": "주택임대차보호법 시행령",
+   "law_kind": "대통령령",
+   "category": "주거임대차",
+   "doc_types": [
+    "lease_housing"
+   ],
+   "ministry": [
+    "법무부"
+   ],
+   "promulgation_date": "2026-06-23",
+   "promulgation_no": "36423",
+   "effective_date": "2026-07-01",
+   "status": "시행",
+   "law_mst": "287183",
+   "official_url": "https://www.law.go.kr/법령/주택임대차보호법시행령",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/주택임대차보호법/시행령.md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/주택임대차보호법/시행령.md"
+   },
+   "article_count": 35,
+   "file": "full/housing_lease_decree.json"
+  },
+  {
+   "law_id": "housing_lease_fixed_date_rule",
+   "law_name": "주택임대차계약증서상의 확정일자 부여 및 임대차 정보제공에 관한 규칙",
+   "law_kind": "법무부령",
+   "category": "주거임대차",
+   "doc_types": [
+    "lease_housing"
+   ],
+   "ministry": [
+    "법무부"
+   ],
+   "promulgation_date": "2022-02-07",
+   "promulgation_no": "01022",
+   "effective_date": "2022-02-07",
+   "status": "시행",
+   "law_mst": "240291",
+   "official_url": "https://www.law.go.kr/법령/주택임대차계약증서상의확정일자부여및임대차정보제공에관한규칙",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/주택임대차계약증서상의확정일자부여및임대차정보제공에관한규칙/법무부령.md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/주택임대차계약증서상의확정일자부여및임대차정보제공에관한규칙/법무부령.md"
+   },
+   "article_count": 12,
+   "file": "full/housing_lease_fixed_date_rule.json"
+  },
+  {
+   "law_id": "private_rental_housing_act",
+   "law_name": "민간임대주택에 관한 특별법",
+   "law_kind": "법률",
+   "category": "주거임대차",
+   "doc_types": [
+    "lease_housing"
+   ],
+   "ministry": [
+    "국토교통부"
+   ],
+   "promulgation_date": "2026-09-08",
+   "promulgation_no": "21901",
+   "effective_date": "2027-09-09",
+   "status": "시행",
+   "law_mst": "289353",
+   "official_url": "https://www.law.go.kr/법령/민간임대주택에관한특별법",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/민간임대주택에관한특별법/법률.md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/민간임대주택에관한특별법/법률.md"
+   },
+   "article_count": 90,
+   "file": "full/private_rental_housing_act.json"
+  },
+  {
+   "law_id": "jeonse_fraud_victim_act",
+   "law_name": "전세사기피해자 지원 및 주거안정에 관한 특별법",
+   "law_kind": "법률",
+   "category": "주거임대차",
+   "doc_types": [
+    "lease_housing"
+   ],
+   "ministry": [
+    "국토교통부"
+   ],
+   "promulgation_date": "2026-05-12",
+   "promulgation_no": "21634",
+   "effective_date": "2026-05-12",
+   "status": "시행",
+   "law_mst": "285963",
+   "official_url": "https://www.law.go.kr/법령/전세사기피해자지원및주거안정에관한특별법",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/전세사기피해자지원및주거안정에관한특별법/법률.md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/전세사기피해자지원및주거안정에관한특별법/법률.md"
+   },
+   "article_count": 53,
+   "file": "full/jeonse_fraud_victim_act.json"
+  },
+  {
+   "law_id": "licensed_realtors_act",
+   "law_name": "공인중개사법",
+   "law_kind": "법률",
+   "category": "주거임대차",
+   "doc_types": [
+    "lease_housing",
+    "lease_commercial"
+   ],
+   "ministry": [
+    "국토교통부"
+   ],
+   "promulgation_date": "2026-02-27",
+   "promulgation_no": "21409",
+   "effective_date": "2026-08-28",
+   "status": "시행",
+   "law_mst": "283713",
+   "official_url": "https://www.law.go.kr/법령/공인중개사법",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/공인중개사법/법률.md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/공인중개사법/법률.md"
+   },
+   "article_count": 69,
+   "file": "full/licensed_realtors_act.json"
+  },
+  {
+   "law_id": "commercial_lease_act",
+   "law_name": "상가건물 임대차보호법",
+   "law_kind": "법률",
+   "category": "상가임대차",
+   "doc_types": [
+    "lease_commercial"
+   ],
+   "ministry": [
+    "법무부"
+   ],
+   "promulgation_date": "2025-11-11",
+   "promulgation_no": "21083",
+   "effective_date": "2026-05-12",
+   "status": "시행",
+   "law_mst": "279651",
+   "official_url": "https://www.law.go.kr/법령/상가건물임대차보호법",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/상가건물임대차보호법/법률.md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/상가건물임대차보호법/법률.md"
+   },
+   "article_count": 33,
+   "file": "full/commercial_lease_act.json"
+  },
+  {
+   "law_id": "commercial_lease_decree",
+   "law_name": "상가건물 임대차보호법 시행령",
+   "law_kind": "대통령령",
+   "category": "상가임대차",
+   "doc_types": [
+    "lease_commercial"
+   ],
+   "ministry": [
+    "법무부"
+   ],
+   "promulgation_date": "2026-06-23",
+   "promulgation_no": "36423",
+   "effective_date": "2026-07-01",
+   "status": "시행",
+   "law_mst": "287139",
+   "official_url": "https://www.law.go.kr/법령/상가건물임대차보호법시행령",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/상가건물임대차보호법/시행령.md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/상가건물임대차보호법/시행령.md"
+   },
+   "article_count": 24,
+   "file": "full/commercial_lease_decree.json"
+  },
+  {
+   "law_id": "civil_act",
+   "law_name": "민법",
+   "law_kind": "법률",
+   "category": "일반",
+   "doc_types": [
+    "*"
+   ],
+   "ministry": [
+    "법무부"
+   ],
+   "promulgation_date": "2026-03-17",
+   "promulgation_no": "21454",
+   "effective_date": "2026-03-17",
+   "status": "시행",
+   "law_mst": "284415",
+   "official_url": "https://www.law.go.kr/법령/민법",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/민법/법률.md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/민법/법률.md"
+   },
+   "article_count": 1116,
+   "file": "full/civil_act.json"
+  },
+  {
+   "law_id": "standard_terms_act",
+   "law_name": "약관의 규제에 관한 법률",
+   "law_kind": "법률",
+   "category": "소비자",
+   "doc_types": [
+    "*"
+   ],
+   "ministry": [
+    "공정거래위원회"
+   ],
+   "promulgation_date": "2024-02-06",
+   "promulgation_no": "20240",
+   "effective_date": "2024-02-09",
+   "status": "시행",
+   "law_mst": "260031",
+   "official_url": "https://www.law.go.kr/법령/약관의규제에관한법률",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/약관의규제에관한법률/법률.md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/약관의규제에관한법률/법률.md"
+   },
+   "article_count": 42,
+   "file": "full/standard_terms_act.json"
+  },
+  {
+   "law_id": "standard_terms_decree",
+   "law_name": "약관의 규제에 관한 법률 시행령",
+   "law_kind": "대통령령",
+   "category": "소비자",
+   "doc_types": [
+    "*"
+   ],
+   "ministry": [
+    "공정거래위원회"
+   ],
+   "promulgation_date": "2023-12-12",
+   "promulgation_no": "33961",
+   "effective_date": "2023-12-21",
+   "status": "시행",
+   "law_mst": "256827",
+   "official_url": "https://www.law.go.kr/법령/약관의규제에관한법률시행령",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/약관의규제에관한법률/시행령.md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/약관의규제에관한법률/시행령.md"
+   },
+   "article_count": 26,
+   "file": "full/standard_terms_decree.json"
+  },
+  {
+   "law_id": "ecommerce_act",
+   "law_name": "전자상거래 등에서의 소비자보호에 관한 법률",
+   "law_kind": "법률",
+   "category": "소비자",
+   "doc_types": [
+    "consumer_online"
+   ],
+   "ministry": [
+    "공정거래위원회"
+   ],
+   "promulgation_date": "2026-01-20",
+   "promulgation_no": "21312",
+   "effective_date": "2026-07-21",
+   "status": "시행",
+   "law_mst": "282793",
+   "official_url": "https://www.law.go.kr/법령/전자상거래등에서의소비자보호에관한법률",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/전자상거래등에서의소비자보호에관한법률/법률.md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/전자상거래등에서의소비자보호에관한법률/법률.md"
+   },
+   "article_count": 56,
+   "file": "full/ecommerce_act.json"
+  },
+  {
+   "law_id": "ecommerce_decree",
+   "law_name": "전자상거래 등에서의 소비자보호에 관한 법률 시행령",
+   "law_kind": "대통령령",
+   "category": "소비자",
+   "doc_types": [
+    "consumer_online"
+   ],
+   "ministry": [
+    "공정거래위원회"
+   ],
+   "promulgation_date": "2026-07-20",
+   "promulgation_no": "36507",
+   "effective_date": "2026-07-21",
+   "status": "시행",
+   "law_mst": "288143",
+   "official_url": "https://www.law.go.kr/법령/전자상거래등에서의소비자보호에관한법률시행령",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/전자상거래등에서의소비자보호에관한법률/시행령.md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/전자상거래등에서의소비자보호에관한법률/시행령.md"
+   },
+   "article_count": 61,
+   "file": "full/ecommerce_decree.json"
+  },
+  {
+   "law_id": "door_to_door_sales_act",
+   "law_name": "방문판매 등에 관한 법률",
+   "law_kind": "법률",
+   "category": "소비자",
+   "doc_types": [
+    "consumer_door_to_door",
+    "consumer_membership"
+   ],
+   "ministry": [
+    "공정거래위원회"
+   ],
+   "promulgation_date": "2026-09-29",
+   "promulgation_no": "22044",
+   "effective_date": "2026-10-02",
+   "status": "시행",
+   "law_mst": "290239",
+   "official_url": "https://www.law.go.kr/법령/방문판매등에관한법률",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/방문판매등에관한법률/법률.md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/방문판매등에관한법률/법률.md"
+   },
+   "article_count": 74,
+   "file": "full/door_to_door_sales_act.json"
+  },
+  {
+   "law_id": "door_to_door_sales_decree",
+   "law_name": "방문판매 등에 관한 법률 시행령",
+   "law_kind": "대통령령",
+   "category": "소비자",
+   "doc_types": [
+    "consumer_door_to_door",
+    "consumer_membership"
+   ],
+   "ministry": [
+    "공정거래위원회"
+   ],
+   "promulgation_date": "2026-06-16",
+   "promulgation_no": "36416",
+   "effective_date": "2026-07-01",
+   "status": "시행",
+   "law_mst": "286997",
+   "official_url": "https://www.law.go.kr/법령/방문판매등에관한법률시행령",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/방문판매등에관한법률/시행령.md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/방문판매등에관한법률/시행령.md"
+   },
+   "article_count": 68,
+   "file": "full/door_to_door_sales_decree.json"
+  },
+  {
+   "law_id": "installment_transactions_act",
+   "law_name": "할부거래에 관한 법률",
+   "law_kind": "법률",
+   "category": "소비자",
+   "doc_types": [
+    "consumer_installment",
+    "consumer_funeral"
+   ],
+   "ministry": [
+    "공정거래위원회"
+   ],
+   "promulgation_date": "2026-09-08",
+   "promulgation_no": "21906",
+   "effective_date": "2027-09-09",
+   "status": "시행",
+   "law_mst": "289407",
+   "official_url": "https://www.law.go.kr/법령/할부거래에관한법률",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/할부거래에관한법률/법률.md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/할부거래에관한법률/법률.md"
+   },
+   "article_count": 68,
+   "file": "full/installment_transactions_act.json"
+  },
+  {
+   "law_id": "installment_transactions_decree",
+   "law_name": "할부거래에 관한 법률 시행령",
+   "law_kind": "대통령령",
+   "category": "소비자",
+   "doc_types": [
+    "consumer_installment",
+    "consumer_funeral"
+   ],
+   "ministry": [
+    "공정거래위원회"
+   ],
+   "promulgation_date": "2026-06-16",
+   "promulgation_no": "36416",
+   "effective_date": "2026-07-01",
+   "status": "시행",
+   "law_mst": "287001",
+   "official_url": "https://www.law.go.kr/법령/할부거래에관한법률시행령",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/할부거래에관한법률/시행령.md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/할부거래에관한법률/시행령.md"
+   },
+   "article_count": 39,
+   "file": "full/installment_transactions_decree.json"
+  },
+  {
+   "law_id": "framework_consumer_act",
+   "law_name": "소비자기본법",
+   "law_kind": "법률",
+   "category": "소비자",
+   "doc_types": [
+    "*"
+   ],
+   "ministry": [
+    "공정거래위원회"
+   ],
+   "promulgation_date": "2026-03-10",
+   "promulgation_no": "21444",
+   "effective_date": "2026-09-11",
+   "status": "시행",
+   "law_mst": "283837",
+   "official_url": "https://www.law.go.kr/법령/소비자기본법",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/소비자기본법/법률.md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/소비자기본법/법률.md"
+   },
+   "article_count": 99,
+   "file": "full/framework_consumer_act.json"
+  },
+  {
+   "law_id": "interest_limitation_act",
+   "law_name": "이자제한법",
+   "law_kind": "법률",
+   "category": "금전",
+   "doc_types": [
+    "loan_private"
+   ],
+   "ministry": [
+    "법무부"
+   ],
+   "promulgation_date": "2025-01-21",
+   "promulgation_no": "20714",
+   "effective_date": "2025-07-22",
+   "status": "시행",
+   "law_mst": "268667",
+   "official_url": "https://www.law.go.kr/법령/이자제한법",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/이자제한법/법률(법률).md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/이자제한법/법률(법률).md"
+   },
+   "article_count": 8,
+   "file": "full/interest_limitation_act.json"
+  },
+  {
+   "law_id": "interest_limitation_max_rate_decree",
+   "law_name": "이자제한법 제2조제1항의 최고이자율에 관한 규정",
+   "law_kind": "대통령령",
+   "category": "금전",
+   "doc_types": [
+    "loan_private"
+   ],
+   "ministry": [
+    "법무부"
+   ],
+   "promulgation_date": "2021-04-06",
+   "promulgation_no": "31593",
+   "effective_date": "2021-07-07",
+   "status": "시행",
+   "law_mst": "230727",
+   "official_url": "https://www.law.go.kr/법령/이자제한법제2조제1항의최고이자율에관한규정",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/이자제한법제2조제1항의최고이자율에관한규정/대통령령.md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/이자제한법제2조제1항의최고이자율에관한규정/대통령령.md"
+   },
+   "article_count": 1,
+   "file": "full/interest_limitation_max_rate_decree.json"
+  },
+  {
+   "law_id": "money_lending_act",
+   "law_name": "대부업 등의 등록 및 금융이용자 보호에 관한 법률",
+   "law_kind": "법률",
+   "category": "금전",
+   "doc_types": [
+    "loan_lender"
+   ],
+   "ministry": [
+    "금융위원회"
+   ],
+   "promulgation_date": "2025-10-01",
+   "promulgation_no": "21065",
+   "effective_date": "2026-01-02",
+   "status": "시행",
+   "law_mst": "277259",
+   "official_url": "https://www.law.go.kr/법령/대부업등의등록및금융이용자보호에관한법률",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/대부업등의등록및금융이용자보호에관한법률/법률.md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/대부업등의등록및금융이용자보호에관한법률/법률.md"
+   },
+   "article_count": 60,
+   "file": "full/money_lending_act.json"
+  },
+  {
+   "law_id": "university_tuition_rule",
+   "law_name": "대학 등록금에 관한 규칙",
+   "law_kind": "교육부령",
+   "category": "교육",
+   "doc_types": [
+    "tuition"
+   ],
+   "ministry": [
+    "교육부"
+   ],
+   "promulgation_date": "2022-02-07",
+   "promulgation_no": "00257",
+   "effective_date": "2022-02-07",
+   "status": "시행",
+   "law_mst": "240223",
+   "official_url": "https://www.law.go.kr/법령/대학등록금에관한규칙",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/대학등록금에관한규칙/교육부령.md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/대학등록금에관한규칙/교육부령.md"
+   },
+   "article_count": 10,
+   "file": "full/university_tuition_rule.json"
+  },
+  {
+   "law_id": "resident_registration_act",
+   "law_name": "주민등록법",
+   "law_kind": "법률",
+   "category": "행정",
+   "doc_types": [
+    "lease_housing",
+    "admin"
+   ],
+   "ministry": [
+    "행정안전부"
+   ],
+   "promulgation_date": "2025-01-21",
+   "promulgation_no": "20677",
+   "effective_date": "2025-07-22",
+   "status": "시행",
+   "law_mst": "268555",
+   "official_url": "https://www.law.go.kr/법령/주민등록법",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/주민등록법/법률.md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/주민등록법/법률.md"
+   },
+   "article_count": 55,
+   "file": "full/resident_registration_act.json"
+  },
+  {
+   "law_id": "resident_registration_decree",
+   "law_name": "주민등록법 시행령",
+   "law_kind": "대통령령",
+   "category": "행정",
+   "doc_types": [
+    "lease_housing",
+    "admin"
+   ],
+   "ministry": [
+    "행정안전부"
+   ],
+   "promulgation_date": "2026-04-28",
+   "promulgation_no": "36282",
+   "effective_date": "2026-10-29",
+   "status": "시행",
+   "law_mst": "285733",
+   "official_url": "https://www.law.go.kr/법령/주민등록법시행령",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/주민등록법/시행령.md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/주민등록법/시행령.md"
+   },
+   "article_count": 86,
+   "file": "full/resident_registration_decree.json"
+  },
+  {
+   "law_id": "electronic_signature_act",
+   "law_name": "전자서명법",
+   "law_kind": "법률",
+   "category": "서명",
+   "doc_types": [
+    "*"
+   ],
+   "ministry": [
+    "과학기술정보통신부"
+   ],
+   "promulgation_date": "2021-10-19",
+   "promulgation_no": "18479",
+   "effective_date": "2022-10-20",
+   "status": "시행",
+   "law_mst": "236201",
+   "official_url": "https://www.law.go.kr/법령/전자서명법",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/전자서명법/법률.md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/전자서명법/법률.md"
+   },
+   "article_count": 26,
+   "file": "full/electronic_signature_act.json"
+  },
+  {
+   "law_id": "disability_discrimination_act",
+   "law_name": "장애인차별금지 및 권리구제 등에 관한 법률",
+   "law_kind": "법률",
+   "category": "접근성",
+   "doc_types": [
+    "*"
+   ],
+   "ministry": [
+    "보건복지부"
+   ],
+   "promulgation_date": "2025-11-11",
+   "promulgation_no": "21115",
+   "effective_date": "2025-11-11",
+   "status": "시행",
+   "law_mst": "279699",
+   "official_url": "https://www.law.go.kr/법령/장애인차별금지및권리구제등에관한법률",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/장애인차별금지및권리구제등에관한법률/법률.md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/장애인차별금지및권리구제등에관한법률/법률.md"
+   },
+   "article_count": 53,
+   "file": "full/disability_discrimination_act.json"
+  }
+ ]
+}

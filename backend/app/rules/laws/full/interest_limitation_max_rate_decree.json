@@ -1,0 +1,36 @@
+{
+ "law_id": "interest_limitation_max_rate_decree",
+ "law_name": "이자제한법 제2조제1항의 최고이자율에 관한 규정",
+ "law_kind": "대통령령",
+ "category": "금전",
+ "doc_types": [
+  "loan_private"
+ ],
+ "ministry": [
+  "법무부"
+ ],
+ "promulgation_date": "2021-04-06",
+ "promulgation_no": "31593",
+ "effective_date": "2021-07-07",
+ "status": "시행",
+ "law_mst": "230727",
+ "official_url": "https://www.law.go.kr/법령/이자제한법제2조제1항의최고이자율에관한규정",
+ "mirror_source": {
+  "repo": "https://github.com/legalize-kr/legalize-kr",
+  "path": "kr/이자제한법제2조제1항의최고이자율에관한규정/대통령령.md",
+  "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+  "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/이자제한법제2조제1항의최고이자율에관한규정/대통령령.md"
+ },
+ "attachments": [],
+ "article_count": 1,
+ "articles": [
+  {
+   "article_no": "본문",
+   "title": "이자제한법 제2조제1항의 최고이자율에 관한 규정",
+   "chapter": "",
+   "text": "「이자제한법」 제2조제1항에 따른 금전대차에 관한 계약상의 최고이자율은 연 20퍼센트로 한다. <개정 2014.6.11, 2017.11.7, 2021.4.6>",
+   "deleted": false,
+   "source_url": "https://www.law.go.kr/법령/이자제한법제2조제1항의최고이자율에관한규정"
+  }
+ ]
+}
