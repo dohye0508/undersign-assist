@@ -52,7 +52,7 @@ async def check_writing(field: str = Form(...), photo: UploadFile = File(...)) -
         written = _clean(value_after(label_line.text, field) or _text_to_the_right(label_line, result.lines))
 
     if not found:
-        speech = f"{field} 칸을 찾지 못했어요. 그 칸이 화면에 들어오게 다시 찍어 주세요."
+        speech = f"이 페이지에서 {field} 칸을 찾지 못했어요. 다른 칸을 고르거나 다른 페이지에 써 보세요."
     elif not written:
         speech = f"{field} 칸이 비어 있는 것 같아요."
     else:

@@ -72,8 +72,9 @@ class AppTheme {
       outline: AppColors.line,
     );
 
-    final buttonShape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(16));
-    const buttonText = TextStyle(fontFamily: AppFonts.body, fontSize: 20);
+    // 버튼은 크게: 저시력 사용자가 찾기 쉽고, 손가락으로 누르기 쉽게
+    final buttonShape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(18));
+    const buttonText = TextStyle(fontFamily: AppFonts.body, fontSize: 23);
 
     return ThemeData(
       colorScheme: scheme,
@@ -89,16 +90,18 @@ class AppTheme {
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          minimumSize: const Size.fromHeight(64),
+          minimumSize: const Size.fromHeight(76),
           shape: buttonShape,
           textStyle: buttonText,
+          iconSize: 30,
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          minimumSize: const Size.fromHeight(64),
+          minimumSize: const Size.fromHeight(76),
           shape: buttonShape,
           textStyle: buttonText,
+          iconSize: 30,
           foregroundColor: AppColors.text,
           side: const BorderSide(color: AppColors.line, width: 1.5),
           backgroundColor: AppColors.surface,
@@ -106,9 +109,17 @@ class AppTheme {
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          minimumSize: const Size(48, 48),
-          textStyle: const TextStyle(fontFamily: AppFonts.body, fontSize: 17),
+          minimumSize: const Size(64, 60),
+          textStyle: const TextStyle(fontFamily: AppFonts.body, fontSize: 21),
+          iconSize: 28,
         ),
+      ),
+      iconButtonTheme: IconButtonThemeData(
+        style: IconButton.styleFrom(minimumSize: const Size(60, 60), iconSize: 32),
+      ),
+      chipTheme: const ChipThemeData(
+        labelStyle: TextStyle(fontFamily: AppFonts.body, fontSize: 20, color: AppColors.text),
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       ),
       focusColor: AppColors.primary.withValues(alpha: 0.18),
     );

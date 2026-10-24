@@ -58,6 +58,21 @@ class WorkspaceState extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// 페이지(0부터)마다 패드에 쓴 글씨. 페이지 사진과 같은 크기의 투명 배경 PNG.
+  /// 분석하면 페이지가 노트에 올라가고, 사용자가 그 위에 직접 쓴다 (features/write)
+  final Map<int, Uint8List> _notes = {};
+  Map<int, Uint8List> get notes => Map.unmodifiable(_notes);
+
+  void setNote(int page, Uint8List png) {
+    _notes[page] = png;
+    notifyListeners();
+  }
+
+  void clearNote(int page) {
+    _notes.remove(page);
+    notifyListeners();
+  }
+
   // --- 1. 업로드 -------------------------------------------------------------
 
   void addPage(DocumentPhoto photo) {
@@ -85,6 +100,7 @@ class WorkspaceState extends ChangeNotifier {
     _judgement = null;
     _judgeError = null;
     _signatures.clear();
+    _notes.clear();
   }
 
   // --- 2. 분석 ---------------------------------------------------------------

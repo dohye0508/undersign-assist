@@ -5,6 +5,7 @@ import '../../models/workspace_state.dart';
 import '../../services/speech.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/panel_section.dart';
+import '../read/read_panel.dart' show ListenButton;
 
 /// 판단("검토하세요!"): 빠진 항목과 확인이 필요한 내용을 근거와 함께 알려준다. 최종 판단은 사용자가 한다.
 /// 판정은 백엔드 규칙 엔진(backend/app/services/judge)이 한다. 이 화면은 결과를 보여주고 읽어주기만 한다.
@@ -48,12 +49,6 @@ class _JudgePanelState extends State<JudgePanel> {
       final caution = judgement.counts['caution'] ?? 0;
       final missing = judgement.counts['missing'] ?? 0;
       body = [
-        FilledButton.icon(
-          onPressed: () => Speech.announce(context, judgement.speech),
-          icon: const Icon(Icons.volume_up_outlined),
-          label: const Text('검토 결과 듣기'),
-        ),
-        const SizedBox(height: 14),
         Text('확인이 필요한 곳 $caution개 · 빠진 항목 $missing개', style: text.titleMedium),
         const SizedBox(height: 10),
         for (final finding in _ordered(judgement.findings)) _FindingCard(finding: finding),
@@ -63,10 +58,25 @@ class _JudgePanelState extends State<JudgePanel> {
       ];
     }
 
-    return PanelSection(
-      title: WorkStep.judge.label,
-      description: '빠진 항목과 확인이 필요한 내용을 근거와 함께 알려드려요. 결정은 직접 하세요.',
-      children: body,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // 문서 읽기와 같이, 듣기 버튼은 맨 위에 크게
+        if (judgement != null) ...[
+          ListenButton(
+            label: '검토 결과 듣기',
+            icon: Icons.volume_up_outlined,
+            primary: true,
+            onPressed: () => Speech.announce(context, judgement.speech),
+          ),
+          const SizedBox(height: 24),
+        ],
+        PanelSection(
+          title: WorkStep.judge.label,
+          description: '빠진 항목과 확인이 필요한 내용을 근거와 함께 알려드려요. 결정은 직접 하세요.',
+          children: body,
+        ),
+      ],
     );
   }
 

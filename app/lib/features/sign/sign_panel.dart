@@ -65,9 +65,16 @@ class _SignPanelState extends State<SignPanel> {
     setState(() => _exporting = true);
     try {
       final signatures = widget.state.signatures;
-      final pdf = await buildSignedPdf(pages: widget.state.pages, document: document, signatures: signatures);
+      // 쓴 글씨 단계에서 패드에 쓴 글씨도 함께 넣는다
+      final notes = widget.state.notes;
+      final pdf = await buildSignedPdf(
+        pages: widget.state.pages,
+        document: document,
+        signatures: signatures,
+        notes: notes,
+      );
       downloadBytes(pdf, '들리는계약서_서명본.pdf');
-      if (mounted) Speech.announce(context, describeSignedPdf(document, signatures));
+      if (mounted) Speech.announce(context, describeSignedPdf(document, signatures, notes: notes));
     } catch (_) {
       if (mounted) Speech.announce(context, 'PDF를 만들지 못했어요. 다시 시도해 주세요.');
     }
@@ -98,7 +105,7 @@ class _SignPanelState extends State<SignPanel> {
           Text('서명란을 찾지 못했어요. 서명할 곳이 사진에 들어오게 다시 찍어 주세요.', style: text.bodyMedium)
         else
           for (final spot in spots) _SpotRow(spot: spot, signature: signatures[spot.line], onSign: () => _sign(spot)),
-        if (signatures.isNotEmpty) ...[
+        if (signatures.isNotEmpty || widget.state.notes.isNotEmpty) ...[
           const SizedBox(height: 16),
           FilledButton.icon(
             onPressed: _exporting ? null : _export,

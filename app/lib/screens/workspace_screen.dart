@@ -51,7 +51,8 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
       if (!mounted) return;
       Speech.announce(
         context,
-        _camera.error ?? '카메라가 켜졌어요. 문서를 한 장씩 카메라 앞에 놓고 아래 가운데 버튼으로 찍으세요. 다 찍으면 오른쪽 아래 분석하기를 누르세요.',
+        _camera.error ??
+            '카메라가 켜졌어요. 문서를 한 장씩 카메라 앞에 놓고 아래 가운데 버튼으로 찍으세요. 다 찍으면 오른쪽 아래 분석하기를 누르세요.',
       );
     });
   }
@@ -69,14 +70,19 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
     if (_analyzing) return;
     final photo = await _camera.snapshot();
     if (photo == null) {
-      if (mounted) Speech.announce(context, '카메라가 준비되지 않았어요. 왼쪽 아래 사진 불러오기를 써 주세요.');
+      if (mounted) {
+        Speech.announce(context, '카메라가 준비되지 않았어요. 왼쪽 아래 사진 불러오기를 써 주세요.');
+      }
       return;
     }
     _state.addPage(photo);
     Haptics.ok();
     if (mounted) {
       final n = _state.pages.length;
-      Speech.announce(context, '$n페이지를 찍었어요. 다음 장을 올리고 찍거나, 다 찍었으면 분석하기를 누르세요.');
+      Speech.announce(
+        context,
+        '$n페이지를 찍었어요. 다음 장을 올리고 찍거나, 다 찍었으면 분석하기를 누르세요.',
+      );
     }
   }
 
@@ -85,10 +91,15 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
     final files = await ImagePicker().pickMultiImage();
     if (files.isEmpty) return;
     for (final file in files) {
-      _state.addPage(DocumentPhoto(bytes: await file.readAsBytes(), name: file.name));
+      _state.addPage(
+        DocumentPhoto(bytes: await file.readAsBytes(), name: file.name),
+      );
     }
     if (mounted) {
-      Speech.announce(context, '${files.length}장을 불러왔어요. 지금까지 모두 ${_state.pages.length}페이지예요.');
+      Speech.announce(
+        context,
+        '${files.length}장을 불러왔어요. 지금까지 모두 ${_state.pages.length}페이지예요.',
+      );
     }
   }
 
@@ -101,7 +112,10 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
 
   void _removePage(int index) {
     _state.removePage(index);
-    Speech.announce(context, '${index + 1}페이지를 지웠어요. 남은 페이지는 ${_state.pages.length}장이에요.');
+    Speech.announce(
+      context,
+      '${index + 1}페이지를 지웠어요. 남은 페이지는 ${_state.pages.length}장이에요.',
+    );
   }
 
   void _clearPages() {
@@ -131,7 +145,10 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
     }
     // 계획서: "총 7페이지입니다. … 서명이 필요한 페이지는 1페이지와 7페이지입니다."
     final signPages = describeSignaturePages(findSignatureSpots(document));
-    Speech.announce(context, '총 $pages페이지예요. ${document.speech} $signPages 다음에 할 일을 고를 수 있어요.');
+    Speech.announce(
+      context,
+      '총 $pages페이지예요. ${document.speech} $signPages 다음에 할 일을 고를 수 있어요.',
+    );
   }
 
   void _openStep(WorkStep step) {
@@ -144,10 +161,16 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
     Speech.announce(context, '${step.label}. ${step.guide}');
   }
 
-  void _backToCamera() {
+  /// 한 단계씩 뒤로: 검토하세요·쓴 글씨·서명 → 문서 읽기 → 카메라.
+  /// 단계에서 나갈 때 바로 카메라로 가면 분석 결과를 다시 찾아야 해서 불편하다
+  void _goBack() {
     if (!_analyzing) return;
+    if (_step != WorkStep.read) {
+      _openStep(WorkStep.read);
+      return;
+    }
     setState(() => _step = null);
-    Speech.announce(context, '카메라로 돌아왔어요. 찍은 페이지는 그대로 있어요.');
+    Speech.announce(context, '카메라로 돌아왔어요. 찍은 페이지와 분석 결과는 그대로 있어요.');
   }
 
   void _repeat() {
@@ -165,9 +188,12 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
         const SingleActivator(LogicalKeyboardKey.keyP): _toggleTray,
         const SingleActivator(LogicalKeyboardKey.enter): _analyze,
         const SingleActivator(LogicalKeyboardKey.keyR): _repeat,
-        const SingleActivator(LogicalKeyboardKey.escape): _backToCamera,
+        const SingleActivator(LogicalKeyboardKey.escape): _goBack,
         for (final (i, step) in WorkStep.values.indexed)
-          SingleActivator(LogicalKeyboardKey(LogicalKeyboardKey.digit1.keyId + i)): () => _openStep(step),
+          SingleActivator(
+            LogicalKeyboardKey(LogicalKeyboardKey.digit1.keyId + i),
+          ): () =>
+              _openStep(step),
       },
       child: Focus(
         autofocus: true,
@@ -190,11 +216,16 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
                         transitionBuilder: (child, animation) => FadeTransition(
                           opacity: animation,
                           child: SlideTransition(
-                            position: Tween(begin: const Offset(0.06, 0), end: Offset.zero).animate(animation),
+                            position: Tween(
+                              begin: const Offset(0.06, 0),
+                              end: Offset.zero,
+                            ).animate(animation),
                             child: child,
                           ),
                         ),
-                        child: _analyzing ? _analysisView(context) : _cameraView(context),
+                        child: _analyzing
+                            ? _analysisView(context)
+                            : _cameraView(context),
                       ),
                     ),
                   ),
@@ -217,7 +248,10 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
           trailing: _state.hasPages
               ? IconButton(
                   tooltip: '모두 지우고 새 문서 찍기',
-                  icon: const Icon(Icons.delete_sweep_outlined, color: AppColors.muted),
+                  icon: const Icon(
+                    Icons.delete_sweep_outlined,
+                    color: AppColors.muted,
+                  ),
                   onPressed: _clearPages,
                 )
               : IconButton(
@@ -268,36 +302,33 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
       key: const ValueKey('analysis'),
       children: [
         _TopBar(
-          title: '분석 결과',
+          title: step == WorkStep.read ? '분석 결과' : step.label,
           onRepeat: _repeat,
           leading: IconButton(
-            tooltip: '카메라로 돌아가기',
+            tooltip: step == WorkStep.read ? '카메라로 돌아가기' : '문서 읽기로 돌아가기',
             icon: const Icon(Icons.arrow_back),
-            onPressed: _backToCamera,
+            onPressed: _goBack,
           ),
         ),
         Expanded(
           child: Container(
             margin: const EdgeInsets.fromLTRB(12, 0, 12, 12),
-            decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(24)),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(24),
+            ),
             child: SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  if (step != WorkStep.read)
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: TextButton.icon(
-                        onPressed: () => _openStep(WorkStep.read),
-                        icon: const Icon(Icons.arrow_back),
-                        label: const Text('문서 읽기로'),
-                      ),
-                    ),
                   switch (step) {
                     WorkStep.read => ReadPanel(state: _state),
                     WorkStep.judge => JudgePanel(state: _state),
-                    WorkStep.write => WritePanel(state: _state, camera: _camera),
+                    WorkStep.write => WritePanel(
+                      state: _state,
+                      camera: _camera,
+                    ),
                     WorkStep.sign => SignPanel(state: _state),
                   },
                   if (step == WorkStep.read && _state.recognized != null) ...[
@@ -315,7 +346,12 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
 }
 
 class _TopBar extends StatelessWidget {
-  const _TopBar({required this.title, required this.onRepeat, this.leading, this.trailing});
+  const _TopBar({
+    required this.title,
+    required this.onRepeat,
+    this.leading,
+    this.trailing,
+  });
 
   final String title;
   final VoidCallback onRepeat;
@@ -325,17 +361,23 @@ class _TopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 56,
+      height: 68,
       child: Padding(
         padding: EdgeInsets.only(left: leading == null ? 18 : 4, right: 6),
         child: Row(
           children: [
             ?leading,
-            Semantics(header: true, child: Text(title, style: Theme.of(context).textTheme.titleLarge)),
+            Semantics(
+              header: true,
+              child: Text(title, style: Theme.of(context).textTheme.titleLarge),
+            ),
             const Spacer(),
             IconButton(
               tooltip: '다시 듣기',
-              icon: const Icon(Icons.volume_up_outlined, color: AppColors.muted),
+              icon: const Icon(
+                Icons.volume_up_outlined,
+                color: AppColors.muted,
+              ),
               onPressed: onRepeat,
             ),
             ?trailing,
@@ -397,26 +439,30 @@ class _BottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(28, 16, 28, 20),
+      padding: const EdgeInsets.fromLTRB(12, 14, 12, 18),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _SideButton(icon: Icons.photo_library_outlined, label: '사진 불러오기', onTap: onPick),
+          _SideButton(
+            icon: Icons.photo_library_outlined,
+            label: '사진 불러오기',
+            onTap: onPick,
+          ),
           Semantics(
             button: true,
             label: '찍기',
             excludeSemantics: true,
             child: SizedBox(
-              width: 84,
-              height: 84,
+              width: 100,
+              height: 100,
               child: FilledButton(
                 onPressed: canCapture ? onCapture : null,
                 style: FilledButton.styleFrom(
                   shape: const CircleBorder(),
                   padding: EdgeInsets.zero,
-                  minimumSize: const Size(84, 84),
+                  minimumSize: const Size(100, 100),
                 ),
-                child: const Icon(Icons.photo_camera, size: 38),
+                child: const Icon(Icons.photo_camera, size: 46),
               ),
             ),
           ),
@@ -432,7 +478,11 @@ class _BottomBar extends StatelessWidget {
 }
 
 class _SideButton extends StatelessWidget {
-  const _SideButton({required this.icon, required this.label, required this.onTap});
+  const _SideButton({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
 
   final IconData icon;
   final String label;
@@ -450,14 +500,21 @@ class _SideButton extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
         child: SizedBox(
-          width: 96,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(icon, size: 30, color: color),
-              const SizedBox(height: 4),
-              Text(label, textAlign: TextAlign.center, style: TextStyle(fontSize: 14, color: color)),
-            ],
+          width: 116,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icon, size: 40, color: color),
+                const SizedBox(height: 6),
+                Text(
+                  label,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18, color: color),
+                ),
+              ],
+            ),
           ),
         ),
       ),

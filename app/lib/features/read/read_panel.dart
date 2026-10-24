@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../models/recognized_document.dart';
 import '../../models/workspace_state.dart';
 import '../../services/speech.dart';
+import '../../theme/app_theme.dart';
 import '../../widgets/panel_section.dart';
 
 /// 읽기: 사진을 받으면 자동으로 읽은 결과(문서 종류, 핵심 항목)를 보여주고 다시 들려준다.
@@ -31,26 +32,71 @@ class ReadPanel extends StatelessWidget {
       body = [ReadSummary(key: ObjectKey(document), document: document)];
     }
 
-    return PanelSection(
-      title: WorkStep.read.label,
-      description: '어떤 문서인지와 중요한 항목을 읽어드려요.',
-      // 듣기 버튼은 제목 옆에 작게 둔다. 읽은 결과는 이미 자동으로 들려주므로 다시 들을 때만 쓴다
-      actions: document == null || state.reading
-          ? const []
-          : [
-              IconButton(
-                tooltip: '전체 듣기',
-                onPressed: () => Speech.announce(context, document.fullText),
-                icon: const Icon(Icons.record_voice_over_outlined),
-              ),
-              IconButton(
-                tooltip: '요약 다시 듣기',
-                onPressed: () => Speech.announce(context, document.speech),
-                icon: const Icon(Icons.volume_up_outlined),
-              ),
-            ],
-      children: body,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // 듣기는 이 앱에서 가장 많이 쓰는 동작이다. 화면을 보지 않고도 찾도록 맨 위에 크게 둔다
+        if (document != null && !state.reading) ...[
+          ListenButton(
+            label: '전체 듣기',
+            icon: Icons.record_voice_over_outlined,
+            primary: true,
+            onPressed: () => Speech.announce(context, document.fullText),
+          ),
+          const SizedBox(height: 12),
+          ListenButton(
+            label: '요약 듣기',
+            icon: Icons.volume_up_outlined,
+            onPressed: () => Speech.announce(context, document.speech),
+          ),
+          const SizedBox(height: 24),
+        ],
+        PanelSection(
+          title: WorkStep.read.label,
+          description: '어떤 문서인지와 중요한 항목을 읽어드려요.',
+          children: body,
+        ),
+      ],
     );
+  }
+}
+
+/// 화면 맨 위에 두는 큰 듣기 버튼
+class ListenButton extends StatelessWidget {
+  const ListenButton({
+    super.key,
+    required this.label,
+    required this.icon,
+    required this.onPressed,
+    this.primary = false,
+  });
+
+  final String label;
+  final IconData icon;
+  final VoidCallback onPressed;
+
+  /// 가장 먼저 누를 버튼 (꽉 찬 색)
+  final bool primary;
+
+  @override
+  Widget build(BuildContext context) {
+    const size = Size.fromHeight(88);
+    const textStyle = TextStyle(fontFamily: AppFonts.body, fontSize: 26);
+    final child = Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [Icon(icon, size: 36), const SizedBox(width: 14), Text(label)],
+    );
+    return primary
+        ? FilledButton(
+            onPressed: onPressed,
+            style: FilledButton.styleFrom(minimumSize: size, textStyle: textStyle),
+            child: child,
+          )
+        : OutlinedButton(
+            onPressed: onPressed,
+            style: OutlinedButton.styleFrom(minimumSize: size, textStyle: textStyle),
+            child: child,
+          );
   }
 }
 

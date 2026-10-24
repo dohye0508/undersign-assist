@@ -16,12 +16,14 @@ const _signatureLineScale = 2.2;
 final _keyword = RegExp(r'서명|\(인\)|날인');
 
 /// 페이지 사진마다 PDF 한 쪽. 서명란 줄(signatures의 key)에 서명 PNG를 겹쳐 그린다.
+/// [notes](페이지 번호 → 노트 PNG)가 있으면 그 페이지 전체에 먼저 겹친다. 서명이 쓴 글씨에 가리지 않게 서명은 그 위에.
 ///
 /// 종이를 다시 출력하지 않고 찍은 사진 위에 그리므로, 사용자가 들은 문서와 서명된 문서가 같다.
 Future<Uint8List> buildSignedPdf({
   required List<DocumentPhoto> pages,
   required RecognizedDocument document,
   required Map<int, Uint8List> signatures,
+  Map<int, Uint8List> notes = const {},
 }) async {
   final pdf = pw.Document();
   for (final (i, photo) in pages.indexed) {
@@ -32,7 +34,20 @@ Future<Uint8List> buildSignedPdf({
         : PdfPageFormat(PdfPageFormat.a4.width, PdfPageFormat.a4.width * size.height / size.width);
     final scale = size == null ? 0.0 : format.width / size.width;
 
+    // 노트는 페이지 사진과 같은 픽셀 크기의 투명 PNG라, 사진과 똑같이 깔면 제자리에 겹친다
+    final note = notes[i];
     final overlays = <pw.Widget>[
+      if (note != null)
+        pw.Positioned(
+          left: 0,
+          top: 0,
+          child: pw.Image(
+            pw.MemoryImage(note),
+            width: format.width,
+            height: format.height,
+            fit: size == null ? pw.BoxFit.contain : pw.BoxFit.fill,
+          ),
+        ),
       if (size != null)
         for (final MapEntry(key: line, value: png) in signatures.entries)
           if (line >= 0 && line < document.blocks.length && document.blocks[line].page == i)
@@ -99,8 +114,15 @@ pw.Widget _placeSignature(TextBlock block, Uint8List png, double scale, PdfPageF
 double _clamp(double value, double max) => value.clamp(0.0, math.max(0.0, max));
 
 /// "1페이지 근로자 줄, 2페이지 사업주 줄에 서명을 넣었어요. PDF를 내려받았어요." (들려줄 말)
-String describeSignedPdf(RecognizedDocument document, Map<int, Uint8List> signatures) {
-  if (signatures.isEmpty) return '넣은 서명이 없어요. 서명 없이 PDF를 내려받았어요.';
+/// [notes]가 있으면 쓴 글씨도 넣었다고 앞에 알린다
+String describeSignedPdf(
+  RecognizedDocument document,
+  Map<int, Uint8List> signatures, {
+  Map<int, Uint8List> notes = const {},
+}) {
+  final noted = notes.keys.toList()..sort();
+  final notePart = noted.isEmpty ? '' : '${noted.map((p) => '${p + 1}페이지').join(', ')}에 쓴 글씨를 넣었어요. ';
+  if (signatures.isEmpty) return '$notePart넣은 서명이 없어요. 서명 없이 PDF를 내려받았어요.';
   final multiPage = document.pages.length > 1;
   final lines = signatures.keys.toList()..sort();
   final parts = [
@@ -112,7 +134,7 @@ String describeSignedPdf(RecognizedDocument document, Map<int, Uint8List> signat
       else
         '${line + 1}번째 줄',
   ];
-  return '${parts.join(', ')}에 서명을 넣었어요. PDF를 내려받았어요.';
+  return '$notePart${parts.join(', ')}에 서명을 넣었어요. PDF를 내려받았어요.';
 }
 
 /// 서명 탭과 같은 방식으로 줄 맨 앞의 주체(근로자, 사업주…)로 부른다.
