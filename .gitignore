@@ -1,0 +1,25 @@
+# 비밀 값: 절대 커밋하지 않는다
+.env
+*.key.json
+my-key.json
+credentials*.json
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# 업로드된 문서 사진, 음성 파일 등 실행 중 생기는 파일
+uploads/
+tts_file/
+*.log
+
+# 손글씨 데이터셋 등 대용량 로컬 자료
+data/raw/
+
+# OS, 편집기
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

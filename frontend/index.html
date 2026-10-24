@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>undersign-assist</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="app-header">
+    <h1>undersign-assist</h1>
+    <p>종이 문서를 카메라에 대면 읽고, 쓰고, 서명하고, 판단하도록 도와드려요.</p>
+  </header>
+
+  <main>
+    <!-- 모든 탭이 함께 쓰는 카메라. 입력은 언제나 종이 문서 사진이다 -->
+    <section class="camera" aria-label="카메라">
+      <video id="camera-video" autoplay playsinline muted></video>
+      <button type="button" id="camera-start">카메라 켜기</button>
+    </section>
+
+    <div class="tabs" role="tablist" aria-label="기능">
+      <button type="button" role="tab" id="tab-read" aria-controls="panel-read" aria-selected="true">읽기</button>
+      <button type="button" role="tab" id="tab-write" aria-controls="panel-write" aria-selected="false" tabindex="-1">쓰기</button>
+      <button type="button" role="tab" id="tab-sign" aria-controls="panel-sign" aria-selected="false" tabindex="-1">서명</button>
+      <button type="button" role="tab" id="tab-judge" aria-controls="panel-judge" aria-selected="false" tabindex="-1">판단</button>
+    </div>
+
+    <section role="tabpanel" id="panel-read" aria-labelledby="tab-read"></section>
+    <section role="tabpanel" id="panel-write" aria-labelledby="tab-write" hidden></section>
+    <section role="tabpanel" id="panel-sign" aria-labelledby="tab-sign" hidden></section>
+    <section role="tabpanel" id="panel-judge" aria-labelledby="tab-judge" hidden></section>
+
+    <!-- 새 결과는 이 영역과 음성으로 함께 알린다 -->
+    <p id="announcer" class="announcer" aria-live="polite"></p>
+  </main>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
