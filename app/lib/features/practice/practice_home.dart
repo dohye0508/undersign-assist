@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../services/haptics.dart';
 import '../../services/speech.dart';
@@ -9,17 +10,18 @@ import 'hangul.dart';
 import 'practice_frame.dart';
 import 'practice_items.dart';
 import 'practice_screen.dart';
+import 'profile_format.dart';
 import '../read/read_panel.dart' show ListenButton;
 import '../../widgets/panel_section.dart';
 import 'practice_layout.dart';
 import 'score_board.dart';
 import 'score_store.dart';
 
-enum _View { home, learnMenu, learn, wordMenu, word, board, name, settings }
+enum _View { home, learnMenu, learn, wordMenu, word, board, profile, settings }
 
 /// 들리는 받아쓰기: 계약서 칸에 쓰기 전에 패드에서 글씨를 연습한다.
 ///
-/// 홈 → 학습하기(자음·모음·글자) / 연습하기(낱말) / 나의 점수판 / 내 이름 등록, 설정.
+/// 홈 → 학습하기(자음·모음·글자) / 연습하기(낱말) / 나의 점수판 / 내 정보 등록, 설정.
 /// 촬영 화면(G 키)이나 설정 화면 위에 새 화면으로 열리고, 나가도 찍은 페이지와 분석 결과는 그대로 남는다.
 class PracticeFlow extends StatefulWidget {
   const PracticeFlow({super.key, this.store, this.exitLabel = '카메라로'});
@@ -52,17 +54,17 @@ class _PracticeFlowState extends State<PracticeFlow> {
   String _intro(_View view) {
     switch (view) {
       case _View.home:
-        return '들리는 받아쓰기예요. 학습하기, 연습하기, 나의 점수판, 내 이름 등록이 있어요.';
+        return '들리는 받아쓰기예요. 학습하기, 연습하기, 나의 점수판, 내 정보 등록이 있어요.';
       case _View.learnMenu:
         return '학습하기예요. 자음, 모음, 글자 중에서 골라 주세요.';
       case _View.wordMenu:
-        return '연습하기예요. 내 이름, 계약서 낱말, 일반 낱말 중에서 골라 주세요.';
+        return '연습하기예요. 내 정보, 날짜, 계약서 낱말, 일반 낱말 중에서 골라 주세요.';
       case _View.board:
         return '나의 점수판이에요. ${_store.boardSpeech()}';
-      case _View.name:
-        final name = _store.name;
-        return '내 이름 등록이에요. 한글로 이름을 입력하고 저장을 눌러 주세요.'
-            '${name.isEmpty ? '' : ' 지금 등록된 이름은 $name${ieyo(name)}.'}';
+      case _View.profile:
+        final labels = _store.profileLabels;
+        return '내 정보 등록이에요. 이름, 집주소, 생년월일, 전화번호를 입력하고 저장을 눌러 주세요. 비워 두면 그 항목은 지워요.'
+            '${labels.isEmpty ? '' : ' 지금은 ${labels.join(', ')}이 등록돼 있어요.'}';
       case _View.settings:
         return '설정이에요. 거리 소리와 보조선 숨기기를 켜고 끌 수 있어요. 진동은 앱 설정에서 켜고 꺼요.';
       case _View.learn:
@@ -89,7 +91,7 @@ class _PracticeFlowState extends State<PracticeFlow> {
       case _View.learnMenu:
       case _View.wordMenu:
       case _View.board:
-      case _View.name:
+      case _View.profile:
       case _View.settings:
         _go(_View.home);
     }
@@ -112,8 +114,8 @@ class _PracticeFlowState extends State<PracticeFlow> {
   }
 
   void _openWords(WordGroup group) {
-    if (group == WordGroup.myName && _store.name.isEmpty) {
-      _go(_View.name, say: '먼저 내 이름을 등록해 주세요. 한글로 이름을 입력하고 저장을 눌러 주세요.');
+    if (group == WordGroup.myInfo && !_store.hasProfile) {
+      _go(_View.profile, say: '먼저 내 정보를 등록해요. 이름, 집주소, 생년월일, 전화번호 중 쓰고 싶은 것을 입력하고 저장을 눌러 주세요.');
       return;
     }
     _group = group;
@@ -130,8 +132,8 @@ class _PracticeFlowState extends State<PracticeFlow> {
         return '연습하기';
       case _View.board:
         return '나의 점수판';
-      case _View.name:
-        return '내 이름 등록';
+      case _View.profile:
+        return '내 정보 등록';
       case _View.settings:
         return '설정';
       case _View.learn:
@@ -157,7 +159,7 @@ class _PracticeFlowState extends State<PracticeFlow> {
       return PracticeScreen(
         key: ValueKey('word-${_group.name}'),
         title: _title,
-        items: wordItems(_group, name: _store.name),
+        items: wordItems(_group, profile: _store.profile),
         mode: PracticeMode.word,
         store: _store,
         onExit: _back,
@@ -167,7 +169,7 @@ class _PracticeFlowState extends State<PracticeFlow> {
       title: _view == _View.home ? '' : _title,
       backLabel: _backLabel,
       onBack: _back,
-      letterKeys: _view != _View.name,
+      letterKeys: _view != _View.profile,
       trailing: _view == _View.home
           ? IconButton(
               tooltip: '설정',
@@ -208,8 +210,12 @@ class _PracticeFlowState extends State<PracticeFlow> {
           _Choice('학습하기', '자음·모음·글자', 'ㄱ', () => _go(_View.learnMenu), primary: true),
           _Choice('연습하기', '낱말 한 줄', '서명', () => _go(_View.wordMenu)),
           _Choice('나의 점수판', avg == null ? '아직 없어요' : '최근 평균 $avg점', avg == null ? '점수' : '$avg', () => _go(_View.board)),
-          _Choice('내 이름 등록', _store.name.isEmpty ? '아직 없어요' : _store.name, _store.name.isEmpty ? '이름' : _store.name,
-              () => _go(_View.name)),
+          _Choice(
+            '내 정보 등록',
+            _store.hasProfile ? '${_store.profileLabels.join('·')} 등록됨' : '아직 없어요',
+            _store.name.isEmpty ? '이름' : _store.name,
+            () => _go(_View.profile),
+          ),
         ]);
       case _View.learnMenu:
         final hard = _store.itemScores(kinds: {PracticeKind.consonant, PracticeKind.vowel, PracticeKind.syllable});
@@ -229,23 +235,35 @@ class _PracticeFlowState extends State<PracticeFlow> {
         );
       case _View.wordMenu:
         final hardWords = _store.itemScores(kinds: {PracticeKind.word});
+        final today = DateTime.now();
         return _menu(
           [
-            _Choice('내 이름', _store.name.isEmpty ? '먼저 이름을 등록해요' : _store.name, '名', () => _openWords(WordGroup.myName)),
+            _Choice(
+              '내 정보',
+              _store.hasProfile ? '${_store.profileLabels.join(', ')} 한 칸씩' : '먼저 내 정보를 등록해요',
+              '나',
+              () => _openWords(WordGroup.myInfo),
+            ),
+            _Choice(
+              '날짜',
+              '오늘 ${today.year}년 ${today.month}월 ${today.day}일${_store.birth.isEmpty ? '' : ', 생년월일'}',
+              '12',
+              () => _openWords(WordGroup.date),
+            ),
             _Choice('계약서 낱말', '동의, 확인, 서명, 성명, 주소 …', '서명', () => _openWords(WordGroup.contract), primary: true),
             _Choice('일반 낱말', '하늘, 나무, 바다 …', '하늘', () => _openWords(WordGroup.general)),
           ],
           listTitle: '어려웠던 낱말',
           list: hardWords.take(3).toList(),
           emptyText: '아직 연습한 낱말이 없어요.',
-          cta: _store.name.isEmpty
-              ? _Cta('계약서에 쓸 이름부터 등록해요', '내 이름 등록', () => _go(_View.name))
+          cta: !_store.hasProfile
+              ? _Cta('계약서에 쓸 이름·주소부터 등록해요', '내 정보 등록', () => _go(_View.profile))
               : _Cta('계약서에 자주 나오는 낱말이에요', '계약서 낱말 시작', () => _openWords(WordGroup.contract)),
         );
       case _View.board:
         return ScoreBoardView(store: _store, onRetryLowest: _retryLowest, onStart: () => _openLearn(PracticeKind.consonant));
-      case _View.name:
-        return _NameForm(store: _store, onSaved: () => _go(_View.home, say: _savedSpeech()));
+      case _View.profile:
+        return _ProfileForm(store: _store, onSaved: () => _go(_View.home, say: _savedSpeech()));
       case _View.settings:
         return _SettingsForm(store: _store);
       case _View.learn:
@@ -254,14 +272,16 @@ class _PracticeFlowState extends State<PracticeFlow> {
     }
   }
 
+  /// 저장한 뒤 등록된 항목만 읽어 준다 ("이름 김이름, 주소 서울시 강남구 등록했어요")
   String _savedSpeech() {
-    final name = _store.name;
-    return '$name, ${_countWord(name.runes.length)} 글자로 등록했어요. 낱말 연습의 내 이름에서 써 볼 수 있어요.';
-  }
-
-  static String _countWord(int n) {
-    const words = ['', '한', '두', '세', '네', '다섯', '여섯'];
-    return n >= 1 && n < words.length ? words[n] : '$n';
+    final parts = <String>[
+      if (_store.name.isNotEmpty) '이름 ${_store.name}',
+      if (_store.address.isNotEmpty) '주소 ${_store.address}',
+      if (_store.birth.isNotEmpty) '생년월일 ${_store.birth}',
+      if (_store.phone.isNotEmpty) '전화번호 ${_store.phone.replaceAll('-', ', ')}',
+    ];
+    if (parts.isEmpty) return '내 정보를 모두 지웠어요.';
+    return '${parts.join(', ')} 등록했어요. 낱말 연습의 내 정보에서 써 볼 수 있어요.';
   }
 
   /// 홈 (사용자 선택 W4): 작은 파란 줄 + 큰 제목 → 타일 2×2 → 사용법 듣기를 한 덩어리로 세로 가운데에
@@ -472,60 +492,121 @@ class _RowButton extends StatelessWidget {
   }
 }
 
-/// 내 이름 등록: 키보드로 입력한다 (스크린리더로도 입력할 수 있다)
-class _NameForm extends StatefulWidget {
-  const _NameForm({required this.store, required this.onSaved});
+/// 내 정보 등록: 이름·집주소·생년월일·전화번호를 키보드로 입력한다 (스크린리더로도 입력할 수 있다).
+/// 비워 두면 그 항목은 지운다. 모두 이 기기 안에만 남는다
+class _ProfileForm extends StatefulWidget {
+  const _ProfileForm({required this.store, required this.onSaved});
 
   final ScoreStore store;
   final VoidCallback onSaved;
 
   @override
-  State<_NameForm> createState() => _NameFormState();
+  State<_ProfileForm> createState() => _ProfileFormState();
 }
 
-class _NameFormState extends State<_NameForm> {
-  late final _controller = TextEditingController(text: widget.store.name);
+class _ProfileFormState extends State<_ProfileForm> {
+  late final _name = TextEditingController(text: widget.store.name);
+  late final _address = TextEditingController(text: widget.store.address);
+  late final _birth = TextEditingController(text: widget.store.birth);
+  late final _phone = TextEditingController(text: widget.store.phone);
 
   @override
   void dispose() {
-    _controller.dispose();
+    _name.dispose();
+    _address.dispose();
+    _birth.dispose();
+    _phone.dispose();
     super.dispose();
   }
 
   void _save() {
-    final name = _controller.text.trim();
-    if (!isAllHangul(name) || name.runes.length > 6) {
+    final name = _name.text.trim();
+    if (name.isNotEmpty && (!isAllHangul(name) || name.runes.length > 6)) {
       Haptics.warn();
-      Speech.announce(context, '한글로 한 글자에서 여섯 글자까지만 입력할 수 있어요. 다시 입력해 주세요.');
+      Speech.announce(context, '이름은 한글로 한 글자에서 여섯 글자까지만 입력할 수 있어요. 다시 입력해 주세요.');
       return;
     }
     Haptics.ok();
-    widget.store.setName(name);
+    widget.store.setProfile(
+      name: name,
+      address: _address.text,
+      birth: normalizeBirth(_birth.text),
+      phone: normalizePhone(_phone.text),
+    );
     widget.onSaved();
   }
 
   @override
   Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
       children: [
-        TextField(
-          controller: _controller,
-          autofocus: true,
-          maxLength: 6,
-          style: const TextStyle(fontSize: 28),
-          decoration: const InputDecoration(labelText: '이름 (한글, 1~6글자)'),
-          onSubmitted: (_) => _save(),
+        _field(_name, '이름', '한글 1~6글자', '김이름', autofocus: true, maxLength: 6),
+        _field(_address, '집주소', '띄어쓰기마다 한 칸씩 연습해요', '서울시 강남구 테헤란로 12'),
+        _field(_birth, '생년월일', '숫자만 써도 "2008년 3월 15일"로 바꿔 저장해요', '20080315', keyboard: TextInputType.datetime),
+        _field(
+          _phone,
+          '전화번호',
+          '숫자와 - 만. - 로 나눈 덩어리마다 한 칸씩 연습해요',
+          '010-1234-5678',
+          keyboard: TextInputType.phone,
+          formatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9\-]'))],
+          last: true,
+        ),
+        const SizedBox(height: 8),
+        Semantics(
+          button: true,
+          label: '내 정보 저장',
+          excludeSemantics: true,
+          child: FilledButton.icon(
+            onPressed: TapFeedback.wrap(_save),
+            style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(68)),
+            icon: const Icon(Icons.check),
+            label: const Text('저장'),
+          ),
         ),
         const SizedBox(height: 12),
-        FilledButton.icon(
-          onPressed: TapFeedback.wrap(_save),
-          icon: const Icon(Icons.check),
-          label: const Text('저장'),
-        ),
-        const SizedBox(height: 12),
-        Text('이름은 이 기기 안에만 저장되고 밖으로 보내지 않아요.', style: Theme.of(context).textTheme.bodyMedium),
+        Text('내 정보는 이 기기 안에만 저장되고 밖으로 보내지 않아요. 비워 두고 저장하면 그 항목은 지워져요.', style: text.bodyMedium),
       ],
+    );
+  }
+
+  /// 칸 하나: 제목(18, 굵게) + 작은 설명 + 입력칸(앱 InputDecorationTheme)
+  Widget _field(
+    TextEditingController controller,
+    String label,
+    String hint,
+    String example, {
+    bool autofocus = false,
+    int? maxLength,
+    TextInputType? keyboard,
+    List<TextInputFormatter>? formatters,
+    bool last = false,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.textStrong)),
+          const SizedBox(height: 2),
+          Text(hint, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.muted)),
+          const SizedBox(height: 8),
+          // Semantics로 감싸면 입력칸 노드가 둘로 읽혀서, 이름은 TextField 자체의 semanticsLabel에 준다
+          TextField(
+            controller: controller,
+            autofocus: autofocus,
+            maxLength: maxLength,
+            keyboardType: keyboard,
+            inputFormatters: formatters,
+            textInputAction: last ? TextInputAction.done : TextInputAction.next,
+            style: const TextStyle(fontSize: 24),
+            decoration: InputDecoration(hintText: example, counterText: '', semanticCounterText: ''),
+            onSubmitted: last ? (_) => _save() : null,
+          ),
+        ],
+      ),
     );
   }
 }

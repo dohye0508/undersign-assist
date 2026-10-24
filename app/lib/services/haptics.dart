@@ -1,6 +1,29 @@
 import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 
 import 'package:web/web.dart' as web;
+
+/// 마지막 `navigator.vibrate` 호출이 어떻게 됐는지 (패드에서 진동이 안 날 때 원인을 바로 보기 위한 디버그 정보)
+enum VibrateStatus {
+  /// 아직 한 번도 부르지 않았다
+  unknown,
+
+  /// 브라우저에 `navigator.vibrate`가 없다 (iOS Safari, 일부 데스크톱)
+  unsupported,
+
+  /// 브라우저가 false를 돌려줬다. 크롬은 사용자 제스처(터치) 밖에서 부르면 막는다
+  blocked,
+
+  /// true를 돌려줬다 (데스크톱 크롬은 true를 주고도 모터가 없어 아무 느낌이 없다)
+  ok;
+
+  String get label => switch (this) {
+        VibrateStatus.unknown => '아직 안 함',
+        VibrateStatus.unsupported => '지원 안 함',
+        VibrateStatus.blocked => '차단됨',
+        VibrateStatus.ok => '됨',
+      };
+}
 
 /// 진동과 짧은 소리 신호. 진동 주체는 패드(기기)다 (계획서 확정).
 ///
@@ -16,6 +39,18 @@ class Haptics {
 
   /// 효과음 크기 배율 (설정 화면: 끄기 0 / 작게 0.5 / 보통 1 / 크게 1.6). 모든 소리 신호의 gain에 곱한다
   static double effectVolume = 1.0;
+
+  /// 마지막으로 진동을 울리려 했을 때의 결과 (멈추기용 `vibrate(0)`은 세지 않는다)
+  static VibrateStatus lastVibrateResult = VibrateStatus.unknown;
+
+  /// `navigator.vibrate`가 있는 브라우저인지. 없으면 null (아직 모름)이 아니라 false
+  static bool get vibrateSupported {
+    try {
+      return (web.window.navigator as JSObject).has('vibrate');
+    } catch (_) {
+      return false;
+    }
+  }
 
   /// 잘못됨: 강하게 두 번 + 낮은음 두 번 (이전 앱의 진동 'w'와 같은 뜻)
   static void warn() {
@@ -41,8 +76,9 @@ class Haptics {
     _tones([660], length: 0.1, gain: 0.18);
   }
 
-  /// 받아쓰기의 연속 안내용: 진동만 / 소리만 따로 낸다 (경고·성공처럼 둘을 묶어 내지 않는다)
-  static void pulse(List<int> pattern) => _vibrate(pattern);
+  /// 받아쓰기의 연속 안내용: 진동만 / 소리만 따로 낸다 (경고·성공처럼 둘을 묶어 내지 않는다).
+  /// 돌려주는 값은 브라우저가 진동을 받아들였는지(`navigator.vibrate`의 반환값). 꺼져 있거나 못 울리면 false
+  static bool pulse(List<int> pattern) => _vibrate(pattern);
 
   /// 진행 중인 진동을 멈춘다
   static void cancel() => _vibrate([0]);
@@ -50,13 +86,27 @@ class Haptics {
   static void tone(double frequency, {double length = 0.05, double gain = 0.1}) =>
       _tones([frequency], length: length, gain: gain);
 
-  static void _vibrate(List<int> pattern) {
+  /// `navigator.vibrate`를 부른다. 패턴은 `List<int>`를 그대로 넘기지 않고 JS 숫자 배열(`JSArray<JSNumber>`)로 바꿔 넘긴다.
+  /// 크롬은 사용자가 화면을 누르고 있는 동안(또는 그 직후)에만 진동을 허락하고, 그 밖(타이머 콜백 등)에서 부르면
+  /// 조용히 false를 돌려준다. 그 값을 [lastVibrateResult]에 남겨 화면에서 볼 수 있게 한다
+  static bool _vibrate(List<int> pattern) {
+    final isCancel = pattern.length == 1 && pattern.first == 0;
     // 끄기(0)는 꺼진 상태에서도 보내서 이어지던 진동을 멈춘다
-    if (!vibrationEnabled && !(pattern.length == 1 && pattern.first == 0)) return;
+    if (!vibrationEnabled && !isCancel) return false;
     try {
-      web.window.navigator.vibrate(pattern.jsify()!);
+      final navigator = web.window.navigator;
+      if (!(navigator as JSObject).has('vibrate')) {
+        if (!isCancel) lastVibrateResult = VibrateStatus.unsupported;
+        return false;
+      }
+      final jsPattern = pattern.map((ms) => ms.toJS).toList().toJS;
+      final accepted = navigator.vibrate(jsPattern);
+      if (!isCancel) lastVibrateResult = accepted ? VibrateStatus.ok : VibrateStatus.blocked;
+      return accepted;
     } catch (_) {
       // 진동을 지원하지 않는 기기
+      if (!isCancel) lastVibrateResult = VibrateStatus.unsupported;
+      return false;
     }
   }
 

@@ -58,6 +58,28 @@ class ScoreStore extends ChangeNotifier {
   final KeyValueStorage _storage;
 
   String name = '';
+
+  /// 내 정보: 계약서 칸에 자주 쓰는 값. 받아쓰기 연습 낱말이 되고, 쓰고 서명하기에서 회색 보조 글씨로 보인다.
+  /// 모두 이 기기 밖으로 보내지 않는다
+  String address = '';
+
+  /// 생년월일. "2008년 3월 15일"처럼 사람이 읽는 꼴 그대로 둔다
+  String birth = '';
+  String phone = '';
+
+  /// 등록된 정보가 하나라도 있는지
+  bool get hasProfile => name.isNotEmpty || address.isNotEmpty || birth.isNotEmpty || phone.isNotEmpty;
+
+  /// 낱말 연습에 넘기는 내 정보 묶음
+  ProfileInfo get profile => ProfileInfo(name: name, address: address, birth: birth, phone: phone);
+
+  /// 등록된 항목 이름들 ("이름", "주소", "생년월일", "전화번호"). 홈 타일 설명과 저장 안내에 쓴다
+  List<String> get profileLabels => [
+        if (name.isNotEmpty) '이름',
+        if (address.isNotEmpty) '주소',
+        if (birth.isNotEmpty) '생년월일',
+        if (phone.isNotEmpty) '전화번호',
+      ];
   final settings = PracticeSettings();
 
   /// 이름표(`consonant:ㄱ`) → 최근 점수들 (오래된 것이 앞)
@@ -70,6 +92,9 @@ class ScoreStore extends ChangeNotifier {
       final json = jsonDecode(raw);
       if (json is! Map<String, dynamic>) return;
       if (json['name'] is String) name = json['name'] as String;
+      if (json['address'] is String) address = json['address'] as String;
+      if (json['birth'] is String) birth = json['birth'] as String;
+      if (json['phone'] is String) phone = json['phone'] as String;
       if (json['settings'] is Map<String, dynamic>) settings.load(json['settings'] as Map<String, dynamic>);
       final scores = json['scores'];
       if (scores is Map<String, dynamic>) {
@@ -85,12 +110,29 @@ class ScoreStore extends ChangeNotifier {
   void _save() {
     _storage.write(
       _storageKey,
-      jsonEncode({'name': name, 'settings': settings.toJson(), 'scores': _scores}),
+      jsonEncode({
+        'name': name,
+        'address': address,
+        'birth': birth,
+        'phone': phone,
+        'settings': settings.toJson(),
+        'scores': _scores,
+      }),
     );
   }
 
   void setName(String value) {
     name = value;
+    _save();
+    notifyListeners();
+  }
+
+  /// 내 정보 저장. 넘기지 않은 값은 그대로 둔다
+  void setProfile({String? name, String? address, String? birth, String? phone}) {
+    if (name != null) this.name = name.trim();
+    if (address != null) this.address = address.trim();
+    if (birth != null) this.birth = birth.trim();
+    if (phone != null) this.phone = phone.trim();
     _save();
     notifyListeners();
   }

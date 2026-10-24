@@ -435,6 +435,7 @@ class _PracticeScreenState extends State<PracticeScreen> with SingleTickerProvid
           ),
           const SizedBox(height: 12),
           _resultBand(),
+          _vibrateStatusLine(),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
             child: SizedBox(
@@ -535,6 +536,23 @@ class _PracticeScreenState extends State<PracticeScreen> with SingleTickerProvid
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  /// 디버그용 한 줄: 마지막 `navigator.vibrate`가 어떻게 됐는지 (패드에서 진동이 안 날 때 원인을 바로 보기 위해).
+  /// "지원 안 함"(브라우저에 vibrate 없음) / "차단됨"(false, 제스처 밖 호출 등) / "됨"(true). 스크린리더에는 읽히지 않는다.
+  /// 펜을 움직이는 동안 setState가 계속 일어나므로 값이 바로 바뀐다
+  Widget _vibrateStatusLine() {
+    final status = !Haptics.vibrateSupported
+        ? '지원 안 함'
+        : !Haptics.vibrationEnabled
+            ? '설정에서 꺼짐'
+            : Haptics.lastVibrateResult.label;
+    return ExcludeSemantics(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(20, 6, 20, 0),
+        child: Text('진동: $status', style: const TextStyle(fontSize: 12, color: AppColors.muted, height: 1.3)),
       ),
     );
   }

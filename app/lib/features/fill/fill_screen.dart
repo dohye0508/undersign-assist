@@ -13,10 +13,13 @@ import '../../services/speech.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/tap_feedback.dart';
 import '../output/signed_pdf.dart';
+import '../practice/browser_storage.dart' show sharedScoreStore;
+import '../practice/score_store.dart';
 import '../sign/signature_check.dart';
 import '../write/note_ink.dart';
 import 'fill_kind.dart';
 import 'fill_targets.dart';
+import 'guide_text.dart';
 import 'progress_dots.dart';
 
 /// 쓰고 서명하기 화면. 칸 하나마다 화면 전체가 쓰기 칸이 된다.
@@ -35,11 +38,17 @@ import 'progress_dots.dart';
 ///
 /// ✓는 기계가 그리지 않고 **사용자가 딱 한 번 그린 것**([WorkspaceState.checkMark])을 쓴다.
 /// 아직 없으면 처음 예/아니요를 고른 뒤 화면이 쓰기 칸으로 바뀌어 ✓를 한 번 그리게 하고, 그 뒤로는 저장해 둔 ✓를 그대로 넣는다.
+///
+/// 글씨 칸에 등록한 내 정보가 맞으면([guideFor]) 그 값을 **회색 보조 글씨**로 깔아 따라 쓸 수 있게 한다.
+/// 화면용 레이어([_InkPainter])에만 그리므로 PNG·움직임·PDF에는 들어가지 않는다. 진동·소리 안내는 없다.
 class FillScreen extends StatefulWidget {
-  const FillScreen({super.key, required this.state, required this.targets, this.start = 0, this.intro});
+  const FillScreen({super.key, required this.state, required this.targets, this.start = 0, this.intro, this.store});
 
   final WorkspaceState state;
   final List<FillTarget> targets;
+
+  /// 회색 보조 글씨에 쓰는 내 정보(이름·주소·생년월일·연락처). 없으면 앱 공용 저장소([sharedScoreStore])
+  final ScoreStore? store;
 
   /// 처음 쓸 칸 (targets 안의 순서)
   final int start;
@@ -102,6 +111,9 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
   FillTarget get _target => _targets[_index];
   bool get _filled => widget.state.fills.containsKey(_target.id);
 
+  /// 지금 칸에 깔 회색 보조 글씨. 글씨 칸이고 등록 값이 맞을 때만 있다 (서명·체크·✓ 그리기에는 없음)
+  GuideText? get _guide => _drawingCheck ? null : guideFor(_target, widget.store ?? sharedScoreStore);
+
   @override
   void initState() {
     super.initState();
@@ -147,10 +159,12 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
       case FillKind.text:
         final filled = _filled ? ' 이미 채운 칸이에요. 새로 쓰면 바뀌고, 그냥 다음을 누르면 그대로 둬요.' : '';
         final how = first ? ' 화면 가득 크게 쓰고, 다 쓰면 왼쪽으로 밀거나 다음 버튼을 누르세요.' : '';
+        // 회색 보조 글씨가 깔리면 한 마디 더 ("등록한 이름 김이름이 회색으로 보여요. 따라 써도 돼요.")
+        final guide = _guide == null ? '' : ' ${_guide!.spoken}';
         if (t.datePart case final part?) {
-          return '$n번째, 날짜의 ${josa(part, '을', '를')} 적으세요. 숫자만 쓰면 돼요.$filled$how';
+          return '$n번째, 날짜의 ${josa(part, '을', '를')} 적으세요. 숫자만 쓰면 돼요.$filled$how$guide';
         }
-        return '$n번째, ${josa(t.label, '을', '를')} 쓰세요.$filled$how';
+        return '$n번째, ${josa(t.label, '을', '를')} 쓰세요.$filled$how$guide';
     }
   }
 
@@ -698,10 +712,12 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
         _area = constraints.biggest;
         final target = _target;
         final drawing = _drawingCheck;
+        final guide = _phase == _Phase.writing ? _guide : null;
         return Semantics(
           label: drawing
               ? '체크 표시 그리는 칸. 한 번만 그리면 다음부터 그대로 써요. 다 그리면 다음을 누르세요. 지금까지 ${_strokes.length}획.'
-              : '${target.label} 쓰는 칸. 화면 가득 쓰세요. 다 쓰면 다음을 누르세요. 지금까지 ${_strokes.length}획.',
+              : '${target.label} 쓰는 칸. 화면 가득 쓰세요. 다 쓰면 다음을 누르세요. 지금까지 ${_strokes.length}획.'
+                  '${guide == null ? '' : ' 회색 보조 글씨: ${guide.text}.'}',
           child: Listener(
             behavior: HitTestBehavior.opaque,
             onPointerDown: _down,
@@ -717,8 +733,8 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  // 빈 칸이면 무엇을 쓸지 옅게 (저시력 사용자)
-                  if (_strokes.isEmpty && _phase == _Phase.writing)
+                  // 빈 칸이면 무엇을 쓸지 옅게 (저시력 사용자). 회색 보조 글씨가 깔리면 그게 대신한다
+                  if (_strokes.isEmpty && _phase == _Phase.writing && guide == null)
                     Center(
                       child: Padding(
                         padding: const EdgeInsets.all(24),
@@ -734,7 +750,8 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
                       ),
                     ),
                   if (_phase == _Phase.placing) _placing(),
-                  CustomPaint(painter: _InkPainter(_strokes, baseline: !target.isSignature && !drawing)),
+                  // 회색 보조 글씨는 이 화면용 painter에만 그린다. PNG(_FillInk.toPng)와 움직임(_FlyingInkPainter)에는 없다
+                  CustomPaint(painter: _InkPainter(_strokes, baseline: !target.isSignature && !drawing, guide: guide?.text)),
                 ],
               ),
             ),
@@ -1073,26 +1090,55 @@ class _FillInk {
 }
 
 class _InkPainter extends CustomPainter {
-  _InkPainter(this.strokes, {required this.baseline});
+  _InkPainter(this.strokes, {required this.baseline, this.guide});
 
   final List<List<PenPoint>> strokes;
 
   /// 글씨 칸이면 옅은 밑줄을 그어 줄을 맞추기 쉽게
   final bool baseline;
 
+  /// 따라 쓸 회색 보조 글씨 (등록한 이름·주소·오늘 날짜 …). 밑줄 위, 왼쪽 여백에서 한 줄.
+  /// 화면에만 그리고 저장되는 글씨에는 들어가지 않는다
+  final String? guide;
+
+  /// 밑줄 위치와 좌우 여백. 보조 글씨도 같은 자리에 놓는다
+  static const _baselineY = 0.7, _left = 0.06, _right = 0.94;
+
   @override
   void paint(Canvas canvas, Size size) {
     if (baseline) {
+      if (guide case final text? when text.isNotEmpty) _paintGuide(canvas, size, text);
       // 옅은 점선 밑줄
-      final y = size.height * 0.7;
+      final y = size.height * _baselineY;
       final paint = Paint()
         ..color = AppColors.grey300
         ..strokeWidth = 2;
-      for (var x = size.width * 0.06; x < size.width * 0.94; x += 10) {
-        canvas.drawLine(Offset(x, y), Offset(math.min(x + 5, size.width * 0.94), y), paint);
+      for (var x = size.width * _left; x < size.width * _right; x += 10) {
+        canvas.drawLine(Offset(x, y), Offset(math.min(x + 5, size.width * _right), y), paint);
       }
     }
     _FillInk.paint(canvas, strokes);
+  }
+
+  /// 도현체 한 줄을 칸 높이에 맞춰 크게, 왼쪽 여백부터 밑줄에 맞춰 놓는다. 길면 너비에 맞게 줄인다
+  void _paintGuide(Canvas canvas, Size size, String text) {
+    final maxWidth = size.width * (_right - _left);
+    var fontSize = size.height * 0.5;
+    TextPainter layout(double fs) => TextPainter(
+          text: TextSpan(
+            text: text,
+            style: TextStyle(fontFamily: 'DoHyeon', fontSize: fs, color: AppColors.grey300, height: 1),
+          ),
+          textDirection: TextDirection.ltr,
+          maxLines: 1,
+        )..layout();
+    var painter = layout(fontSize);
+    if (painter.width > maxWidth) {
+      fontSize = math.max(12, fontSize * maxWidth / painter.width);
+      painter = layout(fontSize);
+    }
+    final ascent = painter.computeDistanceToActualBaseline(TextBaseline.alphabetic);
+    painter.paint(canvas, Offset(size.width * _left, size.height * _baselineY - ascent));
   }
 
   @override

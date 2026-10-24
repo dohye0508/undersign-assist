@@ -1,4 +1,5 @@
 import 'hangul.dart';
+import 'profile_format.dart';
 
 /// 연습 종류. 점수판의 막대 네 개와 같다
 enum PracticeKind {
@@ -91,7 +92,11 @@ final syllableItems = <PracticeItem>[
 
 /// 낱말 묶음
 enum WordGroup {
-  myName('내 이름'),
+  /// 등록한 내 정보: 이름, 주소(띄어쓰기 단위), 생년월일(연·월·일), 전화번호(- 단위)
+  myInfo('내 정보'),
+
+  /// 계약서 날짜 칸: 오늘 날짜와 생년월일의 연·월·일 (숫자 연습)
+  date('날짜'),
   contract('계약서 낱말'),
   general('일반 낱말');
 
@@ -100,17 +105,71 @@ enum WordGroup {
   final String label;
 }
 
-const contractWords = ['동의', '확인', '서명', '예', '아니요', '성명', '주소'];
+const contractWords = ['동의', '확인', '서명', '예', '아니요', '성명', '주소', '생년월일', '전화번호', '연락처'];
 const generalWords = ['솔숲', '하늘', '나무', '바다', '학교', '가족', '사랑', '친구'];
 
-/// [group]의 낱말들. 내 이름은 [name]이 비어 있으면 빈 목록
-List<PracticeItem> wordItems(WordGroup group, {String name = ''}) {
-  final words = switch (group) {
-    WordGroup.myName => name.isEmpty ? <String>[] : [name],
-    WordGroup.contract => contractWords,
-    WordGroup.general => generalWords,
-  };
-  return [for (final w in words) PracticeItem(PracticeKind.word, w)];
+/// 등록한 내 정보. 비어 있는 칸은 빈 문자열
+class ProfileInfo {
+  const ProfileInfo({this.name = '', this.address = '', this.birth = '', this.phone = ''});
+
+  final String name;
+  final String address;
+
+  /// "2008년 3월 15일" 꼴
+  final String birth;
+
+  /// "010-1234-5678" 꼴
+  final String phone;
+
+  bool get isEmpty => name.isEmpty && address.isEmpty && birth.isEmpty && phone.isEmpty;
+}
+
+PracticeItem _word(String text, String what) =>
+    PracticeItem(PracticeKind.word, text, intro: '$what, $text. 보조선을 따라 한 줄로 써 보세요.');
+
+/// 내 정보 낱말: 긴 것은 한 칸에 들어갈 만큼 나눈다. 무엇을 쓰는지 먼저 말한다 ("주소의 2번째 낱말, 강남구")
+List<PracticeItem> _profileItems(ProfileInfo p) {
+  final out = <PracticeItem>[];
+  if (p.name.isNotEmpty) out.add(_word(p.name, '이름'));
+  final address = splitAddress(p.address);
+  for (var i = 0; i < address.length; i++) {
+    out.add(_word(address[i], address.length == 1 ? '주소' : '주소의 ${ordinal(i)} 낱말'));
+  }
+  out.addAll(_dateItems(splitBirth(p.birth), '생년월일'));
+  final phone = splitPhone(p.phone);
+  for (var i = 0; i < phone.length; i++) {
+    out.add(_word(phone[i], phone.length == 1 ? '전화번호' : '전화번호의 ${ordinal(i)} 덩어리'));
+  }
+  return out;
+}
+
+/// [ymd]가 연·월·일 세 개면 "날짜의 연도, 2026"처럼 칸 세 개
+List<PracticeItem> _dateItems(List<String> ymd, String what) {
+  if (ymd.length != 3) return const [];
+  return [
+    _word(ymd[0], '$what의 연도'),
+    _word(ymd[1], '$what의 월'),
+    _word(ymd[2], '$what의 일'),
+  ];
+}
+
+/// [group]의 낱말들. 내 정보는 [profile]에 등록된 것만, 비어 있으면 빈 목록.
+/// 날짜는 [today](없으면 지금)의 연·월·일, 생년월일이 있으면 그것도
+List<PracticeItem> wordItems(WordGroup group, {ProfileInfo profile = const ProfileInfo(), DateTime? today}) {
+  switch (group) {
+    case WordGroup.myInfo:
+      return _profileItems(profile);
+    case WordGroup.date:
+      final now = today ?? DateTime.now();
+      return [
+        ..._dateItems(['${now.year}', '${now.month}', '${now.day}'], '오늘 날짜'),
+        ..._dateItems(splitBirth(profile.birth), '생년월일'),
+      ];
+    case WordGroup.contract:
+      return [for (final w in contractWords) PracticeItem(PracticeKind.word, w)];
+    case WordGroup.general:
+      return [for (final w in generalWords) PracticeItem(PracticeKind.word, w)];
+  }
 }
 
 List<PracticeItem> itemsFor(PracticeKind kind) {
