@@ -182,9 +182,18 @@ flutter run -d chrome
 - Windows에서 `uvicorn --reload`가 코드 변경을 반영하지 못한 적이 있다. 결과가 그대로면 서버를 껐다 켠다.
 - `pdf` 패키지가 끌어오는 `image` 4.11은 `archive` 4.0.9와 맞지 않아 웹 컴파일이 실패한다. `pubspec.yaml`의 `dependency_overrides`로 `image: 4.4.0`에 고정했다. Flutter를 올려 archive가 새 버전으로 풀리면 고정을 풀어도 된다.
 
-### 배포 (패드에서 서버 없이 쓰려면)
+### 배포 (실제 주소, 2026-10-25부터 동작)
 
-패드 모드(아래)는 노트북 IP·인증서 경고·방화벽·서버 창 멈춤 때문에 매번 흔들렸다. 진짜 배포는 둘 다 **HTTPS가 자동으로 붙는 호스팅**에 올린다: 앱은 GitHub Pages(저장소가 GitHub, `flutter build web --base-href /undersign-assist/`를 Actions가 돌려 올림), 백엔드는 `backend/Dockerfile`(python 3.11 + `tesseract-ocr-kor`, 포트는 `PORT` 환경 변수, HF Spaces 기본 7860)을 Hugging Face Spaces(Docker, 무료 cpu-basic은 48시간 쉬면 잠듦) 또는 Cloud Run(결제 계정 필요, 쓴 만큼만, 안 쓰면 0)에 올린다. Render 무료는 15분 쉬면 잠들고 깨는 데 30~90초라 시연에 맞지 않는다. 앱 빌드 때 `--dart-define=API_BASE=https://<백엔드 주소>`. `GROQ_API_KEY`는 호스팅의 Secret으로만 준다. 배포 뒤에는 패드에서 주소만 열면 되고 인증서 경고가 없다.
+패드 모드(아래)는 노트북 IP·인증서 경고·방화벽·서버 창 멈춤 때문에 매번 흔들려서 HTTPS가 자동으로 붙는 호스팅에 올렸다. 패드에서는 앱 주소만 열면 된다(인증서 경고 없음).
+
+| 무엇 | 주소 | 어떻게 올라가나 |
+|---|---|---|
+| 앱 | https://dohye0508.github.io/undersign-assist/ | `main`에 `app/` 변경을 푸시하면 `.github/workflows/pages.yml`이 빌드해 GitHub Pages로 자동 배포. 백엔드 주소는 저장소 변수 `API_BASE` |
+| 백엔드 | https://undersign-assist-api.onrender.com | Render 무료, `render.yaml`(Blueprint) + `backend/Dockerfile`. 저장소를 공개 URL로 연결해서 **자동 배포가 없다**: `backend/`를 고치면 Render 대시보드 → undersign-assist-api → Manual Deploy → Deploy latest commit. `GROQ_API_KEY`는 Render 환경 변수에만 |
+
+- Render 무료는 15분 쉬면 잠들고 깨는 데 약 50초. `.github/workflows/keep-awake.yml`이 10분마다 `/api/health`를 불러 깨워 둔다(GitHub 예약 작업은 몇 분 늦을 수 있으니 시연 직전엔 직접 한 번 연다).
+- 속도(실측): 사진 한 장 분석 13~32초(Render 무료 0.1 CPU, Tesseract 두 번 읽기). 노트북은 5초. 처음엔 3분이 넘어 멈춘 것처럼 보였는데 Tesseract 스레드 다툼 때문이었고 `OMP_THREAD_LIMIT=1`(Dockerfile)로 고쳤다. 더 빠르게 하려면 Render Starter(유료, 0.5 CPU).
+- Hugging Face Spaces는 Docker Space에 PRO 구독이 필요해서(402) 쓰지 않는다.
 
 ### 대회장 패드 모드
 
