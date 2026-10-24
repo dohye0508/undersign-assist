@@ -46,8 +46,13 @@ const _boxChars = 'ㅁ□口디■☐▢▣';
 /// "동의하십니까" (OCR은 동→통으로 자주 읽는다)
 final _consentQuestion = RegExp(r'[동통]의하(십니까|시겠습니까|시나요|세요|는지|십니|시는|십)');
 
-/// "□예 □아니요". 상자 글자는 없을 수도 있고, 사이에 밑줄·공백이 끼기도 한다
-final _yesNo = RegExp('([$_boxChars])?예[^가-힣]{0,4}([$_boxChars])?아니[요오]');
+/// "□예 □아니요"도 "예 □ 아니요 □"도. 예(OCR은 에·여로도 읽는다)와 아니요 사이에 상자 글자가 낀다.
+/// 상자는 OCR이 ㅁ, 口, 디는 물론 "[|", "더", "던" 같은 한글 한 글자로도 읽어서(배포 서버의 Tesseract가 그렇다)
+/// 상자가 무슨 글자인지는 따지지 않고 예~아니요 사이를 최대 4글자로 본다. 그 안의 한글 글자는 [_matchYesNo]가 한 글자까지만 허락한다
+final _yesNo = RegExp(r'([예에여])(.{0,4}?)(아니[요오])');
+
+/// 상자 글자가 아닌 줄 끝맺음 문장부호 ("동의하십니까?" 바로 뒤의 예)
+const _notBox = '?.,:;!·';
 
 /// "2026년  월  일"처럼 월·일이 빈 날짜 (공백을 지운 글자 기준). "생년월일"은 뺀다.
 /// 1번 그룹은 인쇄된 연도 숫자. 비어 있으면("년 월 일") 연도도 써야 한다
@@ -72,7 +77,7 @@ final _bullet = RegExp(r'^[※*•○●▶►■□ㅁ口▪]');
 List<FillTarget> findFillTargets(RecognizedDocument doc) {
   final found = <_Found>[];
   for (final (i, block) in doc.blocks.indexed) {
-    found.addAll(_scanLine(block, i, _pageSize(doc, block.page)));
+    found.addAll(_scanLine(block, i, _pageSize(doc, block.page), doc.blocks));
   }
   found.sort((a, b) {
     if (a.page != b.page) return a.page.compareTo(b.page);
@@ -138,10 +143,9 @@ TextBlock? findCheckBlock(FillTarget target, List<TextBlock> blocks) {
 /// 칸 자리([FillTarget.rect])는 두 상자를 합친 것이라, 표시를 넣을 때 어느 쪽인지 여기서 다시 잰다.
 /// [block]이 "□예 □아니요" 줄이 아니면 null
 ({Rect yes, Rect no})? checkBoxRects(FillTarget target, TextBlock block) {
-  final line = _Line(block);
-  final span = _yesNoAt(line.compact);
-  if (span == null) return null;
-  return (yes: line.square(span.yes, span.yesEnd), no: line.square(span.no, span.noEnd));
+  final boxes = _yesNoBoxes(_Line(block));
+  if (boxes == null) return null;
+  return (yes: boxes.yes, no: boxes.no);
 }
 
 /// 글씨 칸에 글씨를 넣을 때 쓰는 자리: 칸 높이의 15%만큼 왼쪽을 비운다 (':' 바로 뒤에 붙지 않게).
@@ -266,37 +270,111 @@ class _Line {
   }
 }
 
-/// "□예 □아니요"의 자리. yes/no는 상자 글자(없으면 "예"/"아니요" 글자)의 시작, yesEnd/noEnd는 그 끝(다음 글자)
-({int yes, int yesEnd, int no, int noEnd})? _yesNoAt(String compact) {
-  final m = _yesNo.firstMatch(compact);
+/// 예·아니요 줄의 정규식 짝. 예~아니요 사이의 한글이 한 글자를 넘으면 문장 속 우연이라 버린다 ("예 또는 아니요")
+RegExpMatch? _matchYesNo(String compact) {
+  for (final m in _yesNo.allMatches(compact)) {
+    final gap = m.group(2)!;
+    final letters = gap.runes.where((r) => r >= 0xAC00 && r <= 0xD7A3 && !_boxChars.contains(String.fromCharCode(r))).length;
+    if (letters <= 1) return m;
+  }
+  return null;
+}
+
+/// 글자가 상자로 읽혔을 법한가: 한글이 아닌 글자(ㅁ □ [ | 같은 것)이거나 [_boxChars]
+bool _boxish(String c) => !_space.hasMatch(c) && !_notBox.contains(c) && (!_isHangul(c) || _boxChars.contains(c));
+
+/// 예 상자와 아니요 상자의 자리 (그 줄 사진의 픽셀 좌표). [start]는 "예" 글자의 위치(칸 id에 쓴다).
+///
+/// 서식은 두 가지다. 상자가 글자 앞이면 "□예 □아니요", 뒤면 "예 □ 아니요 □"(해커톤 참가신청서).
+/// 앞에 상자로 읽힌 글자가 있으면 앞, 없으면 뒤로 본다. OCR이 상자를 놓치면 글자 옆에 어림해서 둔다
+({int start, Rect yes, Rect no})? _yesNoBoxes(_Line line) {
+  final compact = line.compact;
+  final m = _matchYesNo(compact);
   if (m == null) return null;
-  final yesEnd = compact.indexOf('예', m.start) + 1;
-  final noText = compact.indexOf('아니', yesEnd);
+  final yesIdx = m.start;
+  final gap = m.group(2)!;
+  final noIdx = m.start + 1 + gap.length;
+  final noEnd = m.end;
+  final h = line.h;
+
+  final lead = yesIdx > 0 ? compact[yesIdx - 1] : null;
+  final boxBefore = lead != null && _boxish(lead);
+  // 상자 글자는 줄 끝의 몇 글자 (OCR이 상자를 "Ｌ|"처럼 두 글자로 읽기도 한다)
+  final tail = compact.substring(noEnd);
+  final tailBox = tail.isNotEmpty && tail.length <= 4;
+
+  Rect near(double cx) => Rect.fromCenter(center: Offset(cx, line.cy), width: h * 1.2, height: h * 1.2);
+
+  if (boxBefore) {
+    return (
+      start: yesIdx,
+      yes: line.square(yesIdx - 1, yesIdx),
+      no: gap.isNotEmpty ? line.square(yesIdx + 1, noIdx) : near(line.xAt(noIdx) - h * 0.8),
+    );
+  }
   return (
-    yes: m.start,
-    yesEnd: m.group(1) != null ? m.start + 1 : yesEnd,
-    no: m.group(2) != null ? noText - 1 : noText,
-    noEnd: m.group(2) != null ? noText : m.end,
+    start: yesIdx,
+    yes: gap.isNotEmpty ? line.square(yesIdx + 1, noIdx) : near(line.xEnd(yesIdx) + h * 0.8),
+    no: tailBox ? line.square(noEnd, noEnd + tail.length) : near(line.xEnd(noEnd - 1) + h * 0.8),
   );
 }
 
 /// "동의하십니까? □예 □아니요" 줄인가. 물음 없이 "□예 □아니요"만 있는 줄도 포함한다
 bool _isCheckLine(String compact) {
-  final m = _yesNo.firstMatch(compact);
+  final m = _matchYesNo(compact);
   if (m == null) return false;
   if (_consentQuestion.hasMatch(compact)) return true;
   final rest = compact.replaceRange(m.start, m.end, '').replaceAll(RegExp('[^가-힣]'), '');
   return rest.length <= 2;
 }
 
-/// 무엇에 대한 동의인지 물음에서 끌어낸 칸 이름. 반드시 "동의 여부"로 끝난다 ([FillTargetKind.kind]가 이 꼬리로 구분한다)
-String _checkLabel(String compact) {
-  if (compact.contains('수집')) return '수집·이용 동의 여부';
-  if (compact.contains('제3자') || compact.contains('제삼자') || compact.contains('제공')) return '제3자 제공 동의 여부';
-  return '동의 여부';
+/// 무엇에 대한 동의인지 물음에서 끌어낸 칸 이름. 반드시 "동의 여부"로 끝난다 ([FillTargetKind.kind]가 이 꼬리로 구분한다).
+/// [context]는 물음의 글자(공백 지움). 예·아니요가 물음 줄 아래 따로 있는 서식은 윗줄까지 합친 글자다.
+/// [owner]는 그 동의를 하는 사람("보호자")이고, 본인이면 null
+String _checkLabel(String context, {String? owner}) {
+  final what = context.contains('수집')
+      ? '수집·이용 동의 여부'
+      : (context.contains('제3자') || context.contains('제삼자') || context.contains('제공'))
+          ? '제3자 제공 동의 여부'
+          : '동의 여부';
+  return owner == null ? what : '$owner $what';
 }
 
-List<_Found> _scanLine(TextBlock block, int lineNo, PageSize? page) {
+/// 예·아니요 줄([index]) 바로 위의 물음과 제목에서 물음 글자와 동의하는 사람을 찾는다.
+///
+/// - 같은 줄에 "동의하십니까"가 있으면 그 줄이 물음이다.
+/// - 아니면 바로 윗줄이 물음이면(해커톤 참가신청서) 그 줄을 합친다.
+/// - 동의하는 사람은 위로 거슬러 오르며 "보호자 개인정보 수집 및 이용에 대한 동의(필수)"처럼
+///   주체로 시작하고 '개인정보'와 '동의'가 든 제목 줄에서 읽는다. 앞 칸의 예·아니요 줄을 만나면 거기서 멈춘다.
+///   ("• 보호자: 성명, …" 같은 항목 목록이나 표 칸의 "참가자 보호자 동의"는 제목이 아니라 건너뛴다)
+({String context, String? owner}) _checkContext(List<TextBlock> blocks, int index) {
+  final block = blocks[index];
+  final own = _Line(block).compact;
+  var context = own;
+  if (!_consentQuestion.hasMatch(own) && index > 0 && blocks[index - 1].page == block.page) {
+    final prev = _Line(blocks[index - 1]).compact;
+    if (_consentQuestion.hasMatch(prev)) context = '$prev$own';
+  }
+  String? owner;
+  for (var k = index - 1; k >= 0 && k >= index - 14; k--) {
+    if (blocks[k].page != block.page) break;
+    final compact = _Line(blocks[k]).compact;
+    if (_isCheckLine(compact)) break;
+    final heading = compact.replaceFirst(RegExp(r'^[ㅁ□口디■☐▢▣\[\]|ㅣ]+'), '');
+    // 제목은 '개인정보 …에 대한 동의'꼴이다. 표 칸의 "참가자 보호자 동의" 같은 글자는 제목이 아니다
+    if (!heading.contains('개인정보') || !heading.contains('동의') || heading.contains('?')) continue;
+    for (final o in _ownersLongFirst) {
+      if (o.length > 1 && heading.startsWith(o)) {
+        owner = o;
+        break;
+      }
+    }
+    if (owner != null) break;
+  }
+  return (context: context, owner: owner);
+}
+
+List<_Found> _scanLine(TextBlock block, int lineNo, PageSize? page, List<TextBlock> blocks) {
   final line = _Line(block);
   final compact = line.compact;
   if (compact.isEmpty) return const [];
@@ -319,14 +397,15 @@ List<_Found> _scanLine(TextBlock block, int lineNo, PageSize? page) {
 
   // --- 동의 여부: "□예 □아니요" 두 상자를 합친 자리 ---
   if (_isCheckLine(compact)) {
-    final span = _yesNoAt(compact)!;
+    final boxes = _yesNoBoxes(line)!;
     // 예 상자 왼쪽 끝부터 아니요 상자 오른쪽 끝까지 ([checkBoxRects]와 같은 상자로 재서 표시가 칸 안에 들어간다)
-    final left = math.min(line.xAt(span.yes), line.square(span.yes, span.yesEnd).left);
-    final right = math.max(line.xEnd(span.noEnd - 1), line.square(span.no, span.noEnd).right);
+    final left = math.min(boxes.yes.left, boxes.no.left);
+    final right = math.max(boxes.yes.right, boxes.no.right);
     final height = h * 1.5;
+    final ctx = _checkContext(blocks, lineNo);
     found.add(_Found(
-      'p${block.page}-l$lineNo-c${span.yes}-동의',
-      _checkLabel(compact),
+      'p${block.page}-l$lineNo-c${boxes.start}-동의',
+      _checkLabel(ctx.context, owner: ctx.owner),
       block.page,
       toBox(left, cy - height / 2, right - left, height),
       false,
