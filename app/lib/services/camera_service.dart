@@ -43,8 +43,18 @@ class CameraService extends ChangeNotifier {
   // 화면에 붙일 video 요소. 서비스는 앱에 하나만 있다
   static web.HTMLVideoElement? _currentVideo;
 
-  /// 카메라 미리보기
-  Widget preview() => const HtmlElementView(viewType: _viewType);
+  /// 카메라 미리보기. 화면이 바뀌어 video 요소가 페이지에서 빠지면 브라우저가 재생을 멈추므로
+  /// 다시 붙을 때마다 재생을 이어 간다.
+  Widget preview() => HtmlElementView(viewType: _viewType, onPlatformViewCreated: (_) => _resume());
+
+  Future<void> _resume() async {
+    if (_stream == null || !_video.paused) return;
+    try {
+      await _video.play().toDart;
+    } catch (_) {
+      // 재생을 이어 가지 못하면 다음 찍기에서 다시 시도한다
+    }
+  }
 
   /// 카메라를 연다. 실패하면 [error]에 이유를 남긴다. 다시 부르면 다시 시도한다.
   Future<void> start() async {
@@ -93,7 +103,9 @@ class CameraService extends ChangeNotifier {
 
   /// 지금 화면을 JPEG 사진으로 찍는다
   Future<DocumentPhoto?> snapshot() async {
-    if (!_ready || _video.videoWidth == 0) return null;
+    if (!_ready) return null;
+    await _resume();
+    if (_video.videoWidth == 0) return null;
     final canvas = web.HTMLCanvasElement()
       ..width = _video.videoWidth
       ..height = _video.videoHeight;

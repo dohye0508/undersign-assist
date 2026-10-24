@@ -2,31 +2,34 @@ import 'package:flutter/foundation.dart';
 
 import '../services/api_client.dart';
 import 'document_photo.dart';
+import 'judgement.dart';
 import 'recognized_document.dart';
 
 /// 네 단계. 코드에서는 읽기·판단·쓰기·서명으로 나누지만,
 /// 사용자에게는 [label]처럼 하는 일을 쉬운 말로 보여준다.
 enum WorkStep {
-  read('문서 읽기', '찍으면 어떤 문서인지와 중요한 내용을 읽어드려요'),
-  judge('빠진 것 확인', '빠지거나 확인할 내용을 알려드려요'),
+  read('문서 읽기', '어떤 문서인지와 중요한 내용을 읽어드려요'),
+  judge('검토하세요!', '빠지거나 확인할 내용을 근거와 함께 알려드려요'),
   write('쓴 글씨 확인', '칸을 고르고, 종이에 쓴 다음 확인을 누르면 무엇을 썼는지 읽어드려요'),
-  sign('서명 위치', '어디에 서명하는지 알려드려요');
+  sign('서명 위치', '어디에 서명하는지 알려드리고, 패드에 서명해요');
 
   const WorkStep(this.label, this.guide);
 
   final String label;
 
-  /// 모드를 고를 때 들려주는 안내
+  /// 단계를 고를 때 들려주는 안내
   final String guide;
 }
 
-/// 한 화면 전체가 함께 보는 상태: 고른 모드, 찍은 사진, 읽기 결과, 결과 창 표시 여부.
+/// 화면 전체가 함께 보는 상태.
+///   1. 업로드: 페이지 사진을 차례로 모은다 ([pages])
+///   2. 분석: 모든 페이지를 한 문서로 읽고([recognized]) 규칙으로 판단한다([judgement])
+///   3. 서명: 서명란마다 패드 서명을 받는다 ([signatures])
+///   4. 출력: 페이지 사진에 서명을 합성해 PDF로 (features/output)
 class WorkspaceState extends ChangeNotifier {
-  WorkStep _step = WorkStep.read;
-  WorkStep get step => _step;
-
-  DocumentPhoto? _photo;
-  DocumentPhoto? get photo => _photo;
+  final List<DocumentPhoto> _pages = [];
+  List<DocumentPhoto> get pages => List.unmodifiable(_pages);
+  bool get hasPages => _pages.isNotEmpty;
 
   RecognizedDocument? _recognized;
   RecognizedDocument? get recognized => _recognized;
@@ -37,42 +40,87 @@ class WorkspaceState extends ChangeNotifier {
   String? _readError;
   String? get readError => _readError;
 
-  bool get hasPhoto => _photo != null;
+  Judgement? _judgement;
+  Judgement? get judgement => _judgement;
 
-  void selectStep(WorkStep step) {
-    _step = step;
+  bool _judging = false;
+  bool get judging => _judging;
+
+  String? _judgeError;
+  String? get judgeError => _judgeError;
+
+  /// 서명란(읽기 결과 blocks의 줄 번호)마다 패드에 한 서명 (투명 배경 PNG)
+  final Map<int, Uint8List> _signatures = {};
+  Map<int, Uint8List> get signatures => Map.unmodifiable(_signatures);
+
+  void setSignature(int line, Uint8List png) {
+    _signatures[line] = png;
     notifyListeners();
   }
 
-  /// 새 문서 사진을 받으면 이전 결과를 지우고 바로 읽는다.
-  /// 판단, 쓰기, 서명 모두 읽기 결과(글자와 위치)를 바탕으로 하기 때문이다.
-  Future<RecognizedDocument?> setPhoto(DocumentPhoto photo) async {
-    _photo = photo;
+  // --- 1. 업로드 -------------------------------------------------------------
+
+  void addPage(DocumentPhoto photo) {
+    _pages.add(photo);
+    _resetAnalysis();
+    notifyListeners();
+  }
+
+  void removePage(int index) {
+    _pages.removeAt(index);
+    _resetAnalysis();
+    notifyListeners();
+  }
+
+  void clearPages() {
+    _pages.clear();
+    _resetAnalysis();
+    notifyListeners();
+  }
+
+  /// 페이지가 바뀌면 이전 분석과 서명은 맞지 않으므로 지운다
+  void _resetAnalysis() {
     _recognized = null;
-    notifyListeners();
-    return read();
-  }
-
-  /// 결과 창을 닫고 카메라로 돌아간다.
-  void clearPhoto() {
-    _photo = null;
     _readError = null;
-    notifyListeners();
+    _judgement = null;
+    _judgeError = null;
+    _signatures.clear();
   }
 
+  // --- 2. 분석 ---------------------------------------------------------------
+
+  /// 모든 페이지를 한 문서로 읽는다. 이미 읽었으면 다시 부르지 않는다
   Future<RecognizedDocument?> read() async {
-    final photo = _photo;
-    if (photo == null) return null;
+    if (_pages.isEmpty) return null;
+    if (_recognized != null) return _recognized;
     _reading = true;
     _readError = null;
     notifyListeners();
     try {
-      _recognized = await ApiClient.read(photo);
+      _recognized = await ApiClient.read(_pages);
     } catch (_) {
       _readError = '문서를 읽지 못했어요. 서버가 켜져 있는지 확인하고 다시 시도해 주세요.';
     }
     _reading = false;
     notifyListeners();
     return _recognized;
+  }
+
+  /// 읽기 결과를 규칙 엔진으로 판단한다. 같은 문서는 한 번만 판단한다
+  Future<Judgement?> judge() async {
+    final document = _recognized;
+    if (document == null) return null;
+    if (_judgement != null) return _judgement;
+    _judging = true;
+    _judgeError = null;
+    notifyListeners();
+    try {
+      _judgement = await ApiClient.judge(document);
+    } catch (_) {
+      _judgeError = '판단하지 못했어요. 서버가 켜져 있는지 확인하고 다시 시도해 주세요.';
+    }
+    _judging = false;
+    notifyListeners();
+    return _judgement;
   }
 }

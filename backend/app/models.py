@@ -30,6 +30,14 @@ class TextBlock(BaseModel):
 
     text: str
     box: Box
+    page: int = 0  # 몇 번째 사진(페이지)의 줄인지. 0부터. box는 그 페이지 사진의 좌표
+
+
+class PageInfo(BaseModel):
+    """페이지 사진의 크기 (방향을 바로잡은 뒤). 서명을 합성할 때 좌표 기준이 된다"""
+
+    width: int
+    height: int
 
 
 class Field(BaseModel):
@@ -45,7 +53,8 @@ class RecognizedDocument(BaseModel):
     blocks: list[TextBlock] = []
     fields: list[Field] = []
     full_text: str = ""
-    image_width: int = 0
+    image_width: int = 0  # 첫 페이지 크기 (이전 버전과 호환)
     image_height: int = 0
+    pages: list[PageInfo] = []  # 페이지마다 사진 크기. 페이지 수는 len(pages)
     reader: str = "rules"  # 항목을 정리한 방식: "ai"(Groq) 또는 "rules"(규칙 파일)
     speech: str = ""  # 사용자에게 읽어줄 요약

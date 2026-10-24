@@ -3,31 +3,32 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../models/document_photo.dart';
+import '../models/judgement.dart';
 import '../models/recognized_document.dart';
 
 /// 백엔드(FastAPI) 호출. 주소는 `--dart-define=API_BASE=...`로 바꿀 수 있다.
 class ApiClient {
   static const base = String.fromEnvironment('API_BASE', defaultValue: 'http://localhost:8000');
 
-  static Future<RecognizedDocument> read(DocumentPhoto photo) async {
-    final json = await _postPhoto('/api/read', photo);
-    return RecognizedDocument.fromJson(json);
+  /// 여러 페이지를 한 문서로 읽는다 (페이지 순서대로 photo 필드를 여러 번 보낸다)
+  static Future<RecognizedDocument> read(List<DocumentPhoto> pages) async {
+    final request = http.MultipartRequest('POST', Uri.parse('$base/api/read'))
+      ..files.addAll([
+        for (final page in pages) http.MultipartFile.fromBytes('photo', page.bytes, filename: page.name),
+      ]);
+    final response = await http.Response.fromStream(await request.send());
+    return RecognizedDocument.fromJson(_decode('/api/read', response));
   }
 
   /// 고른 칸에 무엇이 쓰였는지. 응답: field, found, written, box, speech
   static Future<Map<String, dynamic>> checkWriting(DocumentPhoto photo, String field) =>
       _postPhoto('/api/write/check', photo, fields: {'field': field});
 
-  // 서명은 아직 화면만 있다. 기능을 만들 때 아래 호출을 쓴다.
-  /// [answers]: 판단이 되물은 질문의 답 (질문 id -> yes/no/unknown)
-  static Future<Map<String, dynamic>> judge(
-    RecognizedDocument document, {
-    Map<String, String> answers = const {},
-  }) =>
-      _postJson('/api/judge', {...document.toJson(), 'answers': answers});
+  /// 판단: 규칙 엔진(backend/app/services/judge)이 빠진 항목과 확인할 내용을 근거와 함께 돌려준다
+  static Future<Judgement> judge(RecognizedDocument document) async =>
+      Judgement.fromJson(await _postJson('/api/judge', document.toJson()));
 
-  static Future<Map<String, dynamic>> locateSignature(DocumentPhoto photo) =>
-      _postPhoto('/api/sign/locate', photo);
+  // 서명란 찾기는 백엔드를 부르지 않고 앱에서 읽기 결과로 한다 (features/sign/signature_spots.dart).
 
   static Future<Map<String, dynamic>> _postPhoto(
     String path,

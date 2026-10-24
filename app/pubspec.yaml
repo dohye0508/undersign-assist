@@ -38,6 +38,11 @@ dependencies:
   http: ^1.6.0
   flutter_tts: ^4.2.5
   web: ^1.1.1
+  pdf: ^3.12.0
+
+# pdf가 끌어오는 image 4.11은 archive 4.0.9와 맞지 않아 컴파일되지 않는다 (decodeLazy 없음). 맞는 버전으로 고정
+dependency_overrides:
+  image: 4.4.0
 
 dev_dependencies:
   flutter_test:
