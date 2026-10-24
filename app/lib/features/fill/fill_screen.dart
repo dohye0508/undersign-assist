@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../models/fill.dart';
+import '../../models/recognized_document.dart' show TextBlock;
 import '../../models/workspace_state.dart';
 import '../../services/download.dart';
 import '../../services/haptics.dart';
@@ -13,6 +14,7 @@ import '../../theme/app_theme.dart';
 import '../output/signed_pdf.dart';
 import '../sign/signature_check.dart';
 import '../write/note_ink.dart';
+import 'fill_kind.dart';
 import 'fill_targets.dart';
 
 /// 쓰고 서명하기 화면. 칸 하나마다 화면 전체가 쓰기 칸이 된다.
@@ -24,6 +26,10 @@ import 'fill_targets.dart';
 ///      이렇게 그은 획은 글씨에 넣지 않는다.
 /// 넘기기 전에 [SignatureCheck]로 숫자 검사만 한다 (비었는지, 너무 작은지, 너무 빠른지. AI 판단 없음).
 /// 통과하면 쓴 글씨가 문서 사진의 그 칸 자리로 줄어들며 들어가고(0.6초), 다음 칸이 나온다.
+///
+/// 고르는 칸([FillKind.check], "□예 □아니요")은 쓰는 대신 큰 "예"/"아니요" 버튼 둘을 보여 준다.
+/// 고르면 그 상자 자리에 ✓를 그린 PNG를 만들어 글씨 칸과 똑같이 넣는다. PNG는 두 상자를 합친 칸과 같은 비율이고
+/// 고른 상자 자리에만 ✓가 있어, 칸 자리만 아는 [FilledInk]로도 어느 쪽을 골랐는지 그대로 문서에 남는다.
 class FillScreen extends StatefulWidget {
   const FillScreen({super.key, required this.state, required this.targets, this.start = 0, this.intro});
 
@@ -55,6 +61,12 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
   String? _message;
   bool _busy = false;
   bool _exported = false;
+
+  /// 고르는 칸에서 이 화면에서 고른 답 (칸 순서 → 예면 true). 다시 돌아왔을 때 무엇을 골랐는지 말해 주려고 둔다
+  final Map<int, bool> _choices = {};
+
+  /// 다음 칸 안내 앞에 한 번 붙여 말할 것 (예: "예에 표시했어요.")
+  String _pending = '';
 
   Size _area = Size.zero;
 
@@ -96,6 +108,16 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
 
   String _intro({bool first = false}) {
     final t = _target;
+    if (t.kind == FillKind.check) {
+      final head = first ? '' : '다음은 ${josa(t.label, '이에요', '예요')}. ';
+      final chosen = _choices[_index];
+      final filled = !_filled
+          ? ''
+          : chosen == null
+              ? '이미 고른 칸이에요. 다시 고르면 바뀌고, 그냥 다음을 누르면 그대로 둬요. '
+              : '이미 ${chosen ? '예' : '아니요'}를 골랐어요. 다시 고르면 바뀌고, 그냥 다음을 누르면 그대로 둬요. ';
+      return '$head${checkQuestion(t)} $filled예 또는 아니요 버튼을 누르세요. 위가 예, 아래가 아니요예요.';
+    }
     final head = first ? '${josa(t.label, '을', '를')} 쓰세요. ' : '다음은 ${josa(t.label, '이에요', '예요')}. ';
     final filled = _filled ? '이미 채운 칸이에요. 새로 쓰면 바뀌고, 그냥 다음을 누르면 그대로 둬요. ' : '';
     final how = first ? '화면 가득 크게 쓰고, 다 쓰면 아래 다음 버튼을 누르거나 오른쪽 끝에서 왼쪽으로 빠르게 미세요.' : '';
@@ -158,6 +180,10 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
 
   void _undo() {
     if (_phase != _Phase.writing || _busy) return;
+    if (_target.kind == FillKind.check) {
+      Speech.announce(context, '고르는 칸이에요. 예나 아니요를 다시 누르면 바뀌어요.');
+      return;
+    }
     if (_strokes.isNotEmpty) {
       setState(() => _strokes.removeLast());
       Speech.announce(context, '마지막 획을 지웠어요. 남은 획 ${_strokes.length}개.');
@@ -175,6 +201,10 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
 
   void _clear() {
     if (_phase != _Phase.writing || _busy) return;
+    if (_target.kind == FillKind.check) {
+      Speech.announce(context, '고르는 칸이에요. 예나 아니요를 다시 누르면 바뀌어요.');
+      return;
+    }
     if (_strokes.isEmpty) {
       Speech.announce(context, '지울 글씨가 없어요.');
       return;
@@ -214,6 +244,17 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
   Future<void> _next() async {
     if (_phase != _Phase.writing || _busy) return;
     final target = _target;
+    if (target.kind == FillKind.check) {
+      if (_filled) {
+        _advance();
+        return;
+      }
+      const message = '아직 고르지 않았어요. 예 또는 아니요 버튼을 누르세요.';
+      setState(() => _message = message);
+      Haptics.warn();
+      Speech.announce(context, message);
+      return;
+    }
     if (_strokes.isEmpty && _filled) {
       _advance();
       return;
@@ -228,12 +269,63 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
     }
     Haptics.ok();
     if (target.isSignature) _signatureBaseline ??= verdict.metrics;
+    await _commit(target, List.of(_strokes), _FillInk.bounds(_strokes));
+  }
 
-    final bounds = _FillInk.bounds(_strokes);
+  /// 고르는 칸: 고른 상자 자리에 ✓를 그려 넣는다.
+  /// 화면에는 두 상자를 합친 칸을 크게 놓고(가상 칸), 그 안의 고른 상자 자리에 ✓ 획을 만든 뒤
+  /// 글씨와 같은 길(PNG → 움직임 → 다음 칸)로 보낸다. PNG의 상자는 가상 칸 전체라 문서 칸에 꽉 들어가며 ✓가 제자리에 놓인다
+  Future<void> _choose(bool yes) async {
+    if (_phase != _Phase.writing || _busy) return;
+    final target = _target;
+    final r = target.rect;
+    final span = Rect.fromLTWH(r.x.toDouble(), r.y.toDouble(), r.width.toDouble(), r.height.toDouble());
+    final blocks = widget.state.recognized?.blocks ?? const <TextBlock>[];
+    final block = findCheckBlock(target, blocks);
+    final boxes = block == null ? null : checkBoxRects(target, block);
+    // 줄을 못 찾으면 왼쪽 절반이 예, 오른쪽 절반이 아니요
+    final half = Size(span.width / 2, span.height);
+    final chosen = boxes == null
+        ? (yes ? span.topLeft & half : (span.topLeft + Offset(half.width, 0)) & half)
+        : (yes ? boxes.yes : boxes.no);
+
+    final s = math.min(_area.width * 0.9 / span.width, _area.height * 0.9 / span.height);
+    final virtual = Rect.fromCenter(center: _area.center(Offset.zero), width: span.width * s, height: span.height * s);
+    final boxOnScreen = Rect.fromLTWH(
+      virtual.left + (chosen.left - span.left) * s,
+      virtual.top + (chosen.top - span.top) * s,
+      chosen.width * s,
+      chosen.height * s,
+    );
+    final inner = boxOnScreen.deflate(boxOnScreen.shortestSide * 0.18);
+    _choices[_index] = yes;
+    _pending = '${yes ? '예' : '아니요'}에 표시했어요. ';
+    Haptics.ok();
+    await _commit(target, [_checkStroke(inner)], virtual);
+  }
+
+  /// ✓ 한 획: 왼쪽 가운데에서 아래로 내려갔다가 오른쪽 위로 길게. 필압은 조금 세게(굵기 약 3.2px)
+  static List<PenPoint> _checkStroke(Rect box) {
+    final a = Offset(box.left + box.width * 0.12, box.top + box.height * 0.55);
+    final b = Offset(box.left + box.width * 0.40, box.top + box.height * 0.85);
+    final c = Offset(box.left + box.width * 0.90, box.top + box.height * 0.15);
+    final points = <PenPoint>[];
+    var ms = 0;
+    for (var k = 0; k <= 8; k++) {
+      points.add(PenPoint(Offset.lerp(a, b, k / 8)!, ms += 20, 0.9));
+    }
+    for (var k = 1; k <= 14; k++) {
+      points.add(PenPoint(Offset.lerp(b, c, k / 14)!, ms += 20, 0.9));
+    }
+    return points;
+  }
+
+  /// [strokes]를 [bounds] 상자의 PNG로 만들어 저장하고, 문서 사진의 칸 자리로 움직인 뒤 다음 칸으로
+  Future<void> _commit(FillTarget target, List<List<PenPoint>> strokes, Rect bounds) async {
     setState(() => _busy = true);
     final Uint8List png;
     try {
-      png = await _FillInk.toPng(_strokes, bounds);
+      png = await _FillInk.toPng(strokes, bounds);
     } catch (_) {
       if (!mounted) return;
       setState(() => _busy = false);
@@ -250,9 +342,9 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
       _pageOnScreen = _fitPage(page, _area);
       _targetOnScreen = _mapBox(target, page, _pageOnScreen);
       _from = bounds;
-      _to = _fitInk(bounds.size, _targetOnScreen, target.isSignature);
+      _to = _fitInk(bounds.size, _targetOnScreen, target.kind);
       setState(() {
-        _flying = List.of(_strokes);
+        _flying = strokes;
         _flyingBounds = bounds;
         _strokes.clear();
         _phase = _Phase.placing;
@@ -283,10 +375,16 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
         _busy = false;
         _strokes.clear();
       });
-      Speech.announce(context, '모두 채웠어요. PDF로 받을 수 있어요.');
+      Speech.announce(context, '${_takePending()}모두 채웠어요. PDF로 받을 수 있어요.');
       return;
     }
     _goTo(next);
+  }
+
+  String _takePending() {
+    final p = _pending;
+    _pending = '';
+    return p;
   }
 
   void _goTo(int index, {bool back = false}) {
@@ -303,7 +401,10 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
     });
     _precache();
     final filled = _filled ? ' 이미 채운 칸이에요. 새로 쓰면 바뀌어요.' : '';
-    Speech.announce(context, back ? '이전 칸, ${josa(_target.label, '이에요', '예요')}.$filled' : _intro());
+    final previous = _target.kind == FillKind.check
+        ? '이전 칸, ${josa(_target.label, '이에요', '예요')}. ${_intro()}'
+        : '이전 칸, ${josa(_target.label, '이에요', '예요')}.$filled';
+    Speech.announce(context, '${_takePending()}${back ? previous : _intro()}');
   }
 
   void _previous() {
@@ -347,6 +448,11 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
         const SingleActivator(LogicalKeyboardKey.enter): done ? _export : _next,
         const SingleActivator(LogicalKeyboardKey.keyZ, control: true): _undo,
         const SingleActivator(LogicalKeyboardKey.escape): () => Navigator.of(context).pop(_exported),
+        // 고르는 칸: 1 = 예, 2 = 아니요
+        if (!done && _target.kind == FillKind.check) ...{
+          const SingleActivator(LogicalKeyboardKey.digit1): () => _choose(true),
+          const SingleActivator(LogicalKeyboardKey.digit2): () => _choose(false),
+        },
       },
       child: Focus(
         autofocus: true,
@@ -385,7 +491,13 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
                         ],
                       ),
                       const SizedBox(height: 8),
-                      Expanded(child: done ? _donePages() : _writingArea(text)),
+                      Expanded(
+                        child: done
+                            ? _donePages()
+                            : _target.kind == FillKind.check
+                                ? _checkArea(text)
+                                : _writingArea(text),
+                      ),
                       if (_message != null && !done) ...[
                         const SizedBox(height: 8),
                         Semantics(
@@ -450,6 +562,62 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
                 ],
               ),
             ),
+          ),
+        );
+      },
+    );
+  }
+
+  /// 고르는 칸: 위 "예", 아래 "아니요" 큰 버튼 둘. 고르면 같은 자리에서 ✓가 문서로 들어가는 움직임을 보여 준다
+  Widget _checkArea(TextTheme text) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        _area = constraints.biggest;
+        final target = _target;
+        final chosen = _choices[_index];
+        final enabled = _phase == _Phase.writing && !_busy;
+        if (_phase == _Phase.placing) {
+          return Container(
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: AppColors.line, width: 1.5),
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: Stack(fit: StackFit.expand, children: [_placing()]),
+          );
+        }
+        final question = checkQuestion(target);
+        return Semantics(
+          label: '${target.label} 고르는 칸. $question 예 또는 아니요 버튼을 누르세요.'
+              '${chosen == null ? '' : ' 지금은 ${chosen ? '예' : '아니요'}를 골랐어요.'}',
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8, 4, 8, 10),
+                child: Text(question, textAlign: TextAlign.center, style: text.titleLarge?.copyWith(fontSize: 26)),
+              ),
+              Expanded(
+                child: _ChoiceButton(
+                  label: '예',
+                  icon: Icons.check_circle_outline,
+                  selected: chosen == true,
+                  filled: true,
+                  onPressed: enabled ? () => _choose(true) : null,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Expanded(
+                child: _ChoiceButton(
+                  label: '아니요',
+                  icon: Icons.cancel_outlined,
+                  selected: chosen == false,
+                  filled: false,
+                  onPressed: enabled ? () => _choose(false) : null,
+                ),
+              ),
+            ],
           ),
         );
       },
@@ -542,7 +710,7 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
   Widget _inkImage(FilledInk f) => Image.memory(
         f.png,
         fit: BoxFit.contain,
-        alignment: f.target.isSignature ? Alignment.center : Alignment.centerLeft,
+        alignment: f.target.kind == FillKind.text ? Alignment.centerLeft : Alignment.center,
         gaplessPlayback: true,
       );
 
@@ -640,10 +808,12 @@ Rect _mapBox(FillTarget t, Size page, Rect pageRect) {
   return Rect.fromLTWH(pageRect.left + b.x * s, pageRect.top + b.y * s, b.width * s, b.height * s);
 }
 
-/// 글씨 칸은 왼쪽에 붙이되 칸 높이의 15%만큼 안쪽에서 시작한다 (':' 바로 뒤에 붙지 않게). 서명은 가운데
-Rect _fitInk(Size ink, Rect target, bool signature) {
-  final area = signature ? target : fillTextInset(target);
-  return (signature ? Alignment.center : Alignment.centerLeft)
+/// 글씨 칸은 왼쪽에 붙이되 칸 높이의 15%만큼 안쪽에서 시작한다 (':' 바로 뒤에 붙지 않게).
+/// 서명과 고르는 칸(✓ PNG는 칸과 같은 비율)은 가운데
+Rect _fitInk(Size ink, Rect target, FillKind kind) {
+  final isText = kind == FillKind.text;
+  final area = isText ? fillTextInset(target) : target;
+  return (isText ? Alignment.centerLeft : Alignment.center)
       .inscribe(applyBoxFit(BoxFit.contain, ink, area.size).destination, area);
 }
 
@@ -755,6 +925,67 @@ class _FlyingInkPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_FlyingInkPainter old) => old.dest != dest || old.strokes != strokes;
+}
+
+/// 고르는 칸의 큰 답 버튼 (예 / 아니요). 적어도 120px 높이, 글자 48px. 고른 쪽은 테두리를 굵게
+class _ChoiceButton extends StatelessWidget {
+  const _ChoiceButton({
+    required this.label,
+    required this.icon,
+    required this.selected,
+    required this.filled,
+    required this.onPressed,
+  });
+
+  final String label;
+  final IconData icon;
+  final bool selected;
+  final bool filled;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final child = Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(icon, size: 44),
+        const SizedBox(width: 16),
+        Text(label, style: const TextStyle(fontSize: 48, fontWeight: FontWeight.w700)),
+        if (selected) ...[
+          const SizedBox(width: 12),
+          const Text('(고름)', style: TextStyle(fontSize: 22)),
+        ],
+      ],
+    );
+    final shape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(24));
+    return Semantics(
+      button: true,
+      selected: selected,
+      label: '$label 버튼${selected ? ', 고른 답' : ''}',
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 120),
+        child: filled
+            ? FilledButton(
+                style: FilledButton.styleFrom(
+                  minimumSize: const Size(0, 120),
+                  shape: shape,
+                  side: selected ? const BorderSide(color: AppColors.primary, width: 5) : null,
+                ),
+                onPressed: onPressed,
+                child: child,
+              )
+            : OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                  minimumSize: const Size(0, 120),
+                  shape: shape,
+                  side: BorderSide(color: selected ? AppColors.primary : AppColors.line, width: selected ? 5 : 2),
+                ),
+                onPressed: onPressed,
+                child: child,
+              ),
+      ),
+    );
+  }
 }
 
 /// 아이콘 위, 글자 아래의 작은 버튼. 네 개가 한 줄에 들어가도 72px 높이를 지킨다
