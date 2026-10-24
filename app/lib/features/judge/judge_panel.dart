@@ -301,6 +301,15 @@ class _JudgePanelState extends State<JudgePanel> {
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ),
+                // 근거 법 조항 ("근로기준법 제17조"). 소리로도 "근거 듣기"에서 읽는다
+                if (finding.basis.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(left: indent, top: 6),
+                    child: Text(
+                      '근거  ${finding.basis.map((b) => b.label).join(', ')}',
+                      style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.muted, height: 1.5),
+                    ),
+                  ),
               ],
             ),
           ),
@@ -317,7 +326,7 @@ class _JudgePanelState extends State<JudgePanel> {
     );
   }
 
-  /// 결과 문장 뒤에 법 조항 이름을 붙여 읽는다. 법 이름은 화면에 쓰지 않고 소리로만 준다
+  /// 결과 문장 뒤에 법 조항 이름을 붙여 읽는다
   static String _basisSpeech(Finding f) {
     final sentence = f.speech.isNotEmpty ? f.speech : f.reason;
     if (f.basis.isEmpty) return sentence;

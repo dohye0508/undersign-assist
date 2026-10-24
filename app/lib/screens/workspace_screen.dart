@@ -263,15 +263,15 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              // 위쪽 56은 페이지 목록 버튼 자리. 목록을 열면 카메라 위로 내려온다
+              // 카메라를 세로로 최대한 길게. 페이지 목록 버튼은 카메라 위쪽 안에 얹고, 열면 그 자리에서 내려온다
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 56, 16, 0),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: DocumentStage(camera: _camera),
               ),
               Positioned(
                 left: 16,
                 right: 16,
-                top: 0,
+                top: 8,
                 child: PageTray(
                   pages: _state.pages,
                   open: _trayOpen,
@@ -353,7 +353,7 @@ class _TopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 14, 16, 10),
+      padding: const EdgeInsets.fromLTRB(20, 8, 16, 8),
       child: Row(
         children: [
           Semantics(
@@ -413,7 +413,8 @@ class _BackHeader extends StatelessWidget {
   }
 }
 
-/// 맨 아래: 사진 불러오기, 큰 촬영 버튼, 분석하기
+/// 맨 아래: 사진 불러오기, 큰 촬영 버튼, 분석하기.
+/// 양옆은 상자 없이 동그란 아이콘 + 아래 글자 (예전 모양을 토스 색으로). 분석하기만 파란 동그라미
 class _BottomBar extends StatelessWidget {
   const _BottomBar({
     required this.canCapture,
@@ -432,7 +433,7 @@ class _BottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 18, 16, 18),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
       child: Row(
         children: [
           Expanded(
@@ -442,33 +443,28 @@ class _BottomBar extends StatelessWidget {
               onTap: onPick,
             ),
           ),
-          SizedBox(
-            width: 106,
-            child: Center(
-              child: Semantics(
-                button: true,
-                label: '찍기',
-                excludeSemantics: true,
-                child: InkWell(
-                  onTap: TapFeedback.wrap(canCapture ? onCapture : null),
-                  customBorder: const CircleBorder(),
-                  child: Container(
-                    width: 84,
-                    height: 84,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: canCapture ? AppColors.primary : AppColors.grey300,
-                      border: Border.all(color: AppColors.primarySoft, width: 6),
-                    ),
-                  ),
+          Semantics(
+            button: true,
+            label: '찍기',
+            excludeSemantics: true,
+            child: InkWell(
+              onTap: TapFeedback.wrap(canCapture ? onCapture : null),
+              customBorder: const CircleBorder(),
+              child: Container(
+                width: 84,
+                height: 84,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: canCapture ? AppColors.primary : AppColors.grey300,
+                  border: Border.all(color: AppColors.primarySoft, width: 6),
                 ),
               ),
             ),
           ),
           Expanded(
             child: _SideButton(
-              icon: Icons.search_rounded,
-              label: pageCount == 0 ? '분석하기' : '분석하기 $pageCount장',
+              icon: Icons.document_scanner_outlined,
+              label: pageCount == 0 ? '분석하기' : '분석하기 ($pageCount장)',
               primary: true,
               onTap: pageCount == 0 ? null : onAnalyze,
             ),
@@ -491,40 +487,42 @@ class _SideButton extends StatelessWidget {
   final String label;
   final VoidCallback? onTap;
 
-  /// 꽉 찬 강조색 (분석하기)
+  /// 아이콘 동그라미를 강조색으로 채운다 (분석하기)
   final bool primary;
 
   @override
   Widget build(BuildContext context) {
     final enabled = onTap != null;
-    final background = primary && enabled ? AppColors.primary : AppColors.grey100;
-    final color = !enabled ? AppColors.subtle : primary ? Colors.white : AppColors.textStrong;
+    final circle = !enabled ? AppColors.grey100 : primary ? AppColors.primary : AppColors.grey100;
+    final iconColor = !enabled ? AppColors.subtle : primary ? Colors.white : AppColors.textStrong;
+    final textColor = !enabled ? AppColors.subtle : primary ? AppColors.primary : AppColors.textStrong;
     return Semantics(
       button: true,
       enabled: enabled,
       label: label,
       excludeSemantics: true,
-      child: Material(
-        color: background,
-        borderRadius: BorderRadius.circular(AppRadius.button),
-        child: InkWell(
-          onTap: TapFeedback.wrap(onTap),
-          borderRadius: BorderRadius.circular(AppRadius.button),
-          child: SizedBox(
-            height: 72,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(icon, size: 22, color: color),
-                const SizedBox(height: 2),
-                Text(
-                  label,
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: color, height: 1.25),
-                ),
-              ],
-            ),
+      child: InkWell(
+        onTap: TapFeedback.wrap(onTap),
+        borderRadius: BorderRadius.circular(AppRadius.card),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 6),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 52,
+                height: 52,
+                decoration: BoxDecoration(shape: BoxShape.circle, color: circle),
+                child: Icon(icon, size: 26, color: iconColor),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                label,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: textColor),
+              ),
+            ],
           ),
         ),
       ),

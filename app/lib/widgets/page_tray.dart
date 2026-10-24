@@ -119,8 +119,7 @@ class _Panel extends StatelessWidget {
   final ValueChanged<int> onRemove;
 
   static const _padding = 16.0;
-  static const _gap = 10.0;
-  static const _maxCardWidth = 170.0;
+  static const _gap = 8.0;
 
   @override
   Widget build(BuildContext context) {
@@ -132,62 +131,35 @@ class _Panel extends StatelessWidget {
       decoration: BoxDecoration(
         // 카메라 안내 글자가 비쳐 보이지 않게 불투명하게
         color: AppColors.surface,
-        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(24)),
+        borderRadius: BorderRadius.circular(AppRadius.card),
         boxShadow: const [BoxShadow(color: Color(0x22000000), blurRadius: 18, offset: Offset(0, 6))],
       ),
-      padding: const EdgeInsets.fromLTRB(_padding, _padding, _padding, _padding - 4),
+      padding: const EdgeInsets.all(_padding),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Semantics(header: true, child: Text('찍은 페이지', style: text.titleMedium)),
-              ),
-              _CountPill(count: pages.length),
-            ],
-          ),
-          const SizedBox(height: 10),
+          Semantics(header: true, child: Text('찍은 페이지 ${pages.length}장', style: text.titleMedium)),
+          const SizedBox(height: 2),
+          Text('사진을 누르면 지워져요', style: text.bodySmall),
+          const SizedBox(height: 12),
           if (pages.isEmpty)
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 12),
-              child: Text(
-                '아직 찍은 페이지가 없어요. 문서를 한 장씩 찍어 주세요.',
-                style: text.bodyLarge?.copyWith(color: AppColors.muted),
-              ),
+              child: Text('아직 찍은 페이지가 없어요. 문서를 한 장씩 찍어 주세요.', style: text.bodyMedium),
             )
           else
             Flexible(
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  // 카드 높이 = 3:4 사진 + 아래 이름 줄. 너비가 바뀌어도 사진 비율이 유지되게 계산한다.
-                  // 넓은 화면에서 카드가 패널보다 커지지 않게 너비 상한을 둔다
-                  final cardWidth = ((constraints.maxWidth - _gap * 2) / 3).clamp(0.0, _maxCardWidth);
-                  final photoHeight = (cardWidth - _PageCard.inset * 2) * 4 / 3;
-                  final cardHeight = photoHeight + _PageCard.inset * 2 + _PageCard.footer;
-
-                  // 카드가 적을 때 패널이 최대 높이까지 늘어나지 않고 카드 높이만큼만 차지하게 한다
-                  return Align(
-                    alignment: Alignment.topCenter,
-                    heightFactor: 1,
-                    child: SizedBox(
-                      width: cardWidth * 3 + _gap * 2,
-                      child: GridView.builder(
-                        shrinkWrap: true,
-                        itemCount: pages.length,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          mainAxisSpacing: _gap,
-                          crossAxisSpacing: _gap,
-                          mainAxisExtent: cardHeight,
-                        ),
-                        itemBuilder: (context, i) =>
-                            _PageCard(page: pages[i], index: i, onRemove: () => onRemove(i)),
-                      ),
-                    ),
-                  );
-                },
+              child: GridView.builder(
+                shrinkWrap: true,
+                itemCount: pages.length,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  mainAxisSpacing: _gap,
+                  crossAxisSpacing: _gap,
+                  childAspectRatio: 3 / 4,
+                ),
+                itemBuilder: (context, i) => _PageThumb(page: pages[i], index: i, onRemove: () => onRemove(i)),
               ),
             ),
         ],
@@ -196,112 +168,45 @@ class _Panel extends StatelessWidget {
   }
 }
 
-class _CountPill extends StatelessWidget {
-  const _CountPill({required this.count});
-
-  final int count;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      decoration: BoxDecoration(
-        color: AppColors.primarySoft,
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Text('$count장', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: AppColors.primary)),
-    );
-  }
-}
-
-/// 페이지 한 장. 사진, 순번, 지우기 버튼
-class _PageCard extends StatelessWidget {
-  const _PageCard({required this.page, required this.index, required this.onRemove});
+/// 페이지 사진 한 장. 카드 없이 사진만, 왼쪽 위에 순번. 누르면 지운다
+class _PageThumb extends StatelessWidget {
+  const _PageThumb({required this.page, required this.index, required this.onRemove});
 
   final DocumentPhoto page;
   final int index;
   final VoidCallback onRemove;
 
-  static const inset = 8.0;
-  static const footer = 40.0;
-
   @override
   Widget build(BuildContext context) {
-    final label = '${index + 1}페이지';
-
-    return Container(
-      padding: const EdgeInsets.all(inset),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.line),
-        boxShadow: const [BoxShadow(color: Color(0x14000000), blurRadius: 10, offset: Offset(0, 3))],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Image.memory(
-                    page.bytes,
-                    fit: BoxFit.cover,
-                    semanticLabel: '$label 사진',
-                    gaplessPlayback: true,
-                  ),
+    final radius = BorderRadius.circular(10);
+    return Semantics(
+      button: true,
+      label: '${index + 1}페이지 사진. 누르면 지워요',
+      excludeSemantics: true,
+      child: Material(
+        borderRadius: radius,
+        clipBehavior: Clip.antiAlias,
+        color: AppColors.grey100,
+        child: Ink.image(
+          image: MemoryImage(page.bytes),
+          fit: BoxFit.cover,
+          child: InkWell(
+            onTap: TapFeedback.wrap(onRemove),
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: Container(
+                margin: const EdgeInsets.all(6),
+                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                decoration: BoxDecoration(color: const Color(0xCC191F28), borderRadius: BorderRadius.circular(6)),
+                child: Text(
+                  '${index + 1}',
+                  style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Colors.white),
                 ),
-                const Positioned(top: 6, right: 6, child: ExcludeSemantics(child: _CheckBadge())),
-              ],
+              ),
             ),
           ),
-          SizedBox(
-            height: footer,
-            child: Row(
-              children: [
-                const SizedBox(width: 2),
-                Expanded(
-                  child: Text(
-                    label,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.text),
-                  ),
-                ),
-                IconButton(
-                  onPressed: TapFeedback.wrap(onRemove),
-                  tooltip: '$label 지우기',
-                  icon: const Icon(Icons.delete_outline, size: 22),
-                  color: AppColors.muted,
-                  visualDensity: VisualDensity.compact,
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
-                ),
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
-    );
-  }
-}
-
-class _CheckBadge extends StatelessWidget {
-  const _CheckBadge();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 24,
-      height: 24,
-      decoration: BoxDecoration(
-        color: AppColors.primary,
-        shape: BoxShape.circle,
-        border: Border.all(color: Colors.white, width: 2),
-      ),
-      child: const Icon(Icons.check, size: 14, color: Colors.white),
     );
   }
 }

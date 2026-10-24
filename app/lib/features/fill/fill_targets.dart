@@ -61,7 +61,7 @@ final _bullet = RegExp(r'^[※*•○●▶►■□ㅁ口▪]');
 /// 줄마다 이 순서로 본다:
 /// 1. "기재하지 않음"이 있는 줄은 기관용이라 뺀다
 /// 2. "동의하십니까? □예 □아니요" → 고르는 칸 하나 ("수집·이용 동의 여부", "제3자 제공 동의 여부"). 상자 둘을 합친 자리
-/// 3. "2026년  월  일" → 날짜 칸 하나 (년 뒤부터 일까지)
+/// 3. "2026년  월  일" → 빈 자리마다 날짜 칸 (연도·월·일 따로)
 /// 4. "접수번호"만 있는 칸 → 오른쪽(자리가 없으면 아래)의 빈 칸
 /// 5. ※ * □ 같은 글자로 시작하는 안내·목록 줄은 뺀다
 /// 6. "성명:"처럼 칸 이름 + ':' 뒤가 비어 있으면 글씨 칸. 이미 인쇄된 내용("상호: 행복편의점", "지원자: 성명, 성별, …")이 있으면 뺀다.
@@ -336,17 +336,29 @@ List<_Found> _scanLine(TextBlock block, int lineNo, PageSize? page) {
     return found;
   }
 
-  // --- 날짜: "2026년  월  일"의 년 뒤부터 일까지 ---
-  // id 꼬리: 연도가 인쇄돼 있으면 -md (월·일만), 비어 있으면 -ymd (연·월·일 모두). [FillTargetKind.dateNeedsYear]가 읽는다
+  // --- 날짜: "2026년  월  일" → 빈 자리마다 칸 하나씩 (연도, 월, 일) ---
+  // 한 칸에 "10 24"를 한꺼번에 쓰게 하면 년·월·일 사이 간격을 사용자가 알 수 없다.
+  // 그래서 "연도를 적으세요", "월을 적으세요", "일을 적으세요"로 따로 받고 각 숫자를 제 자리에 넣는다.
+  // id 꼬리 -연/-월/-일은 [FillTargetKind.datePart]가 읽는다. 연도가 인쇄돼 있으면 연도 칸은 없다
   for (final m in _dateBlank.allMatches(compact)) {
-    final year = compact.indexOf('년', m.start);
-    final left = line.xEnd(year) + h * 0.2;
-    final right = line.xEnd(m.end - 1);
-    if (right - left < h * 1.2) continue;
-    final height = h * 1.3;
+    final yearIdx = m.end - 3, monthIdx = m.end - 2, dayIdx = m.end - 1;
     final yearPrinted = (m.group(1) ?? '').isNotEmpty;
-    found.add(_Found('p${block.page}-l$lineNo-c${m.start}-날짜-${yearPrinted ? 'md' : 'ymd'}', '날짜', block.page,
-        toBox(left, cy - height / 2, right - left, height), false, cy, h));
+    final height = h * 1.3;
+    // [before] 글자 앞의 빈 자리. 빈 자리가 좁게 잡히면(OCR이 공백을 지움) 줄 높이만큼은 확보한다.
+    // 글씨는 칸 크기에 맞춰 줄어들어 들어가므로 칸이 좁아도 숫자는 들어간다
+    void add(String part, double left, int before) {
+      final right = line.xAt(before) - h * 0.1;
+      final l = math.min(left, right - h);
+      found.add(_Found('p${block.page}-l$lineNo-c${m.start}-날짜-$part', '날짜 $part', block.page,
+          toBox(l, cy - height / 2, right - l, height), false, cy, h));
+    }
+
+    if (!yearPrinted) {
+      final start = m.start > 0 ? line.xEnd(m.start - 1) + h * 0.2 : line.xAt(yearIdx) - h * 3;
+      add('연도', start, yearIdx);
+    }
+    add('월', line.xEnd(yearIdx) + h * 0.2, monthIdx);
+    add('일', line.xEnd(monthIdx) + h * 0.2, dayIdx);
   }
 
   // --- 접수번호: 제목만 있는 표 칸. 빈 칸은 오른쪽, 자리가 없으면 아래 ---
@@ -504,6 +516,9 @@ class _LineLayout {
     final h = box.height.toDouble();
     final widths = <double>[];
     final spaces = <int>[];
+    // ':'가 없는 줄("2026년  월  일")은 글자 폭을 실측(consent_school: 한글 0.75h, 숫자 0.37h)에 가깝게 좁게 잡는다.
+    // 넓게 잡으면 "년" 끝이 실제보다 오른쪽으로 가서 월·일 빈칸이 글자에 겹친다
+    final hasColon = text.contains(':') || text.contains('：');
     for (var k = 0; k < text.length; k++) {
       final c = text[k];
       if (_space.hasMatch(c)) {
@@ -511,9 +526,9 @@ class _LineLayout {
         spaces.add(k);
       } else if (_isHangul(c) || c.codeUnitAt(0) >= 0x3000) {
         // 인쇄 양식의 한글은 대개 줄 높이만큼 넓다. 좁게 잡으면 빈칸이 실제보다 왼쪽에 잡힌다
-        widths.add(h * 1.0);
+        widths.add(h * (hasColon ? 1.0 : 0.8));
       } else if (RegExp(r'[0-9A-Za-z]').hasMatch(c)) {
-        widths.add(h * 0.55);
+        widths.add(h * (hasColon ? 0.55 : 0.45));
       } else {
         widths.add(h * 0.35);
       }

@@ -124,7 +124,7 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
   ///
   /// - 서명: "3페이지 중 2페이지, 보호자 서명을 시작합니다. 손가락으로 크게 쓰고 왼쪽으로 미세요."
   /// - 글씨: "2번째, 지원자 성명을 쓰세요."
-  /// - 날짜: 연도가 인쇄돼 있으면 "월과 일만", 아니면 "연도, 월, 일을 모두" ([FillTargetKind.dateNeedsYear])
+  /// - 날짜: 연도·월·일이 따로 칸이다. "날짜의 연도를 적으세요" → 월 → 일 ([FillTargetKind.datePart])
   /// - 동의 여부: 물음 + "예는 1, 아니요는 2를 누르거나 위아래 버튼을 누르세요."
   /// 이미 채운 칸이면 그 사실을 덧붙인다. [first]면 글씨 칸에 쓰는 법을 한 번 더 설명한다
   String _intro({bool first = false}) {
@@ -147,9 +147,8 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
       case FillKind.text:
         final filled = _filled ? ' 이미 채운 칸이에요. 새로 쓰면 바뀌고, 그냥 다음을 누르면 그대로 둬요.' : '';
         final how = first ? ' 화면 가득 크게 쓰고, 다 쓰면 왼쪽으로 밀거나 다음 버튼을 누르세요.' : '';
-        if (t.isDate) {
-          final what = t.dateNeedsYear ? '연도, 월, 일을 모두 쓰세요.' : '연도는 적혀 있으니 월과 일만 쓰세요.';
-          return '$n번째, 날짜예요. $what$filled$how';
+        if (t.datePart case final part?) {
+          return '$n번째, 날짜의 ${josa(part, '을', '를')} 적으세요. 숫자만 쓰면 돼요.$filled$how';
         }
         return '$n번째, ${josa(t.label, '을', '를')} 쓰세요.$filled$how';
     }
@@ -169,7 +168,7 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
     return switch (t.kind) {
       FillKind.check => '예 또는 아니요를 골라 주세요',
       FillKind.signature => '크게 서명해 주세요',
-      FillKind.text when t.isDate => t.dateNeedsYear ? '연도, 월, 일을 모두 써 주세요' : '월과 일만 써 주세요',
+      FillKind.text when t.isDate => '${josa(t.datePart!, '을', '를')} 숫자로 적어 주세요',
       FillKind.text => '또박또박 써 주세요',
     };
   }
