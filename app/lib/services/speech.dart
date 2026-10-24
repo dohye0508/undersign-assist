@@ -6,7 +6,12 @@ import 'package:flutter_tts/flutter_tts.dart';
 class Speech {
   Speech._();
 
-  static final _tts = FlutterTts()..setLanguage('ko-KR');
+  /// 말하는 속도. flutter_tts 웹은 0~1이고 0.5가 보통 속도라 0.65 ≈ 1.3배. 실기기에서 들어보고 조정한다
+  static const speechRate = 0.65;
+
+  static final _tts = FlutterTts()
+    ..setLanguage('ko-KR')
+    ..setSpeechRate(speechRate);
 
   /// 마지막으로 말한 문장 ("다시 듣기"용)
   static final lastMessage = ValueNotifier<String>('');

@@ -49,8 +49,9 @@ final _consentQuestion = RegExp(r'[동통]의하(십니까|시겠습니까|시�
 /// "□예 □아니요". 상자 글자는 없을 수도 있고, 사이에 밑줄·공백이 끼기도 한다
 final _yesNo = RegExp('([$_boxChars])?예[^가-힣]{0,4}([$_boxChars])?아니[요오]');
 
-/// "2026년  월  일"처럼 월·일이 빈 날짜 (공백을 지운 글자 기준). "생년월일"은 뺀다
-final _dateBlank = RegExp(r'(?<![가-힣])\d{0,4}년월일(?![가-힣])');
+/// "2026년  월  일"처럼 월·일이 빈 날짜 (공백을 지운 글자 기준). "생년월일"은 뺀다.
+/// 1번 그룹은 인쇄된 연도 숫자. 비어 있으면("년 월 일") 연도도 써야 한다
+final _dateBlank = RegExp(r'(?<![가-힣])(\d{0,4})년월일(?![가-힣])');
 
 /// 안내·목록 줄의 머리 글자. 이런 줄은 칸을 찾지 않는다 ("* 지원자 : 성명, 성별, …", "※ …")
 final _bullet = RegExp(r'^[※*•○●▶►■□ㅁ口▪]');
@@ -336,13 +337,15 @@ List<_Found> _scanLine(TextBlock block, int lineNo, PageSize? page) {
   }
 
   // --- 날짜: "2026년  월  일"의 년 뒤부터 일까지 ---
+  // id 꼬리: 연도가 인쇄돼 있으면 -md (월·일만), 비어 있으면 -ymd (연·월·일 모두). [FillTargetKind.dateNeedsYear]가 읽는다
   for (final m in _dateBlank.allMatches(compact)) {
     final year = compact.indexOf('년', m.start);
     final left = line.xEnd(year) + h * 0.2;
     final right = line.xEnd(m.end - 1);
     if (right - left < h * 1.2) continue;
     final height = h * 1.3;
-    found.add(_Found('p${block.page}-l$lineNo-c${m.start}-날짜', '날짜', block.page,
+    final yearPrinted = (m.group(1) ?? '').isNotEmpty;
+    found.add(_Found('p${block.page}-l$lineNo-c${m.start}-날짜-${yearPrinted ? 'md' : 'ymd'}', '날짜', block.page,
         toBox(left, cy - height / 2, right - left, height), false, cy, h));
   }
 

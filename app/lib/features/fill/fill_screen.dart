@@ -11,19 +11,21 @@ import '../../services/download.dart';
 import '../../services/haptics.dart';
 import '../../services/speech.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/tap_feedback.dart';
 import '../output/signed_pdf.dart';
 import '../sign/signature_check.dart';
 import '../write/note_ink.dart';
 import 'fill_kind.dart';
 import 'fill_targets.dart';
+import 'progress_dots.dart';
 
 /// 쓰고 서명하기 화면. 칸 하나마다 화면 전체가 쓰기 칸이 된다.
 ///
 /// 넘기기는 두 가지다:
 ///   1. 아래의 큰 "다음" 버튼 (마우스·키보드 Enter·스크린리더 사용자)
 ///   2. 쓰기 칸 오른쪽 끝에서 왼쪽으로 빠르고 길게 쓸기. 글씨 획과 헷갈리지 않게
-///      오른쪽 45% 안에서 시작해 칸 너비의 40% 넘게, 거의 수평으로, 0.5초 안에 곧게 그은 것만 넘기기로 본다.
-///      이렇게 그은 획은 글씨에 넣지 않는다.
+///      오른쪽 35% 안에서 시작해 칸 너비의 35% 넘게, 거의 수평으로, 0.5초 안에 곧게 그은 것만 넘기기로 본다.
+///      이렇게 그은 획은 글씨에 넣지 않는다. 밀기로 알아보는 순간 [Haptics.slide]를 낸다.
 /// 넘기기 전에 [SignatureCheck]로 숫자 검사만 한다 (비었는지, 너무 작은지, 너무 빠른지. AI 판단 없음).
 /// 통과하면 쓴 글씨가 문서 사진의 그 칸 자리로 줄어들며 들어가고(0.6초), 다음 칸이 나온다.
 ///
@@ -96,6 +98,7 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
       if (!mounted) return;
       _precache();
       final before = widget.intro;
+      // 패널이 건너뛰고 열었으면 써야 할 곳 목록을 먼저, 그다음 첫 칸 안내
       Speech.announce(context, before == null || before.isEmpty ? _intro(first: true) : '$before ${_intro(first: true)}');
     });
   }
@@ -106,22 +109,39 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
     super.dispose();
   }
 
+  /// 칸에 들어설 때 들려줄 말. 열릴 때와 넘어갈 때 모두 이걸 말한다.
+  ///
+  /// - 서명: "3페이지 중 2페이지, 보호자 서명을 시작합니다. 손가락으로 크게 쓰고 왼쪽으로 미세요."
+  /// - 글씨: "2번째, 지원자 성명을 쓰세요."
+  /// - 날짜: 연도가 인쇄돼 있으면 "월과 일만", 아니면 "연도, 월, 일을 모두" ([FillTargetKind.dateNeedsYear])
+  /// - 동의 여부: 물음 + "예는 1, 아니요는 2를 누르거나 위아래 버튼을 누르세요."
+  /// 이미 채운 칸이면 그 사실을 덧붙인다. [first]면 글씨 칸에 쓰는 법을 한 번 더 설명한다
   String _intro({bool first = false}) {
     final t = _target;
-    if (t.kind == FillKind.check) {
-      final head = first ? '' : '다음은 ${josa(t.label, '이에요', '예요')}. ';
-      final chosen = _choices[_index];
-      final filled = !_filled
-          ? ''
-          : chosen == null
-              ? '이미 고른 칸이에요. 다시 고르면 바뀌고, 그냥 다음을 누르면 그대로 둬요. '
-              : '이미 ${chosen ? '예' : '아니요'}를 골랐어요. 다시 고르면 바뀌고, 그냥 다음을 누르면 그대로 둬요. ';
-      return '$head${checkQuestion(t)} $filled예 또는 아니요 버튼을 누르세요. 위가 예, 아래가 아니요예요.';
+    final n = _index + 1;
+    switch (t.kind) {
+      case FillKind.check:
+        final chosen = _choices[_index];
+        final filled = !_filled
+            ? ''
+            : chosen == null
+                ? '이미 고른 칸이에요. 다시 고르면 바뀌고, 그냥 다음을 누르면 그대로 둬요. '
+                : '이미 ${chosen ? '예' : '아니요'}를 골랐어요. 다시 고르면 바뀌고, 그냥 다음을 누르면 그대로 둬요. ';
+        return '$n번째, ${checkQuestion(t)} $filled예는 1, 아니요는 2를 누르거나 위아래 버튼을 누르세요.';
+      case FillKind.signature:
+        final pages = widget.state.pages.length;
+        final where = pages <= 1 ? '1페이지' : '$pages페이지 중 ${t.page + 1}페이지';
+        final filled = _filled ? '이미 서명한 칸이에요. 새로 쓰면 바뀌고, 그냥 다음을 누르면 그대로 둬요. ' : '';
+        return '$where, ${josa(t.label, '을', '를')} 시작합니다. $filled손가락으로 크게 쓰고 왼쪽으로 미세요.';
+      case FillKind.text:
+        final filled = _filled ? ' 이미 채운 칸이에요. 새로 쓰면 바뀌고, 그냥 다음을 누르면 그대로 둬요.' : '';
+        final how = first ? ' 화면 가득 크게 쓰고, 다 쓰면 왼쪽으로 밀거나 다음 버튼을 누르세요.' : '';
+        if (t.isDate) {
+          final what = t.dateNeedsYear ? '연도, 월, 일을 모두 쓰세요.' : '연도는 적혀 있으니 월과 일만 쓰세요.';
+          return '$n번째, 날짜예요. $what$filled$how';
+        }
+        return '$n번째, ${josa(t.label, '을', '를')} 쓰세요.$filled$how';
     }
-    final head = first ? '${josa(t.label, '을', '를')} 쓰세요. ' : '다음은 ${josa(t.label, '이에요', '예요')}. ';
-    final filled = _filled ? '이미 채운 칸이에요. 새로 쓰면 바뀌고, 그냥 다음을 누르면 그대로 둬요. ' : '';
-    final how = first ? '화면 가득 크게 쓰고, 다 쓰면 아래 다음 버튼을 누르거나 오른쪽 끝에서 왼쪽으로 빠르게 미세요.' : '';
-    return '$head$filled$how';
   }
 
   /// 넣을 때 문서 사진이 바로 보이게 미리 읽어 둔다
@@ -163,14 +183,17 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
     _pointer = null;
     final d = e.localPosition - _strokeStart;
     final ms = e.timeStamp.inMilliseconds - _strokeStartMs;
-    final fling = _strokeStart.dx >= _area.width * 0.55 &&
-        d.dx <= -_area.width * 0.4 &&
+    // 오른쪽 35% 안에서 시작해 너비의 35% 넘게 왼쪽으로, 거의 수평·빠르게·곧게
+    final fling = _strokeStart.dx >= _area.width * 0.65 &&
+        d.dx <= -_area.width * 0.35 &&
         d.dy.abs() <= d.dx.abs() * 0.35 &&
         ms <= 500 &&
         _pathLength <= d.distance * 1.3;
     if (fling) {
       setState(() => _strokes.removeLast());
-      _next();
+      // 밀기 = 입력. 알아본 순간 바로 밀기 신호를 내고 넘긴다 (검사 결과는 _next가 따로 알린다)
+      Haptics.slide();
+      _next(bySlide: true);
     }
   }
 
@@ -241,7 +264,8 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
     return v.message;
   }
 
-  Future<void> _next() async {
+  /// 넘기기. [bySlide]면 밀기 신호를 이미 냈으므로 통과 신호(ok)를 다시 내지 않는다
+  Future<void> _next({bool bySlide = false}) async {
     if (_phase != _Phase.writing || _busy) return;
     final target = _target;
     if (target.kind == FillKind.check) {
@@ -267,7 +291,7 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
       Speech.announce(context, message);
       return;
     }
-    Haptics.ok();
+    if (!bySlide) Haptics.ok();
     if (target.isSignature) _signatureBaseline ??= verdict.metrics;
     await _commit(target, List.of(_strokes), _FillInk.bounds(_strokes));
   }
@@ -336,6 +360,8 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
     if (!mounted) return;
     widget.state.setFill(FilledInk(target: target, png: png));
     _drafts.remove(_index);
+    // 다음 칸 안내 앞에 "넣었어요"를 붙인다 (고르는 칸은 _choose가 "예에 표시했어요"를 이미 넣었다)
+    if (target.kind != FillKind.check) _pending = '${target.label} 넣었어요. ';
 
     final page = _pageSize(target.page);
     if (page != null) {
@@ -400,11 +426,7 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
         ..addAll(_drafts[index] ?? const []);
     });
     _precache();
-    final filled = _filled ? ' 이미 채운 칸이에요. 새로 쓰면 바뀌어요.' : '';
-    final previous = _target.kind == FillKind.check
-        ? '이전 칸, ${josa(_target.label, '이에요', '예요')}. ${_intro()}'
-        : '이전 칸, ${josa(_target.label, '이에요', '예요')}.$filled';
-    Speech.announce(context, '${_takePending()}${back ? previous : _intro()}');
+    Speech.announce(context, '${_takePending()}${back ? '이전 칸이에요. ' : ''}${_intro()}');
   }
 
   void _previous() {
@@ -472,7 +494,7 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
                           IconButton(
                             tooltip: '닫기',
                             icon: const Icon(Icons.arrow_back),
-                            onPressed: () => Navigator.of(context).pop(_exported),
+                            onPressed: TapFeedback.wrap(() => Navigator.of(context).pop(_exported)),
                           ),
                           Expanded(
                             child: Semantics(
@@ -483,14 +505,21 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
                           IconButton(
                             tooltip: '다시 듣기',
                             icon: const Icon(Icons.volume_up_outlined),
-                            onPressed: () => Speech.announce(
-                              context,
-                              done ? '모두 채웠어요. PDF로 받을 수 있어요.' : _intro(first: true),
-                            ),
+                            onPressed: TapFeedback.wrap(() => Speech.announce(
+                                  context,
+                                  done ? '모두 채웠어요. PDF로 받을 수 있어요.' : _intro(first: true),
+                                )),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 4),
+                      // 진행 동그라미: 칸마다 하나. 채운 칸은 ✓, 지금 칸은 크게
+                      ProgressDots(
+                        targets: _targets,
+                        filledIds: widget.state.fills.keys.toSet(),
+                        currentIndex: done ? -1 : _index,
+                      ),
+                      const SizedBox(height: 6),
                       Expanded(
                         child: done
                             ? _donePages()
@@ -731,7 +760,7 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
             flex: 2,
             child: FilledButton.icon(
               style: FilledButton.styleFrom(minimumSize: const Size(0, 72)),
-              onPressed: enabled ? _next : null,
+              onPressed: TapFeedback.wrap(enabled ? _next : null),
               icon: const Icon(Icons.arrow_forward),
               label: const Text('다음'),
             ),
@@ -746,7 +775,7 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         FilledButton.icon(
-          onPressed: _busy ? null : _export,
+          onPressed: TapFeedback.wrap(_busy ? null : _export),
           icon: const Icon(Icons.picture_as_pdf_outlined),
           label: Text(_busy ? 'PDF 만드는 중…' : '서명한 문서 PDF 받기'),
         ),
@@ -755,7 +784,7 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
           children: [
             Expanded(
               child: OutlinedButton.icon(
-                onPressed: _busy ? null : _previous,
+                onPressed: TapFeedback.wrap(_busy ? null : _previous),
                 icon: const Icon(Icons.chevron_left),
                 label: const Text('고치기'),
               ),
@@ -763,7 +792,7 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
             const SizedBox(width: 8),
             Expanded(
               child: OutlinedButton.icon(
-                onPressed: () => Navigator.of(context).pop(_exported),
+                onPressed: TapFeedback.wrap(() => Navigator.of(context).pop(_exported)),
                 icon: const Icon(Icons.close),
                 label: const Text('닫기'),
               ),
@@ -971,7 +1000,7 @@ class _ChoiceButton extends StatelessWidget {
                   shape: shape,
                   side: selected ? const BorderSide(color: AppColors.primary, width: 5) : null,
                 ),
-                onPressed: onPressed,
+                onPressed: TapFeedback.wrap(onPressed),
                 child: child,
               )
             : OutlinedButton(
@@ -980,7 +1009,7 @@ class _ChoiceButton extends StatelessWidget {
                   shape: shape,
                   side: BorderSide(color: selected ? AppColors.primary : AppColors.line, width: selected ? 5 : 2),
                 ),
-                onPressed: onPressed,
+                onPressed: TapFeedback.wrap(onPressed),
                 child: child,
               ),
       ),
@@ -1000,7 +1029,7 @@ class _ToolButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return OutlinedButton(
       style: OutlinedButton.styleFrom(minimumSize: const Size(0, 72), padding: const EdgeInsets.symmetric(horizontal: 4)),
-      onPressed: onPressed,
+      onPressed: TapFeedback.wrap(onPressed),
       child: FittedBox(
         fit: BoxFit.scaleDown,
         child: Column(

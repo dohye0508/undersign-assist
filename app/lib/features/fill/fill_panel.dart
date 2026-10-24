@@ -4,6 +4,7 @@ import '../../models/fill.dart';
 import '../../models/workspace_state.dart';
 import '../../services/speech.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/tap_feedback.dart';
 import 'fill_screen.dart';
 import 'fill_targets.dart';
 
@@ -128,7 +129,7 @@ class _FillPanelBodyState extends State<_FillPanelBody> {
                 tooltip: '써야 할 칸 다시 듣기',
                 visualDensity: VisualDensity.compact,
                 icon: const Icon(Icons.volume_up_outlined),
-                onPressed: () => Speech.announce(context, _summary()),
+                onPressed: TapFeedback.wrap(() => Speech.announce(context, _summary())),
               ),
             ],
           ),
@@ -138,7 +139,7 @@ class _FillPanelBodyState extends State<_FillPanelBody> {
           if (firstEmpty >= 0) ...[
             const SizedBox(height: 4),
             FilledButton.icon(
-              onPressed: () => _open(firstEmpty),
+              onPressed: TapFeedback.wrap(() => _open(firstEmpty)),
               icon: const Icon(Icons.draw_outlined),
               label: const Text('쓰기 시작'),
             ),
@@ -149,13 +150,13 @@ class _FillPanelBodyState extends State<_FillPanelBody> {
           // 다 채웠으면 PDF 받기가 가장 큰 버튼이 된다
           if (firstEmpty >= 0)
             OutlinedButton.icon(
-              onPressed: _exporting ? null : () => _export(targets),
+              onPressed: TapFeedback.wrap(_exporting ? null : () => _export(targets)),
               icon: const Icon(Icons.picture_as_pdf_outlined),
               label: Text(_exporting ? 'PDF 만드는 중…' : '서명한 문서 PDF 받기'),
             )
           else
             FilledButton.icon(
-              onPressed: _exporting ? null : () => _export(targets),
+              onPressed: TapFeedback.wrap(_exporting ? null : () => _export(targets)),
               icon: const Icon(Icons.picture_as_pdf_outlined),
               label: Text(_exporting ? 'PDF 만드는 중…' : '서명한 문서 PDF 받기'),
             ),
@@ -186,7 +187,7 @@ class _TargetRow extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           backgroundColor: done ? AppColors.okSoft : AppColors.surface,
         ),
-        onPressed: onTap,
+        onPressed: TapFeedback.wrap(onTap),
         child: Semantics(
           label: done ? '${target.label}, 채웠어요. 누르면 다시 써요.' : '${target.label}, 아직 비었어요. 누르면 써요.',
           child: ExcludeSemantics(

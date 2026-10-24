@@ -15,6 +15,7 @@ import '../theme/app_theme.dart';
 import '../widgets/document_stage.dart';
 import '../widgets/page_tray.dart';
 import '../widgets/soft_blob_background.dart';
+import '../widgets/tap_feedback.dart';
 
 /// 앱의 유일한 화면. 두 가지 모습이 있고 서로 "바뀐다"(덮지 않는다).
 ///
@@ -252,14 +253,16 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
                     Icons.delete_sweep_outlined,
                     color: AppColors.muted,
                   ),
-                  onPressed: _clearPages,
+                  onPressed: TapFeedback.wrap(_clearPages),
                 )
               : IconButton(
                   tooltip: '사용 방법',
                   icon: const Icon(Icons.info_outline, color: AppColors.muted),
-                  onPressed: () => Speech.announce(
-                    context,
-                    '문서를 한 장씩 찍으면 페이지가 쌓여요. 위쪽 가운데 버튼으로 찍은 페이지를 볼 수 있어요. 다 찍으면 분석하기를 누르세요. 키보드는 스페이스로 찍고, 엔터로 분석하고, R로 다시 들어요.',
+                  onPressed: TapFeedback.wrap(
+                    () => Speech.announce(
+                      context,
+                      '문서를 한 장씩 찍으면 페이지가 쌓여요. 위쪽 가운데 버튼으로 찍은 페이지를 볼 수 있어요. 다 찍으면 분석하기를 누르세요. 키보드는 스페이스로 찍고, 엔터로 분석하고, R로 다시 들어요.',
+                    ),
                   ),
                 ),
         ),
@@ -307,7 +310,7 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
           leading: IconButton(
             tooltip: step == WorkStep.read ? '카메라로 돌아가기' : '문서 읽기로 돌아가기',
             icon: const Icon(Icons.arrow_back),
-            onPressed: _goBack,
+            onPressed: TapFeedback.wrap(_goBack),
           ),
         ),
         Expanded(
@@ -374,7 +377,7 @@ class _TopBar extends StatelessWidget {
                 Icons.volume_up_outlined,
                 color: AppColors.muted,
               ),
-              onPressed: onRepeat,
+              onPressed: TapFeedback.wrap(onRepeat),
             ),
             ?trailing,
           ],
@@ -404,7 +407,7 @@ class _NextSteps extends StatelessWidget {
         const SizedBox(height: 8),
         for (final step in [WorkStep.judge, WorkStep.fill]) ...[
           OutlinedButton.icon(
-            onPressed: () => onOpen(step),
+            onPressed: TapFeedback.wrap(() => onOpen(step)),
             icon: Icon(_icons[step]),
             label: Text(step.label),
           ),
@@ -451,7 +454,7 @@ class _BottomBar extends StatelessWidget {
               width: 84,
               height: 84,
               child: FilledButton(
-                onPressed: canCapture ? onCapture : null,
+                onPressed: TapFeedback.wrap(canCapture ? onCapture : null),
                 style: FilledButton.styleFrom(
                   shape: const CircleBorder(),
                   padding: EdgeInsets.zero,
@@ -492,7 +495,7 @@ class _SideButton extends StatelessWidget {
       label: label,
       excludeSemantics: true,
       child: InkWell(
-        onTap: onTap,
+        onTap: TapFeedback.wrap(onTap),
         borderRadius: BorderRadius.circular(16),
         child: SizedBox(
           width: 104,

@@ -5,6 +5,7 @@ import '../../models/workspace_state.dart';
 import '../../services/speech.dart';
 import '../../theme/app_theme.dart';
 import '../read/read_panel.dart' show ListenButton;
+import '../../widgets/tap_feedback.dart';
 
 /// 판단("검토하세요!"): 빠진 항목과 확인이 필요한 내용을 근거와 함께 알려준다.
 /// 문서만으로 알 수 없는 것(예: 사업장 인원)은 먼저 질문으로 묻고, 답을 고르면 그 답으로 다시 판단한다.
@@ -69,7 +70,7 @@ class _JudgePanelState extends State<JudgePanel> {
       body = [
         Text(state.judgeError!),
         const SizedBox(height: 8),
-        OutlinedButton(onPressed: state.judge, child: const Text('다시 검토하기')),
+        OutlinedButton(onPressed: TapFeedback.wrap(state.judge), child: const Text('다시 검토하기')),
       ];
     } else {
       final caution = judgement.counts['caution'] ?? 0;
@@ -337,7 +338,7 @@ class _AnswerResultCard extends StatelessWidget {
             Align(
               alignment: Alignment.centerLeft,
               child: TextButton.icon(
-                onPressed: onChange,
+                onPressed: TapFeedback.wrap(onChange),
                 style: TextButton.styleFrom(
                   padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
                   minimumSize: const Size(0, 36),
@@ -467,7 +468,7 @@ class _FindingCard extends StatelessWidget {
           Align(
             alignment: Alignment.centerLeft,
             child: TextButton.icon(
-              onPressed: () => Speech.announce(context, _detail(finding)),
+              onPressed: TapFeedback.wrap(() => Speech.announce(context, _detail(finding))),
               style: TextButton.styleFrom(
                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
                 minimumSize: const Size(0, 36),
@@ -618,12 +619,12 @@ class _OptionButton extends StatelessWidget {
       selected: selected,
       child: selected
           ? FilledButton(
-              onPressed: onPressed,
+              onPressed: TapFeedback.wrap(onPressed),
               style: FilledButton.styleFrom(padding: padding, minimumSize: minimumSize, textStyle: textStyle),
               child: child,
             )
           : OutlinedButton(
-              onPressed: onPressed,
+              onPressed: TapFeedback.wrap(onPressed),
               style: OutlinedButton.styleFrom(
                 padding: padding,
                 minimumSize: minimumSize,

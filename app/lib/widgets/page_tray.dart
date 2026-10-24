@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/document_photo.dart';
 import '../theme/app_theme.dart';
+import 'tap_feedback.dart';
 
 /// 카메라 영역 맨 위에 붙는 업로드한 페이지 목록.
 /// 평소에는 장수만 적힌 버튼 하나라 카메라를 가리지 않고, 누르면 위에서 패널이 내려온다.
@@ -84,7 +85,7 @@ class _ToggleButton extends StatelessWidget {
             side: const BorderSide(color: AppColors.line),
           ),
           child: InkWell(
-            onTap: onToggle,
+            onTap: TapFeedback.wrap(onToggle),
             borderRadius: radius,
             child: ConstrainedBox(
               constraints: const BoxConstraints(minHeight: 48, minWidth: 96),
@@ -268,7 +269,7 @@ class _PageCard extends StatelessWidget {
                   ),
                 ),
                 IconButton(
-                  onPressed: onRemove,
+                  onPressed: TapFeedback.wrap(onRemove),
                   tooltip: '$label 지우기',
                   icon: const Icon(Icons.delete_outline, size: 22),
                   color: AppColors.muted,

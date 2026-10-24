@@ -6,6 +6,7 @@ import '../../services/speech.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/panel_section.dart';
 import '../fill/fill_targets.dart';
+import '../../widgets/tap_feedback.dart';
 
 /// 읽기: 사진을 받으면 자동으로 읽은 결과(문서 종류, 핵심 항목)를 보여주고 다시 들려준다.
 ///
@@ -32,14 +33,14 @@ class ReadPanel extends StatelessWidget {
         children: [
           Text(state.readError!),
           const SizedBox(height: 8),
-          OutlinedButton(onPressed: state.read, child: const Text('다시 읽기')),
+          OutlinedButton(onPressed: TapFeedback.wrap(state.read), child: const Text('다시 읽기')),
         ],
       );
     }
     if (document == null) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [OutlinedButton(onPressed: state.read, child: const Text('문서 읽기'))],
+        children: [OutlinedButton(onPressed: TapFeedback.wrap(state.read), child: const Text('문서 읽기'))],
       );
     }
 
@@ -93,12 +94,12 @@ class ListenButton extends StatelessWidget {
     );
     return primary
         ? FilledButton(
-            onPressed: onPressed,
+            onPressed: TapFeedback.wrap(onPressed),
             style: FilledButton.styleFrom(minimumSize: size, padding: padding, textStyle: textStyle),
             child: child,
           )
         : OutlinedButton(
-            onPressed: onPressed,
+            onPressed: TapFeedback.wrap(onPressed),
             style: OutlinedButton.styleFrom(minimumSize: size, padding: padding, textStyle: textStyle),
             child: child,
           );

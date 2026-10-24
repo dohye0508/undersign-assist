@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../services/camera_service.dart';
+import 'tap_feedback.dart';
 
 /// 카메라 영역. 촬영 화면에서는 늘 카메라만 보여준다 (찍은 페이지는 위쪽 페이지 목록에서 본다).
 class DocumentStage extends StatelessWidget {
@@ -25,7 +26,7 @@ class DocumentStage extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               FilledButton.icon(
-                onPressed: camera.start,
+                onPressed: TapFeedback.wrap(camera.start),
                 icon: const Icon(Icons.videocam_outlined),
                 label: const Text('카메라 다시 켜기'),
                 style: FilledButton.styleFrom(minimumSize: const Size(200, 52)),
