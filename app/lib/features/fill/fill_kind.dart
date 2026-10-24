@@ -13,12 +13,12 @@ extension FillTargetKind on FillTarget {
     return isSignature ? FillKind.signature : FillKind.text;
   }
 
-  /// 날짜 칸인가 ("2026년 월 일" 줄에서 찾은 칸). id 꼬리가 `-날짜-md` 또는 `-날짜-ymd`
+  /// 날짜 칸인가 ("2026년 월 일" 줄에서 찾은 칸). id 꼬리가 `-날짜-연도`, `-날짜-월`, `-날짜-일`
   bool get isDate => id.contains('-날짜-');
 
-  /// 날짜 칸에서 연도까지 써야 하는가. 연도가 인쇄돼 있지 않으면("년 월 일") id가 `-ymd`로 끝난다.
+  /// 날짜 칸이 맡은 부분: "연도", "월", "일". 날짜 칸이 아니면 null.
   /// 모델에 필드를 더하지 않으려고 id에 실어 둔다 ([findFillTargets]가 붙인다)
-  bool get dateNeedsYear => id.endsWith('-ymd');
+  String? get datePart => isDate ? id.substring(id.lastIndexOf('-') + 1) : null;
 
   /// 진행 동그라미 아래에 쓰는 짧은 이름: 서명 → "서명", 동의 여부 → "동의", 글씨 칸 → 이름의 마지막 낱말(성명, 날짜, 주소 …)
   String get shortName {

@@ -20,6 +20,7 @@ class ReadPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final document = state.recognized;
+    final text = Theme.of(context).textTheme;
 
     if (state.reading) {
       return const Column(
@@ -44,65 +45,73 @@ class ReadPanel extends StatelessWidget {
       );
     }
 
+    final pageCount = document.pages.isEmpty ? 1 : document.pages.length;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        // 문서 이름을 큰 제목으로. 위 작은 줄에 단계와 페이지 수
+        Padding(
+          padding: const EdgeInsets.fromLTRB(4, 2, 4, 22),
+          child: MergeSemantics(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '문서 읽기 · $pageCount페이지',
+                  style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.primary),
+                ),
+                const SizedBox(height: 6),
+                Semantics(header: true, child: Text(document.docTypeLabel, style: text.headlineMedium)),
+              ],
+            ),
+          ),
+        ),
         // 듣기는 이 앱에서 가장 많이 쓰는 동작이다. 화면을 보지 않고도 찾도록 맨 위에 크게 하나만 둔다.
         ListenButton(
           label: '요약 듣기',
-          icon: Icons.volume_up_outlined,
-          primary: true,
+          icon: Icons.volume_up_rounded,
           onPressed: () => Speech.announce(context, document.speech),
         ),
-        const SizedBox(height: 16),
         ReadSummary(document: document),
       ],
     );
   }
 }
 
-/// 화면 맨 위에 두는 큰 듣기 버튼
+/// 화면 맨 위에 두는 큰 듣기 버튼. 옅은 파랑 바탕에 파란 글씨 (토스의 약한 강조 버튼)
 class ListenButton extends StatelessWidget {
   const ListenButton({
     super.key,
     required this.label,
     required this.icon,
     required this.onPressed,
-    this.primary = false,
   });
 
   final String label;
   final IconData icon;
   final VoidCallback onPressed;
 
-  /// 가장 먼저 누를 버튼 (꽉 찬 색)
-  final bool primary;
-
   @override
   Widget build(BuildContext context) {
-    const size = Size.fromHeight(64);
-    const textStyle = TextStyle(fontFamily: AppFonts.body, fontSize: 17);
-    const padding = EdgeInsets.symmetric(horizontal: 12);
-    final child = Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(icon, size: 23),
-        const SizedBox(width: 10),
-        // 좁은 화면에서 나란히 놓여도 넘치지 않게 글자를 줄여 맞춘다
-        Flexible(child: FittedBox(fit: BoxFit.scaleDown, child: Text(label))),
-      ],
+    return FilledButton(
+      onPressed: TapFeedback.wrap(onPressed),
+      style: FilledButton.styleFrom(
+        minimumSize: const Size.fromHeight(68),
+        backgroundColor: AppColors.primarySoft,
+        foregroundColor: AppColors.primary,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        textStyle: const TextStyle(fontFamily: AppFonts.body, fontSize: 19, fontWeight: FontWeight.w700),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, size: 26),
+          const SizedBox(width: 10),
+          // 좁은 화면에서도 넘치지 않게 글자를 줄여 맞춘다
+          Flexible(child: FittedBox(fit: BoxFit.scaleDown, child: Text(label))),
+        ],
+      ),
     );
-    return primary
-        ? FilledButton(
-            onPressed: TapFeedback.wrap(onPressed),
-            style: FilledButton.styleFrom(minimumSize: size, padding: padding, textStyle: textStyle),
-            child: child,
-          )
-        : OutlinedButton(
-            onPressed: TapFeedback.wrap(onPressed),
-            style: OutlinedButton.styleFrom(minimumSize: size, padding: padding, textStyle: textStyle),
-            child: child,
-          );
   }
 }
 
@@ -114,17 +123,39 @@ class ReadSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final text = Theme.of(context).textTheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(describeDocument(document), style: text.bodyLarge),
-        const SizedBox(height: 12),
-        LabelValueRow(label: '문서 종류', value: document.docTypeLabel),
-        for (final field in document.fields) LabelValueRow(label: field.label, value: field.value),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(4, 18, 4, 0),
+          child: Text.rich(
+            highlightCounts(describeDocument(document)),
+            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w500, color: AppColors.text, height: 1.6),
+          ),
+        ),
+        if (document.fields.isNotEmpty) ...[
+          const SectionHeading('중요한 항목'),
+          for (final field in document.fields) LabelValueRow(label: field.label, value: field.value),
+        ],
       ],
     );
   }
+}
+
+/// 문장 속 "5개", "7곳" 같은 수를 굵은 파랑으로
+TextSpan highlightCounts(String sentence) {
+  final spans = <TextSpan>[];
+  var last = 0;
+  for (final m in RegExp(r'\d+(개|곳)').allMatches(sentence)) {
+    spans.add(TextSpan(text: sentence.substring(last, m.start)));
+    spans.add(TextSpan(
+      text: m.group(0),
+      style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w800),
+    ));
+    last = m.end;
+  }
+  spans.add(TextSpan(text: sentence.substring(last)));
+  return TextSpan(children: spans);
 }
 
 /// "3페이지짜리 개인정보 동의서예요. 중요한 항목 7개를 찾았고, 써야 할 칸은 5곳이에요(1·3페이지)."

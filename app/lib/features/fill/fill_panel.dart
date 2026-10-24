@@ -124,7 +124,7 @@ class _FillPanelBodyState extends State<_FillPanelBody> {
         else ...[
           Row(
             children: [
-              Expanded(child: Text('써야 할 곳 ${targets.length}곳', style: text.labelLarge)),
+              Expanded(child: Text('써야 할 곳 ${targets.length}곳', style: text.titleMedium)),
               IconButton(
                 tooltip: '써야 할 칸 다시 듣기',
                 visualDensity: VisualDensity.compact,
@@ -134,10 +134,11 @@ class _FillPanelBodyState extends State<_FillPanelBody> {
             ],
           ),
           const SizedBox(height: 4),
+          const SizedBox(height: 4),
           for (final (i, target) in targets.indexed)
             _TargetRow(target: target, ink: fills[target.id], onTap: () => _open(i)),
           if (firstEmpty >= 0) ...[
-            const SizedBox(height: 4),
+            const SizedBox(height: 16),
             FilledButton.icon(
               onPressed: TapFeedback.wrap(() => _open(firstEmpty)),
               icon: const Icon(Icons.draw_outlined),
@@ -178,40 +179,47 @@ class _TargetRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final ink = this.ink;
     final done = ink != null;
-    final text = Theme.of(context).textTheme;
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
-      child: OutlinedButton(
-        style: OutlinedButton.styleFrom(
-          minimumSize: const Size.fromHeight(52),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          backgroundColor: done ? AppColors.okSoft : AppColors.surface,
-        ),
-        onPressed: TapFeedback.wrap(onTap),
-        child: Semantics(
-          label: done ? '${target.label}, 채웠어요. 누르면 다시 써요.' : '${target.label}, 아직 비었어요. 누르면 써요.',
-          child: ExcludeSemantics(
-            child: Row(
-              children: [
-                Icon(done ? Icons.check_circle : Icons.edit_outlined,
-                    size: 20, color: done ? AppColors.ok : AppColors.muted),
-                const SizedBox(width: 8),
-                // 이름은 한 줄로. "사업주 서명"처럼 긴 이름이 두 줄로 꺾이지 않게 작게, 넘치면 말줄임
-                Expanded(
-                  child: Text(
-                    target.label,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: text.titleMedium?.copyWith(fontSize: 13),
-                  ),
+    return Semantics(
+      button: true,
+      label: done ? '${target.label}, 채웠어요. 누르면 다시 써요.' : '${target.label}, 아직 비었어요. 누르면 써요.',
+      excludeSemantics: true,
+      child: InkWell(
+        onTap: TapFeedback.wrap(onTap),
+        child: Container(
+          constraints: const BoxConstraints(minHeight: 60),
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+          decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: AppColors.grey100))),
+          child: Row(
+            children: [
+              Icon(
+                done ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded,
+                size: 22,
+                color: done ? AppColors.primary : AppColors.grey300,
+              ),
+              const SizedBox(width: 12),
+              // 이름은 한 줄로. 넘치면 말줄임
+              Expanded(
+                child: Text(
+                  target.label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.text),
                 ),
-                if (done) ...[
-                  SizedBox(width: 72, height: 32, child: Image.memory(ink.png, fit: BoxFit.contain)),
-                  const SizedBox(width: 4),
-                ],
-                Text(done ? '다시 쓰기' : '쓰기', style: text.bodySmall?.copyWith(color: AppColors.muted)),
+              ),
+              if (done) ...[
+                SizedBox(width: 72, height: 32, child: Image.memory(ink.png, fit: BoxFit.contain)),
+                const SizedBox(width: 8),
               ],
-            ),
+              Text(
+                done ? '다시 쓰기' : '쓰기',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: done ? AppColors.muted : AppColors.primary,
+                ),
+              ),
+              const Icon(Icons.chevron_right_rounded, size: 20, color: AppColors.subtle),
+            ],
           ),
         ),
       ),

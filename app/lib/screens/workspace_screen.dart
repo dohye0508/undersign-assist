@@ -6,6 +6,7 @@ import '../features/judge/judge_panel.dart';
 import '../features/practice/practice_home.dart';
 import '../features/read/read_panel.dart';
 import '../features/fill/fill_panel.dart';
+import '../features/fill/fill_targets.dart';
 import '../features/sign/signature_spots.dart';
 import '../models/document_photo.dart';
 import '../models/workspace_state.dart';
@@ -15,7 +16,7 @@ import '../services/speech.dart';
 import '../theme/app_theme.dart';
 import '../widgets/document_stage.dart';
 import '../widgets/page_tray.dart';
-import '../widgets/soft_blob_background.dart';
+import '../widgets/panel_section.dart';
 import '../widgets/tap_feedback.dart';
 
 /// 앱의 유일한 화면. 두 가지 모습이 있고 서로 "바뀐다"(덮지 않는다).
@@ -230,40 +231,35 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
       child: Focus(
         autofocus: true,
         child: Scaffold(
-          body: Stack(
-            children: [
-              const Positioned.fill(child: SoftBlobBackground()),
-              SafeArea(
-                // 노트북에서도 휴대폰 화면처럼 가운데에 세로로 둔다
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 480),
-                    child: ListenableBuilder(
-                      listenable: Listenable.merge([_state, _camera]),
-                      builder: (context, _) => AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 280),
-                        switchInCurve: Curves.easeOut,
-                        switchOutCurve: Curves.easeIn,
-                        // 덮이는 느낌이 아니라 화면이 바뀌는 느낌: 옅어지며 옆에서 들어온다
-                        transitionBuilder: (child, animation) => FadeTransition(
-                          opacity: animation,
-                          child: SlideTransition(
-                            position: Tween(
-                              begin: const Offset(0.06, 0),
-                              end: Offset.zero,
-                            ).animate(animation),
-                            child: child,
-                          ),
-                        ),
-                        child: _analyzing
-                            ? _analysisView(context)
-                            : _cameraView(context),
+          body: SafeArea(
+            // 노트북에서도 휴대폰 화면처럼 가운데에 세로로 둔다
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 480),
+                child: ListenableBuilder(
+                  listenable: Listenable.merge([_state, _camera]),
+                  builder: (context, _) => AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 280),
+                    switchInCurve: Curves.easeOut,
+                    switchOutCurve: Curves.easeIn,
+                    // 덮이는 느낌이 아니라 화면이 바뀌는 느낌: 옅어지며 옆에서 들어온다
+                    transitionBuilder: (child, animation) => FadeTransition(
+                      opacity: animation,
+                      child: SlideTransition(
+                        position: Tween(
+                          begin: const Offset(0.06, 0),
+                          end: Offset.zero,
+                        ).animate(animation),
+                        child: child,
                       ),
                     ),
+                    child: _analyzing
+                        ? _analysisView(context)
+                        : _cameraView(context),
                   ),
                 ),
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -286,15 +282,12 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
           trailing: _state.hasPages
               ? IconButton(
                   tooltip: '모두 지우고 새 문서 찍기',
-                  icon: const Icon(
-                    Icons.delete_sweep_outlined,
-                    color: AppColors.muted,
-                  ),
+                  icon: const Icon(Icons.delete_sweep_outlined),
                   onPressed: TapFeedback.wrap(_clearPages),
                 )
               : IconButton(
                   tooltip: '사용 방법',
-                  icon: const Icon(Icons.info_outline, color: AppColors.muted),
+                  icon: const Icon(Icons.info_outline),
                   onPressed: TapFeedback.wrap(
                     () => Speech.announce(
                       context,
@@ -304,25 +297,35 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
                 ),
         ),
         Expanded(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                DocumentStage(camera: _camera),
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  top: 0,
-                  child: PageTray(
-                    pages: _state.pages,
-                    open: _trayOpen,
-                    onToggle: _toggleTray,
-                    onRemove: _removePage,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              // 카메라를 세로로 최대한 길게. 페이지 목록 버튼은 카메라 위쪽 안에 얹고, 열면 그 자리에서 내려온다
+              // 페이지 목록은 카메라 윗변에 딱 붙어 있다가 그 자리에서 끌려 내려온다 (카메라 둥근 모서리로 함께 자른다)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(AppRadius.camera),
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      DocumentStage(camera: _camera),
+                      Positioned(
+                        left: 0,
+                        right: 0,
+                        top: 0,
+                        child: PageTray(
+                          pages: _state.pages,
+                          open: _trayOpen,
+                          onToggle: _toggleTray,
+                          onRemove: _removePage,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
         _BottomBar(
@@ -338,124 +341,126 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
 
   Widget _analysisView(BuildContext context) {
     final step = _step!;
+    final document = _state.recognized;
     return Column(
       key: const ValueKey('analysis'),
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _TopBar(
-          title: step == WorkStep.read ? '분석 결과' : step.label,
-          onRepeat: _repeat,
-          leading: IconButton(
-            tooltip: step == WorkStep.read ? '카메라로 돌아가기' : '문서 읽기로 돌아가기',
-            icon: const Icon(Icons.arrow_back),
-            onPressed: TapFeedback.wrap(_goBack),
-          ),
+        _BackHeader(
+          backLabel: step == WorkStep.read ? '카메라로' : '문서 읽기',
+          tooltip: step == WorkStep.read ? '카메라로 돌아가기' : '문서 읽기로 돌아가기',
+          title: step == WorkStep.read ? null : step.label,
+          onBack: _goBack,
         ),
         Expanded(
-          child: Container(
-            margin: const EdgeInsets.fromLTRB(12, 0, 12, 12),
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(24),
-            ),
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  switch (step) {
-                    WorkStep.read => ReadPanel(state: _state),
-                    WorkStep.judge => JudgePanel(state: _state),
-                    WorkStep.fill => FillPanel(state: _state),
-                  },
-                  if (step == WorkStep.read && _state.recognized != null) ...[
-                    const SizedBox(height: 16),
-                    _NextSteps(onOpen: _openStep),
-                  ],
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 28),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                switch (step) {
+                  WorkStep.read => ReadPanel(state: _state),
+                  WorkStep.judge => JudgePanel(state: _state),
+                  WorkStep.fill => FillPanel(state: _state),
+                },
+                if (step == WorkStep.read && document != null) ...[
+                  const SectionHeading('다음에 할 일'),
+                  NextStepButton(
+                    title: WorkStep.judge.label,
+                    subtitle: '빠진 것·불리한 것 먼저 확인',
+                    primary: true,
+                    onPressed: () => _openStep(WorkStep.judge),
+                  ),
+                  const SizedBox(height: 10),
+                  NextStepButton(
+                    title: WorkStep.fill.label,
+                    subtitle: _fillSubtitle(findFillTargets(document).length),
+                    onPressed: () => _openStep(WorkStep.fill),
+                  ),
                 ],
-              ),
+              ],
             ),
           ),
         ),
       ],
     );
   }
+
+  static String _fillSubtitle(int n) => n == 0 ? '써야 할 칸을 찾지 못했어요' : '써야 할 칸 $n곳';
 }
 
 class _TopBar extends StatelessWidget {
-  const _TopBar({
-    required this.title,
-    required this.onRepeat,
-    this.leading,
-    this.trailing,
-  });
+  const _TopBar({required this.title, required this.onRepeat, this.trailing});
 
   final String title;
   final VoidCallback onRepeat;
-  final Widget? leading;
   final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 60,
-      child: Padding(
-        padding: EdgeInsets.only(left: leading == null ? 18 : 4, right: 6),
-        child: Row(
-          children: [
-            ?leading,
-            Semantics(
-              header: true,
-              child: Text(title, style: Theme.of(context).textTheme.titleLarge),
-            ),
-            const Spacer(),
-            IconButton(
-              tooltip: '다시 듣기',
-              icon: const Icon(
-                Icons.volume_up_outlined,
-                color: AppColors.muted,
-              ),
-              onPressed: TapFeedback.wrap(onRepeat),
-            ),
-            ?trailing,
-          ],
-        ),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 8, 16, 8),
+      child: Row(
+        children: [
+          Semantics(
+            header: true,
+            child: Text(title, style: Theme.of(context).textTheme.titleLarge),
+          ),
+          const Spacer(),
+          IconButton(
+            tooltip: '다시 듣기',
+            icon: const Icon(Icons.volume_up_rounded),
+            onPressed: TapFeedback.wrap(onRepeat),
+          ),
+          if (trailing case final trailing?) ...[const SizedBox(width: 8), trailing],
+        ],
       ),
     );
   }
 }
 
-/// 문서 읽기 아래쪽에 나오는 다음 할 일
-class _NextSteps extends StatelessWidget {
-  const _NextSteps({required this.onOpen});
+/// 분석 화면 맨 위: "‹ 카메라로" 같은 뒤로 버튼과 단계 이름
+class _BackHeader extends StatelessWidget {
+  const _BackHeader({required this.backLabel, required this.tooltip, required this.onBack, this.title});
 
-  final ValueChanged<WorkStep> onOpen;
-
-  static const _icons = {
-    WorkStep.judge: Icons.fact_check_outlined,
-    WorkStep.fill: Icons.draw_outlined,
-  };
+  final String backLabel;
+  final String tooltip;
+  final String? title;
+  final VoidCallback onBack;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text('다음에 할 일', style: Theme.of(context).textTheme.labelLarge),
-        const SizedBox(height: 8),
-        for (final step in [WorkStep.judge, WorkStep.fill]) ...[
-          OutlinedButton.icon(
-            onPressed: TapFeedback.wrap(() => onOpen(step)),
-            icon: Icon(_icons[step]),
-            label: Text(step.label),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(8, 12, 12, 8),
+      child: Row(
+        children: [
+          Semantics(
+            button: true,
+            label: tooltip,
+            excludeSemantics: true,
+            child: TextButton.icon(
+              onPressed: TapFeedback.wrap(onBack),
+              style: TextButton.styleFrom(
+                foregroundColor: AppColors.text,
+                minimumSize: const Size(0, 52),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                textStyle: const TextStyle(fontFamily: AppFonts.body, fontSize: 15, fontWeight: FontWeight.w600),
+                iconSize: 20,
+              ),
+              icon: const Icon(Icons.arrow_back_ios_new_rounded),
+              label: Text(backLabel),
+            ),
           ),
-          const SizedBox(height: 6),
+          if (title case final title?)
+            Semantics(header: true, child: Text(title, style: Theme.of(context).textTheme.titleMedium)),
         ],
-      ],
+      ),
     );
   }
 }
 
-/// 맨 아래: 사진 불러오기, 큰 촬영 버튼, 분석하기
+/// 맨 아래: 사진 불러오기, 큰 촬영 버튼, 분석하기.
+/// 양옆은 상자 없이 동그란 아이콘 + 아래 글자 (예전 모양을 토스 색으로). 분석하기만 파란 동그라미
 class _BottomBar extends StatelessWidget {
   const _BottomBar({
     required this.canCapture,
@@ -474,37 +479,41 @@ class _BottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 14, 12, 18),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _SideButton(
-            icon: Icons.photo_library_outlined,
-            label: '사진 불러오기',
-            onTap: onPick,
+          Expanded(
+            child: _SideButton(
+              icon: Icons.photo_library_outlined,
+              label: '사진 불러오기',
+              onTap: onPick,
+            ),
           ),
           Semantics(
             button: true,
             label: '찍기',
             excludeSemantics: true,
-            child: SizedBox(
-              width: 84,
-              height: 84,
-              child: FilledButton(
-                onPressed: TapFeedback.wrap(canCapture ? onCapture : null),
-                style: FilledButton.styleFrom(
-                  shape: const CircleBorder(),
-                  padding: EdgeInsets.zero,
-                  minimumSize: const Size(84, 84),
+            child: InkWell(
+              onTap: TapFeedback.wrap(canCapture ? onCapture : null),
+              customBorder: const CircleBorder(),
+              child: Container(
+                width: 84,
+                height: 84,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: canCapture ? AppColors.primary : AppColors.grey300,
+                  border: Border.all(color: AppColors.primarySoft, width: 6),
                 ),
-                child: const Icon(Icons.photo_camera, size: 38),
               ),
             ),
           ),
-          _SideButton(
-            icon: Icons.document_scanner_outlined,
-            label: pageCount == 0 ? '분석하기' : '분석하기 ($pageCount장)',
-            onTap: pageCount == 0 ? null : onAnalyze,
+          Expanded(
+            child: _SideButton(
+              icon: Icons.document_scanner_outlined,
+              label: pageCount == 0 ? '분석하기' : '분석하기 ($pageCount장)',
+              primary: true,
+              onTap: pageCount == 0 ? null : onAnalyze,
+            ),
           ),
         ],
       ),
@@ -517,39 +526,49 @@ class _SideButton extends StatelessWidget {
     required this.icon,
     required this.label,
     required this.onTap,
+    this.primary = false,
   });
 
   final IconData icon;
   final String label;
   final VoidCallback? onTap;
 
+  /// 아이콘 동그라미를 강조색으로 채운다 (분석하기)
+  final bool primary;
+
   @override
   Widget build(BuildContext context) {
-    final color = onTap == null ? AppColors.subtle : AppColors.text;
+    final enabled = onTap != null;
+    final circle = !enabled ? AppColors.grey100 : primary ? AppColors.primary : AppColors.grey100;
+    final iconColor = !enabled ? AppColors.subtle : primary ? Colors.white : AppColors.textStrong;
+    final textColor = !enabled ? AppColors.subtle : primary ? AppColors.primary : AppColors.textStrong;
     return Semantics(
       button: true,
-      enabled: onTap != null,
+      enabled: enabled,
       label: label,
       excludeSemantics: true,
       child: InkWell(
         onTap: TapFeedback.wrap(onTap),
-        borderRadius: BorderRadius.circular(16),
-        child: SizedBox(
-          width: 104,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(icon, size: 26, color: color),
-                const SizedBox(height: 6),
-                Text(
-                  label,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 12, color: color),
-                ),
-              ],
-            ),
+        borderRadius: BorderRadius.circular(AppRadius.card),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 6),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 52,
+                height: 52,
+                decoration: BoxDecoration(shape: BoxShape.circle, color: circle),
+                child: Icon(icon, size: 26, color: iconColor),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                label,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: textColor),
+              ),
+            ],
           ),
         ),
       ),
