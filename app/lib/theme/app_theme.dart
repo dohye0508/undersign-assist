@@ -29,12 +29,29 @@ class AppColors {
     stops: [0, 0.55, 1],
   );
 
+  /// 흰 바탕 곳곳에 번진 옅은 색 (파랑, 민트, 분홍, 보라, 노랑)
+  static const blobs = [
+    Blob(0.08, 0.10, 340, Color(0x2E7C93F2)),
+    Blob(0.92, 0.22, 300, Color(0x2659D3B4)),
+    Blob(0.15, 0.62, 280, Color(0x22F2A0C4)),
+    Blob(0.88, 0.78, 360, Color(0x26A98BF0)),
+    Blob(0.50, 0.95, 260, Color(0x1FF5C86B)),
+  ];
+
   /// 선택된 항목, 머리 부분에 쓰는 옅은 그라데이션 (파랑 → 보라)
   static const accentGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     colors: [Color(0xFFEEF1FE), Color(0xFFF5F0FF)],
   );
+}
+
+/// 배경에 번진 옅은 색 하나. x, y는 화면 너비·높이에 대한 비율(0~1), radius는 픽셀
+class Blob {
+  const Blob(this.x, this.y, this.radius, this.color);
+
+  final double x, y, radius;
+  final Color color;
 }
 
 class AppFonts {

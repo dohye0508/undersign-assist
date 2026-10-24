@@ -31,11 +31,23 @@ class DocumentStage extends StatelessWidget {
     } else if (camera.error != null) {
       content = Center(
         child: Padding(
-          padding: const EdgeInsets.all(32),
-          child: Text(
-            camera.error!,
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white),
+          padding: const EdgeInsets.all(28),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                camera.error!,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white),
+              ),
+              const SizedBox(height: 16),
+              FilledButton.icon(
+                onPressed: camera.start,
+                icon: const Icon(Icons.videocam_outlined),
+                label: const Text('카메라 다시 켜기'),
+                style: FilledButton.styleFrom(minimumSize: const Size(200, 52)),
+              ),
+            ],
           ),
         ),
       );
