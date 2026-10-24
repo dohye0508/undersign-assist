@@ -504,12 +504,12 @@ class _SideButton extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(icon, size: 32, color: color),
+                Icon(icon, size: 26, color: color),
                 const SizedBox(height: 6),
                 Text(
                   label,
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16, color: color),
+                  style: TextStyle(fontSize: 12, color: color),
                 ),
               ],
             ),

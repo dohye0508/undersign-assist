@@ -80,13 +80,13 @@ class ListenButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const size = Size.fromHeight(72);
-    const textStyle = TextStyle(fontFamily: AppFonts.body, fontSize: 22);
+    const size = Size.fromHeight(64);
+    const textStyle = TextStyle(fontFamily: AppFonts.body, fontSize: 17);
     const padding = EdgeInsets.symmetric(horizontal: 12);
     final child = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(icon, size: 30),
+        Icon(icon, size: 23),
         const SizedBox(width: 10),
         // 좁은 화면에서 나란히 놓여도 넘치지 않게 글자를 줄여 맞춘다
         Flexible(child: FittedBox(fit: BoxFit.scaleDown, child: Text(label))),
@@ -127,14 +127,21 @@ class ReadSummary extends StatelessWidget {
   }
 }
 
-/// "사진 1장은 근로계약서예요. 중요한 항목 7개를 찾았고, 써야 할 칸은 3곳이에요."
+/// "3페이지짜리 개인정보 동의서예요. 중요한 항목 7개를 찾았고, 써야 할 칸은 5곳이에요(1·3페이지)."
 ///
-/// 읽기 결과만으로 쓸 칸까지 세어 한 문단에 담는다. 쓸 칸이 없으면 "써야 할 칸은 찾지 못했어요."
+/// 여러 장은 한 문서의 여러 페이지로만 말한다. 페이지별로 반복하면 길어지므로
+/// 쓸 칸이 있는 페이지 번호만 괄호에 넣는다. 쓸 칸이 없으면 "써야 할 칸은 찾지 못했어요."
 String describeDocument(RecognizedDocument document) {
-  // 페이지 정보가 없는 예전 응답도 사진 한 장으로 본다
   final pageCount = document.pages.isEmpty ? 1 : document.pages.length;
-  final fillCount = findFillTargets(document).length;
-  final kind = josa(document.docTypeLabel, '이에요', '예요');
-  final fill = fillCount == 0 ? '써야 할 칸은 찾지 못했어요.' : '써야 할 칸은 $fillCount곳이에요.';
-  return '사진 $pageCount장은 $kind. 중요한 항목 ${document.fields.length}개를 찾았고, $fill';
+  final targets = findFillTargets(document);
+  final doc = pageCount > 1 ? '$pageCount페이지짜리 ${document.docTypeLabel}' : document.docTypeLabel;
+  final kind = josa(doc, '이에요', '예요');
+  final String fill;
+  if (targets.isEmpty) {
+    fill = '써야 할 칸은 찾지 못했어요.';
+  } else {
+    final pages = ({for (final t in targets) t.page + 1}.toList()..sort()).join('·');
+    fill = '써야 할 칸은 ${targets.length}곳이에요${pageCount > 1 ? '($pages페이지)' : ''}.';
+  }
+  return '$kind. 중요한 항목 ${document.fields.length}개를 찾았고, $fill';
 }

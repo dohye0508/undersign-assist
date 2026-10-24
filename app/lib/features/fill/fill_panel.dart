@@ -202,7 +202,7 @@ class _TargetRow extends StatelessWidget {
                     target.label,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: text.titleMedium?.copyWith(fontSize: 17),
+                    style: text.titleMedium?.copyWith(fontSize: 13),
                   ),
                 ),
                 if (done) ...[

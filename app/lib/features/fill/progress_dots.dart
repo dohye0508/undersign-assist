@@ -113,7 +113,7 @@ class _Dot extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 11,
+              fontSize: 9,
               height: 1.2,
               color: current ? AppColors.primary : AppColors.muted,
               fontWeight: current ? FontWeight.w700 : FontWeight.w400,

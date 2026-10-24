@@ -88,6 +88,23 @@ class WorkspaceState extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// 사용자가 딱 한 번 그린 체크 표시(✓). 동의 칸마다 이걸 그대로 넣는다.
+  /// 그린 획을 화면 좌표(0~1로 정규화)로 저장해 어떤 칸 크기에도 맞출 수 있게 한다.
+  /// 문서가 바뀌어도 내 ✓는 같으므로 [_resetAnalysis]에서 지우지 않는다
+  List<List<List<double>>>? _checkMark;
+  List<List<List<double>>>? get checkMark => _checkMark;
+
+  /// [strokes]: 획마다 [x, y, pressure] 점 목록. x, y는 0~1
+  void setCheckMark(List<List<List<double>>> strokes) {
+    _checkMark = strokes;
+    notifyListeners();
+  }
+
+  void clearCheckMark() {
+    _checkMark = null;
+    notifyListeners();
+  }
+
   // --- 1. 업로드 -------------------------------------------------------------
 
   void addPage(DocumentPhoto photo) {

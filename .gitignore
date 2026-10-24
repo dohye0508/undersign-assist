@@ -3,6 +3,7 @@
 *.key.json
 my-key.json
 credentials*.json
+backend/.certs/
 
 # Python
 __pycache__/

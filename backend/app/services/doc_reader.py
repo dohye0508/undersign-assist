@@ -60,7 +60,7 @@ def _read_with_ai(full_text: str, lines: list[TextBlock]) -> tuple[DocType, list
         f'- "{kind}" ({rule["label"]}): 항목 {json.dumps([f["label"] for f in rule["fields"]], ensure_ascii=False)}'
         for kind, rule in RULES.items()
     )
-    prompt = f"""다음은 종이 문서 사진을 OCR로 읽은 글자다. 글자 일부가 깨지거나 띄어쓰기가 틀렸을 수 있다.
+    prompt = f"""다음은 종이 문서 사진을 OCR로 읽은 글자다. 여러 페이지를 이어 붙인 **한 문서**이니 페이지마다 따로 나누지 말고 하나로 정리한다. 글자 일부가 깨지거나 띄어쓰기가 틀렸을 수 있다.
 
 1. 문서 종류를 아래에서 하나 고른다. 어느 것도 아니면 "unknown".
 {kinds}
@@ -173,11 +173,12 @@ def build_speech(doc_type: DocType, fields: list[Field], lines: list[TextBlock])
     label = label_of(doc_type)
     # 페이지 수는 줄의 page 번호(0부터)로 센다. 사진 한 장이면 1
     page_count = max(line.page for line in lines) + 1
-    # 화면의 쉬운 설명 문장과 같은 투로 시작한다: 무엇으로 보이고, 몇 장을 읽어 몇 개를 찾았는지
-    parts = [f"{label}{_euro(label)} 보여요."]
+    # 여러 장은 한 문서의 여러 페이지다. "사진 N장"이라고 하면 문서 N개처럼 들려서 "N페이지짜리 문서"로 말한다
+    doc = f"{page_count}페이지짜리 {label}" if page_count > 1 else label
+    parts = [f"{doc}{_euro(doc)} 보여요."]
     if fields:
-        parts.append(f"사진 {page_count}장, 중요한 항목 {len(fields)}개를 찾았어요.")
+        parts.append(f"중요한 항목 {len(fields)}개를 찾았어요.")
         parts += [f"{f.label}, {f.value}." for f in fields]
     else:
-        parts.append(f"사진 {page_count}장을 읽었지만 중요한 항목은 찾지 못했어요. 문서가 화면에 다 들어오게 다시 찍어 보세요.")
+        parts.append("중요한 항목은 찾지 못했어요. 문서가 화면에 다 들어오게 다시 찍어 보세요.")
     return " ".join(parts)

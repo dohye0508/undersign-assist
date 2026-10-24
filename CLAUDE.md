@@ -171,6 +171,22 @@ flutter run -d chrome
 - Windows에서 `uvicorn --reload`가 코드 변경을 반영하지 못한 적이 있다. 결과가 그대로면 서버를 껐다 켠다.
 - `pdf` 패키지가 끌어오는 `image` 4.11은 `archive` 4.0.9와 맞지 않아 웹 컴파일이 실패한다. `pubspec.yaml`의 `dependency_overrides`로 `image: 4.4.0`에 고정했다. Flutter를 올려 archive가 새 버전으로 풀리면 고정을 풀어도 된다.
 
+### 대회장 패드 모드
+
+같은 와이파이의 안드로이드 패드에서 카메라까지 되게 하려면 앱과 API를 **둘 다 HTTPS**로 띄워야 한다 (브라우저는 `localhost`가 아니면 HTTPS에서만 카메라를 연다). 한 줄로 끝낸다:
+
+```
+powershell -ExecutionPolicy Bypass -File scripts/pad-serve.ps1
+```
+
+하는 일: 노트북 LAN IP 찾기 → `scripts/make_cert.py`로 자체 서명 인증서(`backend/.certs/`, 커밋 안 됨) 만들기 → `flutter build web --dart-define=API_BASE=https://<ip>:8443` → 백엔드를 `0.0.0.0:8443` HTTPS로, 빌드 결과를 `scripts/https_static.py`로 `0.0.0.0:3443` HTTPS로 각각 새 창에서 띄우기 → 패드에서 열 주소 안내.
+
+- **위 "127.0.0.1에만 묶는다" 규칙의 유일한 예외다.** 이 스크립트는 서버를 와이파이 전체에 연다. 시연 중에만 쓰고, 끝나면 새로 뜬 두 창을 닫는다(또는 창에서 Ctrl+C).
+- 인증서 경고 통과 (자체 서명이라 반드시 나온다): 패드 크롬에서 **먼저** `https://<ip>:8443/api/health`를 열어 "고급 → 안전하지 않음으로 이동"을 누른다. API 쪽을 먼저 통과하지 않으면 앱 화면은 뜨는데 요청만 조용히 실패한다. 그다음 `https://<ip>:3443`을 열고 같은 경고를 한 번 더 통과한다. 스크립트가 끝에 정확한 주소를 출력한다.
+- 패드에서 접속이 안 되면 방화벽이다. 스크립트가 출력하는 `netsh advfirewall ... localport=3443` / `8443` 두 줄을 관리자 PowerShell에서 실행한다. 시연 후 `delete rule`로 지운다.
+- 진동(`navigator.vibrate`)은 안드로이드 크롬에서만 동작한다. iPad·데스크톱 크롬에서는 소리와 음성만 나온다.
+- IP가 바뀌면(다른 와이파이) 스크립트를 다시 실행하면 된다. `make_cert.py`는 기존 인증서의 SAN에 현재 IP가 없을 때만 새로 만든다.
+
 ## 협업 규칙
 
 - 단계 담당자는 자기 폴더(`app/lib/features/<단계>/`, `backend/app/routers/<단계>.py`)만 고친다. `models`, `services`, `widgets`, `theme`, `screens/workspace_screen.dart`, `backend/app/models.py`를 바꿀 때는 팀에 먼저 알린다.

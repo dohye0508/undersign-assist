@@ -32,6 +32,9 @@ import 'progress_dots.dart';
 /// 고르는 칸([FillKind.check], "□예 □아니요")은 쓰는 대신 큰 "예"/"아니요" 버튼 둘을 보여 준다.
 /// 고르면 그 상자 자리에 ✓를 그린 PNG를 만들어 글씨 칸과 똑같이 넣는다. PNG는 두 상자를 합친 칸과 같은 비율이고
 /// 고른 상자 자리에만 ✓가 있어, 칸 자리만 아는 [FilledInk]로도 어느 쪽을 골랐는지 그대로 문서에 남는다.
+///
+/// ✓는 기계가 그리지 않고 **사용자가 딱 한 번 그린 것**([WorkspaceState.checkMark])을 쓴다.
+/// 아직 없으면 처음 예/아니요를 고른 뒤 화면이 쓰기 칸으로 바뀌어 ✓를 한 번 그리게 하고, 그 뒤로는 저장해 둔 ✓를 그대로 넣는다.
 class FillScreen extends StatefulWidget {
   const FillScreen({super.key, required this.state, required this.targets, this.start = 0, this.intro});
 
@@ -69,6 +72,14 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
 
   /// 다음 칸 안내 앞에 한 번 붙여 말할 것 (예: "예에 표시했어요.")
   String _pending = '';
+
+  /// 고르는 칸에서 ✓를 처음 그리는 중인가. 이때는 고르는 칸도 쓰기 칸 모습이 된다
+  bool _drawingCheck = false;
+
+  /// ✓를 그리는 동안 기억해 둔 답 (그리기를 마치면 이 답의 상자에 넣는다)
+  bool? _pendingChoice;
+
+  static const _drawPrompt = '체크 표시를 한 번만 그려 주세요. 다음부터는 이 표시를 그대로 써요. 다 그리면 왼쪽으로 밀거나 다음을 누르세요.';
 
   Size _area = Size.zero;
 
@@ -203,7 +214,7 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
 
   void _undo() {
     if (_phase != _Phase.writing || _busy) return;
-    if (_target.kind == FillKind.check) {
+    if (_target.kind == FillKind.check && !_drawingCheck) {
       Speech.announce(context, '고르는 칸이에요. 예나 아니요를 다시 누르면 바뀌어요.');
       return;
     }
@@ -224,7 +235,7 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
 
   void _clear() {
     if (_phase != _Phase.writing || _busy) return;
-    if (_target.kind == FillKind.check) {
+    if (_target.kind == FillKind.check && !_drawingCheck) {
       Speech.announce(context, '고르는 칸이에요. 예나 아니요를 다시 누르면 바뀌어요.');
       return;
     }
@@ -268,6 +279,26 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
   Future<void> _next({bool bySlide = false}) async {
     if (_phase != _Phase.writing || _busy) return;
     final target = _target;
+    if (target.kind == FillKind.check && _drawingCheck) {
+      // 처음 그리는 ✓: 비었으면 다시, 있으면 저장하고 고른 상자에 넣는다
+      if (_strokes.isEmpty) {
+        const message = '아직 그리지 않았어요. 체크 표시를 그려 주세요.';
+        setState(() => _message = message);
+        Haptics.warn();
+        Speech.announce(context, message);
+        return;
+      }
+      widget.state.setCheckMark(_normalizeCheckMark(_strokes));
+      final yes = _pendingChoice ?? true;
+      setState(() {
+        _drawingCheck = false;
+        _pendingChoice = null;
+        _strokes.clear();
+      });
+      if (!bySlide) Haptics.ok();
+      await _placeCheck(yes, intro: '체크 표시를 저장했어요. ');
+      return;
+    }
     if (target.kind == FillKind.check) {
       if (_filled) {
         _advance();
@@ -296,11 +327,36 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
     await _commit(target, List.of(_strokes), _FillInk.bounds(_strokes));
   }
 
-  /// 고르는 칸: 고른 상자 자리에 ✓를 그려 넣는다.
-  /// 화면에는 두 상자를 합친 칸을 크게 놓고(가상 칸), 그 안의 고른 상자 자리에 ✓ 획을 만든 뒤
-  /// 글씨와 같은 길(PNG → 움직임 → 다음 칸)로 보낸다. PNG의 상자는 가상 칸 전체라 문서 칸에 꽉 들어가며 ✓가 제자리에 놓인다
+  /// 예/아니요를 골랐다. 저장된 ✓가 있으면 바로 넣고, 없으면 먼저 ✓를 한 번 그리게 한다
   Future<void> _choose(bool yes) async {
     if (_phase != _Phase.writing || _busy) return;
+    if (_drawingCheck) {
+      // 그리는 중에 답을 바꿨다. 그린 획은 그대로 둔다
+      setState(() => _pendingChoice = yes);
+      Speech.announce(context, '${yes ? '예' : '아니요'}로 바꿨어요. 체크 표시를 마저 그리고 왼쪽으로 밀거나 다음을 누르세요.');
+      return;
+    }
+    if (widget.state.checkMark == null) {
+      setState(() {
+        _drawingCheck = true;
+        _pendingChoice = yes;
+        _strokes.clear();
+        _beforeClear = null;
+        _message = null;
+      });
+      Haptics.ok();
+      Speech.announce(context, '${yes ? '예' : '아니요'}를 골랐어요. $_drawPrompt');
+      return;
+    }
+    Haptics.ok();
+    await _placeCheck(yes, intro: '저장해 둔 체크 표시를 넣었어요. ');
+  }
+
+  /// 고르는 칸: 고른 상자 자리에 저장해 둔 ✓를 넣는다.
+  /// 화면에는 두 상자를 합친 칸을 크게 놓고(가상 칸), 그 안의 고른 상자 자리에 ✓ 획을 놓은 뒤
+  /// 글씨와 같은 길(PNG → 움직임 → 다음 칸)로 보낸다. PNG의 상자는 가상 칸 전체라 문서 칸에 꽉 들어가며 ✓가 제자리에 놓인다.
+  /// [intro]는 다음 칸 안내 앞에 "예에 표시했어요" 뒤에 붙여 말한다
+  Future<void> _placeCheck(bool yes, {String intro = ''}) async {
     final target = _target;
     final r = target.rect;
     final span = Rect.fromLTWH(r.x.toDouble(), r.y.toDouble(), r.width.toDouble(), r.height.toDouble());
@@ -323,25 +379,55 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
     );
     final inner = boxOnScreen.deflate(boxOnScreen.shortestSide * 0.18);
     _choices[_index] = yes;
-    _pending = '${yes ? '예' : '아니요'}에 표시했어요. ';
-    Haptics.ok();
-    await _commit(target, [_checkStroke(inner)], virtual);
+    _pending = '${yes ? '예' : '아니요'}에 표시했어요. $intro';
+    final mark = widget.state.checkMark;
+    if (mark == null) return; // 그 사이 지워졌으면 넣지 않는다 (다음 고르기에서 다시 그리게 된다)
+    await _commit(target, _strokesFromCheckMark(mark, inner), virtual);
   }
 
-  /// ✓ 한 획: 왼쪽 가운데에서 아래로 내려갔다가 오른쪽 위로 길게. 필압은 조금 세게(굵기 약 3.2px)
-  static List<PenPoint> _checkStroke(Rect box) {
-    final a = Offset(box.left + box.width * 0.12, box.top + box.height * 0.55);
-    final b = Offset(box.left + box.width * 0.40, box.top + box.height * 0.85);
-    final c = Offset(box.left + box.width * 0.90, box.top + box.height * 0.15);
-    final points = <PenPoint>[];
+  /// 그린 ✓를 저장용으로 정규화한다: 획마다 [x, y, 필압] 점 목록.
+  /// 점을 감싸는 상자의 **긴 변**이 0~1이 되게 같은 배율로 줄여, 모든 값이 0~1 안에 있으면서도 가로세로 비율이 남는다
+  /// (짧은 변은 0~비율). 그래서 [_strokesFromCheckMark]가 비율을 따로 저장하지 않고도 모양을 지킬 수 있다
+  static List<List<List<double>>> _normalizeCheckMark(List<List<PenPoint>> strokes) {
+    var left = double.infinity, top = double.infinity, right = -double.infinity, bottom = -double.infinity;
+    for (final s in strokes) {
+      for (final p in s) {
+        left = math.min(left, p.position.dx);
+        top = math.min(top, p.position.dy);
+        right = math.max(right, p.position.dx);
+        bottom = math.max(bottom, p.position.dy);
+      }
+    }
+    final longest = math.max(math.max(right - left, bottom - top), 1e-6);
+    return [
+      for (final s in strokes)
+        if (s.isNotEmpty)
+          [
+            for (final p in s) [(p.position.dx - left) / longest, (p.position.dy - top) / longest, p.pressure],
+          ],
+    ];
+  }
+
+  /// 저장된 ✓([_normalizeCheckMark] 모양)를 [box] 안에 비율을 지키며 가득(contain) 놓은 획으로 되돌린다
+  static List<List<PenPoint>> _strokesFromCheckMark(List<List<List<double>>> mark, Rect box) {
+    var right = 0.0, bottom = 0.0;
+    for (final s in mark) {
+      for (final p in s) {
+        right = math.max(right, p[0]);
+        bottom = math.max(bottom, p[1]);
+      }
+    }
+    final size = Size(math.max(right, 1e-6), math.max(bottom, 1e-6));
+    final dest = Alignment.center.inscribe(applyBoxFit(BoxFit.contain, size, box.size).destination, box);
+    final scale = dest.width / size.width;
     var ms = 0;
-    for (var k = 0; k <= 8; k++) {
-      points.add(PenPoint(Offset.lerp(a, b, k / 8)!, ms += 20, 0.9));
-    }
-    for (var k = 1; k <= 14; k++) {
-      points.add(PenPoint(Offset.lerp(b, c, k / 14)!, ms += 20, 0.9));
-    }
-    return points;
+    return [
+      for (final s in mark)
+        [
+          for (final p in s)
+            PenPoint(Offset(dest.left + p[0] * scale, dest.top + p[1] * scale), ms += 20, p.length > 2 ? p[2] : 0.5),
+        ],
+    ];
   }
 
   /// [strokes]를 [bounds] 상자의 PNG로 만들어 저장하고, 문서 사진의 칸 자리로 움직인 뒤 다음 칸으로
@@ -421,6 +507,8 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
       _busy = false;
       _message = null;
       _beforeClear = null;
+      _drawingCheck = false;
+      _pendingChoice = null;
       _strokes
         ..clear()
         ..addAll(_drafts[index] ?? const []);
@@ -499,7 +587,7 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
                           Expanded(
                             child: Semantics(
                               header: true,
-                              child: Text(title, style: text.titleLarge?.copyWith(fontSize: 30), maxLines: 2),
+                              child: Text(title, style: text.titleLarge?.copyWith(fontSize: 22), maxLines: 2),
                             ),
                           ),
                           IconButton(
@@ -507,7 +595,11 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
                             icon: const Icon(Icons.volume_up_outlined),
                             onPressed: TapFeedback.wrap(() => Speech.announce(
                                   context,
-                                  done ? '모두 채웠어요. PDF로 받을 수 있어요.' : _intro(first: true),
+                                  done
+                                      ? '모두 채웠어요. PDF로 받을 수 있어요.'
+                                      : _drawingCheck
+                                          ? _drawPrompt
+                                          : _intro(first: true),
                                 )),
                           ),
                         ],
@@ -523,7 +615,7 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
                       Expanded(
                         child: done
                             ? _donePages()
-                            : _target.kind == FillKind.check
+                            : _target.kind == FillKind.check && !_drawingCheck
                                 ? _checkArea(text)
                                 : _writingArea(text),
                       ),
@@ -556,8 +648,11 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
       builder: (context, constraints) {
         _area = constraints.biggest;
         final target = _target;
+        final drawing = _drawingCheck;
         return Semantics(
-          label: '${target.label} 쓰는 칸. 화면 가득 쓰세요. 다 쓰면 다음을 누르세요. 지금까지 ${_strokes.length}획.',
+          label: drawing
+              ? '체크 표시 그리는 칸. 한 번만 그리면 다음부터 그대로 써요. 다 그리면 다음을 누르세요. 지금까지 ${_strokes.length}획.'
+              : '${target.label} 쓰는 칸. 화면 가득 쓰세요. 다 쓰면 다음을 누르세요. 지금까지 ${_strokes.length}획.',
           child: Listener(
             behavior: HitTestBehavior.opaque,
             onPointerDown: _down,
@@ -580,14 +675,18 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
                       child: Padding(
                         padding: const EdgeInsets.all(24),
                         child: Text(
-                          _filled ? '${target.label}\n이미 채웠어요' : '여기에 ${target.label}',
+                          drawing
+                              ? '여기에 체크 표시 ✓\n한 번만 그려요'
+                              : _filled
+                                  ? '${target.label}\n이미 채웠어요'
+                                  : '여기에 ${target.label}',
                           textAlign: TextAlign.center,
-                          style: text.headlineMedium?.copyWith(color: AppColors.line, fontSize: 40),
+                          style: text.headlineMedium?.copyWith(color: AppColors.line, fontSize: 30),
                         ),
                       ),
                     ),
                   if (_phase == _Phase.placing) _placing(),
-                  CustomPaint(painter: _InkPainter(_strokes, baseline: !target.isSignature)),
+                  CustomPaint(painter: _InkPainter(_strokes, baseline: !target.isSignature && !drawing)),
                 ],
               ),
             ),
@@ -625,7 +724,7 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(8, 4, 8, 10),
-                child: Text(question, textAlign: TextAlign.center, style: text.titleLarge?.copyWith(fontSize: 26)),
+                child: Text(question, textAlign: TextAlign.center, style: text.titleLarge?.copyWith(fontSize: 20)),
               ),
               Expanded(
                 child: _ChoiceButton(
@@ -646,11 +745,24 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
                   onPressed: enabled ? () => _choose(false) : null,
                 ),
               ),
+              // 저장해 둔 ✓가 있을 때만: 지우면 다음에 예/아니요를 고를 때 다시 그린다
+              if (widget.state.checkMark != null)
+                TextButton.icon(
+                  onPressed: TapFeedback.wrap(enabled ? _resetCheckMark : null),
+                  icon: const Icon(Icons.draw_outlined, size: 18),
+                  label: const Text('체크 표시 다시 그리기', style: TextStyle(fontSize: 13)),
+                ),
             ],
           ),
         );
       },
     );
+  }
+
+  void _resetCheckMark() {
+    widget.state.clearCheckMark();
+    setState(() {});
+    Speech.announce(context, '저장한 체크 표시를 지웠어요. 다음에 예나 아니요를 고르면 다시 그릴 수 있어요.');
   }
 
   /// 쓴 글씨가 문서 사진의 칸 자리로 줄어들며 들어간다
@@ -977,12 +1089,12 @@ class _ChoiceButton extends StatelessWidget {
     final child = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(icon, size: 44),
+        Icon(icon, size: 33),
         const SizedBox(width: 16),
-        Text(label, style: const TextStyle(fontSize: 48, fontWeight: FontWeight.w700)),
+        Text(label, style: const TextStyle(fontSize: 36, fontWeight: FontWeight.w700)),
         if (selected) ...[
           const SizedBox(width: 12),
-          const Text('(고름)', style: TextStyle(fontSize: 22)),
+          const Text('(고름)', style: TextStyle(fontSize: 16)),
         ],
       ],
     );
@@ -1034,7 +1146,7 @@ class _ToolButton extends StatelessWidget {
         fit: BoxFit.scaleDown,
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [Icon(icon, size: 28), Text(label, style: const TextStyle(fontSize: 17))],
+          children: [Icon(icon, size: 21), Text(label, style: const TextStyle(fontSize: 13))],
         ),
       ),
     );
