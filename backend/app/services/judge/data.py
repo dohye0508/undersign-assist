@@ -73,8 +73,16 @@ def rules_for(subtype: str) -> list[dict]:
 def questions_for(rules: list[dict]) -> list[dict]:
     """고른 규칙 중 applies_if로 답이 필요한 질문만."""
     need = {q for r in rules for q in (r.get("applies_if") or {})}
+    titles = {r["id"]: r.get("title", "") for r in _check_rules_raw().get("rules", [])}
     return [
-        {"id": q["id"], "text": q["text"], "affects": q.get("affects", []), "options": q.get("options", {})}
+        {
+            "id": q["id"],
+            "text": q["text"],
+            "affects": q.get("affects", []),
+            # 화면이 "답에 따라 무엇을 다시 보는지" 말할 수 있게 검사 이름도 함께 준다
+            "affects_titles": [titles[a] for a in q.get("affects", []) if titles.get(a)],
+            "options": q.get("options", {}),
+        }
         for q in _check_rules_raw().get("questions", [])
         if q["id"] in need
     ]

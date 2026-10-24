@@ -26,6 +26,9 @@ class AppColors {
   /// 주 버튼 바탕
   static const primary = Color(0xFFCFE5FB);
 
+  /// 조금 더 진한 주 버튼 (쓰고 서명하기의 "다음"). 남색 글씨와 대비 7:1
+  static const primaryStrong = Color(0xFF9BD0F7);
+
   /// 주 버튼 위 글씨·아이콘
   static const onPrimary = Color(0xFF0B3B66);
 
@@ -42,10 +45,11 @@ class AppColors {
   // 판단 결과의 의미 색. 강조색과 따로 쓴다
   static const ok = Color(0xFF1B7F3B);
   static const okSoft = Color(0xFFE9F7EE);
-  static const missing = Color(0xFFB42318);
-  static const missingSoft = Color(0xFFFEECEB);
-  static const caution = Color(0xFFC2410C);
-  static const cautionSoft = Color(0xFFFFF1E6);
+  // 검토 결과 칸: 확인 필요 = 아주 옅은 빨강, 빠짐 = 아주 옅은 노랑 (칸 전체를 칠하고 글자는 진하게)
+  static const missing = Color(0xFF9A5B00);
+  static const missingSoft = Color(0xFFFFF8E6);
+  static const caution = Color(0xFFC0362C);
+  static const cautionSoft = Color(0xFFFFF3F2);
 
   /// 카메라 바탕
   static const camera = Color(0xFF101318);

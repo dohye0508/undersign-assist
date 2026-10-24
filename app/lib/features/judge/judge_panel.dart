@@ -7,12 +7,15 @@ import '../../theme/app_theme.dart';
 import '../read/read_panel.dart' show ListenButton;
 import '../../widgets/tap_feedback.dart';
 
-/// 판단("검토하세요!"). 화면은 위에서 아래로 딱 네 덩어리다.
-///   1. 검토 결과 듣기 버튼
-///   2. 한 줄 결론 (+ 물어볼 것이 있으면 질문과 답 버튼, 답한 뒤에는 "무엇이 달라졌는지" 한 줄)
-///   3. 번호 붙은 결과 목록 (제목 · 설명 · 근거 듣기)
-///   4. 마지막 안내 한 줄
-/// 글자 크기 셋(titleMedium, bodyLarge, bodyMedium), 색 셋(글자색, 흐린색, 상태색 하나)만 쓴다.
+/// 판단("검토하세요!").
+///
+/// 물어볼 것이 있으면 **결과보다 질문을 먼저** 한 화면에 크게 묻는다 (사용자 선택 Q2).
+/// 무엇을 왜 묻는지("직원 수에 따라 근로시간 한도 초과, 연장·야간·휴일 가산수당 배제 검사가 달라져요")를 함께 말하고,
+/// 답하거나 "모름"을 고르면 그때 결과가 나온다. 순서가 하나라 화면을 보지 않아도 헷갈리지 않는다.
+///
+/// 결과 화면: 검토 결과 듣기 → 한 줄 결론 → 답한 내용 한 줄(답 바꾸기) → 결과 목록 → 안내 한 줄.
+/// 결과 목록은 칸마다 화면 끝까지 닿는 아주 옅은 색 띠(확인 필요 = 빨강, 빠짐 = 노랑, 알아두기 = 색 없음),
+/// 상태는 제목 오른쪽 글자로 (사용자 선택 R1). 칸 사이는 흰 틈으로 나눈다.
 /// 판정은 백엔드 규칙 엔진(backend/app/services/judge)이 한다. 이 화면은 결과를 보여주고 읽어주기만 한다.
 class JudgePanel extends StatefulWidget {
   const JudgePanel({super.key, required this.state});
@@ -31,13 +34,13 @@ class _JudgePanelState extends State<JudgePanel> {
   Question? _answered;
   String _answeredLabel = '';
 
-  /// 답한 줄을 눌러 답을 다시 고르는 중인지
+  /// "답 바꾸기"를 눌러 질문 화면을 다시 보는 중인지
   bool _editing = false;
 
   @override
   void initState() {
     super.initState();
-    // 창이 열리면 바로 판단하고, 물어볼 것이 있으면 질문부터, 그 다음 요약을 들려준다
+    // 창이 열리면 바로 판단한다. 물어볼 것이 있으면 질문만 읽고, 결과는 답한 뒤에 읽는다
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final judgement = await widget.state.judge();
       if (!mounted) return;
@@ -46,10 +49,7 @@ class _JudgePanelState extends State<JudgePanel> {
         return;
       }
       final pending = _unanswered(judgement);
-      Speech.announce(
-        context,
-        pending == null ? judgement.speech : '${pending.text} 답에 따라 결과가 달라져요. 요약: ${judgement.speech}',
-      );
+      Speech.announce(context, pending == null ? judgement.speech : _questionSpeech(pending));
     });
   }
 
@@ -64,11 +64,30 @@ class _JudgePanelState extends State<JudgePanel> {
   static int _caution(Judgement? j) => j?.counts['caution'] ?? 0;
   static int _missing(Judgement? j) => j?.counts['missing'] ?? 0;
 
-  /// 2번 덩어리의 한 줄 결론
+  /// 한 줄 결론 (음성용)
   static String _conclusion(Judgement j) {
     final c = _caution(j), m = _missing(j);
     return c + m == 0 ? '특별히 확인할 것이 없어요.' : '확인할 곳 $c개, 빠진 것 $m개예요.';
   }
+
+  /// "일하는 곳의 직원이 5명 이상인가요? 이에 따라 …"에서 물음 부분만
+  static String _ask(Question q) {
+    final i = q.text.indexOf('?');
+    return i < 0 ? q.text : q.text.substring(0, i + 1);
+  }
+
+  /// 왜 묻는지: 답에 따라 달라지는 검사 이름. 이름이 없으면 질문 뒤 설명 문장
+  static String _why(Question q) {
+    if (q.affectsTitles.isNotEmpty) {
+      return '답에 따라 ${q.affectsTitles.join(', ')} 검사가 달라져요. 모르면 모름을 골라도 돼요.';
+    }
+    final i = q.text.indexOf('?');
+    final rest = i < 0 ? '' : q.text.substring(i + 1).trim();
+    return rest.isEmpty ? '답에 따라 검토 결과가 달라져요.' : rest;
+  }
+
+  static String _questionSpeech(Question q) =>
+      '검토 전에 한 가지 물어볼게요. ${_ask(q)} ${_why(q)} ${q.options.values.join(', ')} 중에서 고르세요.';
 
   @override
   Widget build(BuildContext context) {
@@ -93,70 +112,30 @@ class _JudgePanelState extends State<JudgePanel> {
       );
     }
 
-    final pending = _unanswered(judgement);
-    // 답하지 않은 질문이 먼저. 다 답했고 답한 줄을 눌렀으면 그 질문을 다시 보여준다
-    final question = pending ?? (_editing ? _answered : null);
+    // 답하지 않은 질문이 먼저. "답 바꾸기"를 눌렀으면 그 질문을 다시 보여준다
+    final question = _unanswered(judgement) ?? (_editing ? _answered : null);
+    if (question != null) return _questionFirst(question);
+
     final findings = _ordered(judgement.findings);
     final disclaimer = judgement.disclaimer.trim();
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // 1. 듣기 버튼
         ListenButton(
           label: '검토 결과 듣기',
           icon: Icons.volume_up_rounded,
           onPressed: () => Speech.announce(context, judgement.speech),
         ),
-
-        // 2. 한 줄 결론 (+ 질문 또는 답한 줄)
         Padding(
           padding: const EdgeInsets.fromLTRB(2, 18, 2, 0),
           child: Text.rich(_conclusionSpan(judgement), style: _verdictStyle),
         ),
-        if (question != null)
-          Container(
-            margin: const EdgeInsets.only(top: 16),
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(color: AppColors.grey50, borderRadius: BorderRadius.circular(AppRadius.card)),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(question.text, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, height: 1.5)),
-                const SizedBox(height: 2),
-                Text('답하면 결과가 바로 바뀌어요', style: text.bodySmall),
-                const SizedBox(height: 12),
-                _optionGrid(question),
-              ],
-            ),
-          )
-        else if (_answered != null)
-          Padding(
-            padding: const EdgeInsets.only(top: 16),
-            child: Material(
-              color: AppColors.grey50,
-              borderRadius: BorderRadius.circular(AppRadius.card),
-              child: InkWell(
-                onTap: TapFeedback.wrap(() => setState(() => _editing = true)),
-                borderRadius: BorderRadius.circular(AppRadius.card),
-                child: Semantics(
-                  button: true,
-                  hint: '누르면 답을 다시 고를 수 있어요',
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Text(_answeredLine(judgement), style: text.bodyMedium),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        const SizedBox(height: 8),
-
-        // 3. 번호 붙은 결과 목록
-        for (var i = 0; i < findings.length; i++)
-          _findingRow(context, i + 1, findings[i], last: i == findings.length - 1),
-
-        // 4. 마지막 안내
+        if (_answered case final answered?) _answeredRow(answered),
+        const SizedBox(height: 16),
+        for (var i = 0; i < findings.length; i++) ...[
+          if (i > 0) const SizedBox(height: 4), // 칸 사이 흰 틈
+          _FullBleed(child: _findingRow(context, i + 1, findings[i])),
+        ],
         if (disclaimer.isNotEmpty) ...[
           const SizedBox(height: 18),
           Text(disclaimer, style: text.bodySmall),
@@ -165,100 +144,130 @@ class _JudgePanelState extends State<JudgePanel> {
     );
   }
 
+  // --- 질문 먼저 (Q2) ---------------------------------------------------------
+
+  Widget _questionFirst(Question question) {
+    final chosen = widget.state.answers[question.id];
+    final options = question.options.entries.toList();
+    // "모름"은 맨 아래 약한 버튼으로. 나머지는 위에서부터 큰 버튼
+    final unknown = options.where((e) => e.key == 'unknown').toList();
+    final main = options.where((e) => e.key != 'unknown').toList();
+    return Padding(
+      padding: const EdgeInsets.only(top: 18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const Text(
+            '검토 전에 한 가지',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: AppColors.accent),
+          ),
+          const SizedBox(height: 6),
+          Semantics(
+            header: true,
+            child: Text(
+              _ask(question),
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: AppColors.text, height: 1.45),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            _why(question),
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: AppColors.textStrong, height: 1.6),
+          ),
+          const SizedBox(height: 18),
+          for (final o in main) ...[
+            _optionButton(question, o.key, o.value, selected: chosen == o.key),
+            const SizedBox(height: 10),
+          ],
+          for (final o in unknown)
+            _optionButton(question, o.key, '${o.value} (건너뛰기)', selected: chosen == o.key, weak: true),
+        ],
+      ),
+    );
+  }
+
+  Widget _optionButton(Question question, String code, String label, {required bool selected, bool weak = false}) {
+    return Semantics(
+      selected: selected,
+      child: FilledButton(
+        onPressed: TapFeedback.wrap(() => _answer(question, code)),
+        style: FilledButton.styleFrom(
+          minimumSize: const Size.fromHeight(68),
+          backgroundColor: weak ? AppColors.grey100 : AppColors.primary,
+          foregroundColor: weak ? AppColors.textStrong : AppColors.onPrimary,
+          side: selected ? const BorderSide(color: AppColors.accent, width: 3) : null,
+          textStyle: const TextStyle(fontFamily: AppFonts.body, fontSize: 19, fontWeight: FontWeight.w700),
+        ),
+        child: Text(label),
+      ),
+    );
+  }
+
+  /// 결과 위 한 줄: "'5명 이상'으로 답하고 검토했어요.  답 바꾸기"
+  Widget _answeredRow(Question question) {
+    return Container(
+      margin: const EdgeInsets.only(top: 16),
+      padding: const EdgeInsets.fromLTRB(16, 6, 6, 6),
+      decoration: BoxDecoration(color: AppColors.grey50, borderRadius: BorderRadius.circular(AppRadius.card)),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              "'$_answeredLabel'${_ro(_answeredLabel)} 답하고 검토했어요.",
+              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.text, height: 1.5),
+            ),
+          ),
+          TextButton(
+            onPressed: TapFeedback.wrap(() {
+              setState(() => _editing = true);
+              Speech.announce(context, _questionSpeech(question));
+            }),
+            child: const Text('답 바꾸기'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // --- 결과 (R1) --------------------------------------------------------------
+
   static const _verdictStyle = TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: AppColors.text, height: 1.4);
 
-  /// "확인할 곳 1개,\n빠진 것 2개예요." 앞부분은 상태 색
+  /// "확인할 곳 1개,\n빠진 것 2개예요." 각 부분은 그 상태 색
   static TextSpan _conclusionSpan(Judgement j) {
     final c = _caution(j), m = _missing(j);
     if (c + m == 0) return const TextSpan(text: '특별히 확인할 것이 없어요.');
+    const red = TextStyle(color: AppColors.caution);
+    const yellow = TextStyle(color: AppColors.missing);
     if (c == 0) {
-      return TextSpan(children: [
-        TextSpan(text: '빠진 것 $m개', style: const TextStyle(color: AppColors.missing)),
-        const TextSpan(text: '가 있어요.'),
-      ]);
+      return TextSpan(children: [TextSpan(text: '빠진 것 $m개', style: yellow), const TextSpan(text: '가 있어요.')]);
     }
     return TextSpan(children: [
-      TextSpan(text: '확인할 곳 $c개', style: const TextStyle(color: AppColors.caution)),
-      TextSpan(text: m == 0 ? '가 있어요.' : ',\n빠진 것 $m개예요.'),
+      TextSpan(text: '확인할 곳 $c개', style: red),
+      if (m == 0) const TextSpan(text: '가 있어요.') else ...[
+        const TextSpan(text: ',\n'),
+        TextSpan(text: '빠진 것 $m개', style: yellow),
+        const TextSpan(text: '예요.'),
+      ],
     ]);
   }
 
-  /// 답 버튼을 두 개씩 한 줄에
-  Widget _optionGrid(Question question) {
-    final options = question.options.entries.toList();
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        for (var i = 0; i < options.length; i += 2) ...[
-          if (i > 0) const SizedBox(height: 8),
-          Row(
-            children: [
-              Expanded(child: _optionButton(question, options[i].key, options[i].value)),
-              const SizedBox(width: 8),
-              Expanded(
-                child: i + 1 < options.length
-                    ? _optionButton(question, options[i + 1].key, options[i + 1].value)
-                    : const SizedBox.shrink(),
-              ),
-            ],
-          ),
-        ],
-      ],
-    );
-  }
-
-  /// 질문의 답 버튼 하나. 이미 고른 답은 꽉 찬 색, 나머지는 흰 바탕에 옅은 테두리
-  Widget _optionButton(Question question, String code, String label) {
-    final selected = widget.state.answers[question.id] == code;
-    final onPressed = TapFeedback.wrap(() => _answer(question, code));
-    const textStyle = TextStyle(fontFamily: AppFonts.body, fontSize: 18, fontWeight: FontWeight.w700);
-    final shape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.button));
-    final child = FittedBox(fit: BoxFit.scaleDown, child: Text(label, textAlign: TextAlign.center));
-    return Semantics(
-      selected: selected,
-      child: selected
-          ? FilledButton(
-              onPressed: onPressed,
-              style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(64), shape: shape, textStyle: textStyle),
-              child: child,
-            )
-          : OutlinedButton(
-              onPressed: onPressed,
-              style: OutlinedButton.styleFrom(
-                minimumSize: const Size.fromHeight(64),
-                shape: shape,
-                textStyle: textStyle,
-                backgroundColor: AppColors.surface,
-                foregroundColor: AppColors.text,
-                side: const BorderSide(color: AppColors.grey200, width: 1.5),
-              ),
-              child: child,
-            ),
-    );
-  }
-
-  /// "{답}으로 답했어요 → 확인할 곳 1개 → 0개, 빠진 것 2→2."
-  String _answeredLine(Judgement after) {
-    final label = _answeredLabel;
-    return '$label${_ro(label)} 답했어요 → 확인할 곳 ${_caution(_before)}개 → ${_caution(after)}개, '
-        '빠진 것 ${_missing(_before)}→${_missing(after)}.';
-  }
-
-  /// 결과 한 항목: 번호와 제목 / 상태 꼬리표 / 설명 / 근거 듣기
-  Widget _findingRow(BuildContext context, int n, Finding finding, {required bool last}) {
+  /// 결과 한 칸: 번호 · 제목 · 상태(오른쪽 글자) / 설명 / 근거 / 근거 듣기. 칸 전체를 상태 색으로 아주 옅게 칠한다
+  Widget _findingRow(BuildContext context, int n, Finding finding) {
     final (statusWord, fg, bg) = switch (finding.level) {
       'caution' => ('확인 필요', AppColors.caution, AppColors.cautionSoft),
       'missing' => ('빠짐', AppColors.missing, AppColors.missingSoft),
-      _ => ('알아두기', AppColors.muted, AppColors.grey100),
+      _ => ('알아두기', AppColors.muted, AppColors.surface),
     };
     final prefix = switch (_changeOf(finding)) { _Change.added => '새로: ', _Change.changed => '바뀜: ', null => '' };
     final sentence = finding.speech.isNotEmpty ? finding.speech : finding.reason;
     const indent = 26.0;
     return Container(
-      padding: const EdgeInsets.fromLTRB(2, 16, 2, 6),
-      decoration: BoxDecoration(
-        border: last ? null : const Border(bottom: BorderSide(color: AppColors.grey100)),
-      ),
+      color: bg,
+      padding: const EdgeInsets.fromLTRB(SectionBleed.size + 2, 16, SectionBleed.size + 2, 6),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -282,15 +291,12 @@ class _JudgePanelState extends State<JudgePanel> {
                         style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700, color: AppColors.text, height: 1.4),
                       ),
                     ),
+                    const SizedBox(width: 10),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 2),
+                      child: Text(statusWord, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: fg)),
+                    ),
                   ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: indent, top: 6),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                    decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(6)),
-                    child: Text(statusWord, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: fg)),
-                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: indent, top: 6),
@@ -337,12 +343,12 @@ class _JudgePanelState extends State<JudgePanel> {
   Future<void> _answer(Question question, String code) async {
     final label = question.options[code] ?? code;
     // 답을 바꾸려다 같은 답을 다시 고르면 다시 판단하지 않고 그대로 닫는다
-    if (widget.state.answers[question.id] == code) {
+    if (widget.state.answers[question.id] == code && _answered != null) {
       setState(() => _editing = false);
-      Speech.announce(context, '$label${_ro(label)} 그대로 두었어요.');
+      Speech.announce(context, '$label${_ro(label)} 그대로 두었어요. ${_conclusion(widget.state.judgement!)}');
       return;
     }
-    Speech.announce(context, '$label${_ro(label)} 답했어요. 다시 검토할게요.');
+    Speech.announce(context, '$label${_ro(label)} 답했어요. 검토할게요.');
     final before = widget.state.judgement;
     final judgement = await widget.state.answer(question.id, code);
     if (!mounted) return;
@@ -382,6 +388,30 @@ class _JudgePanelState extends State<JudgePanel> {
         final byLevel = (level[a.level] ?? 9).compareTo(level[b.level] ?? 9);
         return byLevel != 0 ? byLevel : (severity[a.severity] ?? 9).compareTo(severity[b.severity] ?? 9);
       });
+  }
+}
+
+/// 분석 화면 본문의 좌우 여백. 결과 칸 색 띠는 이만큼 바깥으로 늘려 화면 끝까지 닿게 한다
+class SectionBleed {
+  static const size = 16.0;
+}
+
+/// 자식을 좌우로 [SectionBleed.size]씩 넓혀 화면 끝까지 닿게 그린다 (높이는 자식 그대로)
+class _FullBleed extends StatelessWidget {
+  const _FullBleed({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    // 가로만 제약을 풀고 가운데 정렬해 좌우로 같은 만큼 넘친다. 넘친 띠 가장자리에는 버튼이 없어 눌림 영역 문제는 없다
+    return LayoutBuilder(
+      builder: (context, c) => UnconstrainedBox(
+        constrainedAxis: Axis.vertical,
+        clipBehavior: Clip.none,
+        child: SizedBox(width: c.maxWidth + SectionBleed.size * 2, child: child),
+      ),
+    );
   }
 }
 

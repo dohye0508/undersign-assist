@@ -49,6 +49,7 @@ class Question(BaseModel):
     id: str
     text: str
     affects: list[str] = []
+    affects_titles: list[str] = []  # affects 규칙의 이름 (예: "근로시간 한도 초과")
     options: dict[str, str] = {}  # yes/no/unknown -> 화면에 보일 말
 
 

@@ -36,9 +36,12 @@ class Judgement {
 
 /// 판단에 필요한데 문서에 없는 것을 사용자에게 묻는 질문
 class Question {
-  const Question({required this.id, required this.text, this.options = const {}});
+  const Question({required this.id, required this.text, this.options = const {}, this.affectsTitles = const []});
 
   final String id, text;
+
+  /// 답에 따라 달라지는 검사 이름 (예: "근로시간 한도 초과"). 화면이 왜 묻는지 설명할 때 쓴다
+  final List<String> affectsTitles;
 
   /// 답 코드 → 읽어줄 말 (예: {"under5": "5명 미만"})
   final Map<String, String> options;
@@ -47,6 +50,7 @@ class Question {
         id: json['id'] as String,
         text: json['text'] as String? ?? '',
         options: {for (final e in (json['options'] as Map? ?? const {}).entries) e.key as String: e.value as String},
+        affectsTitles: [for (final t in json['affects_titles'] as List? ?? const []) t as String],
       );
 }
 

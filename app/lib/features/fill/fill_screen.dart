@@ -918,7 +918,11 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
           Expanded(
             flex: isCheck ? 5 : 3,
             child: FilledButton(
-              style: FilledButton.styleFrom(minimumSize: const Size(0, 68), textStyle: _buttonText),
+              style: FilledButton.styleFrom(
+                minimumSize: const Size(0, 68),
+                textStyle: _buttonText,
+                backgroundColor: AppColors.primaryStrong,
+              ),
               onPressed: TapFeedback.wrap(enabled ? _next : null),
               child: const Text('다음'),
             ),
