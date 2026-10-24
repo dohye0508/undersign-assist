@@ -14,11 +14,12 @@ import '../theme/app_theme.dart';
 import '../widgets/document_stage.dart';
 import '../widgets/soft_blob_background.dart';
 
-/// 앱의 유일한 화면.
-/// 왼쪽(좁은 화면에서는 위): 켜자마자 나오는 카메라, 사진을 받으면 그 사진.
-/// 오른쪽(좁은 화면에서는 아래): 찍기와 사진 불러오기, 그 아래 네 단계와 선택한 단계의 내용.
+/// 앱의 유일한 화면. 켜자마자 카메라가 화면 대부분을 차지하고, 아래에는 아주 적은 버튼만 있다.
+///   - 할 일 줄: 문서 읽기 / 빠진 것 확인 / 쓴 글씨 확인 / 서명 위치
+///   - 맨 아래: 사진 불러오기, 큰 촬영 버튼, 다시 듣기
+/// 찍으면 고른 할 일에 맞는 결과 창이 카메라 위로 올라온다. 닫으면 다시 카메라.
 ///
-/// 키보드: C 찍기, O 사진 불러오기, 1~4 단계 선택, Esc 다시 찍기
+/// 키보드: Space 또는 C 촬영, O 사진 불러오기, 1~4 할 일, R 다시 듣기, Esc 결과 닫기
 class WorkspaceScreen extends StatefulWidget {
   const WorkspaceScreen({super.key});
 
@@ -30,15 +31,17 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
   final _state = WorkspaceState();
   final _camera = CameraService();
 
+  /// 결과 창에 보일 할 일. null이면 결과 창이 닫혀 있다
+  WorkStep? _resultFor;
+  String? _writeResult;
+  bool _busy = false;
+
   @override
   void initState() {
     super.initState();
     _camera.start().then((_) {
       if (!mounted) return;
-      Speech.announce(
-        context,
-        _camera.error ?? '카메라를 켰어요. 문서를 카메라 앞에 놓고 찍기를 누르세요. 키보드 C를 눌러도 찍혀요.',
-      );
+      Speech.announce(context, _camera.error ?? '카메라가 켜졌어요. 문서를 카메라 앞에 놓고 아래 가운데 버튼을 누르세요.');
     });
   }
 
@@ -50,48 +53,76 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
   }
 
   Future<void> _capture() async {
+    if (_busy) return;
     final photo = await _camera.snapshot();
     if (photo == null) {
-      if (mounted) Speech.announce(context, '카메라가 준비되지 않았어요. 사진 불러오기를 써 주세요.');
+      if (mounted) Speech.announce(context, '카메라가 준비되지 않았어요. 왼쪽 아래 사진 불러오기를 써 주세요.');
       return;
     }
-    await _usePhoto(photo);
+    await _handle(photo);
   }
 
   Future<void> _pickFromFolder() async {
+    if (_busy) return;
     final file = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (file == null) return;
-    await _usePhoto(DocumentPhoto(bytes: await file.readAsBytes(), name: file.name));
+    await _handle(DocumentPhoto(bytes: await file.readAsBytes(), name: file.name));
   }
 
-  Future<void> _usePhoto(DocumentPhoto photo) async {
-    Speech.announce(context, '사진을 받았어요. 문서를 읽고 있어요.');
-    final document = await _state.setPhoto(photo);
+  /// 고른 할 일에 따라 사진을 처리하고 결과 창을 연다
+  Future<void> _handle(DocumentPhoto photo) async {
+    final step = _state.step;
+    setState(() {
+      _busy = true;
+      _resultFor = step;
+    });
+
+    String speech;
+    if (step == WorkStep.write) {
+      Speech.announce(context, '${WriteMode.field.value} 칸을 확인하고 있어요.');
+      speech = await WriteMode.check(photo);
+      _writeResult = speech;
+    } else {
+      Speech.announce(context, '문서를 읽고 있어요.');
+      final document = await _state.setPhoto(photo);
+      speech = switch (step) {
+        WorkStep.read => document?.speech ?? _state.readError ?? '',
+        // 판단, 서명은 아직 화면만 있다
+        _ => '${document?.docTypeLabel ?? '문서'}를 읽었어요. ${step.label} 기능은 준비 중이에요.',
+      };
+    }
+
     if (!mounted) return;
-    Speech.announce(context, document?.speech ?? _state.readError ?? '');
+    setState(() => _busy = false);
+    Speech.announce(context, speech);
   }
 
-  void _retake() {
+  void _closeResult() {
+    if (_resultFor == null) return;
+    setState(() => _resultFor = null);
     _state.clearPhoto();
-    Speech.announce(context, '사진을 지웠어요. 다시 찍을 수 있어요.');
+    Speech.announce(context, '카메라로 돌아왔어요.');
   }
 
   void _selectStep(WorkStep step) {
-    if (!_state.hasPhoto) {
-      Speech.announce(context, '먼저 문서를 찍거나 불러와 주세요.');
-      return;
-    }
     _state.selectStep(step);
-    Speech.announce(context, '${step.label}. ${step.summary}');
+    Speech.announce(context, '${step.label}. ${step.guide}');
+  }
+
+  void _repeat() {
+    final last = Speech.lastMessage.value;
+    if (last.isNotEmpty) Speech.announce(context, last);
   }
 
   @override
   Widget build(BuildContext context) {
     return CallbackShortcuts(
       bindings: {
+        const SingleActivator(LogicalKeyboardKey.space): _capture,
         const SingleActivator(LogicalKeyboardKey.keyC): _capture,
         const SingleActivator(LogicalKeyboardKey.keyO): _pickFromFolder,
-        const SingleActivator(LogicalKeyboardKey.escape): _retake,
+        const SingleActivator(LogicalKeyboardKey.keyR): _repeat,
+        const SingleActivator(LogicalKeyboardKey.escape): _closeResult,
         for (final (i, step) in WorkStep.values.indexed)
           SingleActivator(LogicalKeyboardKey(LogicalKeyboardKey.digit1.keyId + i)): () => _selectStep(step),
       },
@@ -102,19 +133,47 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
             children: [
               const Positioned.fill(child: SoftBlobBackground()),
               SafeArea(
-                // 노트북에서도 휴대폰 화면처럼 가운데 한 줄로 쌓는다
+                // 노트북에서도 휴대폰 화면처럼 가운데에 세로로 둔다
                 child: Center(
                   child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 520),
+                    constraints: const BoxConstraints(maxWidth: 480),
                     child: ListenableBuilder(
                       listenable: Listenable.merge([_state, _camera]),
-                      builder: (context, _) => _PhoneColumn(
-                        state: _state,
-                        camera: _camera,
-                        onCapture: _capture,
-                        onPick: _pickFromFolder,
-                        onRetake: _retake,
-                        onSelectStep: _selectStep,
+                      builder: (context, _) => Column(
+                        children: [
+                          const _TopBar(),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              child: Stack(
+                                fit: StackFit.expand,
+                                children: [
+                                  DocumentStage(state: _state, camera: _camera),
+                                  if (_resultFor != null)
+                                    Positioned(
+                                      left: 0,
+                                      right: 0,
+                                      bottom: 0,
+                                      child: _ResultSheet(onClose: _closeResult, child: _resultView()),
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          if (_state.step == WorkStep.write && _resultFor == null) ...[
+                            const SizedBox(height: 10),
+                            WriteFieldPicker(document: _state.recognized),
+                          ],
+                          const SizedBox(height: 10),
+                          _ModeBar(selected: _state.step, onSelect: _selectStep),
+                          _BottomBar(
+                            busy: _busy,
+                            canCapture: _camera.ready,
+                            onPick: _pickFromFolder,
+                            onCapture: _capture,
+                            onRepeat: _repeat,
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -126,146 +185,222 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
       ),
     );
   }
+
+  Widget _resultView() => switch (_resultFor!) {
+        WorkStep.read => ReadPanel(state: _state),
+        WorkStep.judge => JudgePanel(state: _state),
+        WorkStep.write => _busy
+            ? const Center(child: Padding(padding: EdgeInsets.all(24), child: CircularProgressIndicator()))
+            : WriteResultView(message: _writeResult ?? ''),
+        WorkStep.sign => SignPanel(state: _state),
+      };
 }
 
-/// 위에서부터: 앱 이름, 카메라(또는 사진), 찍기·불러오기, 네 단계, 고른 단계의 내용.
-class _PhoneColumn extends StatelessWidget {
-  const _PhoneColumn({
-    required this.state,
-    required this.camera,
-    required this.onCapture,
-    required this.onPick,
-    required this.onRetake,
-    required this.onSelectStep,
-  });
-
-  final WorkspaceState state;
-  final CameraService camera;
-  final VoidCallback onCapture;
-  final VoidCallback onPick;
-  final VoidCallback onRetake;
-  final ValueChanged<WorkStep> onSelectStep;
+class _TopBar extends StatelessWidget {
+  const _TopBar();
 
   @override
   Widget build(BuildContext context) {
-    final text = Theme.of(context).textTheme;
-
-    return ListView(
-        padding: const EdgeInsets.fromLTRB(20, 24, 20, 40),
-        children: [
-          Semantics(header: true, child: Text('들리는계약서', style: text.headlineMedium)),
-          const SizedBox(height: 4),
-          Text('종이 문서를 읽고, 판단하고, 쓰고, 서명하는 것을 도와드려요.', style: text.bodyMedium),
-          const SizedBox(height: 20),
-
-          // 카메라는 노트북 카메라에 맞춰 가로로 긴 비율, 받은 문서 사진은 세로로 긴 비율
-          AspectRatio(
-            aspectRatio: state.hasPhoto ? 3 / 4 : 4 / 3,
-            child: DocumentStage(state: state, camera: camera),
-          ),
-          const SizedBox(height: 16),
-
-          // 문서 사진 받기
-          if (!state.hasPhoto)
-            FilledButton.icon(
-              onPressed: camera.ready ? onCapture : null,
-              icon: const Icon(Icons.photo_camera_outlined),
-              label: const Text('찍기  (C)'),
-            )
-          else
-            FilledButton.icon(
-              onPressed: onRetake,
-              icon: const Icon(Icons.refresh),
-              label: const Text('다시 찍기  (Esc)'),
+    return SizedBox(
+      height: 56,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 18),
+        child: Row(
+          children: [
+            Semantics(
+              header: true,
+              child: Text('들리는계약서', style: Theme.of(context).textTheme.titleLarge),
             ),
-          const SizedBox(height: 12),
-          OutlinedButton.icon(
-            onPressed: onPick,
-            icon: const Icon(Icons.folder_open_outlined),
-            label: const Text('사진 불러오기  (O)'),
-          ),
-          const SizedBox(height: 28),
-
-          // 네 단계 (한 줄)
-          Row(
-            children: [
-              for (final (i, step) in WorkStep.values.indexed) ...[
-                if (i > 0) const SizedBox(width: 8),
-                Expanded(
-                  child: _StepTile(
-                    number: i + 1,
-                    step: step,
-                    selected: state.hasPhoto && state.step == step,
-                    enabled: state.hasPhoto,
-                    onTap: () => onSelectStep(step),
-                  ),
-                ),
-              ],
-            ],
-          ),
-          const SizedBox(height: 24),
-
-          // 선택한 단계의 내용
-          if (state.hasPhoto)
-            switch (state.step) {
-              WorkStep.read => ReadPanel(state: state),
-              WorkStep.judge => JudgePanel(state: state),
-              WorkStep.write => WritePanel(state: state, camera: camera),
-              WorkStep.sign => SignPanel(state: state),
-            }
-          else
-            Text('문서를 찍거나 불러오면 단계를 고를 수 있어요.', style: text.bodyMedium),
-        ],
+            const Spacer(),
+            IconButton(
+              tooltip: '사용 방법',
+              icon: const Icon(Icons.info_outline, color: AppColors.muted),
+              onPressed: () => Speech.announce(
+                context,
+                '가운데 버튼으로 문서를 찍어요. 아래 줄에서 할 일을 고를 수 있어요. 키보드는 스페이스로 찍고, 1부터 4로 할 일을 고르고, R로 다시 들어요.',
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
 
-class _StepTile extends StatelessWidget {
-  const _StepTile({
-    required this.number,
-    required this.step,
-    required this.selected,
-    required this.enabled,
-    required this.onTap,
+/// 할 일 고르기 줄. 고른 것은 파란 칸으로 표시한다
+class _ModeBar extends StatelessWidget {
+  const _ModeBar({required this.selected, required this.onSelect});
+
+  final WorkStep selected;
+  final ValueChanged<WorkStep> onSelect;
+
+  static const _icons = {
+    WorkStep.read: Icons.description_outlined,
+    WorkStep.judge: Icons.fact_check_outlined,
+    WorkStep.write: Icons.edit_outlined,
+    WorkStep.sign: Icons.draw_outlined,
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Row(
+        children: [
+          for (final step in WorkStep.values)
+            Expanded(
+              child: Semantics(
+                selected: step == selected,
+                button: true,
+                label: step.label,
+                excludeSemantics: true,
+                child: Material(
+                  color: step == selected ? AppColors.primary : Colors.transparent,
+                  borderRadius: BorderRadius.circular(14),
+                  child: InkWell(
+                    onTap: () => onSelect(step),
+                    borderRadius: BorderRadius.circular(14),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: Column(
+                        children: [
+                          Icon(_icons[step], color: step == selected ? Colors.white : AppColors.text),
+                          const SizedBox(height: 4),
+                          Text(
+                            step.label,
+                            style: TextStyle(fontSize: 14, color: step == selected ? Colors.white : AppColors.text),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+/// 맨 아래: 사진 불러오기, 큰 촬영 버튼, 다시 듣기
+class _BottomBar extends StatelessWidget {
+  const _BottomBar({
+    required this.busy,
+    required this.canCapture,
+    required this.onPick,
+    required this.onCapture,
+    required this.onRepeat,
   });
 
-  final int number;
-  final WorkStep step;
-  final bool selected;
-  final bool enabled;
+  final bool busy;
+  final bool canCapture;
+  final VoidCallback onPick;
+  final VoidCallback onCapture;
+  final VoidCallback onRepeat;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(28, 8, 28, 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _SideButton(icon: Icons.photo_library_outlined, label: '사진 불러오기', onTap: onPick),
+          Semantics(
+            button: true,
+            label: '찍기',
+            excludeSemantics: true,
+            child: SizedBox(
+              width: 80,
+              height: 80,
+              child: FilledButton(
+                onPressed: canCapture && !busy ? onCapture : null,
+                style: FilledButton.styleFrom(
+                  shape: const CircleBorder(),
+                  padding: EdgeInsets.zero,
+                  minimumSize: const Size(80, 80),
+                ),
+                child: busy
+                    ? const SizedBox(width: 30, height: 30, child: CircularProgressIndicator(color: Colors.white))
+                    : const Icon(Icons.photo_camera, size: 36),
+              ),
+            ),
+          ),
+          _SideButton(icon: Icons.volume_up_outlined, label: '다시 듣기', onTap: onRepeat),
+        ],
+      ),
+    );
+  }
+}
+
+class _SideButton extends StatelessWidget {
+  const _SideButton({required this.icon, required this.label, required this.onTap});
+
+  final IconData icon;
+  final String label;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final color = !enabled ? AppColors.subtle : (selected ? AppColors.primary : AppColors.text);
     return Semantics(
-      selected: selected,
       button: true,
-      enabled: enabled,
-      label: '${step.label}, ${step.summary}',
+      label: label,
       excludeSemantics: true,
-      child: Material(
-        color: selected ? AppColors.primarySoft : AppColors.surface.withValues(alpha: 0.7),
+      child: InkWell(
+        onTap: onTap,
         borderRadius: BorderRadius.circular(16),
-        child: InkWell(
-          onTap: enabled ? onTap : null,
-          borderRadius: BorderRadius.circular(16),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            child: Column(
-              children: [
-                CircleAvatar(
-                  radius: 15,
-                  backgroundColor: selected ? AppColors.primary : AppColors.line,
-                  foregroundColor: selected ? Colors.white : AppColors.muted,
-                  child: Text('$number', style: const TextStyle(fontSize: 15)),
-                ),
-                const SizedBox(height: 6),
-                Text(step.label, style: TextStyle(fontSize: 19, color: color)),
-              ],
-            ),
+        child: SizedBox(
+          width: 84,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: 30, color: AppColors.text),
+              const SizedBox(height: 4),
+              Text(label, style: const TextStyle(fontSize: 13, color: AppColors.text)),
+            ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// 찍은 뒤 카메라 위로 올라오는 결과 창
+class _ResultSheet extends StatelessWidget {
+  const _ResultSheet({required this.onClose, required this.child});
+
+  final VoidCallback onClose;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * 0.6),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: const [BoxShadow(color: Color(0x33000000), blurRadius: 24, offset: Offset(0, -4))],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Align(
+            alignment: Alignment.centerRight,
+            child: IconButton(
+              tooltip: '닫고 카메라로 돌아가기',
+              icon: const Icon(Icons.close),
+              onPressed: onClose,
+            ),
+          ),
+          Flexible(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+              child: child,
+            ),
+          ),
+        ],
       ),
     );
   }

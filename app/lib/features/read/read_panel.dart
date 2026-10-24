@@ -59,7 +59,7 @@ class _ReadPanelState extends State<ReadPanel> {
     }
 
     return PanelSection(
-      title: '읽기',
+      title: '문서 읽기',
       description: '어떤 문서인지와 중요한 항목을 읽어드려요.',
       children: body,
     );

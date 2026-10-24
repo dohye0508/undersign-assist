@@ -14,7 +14,7 @@ class SignPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const PanelSection(
-      title: '서명',
+      title: '서명 위치',
       description: '서명하기 전에 아래 세 가지를 차례로 해요.',
       preparing: true,
       children: [

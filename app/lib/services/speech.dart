@@ -8,7 +8,11 @@ class Speech {
 
   static final _tts = FlutterTts()..setLanguage('ko-KR');
 
+  /// 마지막으로 말한 문장 ("다시 듣기"용)
+  static final lastMessage = ValueNotifier<String>('');
+
   static Future<void> announce(BuildContext context, String text) async {
+    lastMessage.value = text;
     // ignore: deprecated_member_use
     SemanticsService.announce(text, Directionality.of(context));
     await _tts.stop();

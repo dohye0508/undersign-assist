@@ -4,29 +4,32 @@ import '../services/api_client.dart';
 import 'document_photo.dart';
 import 'recognized_document.dart';
 
-/// 네 단계. 순서가 실제 사용 순서다 (판단 없이 서명하지 않도록 판단이 서명보다 앞).
+/// 네 단계. 코드에서는 읽기·판단·쓰기·서명으로 나누지만,
+/// 사용자에게는 [label]처럼 하는 일을 쉬운 말로 보여준다.
 enum WorkStep {
-  read('읽기', '문서를 읽어드려요'),
-  judge('판단', '빠진 것, 확인할 것'),
-  write('쓰기', '쓴 글씨 확인'),
-  sign('서명', '서명란 안내');
+  read('문서 읽기', '찍으면 어떤 문서인지와 중요한 내용을 읽어드려요'),
+  judge('빠진 것 확인', '찍으면 빠지거나 확인할 내용을 알려드려요'),
+  write('쓴 글씨 확인', '칸을 고르고, 쓴 다음 찍으면 무엇을 썼는지 읽어드려요'),
+  sign('서명 위치', '찍으면 어디에 서명하는지 알려드려요');
 
-  const WorkStep(this.label, this.summary);
+  const WorkStep(this.label, this.guide);
 
   final String label;
-  final String summary;
+
+  /// 모드를 고를 때 들려주는 안내
+  final String guide;
 }
 
-/// 한 화면 전체가 함께 보는 상태: 지금 다루는 문서 사진, 읽기 결과, 선택한 단계.
+/// 한 화면 전체가 함께 보는 상태: 고른 모드, 찍은 사진, 읽기 결과, 결과 창 표시 여부.
 class WorkspaceState extends ChangeNotifier {
+  WorkStep _step = WorkStep.read;
+  WorkStep get step => _step;
+
   DocumentPhoto? _photo;
   DocumentPhoto? get photo => _photo;
 
   RecognizedDocument? _recognized;
   RecognizedDocument? get recognized => _recognized;
-
-  WorkStep _step = WorkStep.read;
-  WorkStep get step => _step;
 
   bool _reading = false;
   bool get reading => _reading;
@@ -36,22 +39,24 @@ class WorkspaceState extends ChangeNotifier {
 
   bool get hasPhoto => _photo != null;
 
-  /// 새 사진을 받으면 이전 결과를 지우고 바로 읽는다.
-  /// 화면을 보지 않는 사용자가 "읽기"를 따로 찾아 누르지 않아도 되게 하기 위해서다.
+  void selectStep(WorkStep step) {
+    _step = step;
+    notifyListeners();
+  }
+
+  /// 새 문서 사진을 받으면 이전 결과를 지우고 바로 읽는다.
+  /// 판단, 쓰기, 서명 모두 읽기 결과(글자와 위치)를 바탕으로 하기 때문이다.
   Future<RecognizedDocument?> setPhoto(DocumentPhoto photo) async {
     _photo = photo;
     _recognized = null;
-    _step = WorkStep.read;
     notifyListeners();
     return read();
   }
 
-  /// 사진을 버리고 카메라로 돌아간다.
+  /// 결과 창을 닫고 카메라로 돌아간다.
   void clearPhoto() {
     _photo = null;
-    _recognized = null;
     _readError = null;
-    _step = WorkStep.read;
     notifyListeners();
   }
 
@@ -69,10 +74,5 @@ class WorkspaceState extends ChangeNotifier {
     _reading = false;
     notifyListeners();
     return _recognized;
-  }
-
-  void selectStep(WorkStep step) {
-    _step = step;
-    notifyListeners();
   }
 }

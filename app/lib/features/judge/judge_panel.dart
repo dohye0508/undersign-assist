@@ -14,7 +14,7 @@ class JudgePanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PanelSection(
-      title: '판단',
+      title: '빠진 것 확인',
       description: '빠진 항목과 확인이 필요한 내용을 근거와 함께 알려드려요. 결정은 직접 하세요.',
       preparing: true,
       children: [
