@@ -1,42 +1,48 @@
 import 'package:flutter/material.dart';
 
-/// 팀 디자인 시안(`Undersign 촬영 화면.html`)의 색과 글꼴.
-/// 밝은 회청색 바탕, 흰 카드, 남색 글자, 파란 강조, 경고는 호박색, 카메라 틀은 짙은 남색.
+/// 흰 바탕에 아주 옅은 유색 그라데이션을 얹은 밝은 테마.
+/// 저시력 사용자를 위해 글씨와 터치 영역은 크게, 글자 대비는 높게 잡는다.
 class AppColors {
-  static const background = Color(0xFFF4F7FB);
+  static const background = Color(0xFFF8F9FC);
   static const surface = Color(0xFFFFFFFF);
-  static const line = Color(0xFFE3E8F2);
-  static const text = Color(0xFF1B2F5E);
-  static const muted = Color(0xFF566074);
-  static const subtle = Color(0xFF8A93A6);
+  static const line = Color(0xFFE3E7F0);
+  static const text = Color(0xFF1B1F2B);
+  static const muted = Color(0xFF5E6577);
+  static const subtle = Color(0xFF8A91A3);
 
-  static const primary = Color(0xFF2F6FDE);
-  static const primarySoft = Color(0xFFE4ECFC);
+  static const primary = Color(0xFF4A63E7);
+  static const primarySoft = Color(0xFFEEF1FE);
 
   // 판단 결과의 의미 색. 강조색과 따로 쓴다
   static const ok = Color(0xFF2B8A3E);
-  static const okSoft = Color(0xFFEAF7EE);
-  static const warning = Color(0xFFB4700A);
-  static const warningDark = Color(0xFF8A5B10);
-  static const warningSoft = Color(0xFFFFF4E3);
-  static const danger = Color(0xFFC8663A);
-  static const dangerSoft = Color(0xFFFCEDE6);
+  static const okSoft = Color(0xFFEBF8EE);
+  static const missing = Color(0xFFB35C00);
+  static const missingSoft = Color(0xFFFFF4E5);
+  static const caution = Color(0xFFC92A2A);
+  static const cautionSoft = Color(0xFFFFF0F0);
 
-  // 카메라 틀
-  static const cameraTop = Color(0xFF141D38);
-  static const cameraBottom = Color(0xFF0D1326);
-  static const recording = Color(0xFFFF5B5B);
+  /// 화면 전체에 깔리는 아주 옅은 그라데이션 (파랑 → 흰색 → 민트)
+  static const pageGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [Color(0xFFEFF2FF), Color(0xFFFFFFFF), Color(0xFFEEFAF5)],
+    stops: [0, 0.55, 1],
+  );
 
-  static const cardShadow = [BoxShadow(color: Color(0x141B2F5E), blurRadius: 3, offset: Offset(0, 1))];
-  static const buttonShadow = [BoxShadow(color: Color(0x592F6FDE), blurRadius: 18, offset: Offset(0, 10))];
+  /// 선택된 항목, 머리 부분에 쓰는 옅은 그라데이션 (파랑 → 보라)
+  static const accentGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [Color(0xFFEEF1FE), Color(0xFFF5F0FF)],
+  );
 }
 
 class AppFonts {
-  /// 화면 전체
-  static const body = 'NotoSansKR';
+  /// 제목
+  static const display = 'DoHyeon';
 
-  /// 앱 이름 글자에만 쓴다
-  static const logo = 'DoHyeon';
+  /// 본문, 버튼, 안내 문장
+  static const body = 'Jua';
 }
 
 class AppTheme {
@@ -48,54 +54,46 @@ class AppTheme {
       onSurface: AppColors.text,
       outline: AppColors.line,
     );
-    final buttonShape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(14));
-    const buttonText = TextStyle(fontFamily: AppFonts.body, fontSize: 17, fontWeight: FontWeight.w700);
+
+    final buttonShape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(16));
+    const buttonText = TextStyle(fontFamily: AppFonts.body, fontSize: 20);
 
     return ThemeData(
       colorScheme: scheme,
       scaffoldBackgroundColor: AppColors.background,
       fontFamily: AppFonts.body,
       textTheme: const TextTheme(
-        headlineSmall: TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: AppColors.text),
-        titleLarge: TextStyle(fontSize: 19, fontWeight: FontWeight.w700, color: AppColors.text),
-        titleMedium: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.text),
-        bodyLarge: TextStyle(fontSize: 16, color: AppColors.text, height: 1.55),
-        bodyMedium: TextStyle(fontSize: 14, color: AppColors.muted, height: 1.5),
-        labelLarge: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.muted),
-        labelSmall: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.subtle),
+        headlineMedium: TextStyle(fontFamily: AppFonts.display, fontSize: 34, color: AppColors.text),
+        titleLarge: TextStyle(fontFamily: AppFonts.display, fontSize: 26, color: AppColors.text),
+        titleMedium: TextStyle(fontSize: 19, color: AppColors.text),
+        bodyLarge: TextStyle(fontSize: 19, color: AppColors.text, height: 1.55),
+        bodyMedium: TextStyle(fontSize: 16, color: AppColors.muted, height: 1.5),
+        labelLarge: TextStyle(fontSize: 15, color: AppColors.subtle, letterSpacing: 0.3),
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          minimumSize: const Size.fromHeight(60),
+          minimumSize: const Size.fromHeight(64),
           shape: buttonShape,
           textStyle: buttonText,
-          backgroundColor: AppColors.primary,
-          disabledBackgroundColor: AppColors.line,
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          minimumSize: const Size.fromHeight(60),
+          minimumSize: const Size.fromHeight(64),
           shape: buttonShape,
           textStyle: buttonText,
           foregroundColor: AppColors.text,
-          backgroundColor: AppColors.surface,
           side: const BorderSide(color: AppColors.line, width: 1.5),
+          backgroundColor: AppColors.surface,
         ),
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          foregroundColor: AppColors.primary,
-          minimumSize: const Size(48, 44),
-          textStyle: const TextStyle(fontFamily: AppFonts.body, fontSize: 14, fontWeight: FontWeight.w700),
+          minimumSize: const Size(48, 48),
+          textStyle: const TextStyle(fontFamily: AppFonts.body, fontSize: 17),
         ),
       ),
-      chipTheme: const ChipThemeData(
-        side: BorderSide.none,
-        shape: StadiumBorder(),
-        labelStyle: TextStyle(fontFamily: AppFonts.body, fontSize: 14, fontWeight: FontWeight.w600),
-      ),
-      focusColor: AppColors.primary.withValues(alpha: 0.16),
+      focusColor: AppColors.primary.withValues(alpha: 0.18),
     );
   }
 }

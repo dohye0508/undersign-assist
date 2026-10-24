@@ -62,12 +62,10 @@ flutter:
   uses-material-design: true
 
   fonts:
-    # 모두 OFL 라이선스. 오프라인에서도 동작하도록 파일을 앱에 포함한다
-    # 본문과 화면 전체: 팀 디자인 시안(Undersign 촬영 화면.html)과 같은 Noto Sans KR
-    - family: NotoSansKR
-      fonts:
-        - asset: assets/fonts/NotoSansKR-Variable.ttf
-    # 앱 이름 글자
+    # 둘 다 OFL 라이선스. 오프라인에서도 동작하도록 파일을 앱에 포함한다
     - family: DoHyeon
       fonts:
         - asset: assets/fonts/DoHyeon-Regular.ttf
+    - family: Jua
+      fonts:
+        - asset: assets/fonts/Jua-Regular.ttf
