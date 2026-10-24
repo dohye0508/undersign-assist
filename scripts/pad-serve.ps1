@@ -70,7 +70,9 @@ if ($LASTEXITCODE -ne 0) { Write-Host '인증서 생성 실패' -ForegroundColor
 Step ('flutter build web  (API_BASE=' + $ApiBase + ')  -- 몇 분 걸립니다')
 Push-Location $AppDir
 try {
-    & flutter build web --dart-define=("API_BASE=" + $ApiBase)
+    # PowerShell은 --옵션=(식)을 두 토막으로 쪼개므로 한 문자열로 만들어 넘긴다
+    $define = '--dart-define=API_BASE=' + $ApiBase
+    & flutter build web $define
     $buildExit = $LASTEXITCODE
 } finally {
     Pop-Location
