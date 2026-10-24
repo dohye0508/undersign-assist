@@ -294,6 +294,43 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
                     fit: StackFit.expand,
                     children: [
                       DocumentStage(camera: _camera),
+                      // 카메라 안쪽 아래 가운데에 떠 있는 하늘색 알약 (사용자 선택 E5): 글씨 연습 입구. 한 번 누르면 바로 들어간다
+                      Positioned(
+                        left: 0,
+                        right: 0,
+                        bottom: 56,
+                        child: Center(
+                          child: Semantics(
+                            button: true,
+                            label: '들리는 받아쓰기, 글씨 연습하기',
+                            excludeSemantics: true,
+                            child: Material(
+                              color: AppColors.primary,
+                              borderRadius: BorderRadius.circular(999),
+                              elevation: 6,
+                              shadowColor: Colors.black54,
+                              child: InkWell(
+                                onTap: TapFeedback.wrap(_openPractice),
+                                borderRadius: BorderRadius.circular(999),
+                                child: const Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(Icons.edit_rounded, size: 18, color: AppColors.onPrimary),
+                                      SizedBox(width: 6),
+                                      Text(
+                                        '글씨 연습하기',
+                                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.onPrimary),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                       Positioned(
                         left: 0,
                         right: 0,
