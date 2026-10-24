@@ -14,7 +14,7 @@ class RecognizedDocument {
     required this.speech,
   });
 
-  /// contract(계약서) / notice(가정통신문) / consent(개인정보 동의서) / unknown
+  /// contract(계약서) / notice(가정통신문) / consent(개인정보 동의서) / application(신청서) / summary(요약서) / unknown
   final String docType;
   final String docTypeLabel;
   final List<TextBlock> blocks;

@@ -7,8 +7,9 @@
 """
 
 import io
+import re
 from dataclasses import dataclass
-from statistics import median
+from statistics import mean, median
 
 from PIL import Image, ImageOps
 
@@ -66,6 +67,19 @@ def _union(boxes: list[tuple[int, int, int, int]]) -> Box:
     return Box(x=left, y=top, width=right - left, height=bottom - top)
 
 
+# 두 번 읽기(아래 _merge_passes)에서 쓰는 기준. 값은 Tesseract 단어 신뢰도(0~100)의 줄 평균
+WEAK_CONF = 70  # 이보다 낮은 psm 6 줄은 잘못 읽었을 가능성이 커서 바꿀 수 있다
+STRONG_CONF = 75  # 이보다 높은 psm 11 줄만 가져온다
+KEEP_LETTERS_RATIO = 0.6  # 바꿀 때 글자 수가 이 비율보다 줄어들면 바꾸지 않는다 ("예 □ 아니요 □" → "예 □" 방지)
+_LETTER = re.compile(r"[가-힣0-9A-Za-z]")
+
+
+@dataclass
+class _Line:
+    block: TextBlock
+    conf: float  # 단어 신뢰도의 평균
+
+
 def _tesseract(image: Image.Image) -> list[TextBlock]:
     import pytesseract
 
@@ -77,28 +91,83 @@ def _tesseract(image: Image.Image) -> list[TextBlock]:
         gray = gray.resize((1600, round(gray.height * scale)), Image.LANCZOS)
     else:
         scale = 1.0
-    # psm 6: 문서를 한 덩어리 글로 본다. 서식 문서에서 줄이 끊기지 않고 가장 정확했다
+    # psm 6: 문서를 한 덩어리 글로 본다. 서식 문서에서 줄이 끊기지 않고 가장 정확했다.
+    # 다만 표의 회색 머리글 칸("수집 목적 | 수집 항목 | 보유 기간")처럼 배경이 있는 칸은 통째로 놓치거나
+    # 엉뚱한 글자("순 버 베 괴")로 읽는다. 그런 칸은 psm 11(흩어진 글자)이 잘 읽으므로 한 번 더 읽어서
+    # 신뢰도 낮은 줄만 바꿔 넣는다. 신뢰도 높은 psm 6 줄은 건드리지 않아 깨끗한 문서의 결과는 그대로다.
+    primary = _tesseract_lines(pytesseract, gray, 6, scale)
+    secondary = _tesseract_lines(pytesseract, gray, 11, scale)
+    lines = [line.block for line in _merge_passes(primary, secondary)]
+    lines.sort(key=lambda line: (line.box.y, line.box.x))
+    return lines
+
+
+def _tesseract_lines(pytesseract, gray: Image.Image, psm: int, scale: float) -> list[_Line]:
     # kor만 쓴다: eng를 섞으면 흐린 한글을 영어 글자로 잘못 읽는 일이 많았다
     data = pytesseract.image_to_data(
-        gray, lang="kor", config="--psm 6", output_type=pytesseract.Output.DICT
+        gray, lang="kor", config=f"--psm {psm}", output_type=pytesseract.Output.DICT
     )
 
     # Tesseract는 단어를 (블록, 문단, 줄) 번호로 묶어 준다
-    grouped: dict[tuple[int, int, int], list[tuple[str, tuple[int, int, int, int]]]] = {}
+    grouped: dict[tuple[int, int, int], list[tuple[str, tuple[int, int, int, int], float]]] = {}
     for i, text in enumerate(data["text"]):
         text = text.strip()
-        if not text or float(data["conf"][i]) < 0:
+        conf = float(data["conf"][i])
+        if not text or conf < 0:
             continue
         key = (data["block_num"][i], data["par_num"][i], data["line_num"][i])
         box = tuple(round(data[k][i] / scale) for k in ("left", "top", "width", "height"))
-        grouped.setdefault(key, []).append((text, box))
+        grouped.setdefault(key, []).append((text, box, conf))
 
     lines = []
     for words in grouped.values():
         words.sort(key=lambda w: w[1][0])
-        lines.append(TextBlock(text=_join_words(words), box=_union([b for _, b in words])))
-    lines.sort(key=lambda line: (line.box.y, line.box.x))
+        block = TextBlock(text=_join_words([(t, b) for t, b, _ in words]), box=_union([b for _, b, _ in words]))
+        lines.append(_Line(block=block, conf=mean(c for _, _, c in words)))
     return lines
+
+
+def _overlaps(a: Box, b: Box) -> bool:
+    """같은 줄 자리인지: 가로로 겹치고, 세로로는 낮은 쪽 높이의 절반 이상 겹친다."""
+    horizontal = min(a.x + a.width, b.x + b.width) - max(a.x, b.x)
+    vertical = min(a.y + a.height, b.y + b.height) - max(a.y, b.y)
+    return horizontal > 0 and vertical >= 0.5 * min(a.height, b.height)
+
+
+def _letters(text: str) -> int:
+    return len(_LETTER.findall(text))
+
+
+def _merge_passes(primary: list[_Line], secondary: list[_Line]) -> list[_Line]:
+    """psm 6 결과(primary)를 기본으로 두고, 신뢰도 낮은 줄만 psm 11 결과(secondary)의 신뢰도 높은 줄로 바꾼다.
+
+    - 신뢰도 높은 primary 줄과 겹치는 secondary 줄은 쓰지 않는다 (같은 글자가 두 번 들어가면 쓰기 칸이 중복된다).
+    - 아무 primary 줄과도 겹치지 않는 secondary 줄은 그대로 더한다 (psm 6이 통째로 놓친 칸).
+    - 신뢰도 낮은 primary 줄은, 그 자리에 들어올 secondary 줄들의 글자 수가 충분할 때만 뺀다.
+      글자가 크게 줄면(예: "예 □ 아니요 □" → "예 □") 원래 줄을 남긴다.
+    """
+    strong_primary = [line for line in primary if line.conf >= WEAK_CONF]
+    candidates = [
+        line
+        for line in secondary
+        if line.conf >= STRONG_CONF and not any(_overlaps(line.block.box, p.block.box) for p in strong_primary)
+    ]
+
+    accepted: list[_Line] = []
+    kept: list[_Line] = list(strong_primary)
+    for weak in primary:
+        if weak.conf >= WEAK_CONF:
+            continue
+        group = [c for c in candidates if _overlaps(c.block.box, weak.block.box)]
+        if group and sum(_letters(c.block.text) for c in group) >= KEEP_LETTERS_RATIO * _letters(weak.block.text):
+            accepted += [c for c in group if c not in accepted]
+        else:
+            kept.append(weak)
+    # 어느 primary 줄과도 안 겹치는 것은 빈 자리를 채운다
+    for line in candidates:
+        if line not in accepted and not any(_overlaps(line.block.box, p.block.box) for p in primary):
+            accepted.append(line)
+    return kept + accepted
 
 
 def _join_words(words: list[tuple[str, tuple[int, int, int, int]]]) -> str:

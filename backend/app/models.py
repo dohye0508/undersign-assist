@@ -13,6 +13,8 @@ class DocType(str, Enum):
     CONTRACT = "contract"  # 계약서 (근로계약서 등)
     NOTICE = "notice"  # 가정통신문
     CONSENT = "consent"  # 개인정보 동의서
+    APPLICATION = "application"  # 신청서 (참가신청서 등)
+    SUMMARY = "summary"  # 요약서·제출 서류 (작품 요약서 등)
     UNKNOWN = "unknown"
 
 

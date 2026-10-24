@@ -31,11 +31,34 @@ def read(lines: list[TextBlock]) -> tuple[DocType, dict[str, int], list[Field], 
     if lines and llm.available():
         try:
             doc_type, fields = _read_with_ai(full_text, lines)
-            return doc_type, scores, fields, "ai"
+            settled = _yield_form_type(doc_type, scores)
+            if settled == doc_type:
+                # 빈 서식(신청서·요약서)은 AI가 항목을 거의 못 뽑는다. 규칙이 더 찾으면 그쪽을 쓴다
+                by_rules = _extract_by_rules(lines, doc_type)
+                return (doc_type, scores, fields, "ai") if len(fields) >= len(by_rules) else (doc_type, scores, by_rules, "rules")
+            # AI가 제목만 보고 서식 종류를 골랐다. 종류는 핵심어 수를 따르고 항목은 규칙으로 뽑는다
+            return settled, scores, _extract_by_rules(lines, settled), "rules"
         except llm.LlmError:
             pass
-    doc_type = _classify_by_keywords(scores)
+    doc_type = _yield_form_type(_classify_by_keywords(scores), scores)
     return doc_type, scores, _extract_by_rules(lines, doc_type), "rules"
+
+
+# 서식 종류(신청서·요약서)가 다른 종류에 양보하려면 그 종류의 핵심어가 이 배수 이상 많아야 한다
+YIELD_RATIO = 2
+
+
+def _yield_form_type(doc_type: DocType, scores: dict[str, int]) -> DocType:
+    """"참가신청서"라는 제목의 개인정보 동의서처럼, 제목은 서식인데 내용은 다른 종류인 문서를 바로잡는다.
+
+    규칙 파일의 `yields_to`에 적힌 종류의 핵심어가 고른 종류보다 YIELD_RATIO배 넘게 많으면 그 종류로 본다.
+    """
+    rule = RULES.get(doc_type.value, {})
+    mine = scores.get(doc_type.value, 0)
+    candidates = [k for k in rule.get("yields_to", []) if scores.get(k, 0) >= MIN_KEYWORD_HITS and scores[k] >= YIELD_RATIO * mine]
+    if not candidates:
+        return doc_type
+    return DocType(max(candidates, key=scores.get))
 
 
 def compact(text: str) -> str:
@@ -58,6 +81,7 @@ def label_of(doc_type: DocType) -> str:
 def _read_with_ai(full_text: str, lines: list[TextBlock]) -> tuple[DocType, list[Field]]:
     kinds = "\n".join(
         f'- "{kind}" ({rule["label"]}): 항목 {json.dumps([f["label"] for f in rule["fields"]], ensure_ascii=False)}'
+        + (f'. {rule["hint"]}' if rule.get("hint") else "")
         for kind, rule in RULES.items()
     )
     prompt = f"""다음은 종이 문서 사진을 OCR로 읽은 글자다. 여러 페이지를 이어 붙인 **한 문서**이니 페이지마다 따로 나누지 말고 하나로 정리한다. 글자 일부가 깨지거나 띄어쓰기가 틀렸을 수 있다.
@@ -119,24 +143,29 @@ def _classify_by_keywords(scores: dict[str, int]) -> DocType:
 def _extract_by_rules(lines: list[TextBlock], doc_type: DocType) -> list[Field]:
     if doc_type == DocType.UNKNOWN:
         return []
+    specs = RULES[doc_type.value]["fields"]
+    all_keys = [compact(key) for spec in specs for key in spec["keys"]]
     fields = []
-    for spec in RULES[doc_type.value]["fields"]:
-        found = _find_value(lines, spec["keys"])
+    for spec in specs:
+        found = _find_value(lines, spec["keys"], all_keys)
         if found:
             value, index = found
             fields.append(Field(label=spec["label"], value=value, line=index))
     return fields
 
 
-def _find_value(lines: list[TextBlock], keys: list[str]) -> tuple[str, int] | None:
+def _find_value(lines: list[TextBlock], keys: list[str], all_keys: list[str] = ()) -> tuple[str, int] | None:
     for index, line in enumerate(lines):
         for key in keys:
             value = value_after(line.text, key)
             if value is None:
                 continue
-            # 항목 이름만 있고 값이 다음 줄에 있는 서식이 많다
+            # 항목 이름만 있고 값이 다음 줄에 있는 서식이 많다.
+            # 단, 다음 줄이 다른 항목 이름이면(표 머리글이 줄마다 따로 읽힌 경우: "수집 목적" 다음 줄 "보유 기간") 값이 아니다
             if not value and index + 1 < len(lines):
-                value = lines[index + 1].text
+                next_text = lines[index + 1].text
+                if not any(k in compact(next_text) for k in all_keys):
+                    value = next_text
             if value:
                 return value[:MAX_VALUE_LENGTH], index
     return None
