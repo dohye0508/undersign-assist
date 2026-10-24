@@ -7,6 +7,7 @@ import '../../services/haptic_guide.dart';
 import '../../services/haptics.dart';
 import '../../services/speech.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/step_progress.dart';
 import '../../widgets/tap_feedback.dart';
 import 'feedback.dart';
 import 'glyph_guide.dart';
@@ -472,36 +473,16 @@ class _PracticeScreenState extends State<PracticeScreen> with SingleTickerProvid
     return body.replaceAll(RegExp(r'[.。]\s*$'), '');
   }
 
-  /// 칸 수만큼의 동그라미 (쓰고 서명하기의 진행 동그라미와 같은 모양). 입력이 끝난 칸은 채워지고, 지금 칸은 둘레가 빛난다
+  /// 진행 표시 한 줄 (쓰고 서명하기와 같은 공용 [StepProgress]). 칸이 많으면 줄바꿈 없이 막대 + "3 / 14"로 바뀐다
   Widget _dots() {
     final n = widget.items.length;
-    return Semantics(
-      label: '$n개 중 ${_done.length}개 입력했어요',
-      excludeSemantics: true,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Wrap(
-          alignment: WrapAlignment.center,
-          spacing: 10,
-          runSpacing: 8,
-          children: [
-            for (var i = 0; i < n; i++)
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 240),
-                width: 14,
-                height: 14,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: _done.contains(i) ? AppColors.marker : AppColors.surface,
-                  border: Border.all(
-                    color: i == _index || _done.contains(i) ? AppColors.marker : AppColors.grey300,
-                    width: 2.5,
-                  ),
-                  boxShadow: i == _index ? const [BoxShadow(color: AppColors.primarySoft, spreadRadius: 4)] : null,
-                ),
-              ),
-          ],
-        ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: StepProgress(
+        count: n,
+        filled: _done.toSet(),
+        current: _index,
+        semanticLabel: '$n개 중 ${_index + 1}번째, ${_done.length}개 입력했어요',
       ),
     );
   }

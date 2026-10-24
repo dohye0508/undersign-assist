@@ -11,6 +11,12 @@ class Haptics {
 
   static web.AudioContext? _audio;
 
+  /// 진동 켜기/끄기 (설정 화면). 끄면 버튼 진동과 받아쓰기 안내 진동이 모두 꺼진다
+  static bool vibrationEnabled = true;
+
+  /// 효과음 크기 배율 (설정 화면: 끄기 0 / 작게 0.5 / 보통 1 / 크게 1.6). 모든 소리 신호의 gain에 곱한다
+  static double effectVolume = 1.0;
+
   /// 잘못됨: 강하게 두 번 + 낮은음 두 번 (이전 앱의 진동 'w'와 같은 뜻)
   static void warn() {
     _vibrate([200, 100, 200]);
@@ -45,6 +51,8 @@ class Haptics {
       _tones([frequency], length: length, gain: gain);
 
   static void _vibrate(List<int> pattern) {
+    // 끄기(0)는 꺼진 상태에서도 보내서 이어지던 진동을 멈춘다
+    if (!vibrationEnabled && !(pattern.length == 1 && pattern.first == 0)) return;
     try {
       web.window.navigator.vibrate(pattern.jsify()!);
     } catch (_) {
@@ -54,6 +62,8 @@ class Haptics {
 
   // 효과음이 음성(TTS)보다 크게 들린다는 피드백으로 기본 크기를 0.3으로 낮췄다 (2026-10-24)
   static void _tones(List<double> frequencies, {double length = 0.16, double gain = 0.3}) {
+    if (effectVolume <= 0) return;
+    gain *= effectVolume;
     try {
       final audio = _audio ??= web.AudioContext();
       for (final (i, frequency) in frequencies.indexed) {

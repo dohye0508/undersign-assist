@@ -27,7 +27,8 @@ class MemoryStorage implements KeyValueStorage {
 class PracticeSettings {
   PracticeSettings({this.vibrate = true, this.distanceSound = true, this.hideGuide = false});
 
-  /// 진동 (안드로이드 크롬에서만 난다)
+  /// 진동 (안드로이드 크롬에서만 난다). 켜고 끄기는 앱 설정의 "진동" 하나로 합쳐서 화면에서 바꾸지 않는다.
+  /// 앱 설정에서 끄면 `Haptics` 자체가 진동을 내지 않으므로 받아쓰기 진동도 꺼진다
   bool vibrate;
 
   /// 학습하기에서 보조선에 가까울수록 높고 잦아지는 소리
@@ -39,7 +40,7 @@ class PracticeSettings {
   Map<String, dynamic> toJson() => {'vibrate': vibrate, 'distanceSound': distanceSound, 'hideGuide': hideGuide};
 
   void load(Map<String, dynamic> json) {
-    vibrate = json['vibrate'] is bool ? json['vibrate'] as bool : vibrate;
+    // 예전에 받아쓰기 설정에서 끈 값은 읽지 않는다 (진동은 앱 설정으로 옮겼다. 여기서 꺼진 채 남으면 다시 켤 곳이 없다)
     distanceSound = json['distanceSound'] is bool ? json['distanceSound'] as bool : distanceSound;
     hideGuide = json['hideGuide'] is bool ? json['hideGuide'] as bool : hideGuide;
   }
@@ -134,6 +135,21 @@ class ScoreStore extends ChangeNotifier {
       }
     }
     return best;
+  }
+
+  /// 연습한 글자들의 평균 점수, 낮은 것부터. [kinds]를 주면 그 종류만.
+  /// 화면 아래 "어려웠던 글자", "글자별 점수" 목록에 쓴다
+  List<({String text, String name, PracticeKind kind, int score})> itemScores({Set<PracticeKind>? kinds}) {
+    final out = <({String text, String name, PracticeKind kind, int score})>[];
+    _scores.forEach((key, list) {
+      final kind = _kindOf(key);
+      if (list.isEmpty || kind == null || (kinds != null && !kinds.contains(kind))) return;
+      final text = key.substring(key.indexOf(':') + 1);
+      final name = kind == PracticeKind.consonant || kind == PracticeKind.vowel ? jamoName(text) : text;
+      out.add((text: text, name: name, kind: kind, score: (list.reduce((a, b) => a + b) / list.length).round()));
+    });
+    out.sort((a, b) => a.score.compareTo(b.score));
+    return out;
   }
 
   /// 평균 점수가 가장 낮은 글자가 속한 종류. 아직 없으면 null (점수판의 "다시 써 보기"가 어느 묶음을 열지 정한다)

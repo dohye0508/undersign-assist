@@ -14,7 +14,7 @@ class PageTray extends StatelessWidget {
     required this.open,
     required this.onToggle,
     required this.onRemove,
-    this.trailing,
+    required this.onClearAll,
   });
 
   final List<DocumentPhoto> pages;
@@ -24,9 +24,8 @@ class PageTray extends StatelessWidget {
   /// 지울 페이지의 순번 (0부터)
   final ValueChanged<int> onRemove;
 
-  /// 페이지 목록 손잡이 바로 오른쪽에 나란히 매달리는 탭 (촬영 화면: 들리는 받아쓰기).
-  /// 같은 모양으로 맞추려면 [PageTrayTab]을 쓴다
-  final Widget? trailing;
+  /// 찍은 페이지를 모두 지운다 (목록 머리 줄의 "모두 지우기")
+  final VoidCallback onClearAll;
 
   static const _duration = Duration(milliseconds: 250);
 
@@ -48,7 +47,7 @@ class PageTray extends StatelessWidget {
               tween: Tween(end: open ? 1 : 0),
               duration: _duration,
               curve: Curves.easeOutCubic,
-              child: _Panel(pages: pages, maxHeight: available * 0.6, onRemove: onRemove),
+              child: _Panel(pages: pages, maxHeight: available * 0.6, onRemove: onRemove, onClearAll: onClearAll),
               builder: (context, t, child) {
                 if (t == 0) return const SizedBox(width: double.infinity);
                 return ClipRect(
@@ -56,16 +55,8 @@ class PageTray extends StatelessWidget {
                 );
               },
             ),
-            // 버튼은 패널 아래 가장자리에 붙어 있어 패널과 함께 내려가고 올라간다.
-            // 옆 탭(받아쓰기)도 같은 줄에 나란히 매달린다
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _ToggleButton(count: pages.length, open: open, onToggle: onToggle),
-                if (trailing case final trailing?) ...[const SizedBox(width: 6), trailing],
-              ],
-            ),
+            // 버튼은 패널 아래 가장자리 가운데에 붙어 있어 패널과 함께 내려가고 올라간다
+            _ToggleButton(count: pages.length, open: open, onToggle: onToggle),
           ],
         );
       },
@@ -73,8 +64,7 @@ class PageTray extends StatelessWidget {
   }
 }
 
-/// 카메라 윗변에 매달린 손잡이 탭: 위는 평평하게 붙고 아래만 둥근 회색 탭.
-/// 페이지 목록 손잡이와 그 옆 탭(받아쓰기)이 같은 모양을 쓴다
+/// 카메라 윗변에 매달린 손잡이 탭: 위는 평평하게 붙고 아래만 둥근 회색 탭 (페이지 목록 손잡이)
 class PageTrayTab extends StatelessWidget {
   const PageTrayTab({
     super.key,
@@ -161,11 +151,12 @@ class _ToggleButton extends StatelessWidget {
 }
 
 class _Panel extends StatelessWidget {
-  const _Panel({required this.pages, required this.maxHeight, required this.onRemove});
+  const _Panel({required this.pages, required this.maxHeight, required this.onRemove, required this.onClearAll});
 
   final List<DocumentPhoto> pages;
   final double maxHeight;
   final ValueChanged<int> onRemove;
+  final VoidCallback onClearAll;
 
   static const _padding = 16.0;
   static const _gap = 8.0;
@@ -188,13 +179,34 @@ class _Panel extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          // 왼쪽: 제목과 그 아래 작은 안내, 오른쪽: 모두 지우기 (위쪽 막대에 있던 휴지통을 여기로 옮겼다)
           Row(
-            crossAxisAlignment: CrossAxisAlignment.baseline,
-            textBaseline: TextBaseline.alphabetic,
             children: [
-              Semantics(header: true, child: Text('찍은 페이지 ${pages.length}장', style: text.titleMedium)),
-              const Spacer(),
-              Text('사진을 누르면 지워져요', style: text.bodySmall),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Semantics(header: true, child: Text('찍은 페이지 ${pages.length}장', style: text.titleMedium)),
+                    if (pages.isNotEmpty) Text('사진을 누르면 한 장씩 지워져요', style: text.bodySmall),
+                  ],
+                ),
+              ),
+              if (pages.isNotEmpty)
+                Semantics(
+                  button: true,
+                  label: '찍은 페이지 모두 지우기',
+                  excludeSemantics: true,
+                  child: TextButton(
+                    onPressed: TapFeedback.wrap(onClearAll),
+                    style: TextButton.styleFrom(
+                      minimumSize: const Size(0, 48),
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      foregroundColor: AppColors.caution,
+                    ),
+                    child: const Text('모두 지우기'),
+                  ),
+                ),
             ],
           ),
           const SizedBox(height: 12),

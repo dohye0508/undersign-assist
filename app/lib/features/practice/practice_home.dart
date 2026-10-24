@@ -10,6 +10,8 @@ import 'practice_frame.dart';
 import 'practice_items.dart';
 import 'practice_screen.dart';
 import '../read/read_panel.dart' show ListenButton;
+import '../../widgets/panel_section.dart';
+import 'practice_layout.dart';
 import 'score_board.dart';
 import 'score_store.dart';
 
@@ -18,12 +20,15 @@ enum _View { home, learnMenu, learn, wordMenu, word, board, name, settings }
 /// 들리는 받아쓰기: 계약서 칸에 쓰기 전에 패드에서 글씨를 연습한다.
 ///
 /// 홈 → 학습하기(자음·모음·글자) / 연습하기(낱말) / 나의 점수판 / 내 이름 등록, 설정.
-/// 촬영 화면 위에 새 화면으로 열리고, 나가도 찍은 페이지와 분석 결과는 그대로 남는다.
+/// 촬영 화면(G 키)이나 설정 화면 위에 새 화면으로 열리고, 나가도 찍은 페이지와 분석 결과는 그대로 남는다.
 class PracticeFlow extends StatefulWidget {
-  const PracticeFlow({super.key, this.store});
+  const PracticeFlow({super.key, this.store, this.exitLabel = '카메라로'});
 
   /// 시험에서 다른 저장소를 넣을 수 있다. 없으면 이 기기 저장소를 쓴다
   final ScoreStore? store;
+
+  /// 홈의 뒤로 버튼에 적는 나갈 곳 이름 (설정에서 들어오면 "설정으로")
+  final String exitLabel;
 
   @override
   State<PracticeFlow> createState() => _PracticeFlowState();
@@ -59,7 +64,7 @@ class _PracticeFlowState extends State<PracticeFlow> {
         return '내 이름 등록이에요. 한글로 이름을 입력하고 저장을 눌러 주세요.'
             '${name.isEmpty ? '' : ' 지금 등록된 이름은 $name${ieyo(name)}.'}';
       case _View.settings:
-        return '설정이에요. 진동, 거리 소리, 보조선 숨기기를 켜고 끌 수 있어요.';
+        return '설정이에요. 거리 소리와 보조선 숨기기를 켜고 끌 수 있어요. 진동은 앱 설정에서 켜고 꺼요.';
       case _View.learn:
       case _View.word:
         return '';
@@ -181,7 +186,7 @@ class _PracticeFlowState extends State<PracticeFlow> {
   String get _backLabel {
     switch (_view) {
       case _View.home:
-        return '카메라로';
+        return widget.exitLabel;
       case _View.learn:
         return '학습하기';
       case _View.word:
@@ -207,17 +212,36 @@ class _PracticeFlowState extends State<PracticeFlow> {
               () => _go(_View.name)),
         ]);
       case _View.learnMenu:
-        return _menu([
-          _Choice('자음', 'ㄱ ㄴ ㄷ … 14개', 'ㄱ', () => _openLearn(PracticeKind.consonant), primary: true),
-          _Choice('모음', 'ㅏ ㅑ ㅓ … 10개', 'ㅏ', () => _openLearn(PracticeKind.vowel)),
-          _Choice('글자', '가 나 다 … 받침 있는 글자까지', '가', () => _openLearn(PracticeKind.syllable)),
-        ]);
+        final hard = _store.itemScores(kinds: {PracticeKind.consonant, PracticeKind.vowel, PracticeKind.syllable});
+        return _menu(
+          [
+            _Choice('자음', 'ㄱ ㄴ ㄷ … 14개', 'ㄱ', () => _openLearn(PracticeKind.consonant), primary: true),
+            _Choice('모음', 'ㅏ ㅑ ㅓ … 10개', 'ㅏ', () => _openLearn(PracticeKind.vowel)),
+            _Choice('글자', '가 나 다 … 받침 있는 글자까지', '가', () => _openLearn(PracticeKind.syllable)),
+          ],
+          listTitle: '어려웠던 글자',
+          list: hard.take(3).toList(),
+          emptyText: '아직 연습한 글자가 없어요.',
+          cta: hard.isEmpty
+              ? _Cta('처음이면 자음부터 해요', '자음 시작', () => _openLearn(PracticeKind.consonant))
+              : _Cta('가장 낮은 글자예요 · ${hard.first.score}점', '${hard.first.name} 다시 써 보기',
+                  () => _openLearn(hard.first.kind)),
+        );
       case _View.wordMenu:
-        return _menu([
-          _Choice('내 이름', _store.name.isEmpty ? '먼저 이름을 등록해요' : _store.name, '名', () => _openWords(WordGroup.myName)),
-          _Choice('계약서 낱말', '동의, 확인, 서명, 성명, 주소 …', '서명', () => _openWords(WordGroup.contract), primary: true),
-          _Choice('일반 낱말', '하늘, 나무, 바다 …', '하늘', () => _openWords(WordGroup.general)),
-        ]);
+        final hardWords = _store.itemScores(kinds: {PracticeKind.word});
+        return _menu(
+          [
+            _Choice('내 이름', _store.name.isEmpty ? '먼저 이름을 등록해요' : _store.name, '名', () => _openWords(WordGroup.myName)),
+            _Choice('계약서 낱말', '동의, 확인, 서명, 성명, 주소 …', '서명', () => _openWords(WordGroup.contract), primary: true),
+            _Choice('일반 낱말', '하늘, 나무, 바다 …', '하늘', () => _openWords(WordGroup.general)),
+          ],
+          listTitle: '어려웠던 낱말',
+          list: hardWords.take(3).toList(),
+          emptyText: '아직 연습한 낱말이 없어요.',
+          cta: _store.name.isEmpty
+              ? _Cta('계약서에 쓸 이름부터 등록해요', '내 이름 등록', () => _go(_View.name))
+              : _Cta('계약서에 자주 나오는 낱말이에요', '계약서 낱말 시작', () => _openWords(WordGroup.contract)),
+        );
       case _View.board:
         return ScoreBoardView(store: _store, onRetryLowest: _retryLowest);
       case _View.name:
@@ -240,48 +264,75 @@ class _PracticeFlowState extends State<PracticeFlow> {
     return n >= 1 && n < words.length ? words[n] : '$n';
   }
 
-  /// 홈: 작은 파란 줄 + 큰 제목 → 타일 2×2 → 사용법 듣기
+  /// 홈 (사용자 선택 W4): 작은 파란 줄 + 큰 제목 → 타일 2×2 → 사용법 듣기를 한 덩어리로 세로 가운데에
   Widget _home(List<_Choice> choices) {
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-      children: [
-        const Text('글씨 연습', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.accent)),
-        const SizedBox(height: 6),
-        Semantics(header: true, child: Text('들리는 받아쓰기', style: Theme.of(context).textTheme.headlineMedium)),
-        const SizedBox(height: 18),
-        for (var i = 0; i < choices.length; i += 2) ...[
-          // ListView 안이라 세로 제약이 없어 stretch 대신 타일 높이를 고정한다
-          Row(
+    return LayoutBuilder(
+      builder: (context, constraints) => SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: (constraints.maxHeight - 24).clamp(0, double.infinity)),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Expanded(child: _Tile(choice: choices[i])),
-              const SizedBox(width: 12),
-              Expanded(child: i + 1 < choices.length ? _Tile(choice: choices[i + 1]) : const SizedBox.shrink()),
+              const Text('글씨 연습', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.accent)),
+              const SizedBox(height: 6),
+              Semantics(header: true, child: Text('들리는 받아쓰기', style: Theme.of(context).textTheme.headlineMedium)),
+              const SizedBox(height: 18),
+              for (var i = 0; i < choices.length; i += 2) ...[
+                Row(
+                  children: [
+                    Expanded(child: _Tile(choice: choices[i])),
+                    const SizedBox(width: 12),
+                    Expanded(child: i + 1 < choices.length ? _Tile(choice: choices[i + 1]) : const SizedBox.shrink()),
+                  ],
+                ),
+                const SizedBox(height: 12),
+              ],
+              const SizedBox(height: 4),
+              ListenButton(
+                label: '사용법 듣기',
+                icon: Icons.volume_up_rounded,
+                onPressed: () => Speech.announce(context, _intro(_View.home)),
+              ),
             ],
           ),
-          const SizedBox(height: 12),
-        ],
-        const SizedBox(height: 4),
-        ListenButton(
-          label: '사용법 듣기',
-          icon: Icons.volume_up_rounded,
-          onPressed: () => Speech.announce(context, _intro(_View.home)),
         ),
-      ],
+      ),
     );
   }
 
-  /// 아래 메뉴(학습하기·연습하기): "다음에 할 일"과 같은 줄 버튼, 왼쪽에 큰 보기 글자
-  Widget _menu(List<_Choice> choices) {
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+  /// 아래 메뉴 (사용자 선택 W2+W3): 줄 버튼 → 회색 띠 구역의 쓸모 있는 목록(어려웠던 글자) → 맨 아래 고정된 큰 버튼 하나
+  Widget _menu(
+    List<_Choice> choices, {
+    required String listTitle,
+    required List<({String text, String name, PracticeKind kind, int score})> list,
+    required String emptyText,
+    required _Cta cta,
+  }) {
+    return PracticeBottomLayout(
+      cta: cta,
       children: [
         for (final c in choices) ...[
           _RowButton(choice: c),
           const SizedBox(height: 10),
         ],
+        SectionHeading(listTitle),
+        if (list.isEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+            child: Text(emptyText, style: Theme.of(context).textTheme.bodyMedium),
+          )
+        else
+          for (final item in list) ScoreRow(glyph: item.text, name: item.name, score: item.score),
       ],
     );
   }
+}
+
+/// 화면 맨 아래 고정 버튼: 위에 작은 안내 한 줄, 아래 진한 하늘 큰 버튼
+class _Cta extends PracticeCta {
+  const _Cta(super.hint, super.label, super.onPressed);
 }
 
 class _Choice {
@@ -479,7 +530,8 @@ class _NameFormState extends State<_NameForm> {
   }
 }
 
-/// 설정: 진동, 거리 소리, 보조선 숨기기
+/// 설정: 거리 소리, 보조선 숨기기.
+/// 진동은 앱 설정(설정 화면의 "진동") 하나로 합쳤다. 그걸 끄면 받아쓰기 안내 진동도 꺼진다
 class _SettingsForm extends StatelessWidget {
   const _SettingsForm({required this.store});
 
@@ -491,7 +543,6 @@ class _SettingsForm extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
       children: [
-        _toggle(context, '진동', '안드로이드 크롬에서만 나요', s.vibrate, (v) => s.vibrate = v),
         _toggle(context, '거리 소리', '보조선에 가까울수록 높고 잦은 소리', s.distanceSound, (v) => s.distanceSound = v),
         _toggle(context, '보조선 숨기기', '화면에서만 숨기고 판정은 같아요', s.hideGuide, (v) => s.hideGuide = v),
       ],

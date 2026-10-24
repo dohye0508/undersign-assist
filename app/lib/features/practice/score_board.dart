@@ -5,10 +5,11 @@ import '../../theme/app_theme.dart';
 import '../../widgets/panel_section.dart';
 import '../read/read_panel.dart' show ListenButton;
 import 'practice_items.dart';
+import 'practice_layout.dart';
 import 'score_store.dart';
 
-/// 나의 점수판 (사용자 선택 S1): 점수 듣기 → 자음·모음·글자·낱말 가로 막대 네 줄(가장 높은 것은 진한 하늘) →
-/// "가장 많이 오른 것 / 가장 낮은 글자" 문장 → 가장 낮은 글자 다시 써 보기 버튼
+/// 나의 점수판 (사용자 선택 S1 + W2·W3): 점수 듣기 → 자음·모음·글자·낱말 가로 막대 네 줄(가장 높은 것은 진한 하늘) →
+/// "가장 많이 오른 것 / 가장 낮은 글자" 문장 → "글자별 점수" 목록. 맨 아래 고정 버튼은 가장 낮은 글자 다시 써 보기
 class ScoreBoardView extends StatelessWidget {
   const ScoreBoardView({super.key, required this.store, this.onRetryLowest});
 
@@ -23,8 +24,12 @@ class ScoreBoardView extends StatelessWidget {
     final best = scores.entries.where((e) => e.value != null).fold<MapEntry<PracticeKind, int?>?>(
         null, (acc, e) => acc == null || (e.value ?? 0) > (acc.value ?? 0) ? e : acc);
     final lowest = store.lowestItemName();
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+    final items = store.itemScores();
+    return PracticeBottomLayout(
+      // 맨 아래 고정 버튼: 가장 낮은 글자 다시 써 보기 (사용자 선택 W2)
+      cta: lowest != null && onRetryLowest != null && items.isNotEmpty
+          ? PracticeCta('가장 낮은 글자예요 · ${items.first.score}점', '$lowest 다시 써 보기', onRetryLowest!)
+          : null,
       children: [
         ListenButton(
           label: '점수 듣기',
@@ -35,9 +40,10 @@ class ScoreBoardView extends StatelessWidget {
         for (final kind in PracticeKind.values) _Bar(label: kind.label, score: scores[kind], lead: best?.key == kind),
         const SizedBox(height: 14),
         Text(store.boardSpeech(), style: Theme.of(context).textTheme.bodyLarge),
-        if (lowest != null && onRetryLowest != null) ...[
-          const SizedBox(height: 16),
-          NextStepButton(title: '$lowest 다시 써 보기', subtitle: '가장 낮은 글자부터', primary: true, onPressed: onRetryLowest!),
+        // 아래 빈 곳에 쓸모 있는 목록 (사용자 선택 W3): 글자별 점수, 낮은 것부터
+        if (items.isNotEmpty) ...[
+          const SectionHeading('글자별 점수'),
+          for (final item in items.take(10)) ScoreRow(glyph: item.text, name: item.name, score: item.score),
         ],
       ],
     );

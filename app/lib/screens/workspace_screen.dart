@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import '../features/judge/judge_panel.dart';
 import '../features/practice/practice_home.dart';
 import '../features/read/read_panel.dart';
+import '../features/settings/settings_screen.dart';
 import '../features/fill/fill_panel.dart';
 import '../features/fill/fill_targets.dart';
 import '../features/sign/signature_spots.dart';
@@ -21,12 +22,13 @@ import '../widgets/tap_feedback.dart';
 
 /// 앱의 유일한 화면. 두 가지 모습이 있고 서로 "바뀐다"(덮지 않는다).
 ///
-/// 촬영: 카메라가 화면 대부분을 차지한다. 위쪽 가운데 버튼을 누르면 찍은 페이지 목록이 내려온다.
+/// 촬영: 카메라가 화면 대부분을 차지한다. 위쪽 가운데 버튼을 누르면 찍은 페이지 목록이 내려온다
+///       (모두 지우기는 그 목록 안). 위쪽 막대 오른쪽은 다시 듣기와 설정.
 ///       아래에는 사진 불러오기, 찍기, 분석하기 세 버튼만 있다. 찍을 때마다 페이지가 하나씩 쌓인다.
 /// 분석: 모든 페이지를 한 문서로 읽은 결과. 더 찍을 일이 없으므로 화면 전체를 쓴다.
 ///       문서 읽기 → 다음에 할 일(검토하세요!, 쓴 글씨 확인, 서명 위치).
 ///
-/// 키보드 (촬영): Space/C 찍기, O 사진 불러오기, P 페이지 목록, Enter 분석하기
+/// 키보드 (촬영): Space/C 찍기, O 사진 불러오기, P 페이지 목록, Enter 분석하기, G 들리는 받아쓰기
 /// 키보드 (분석): Esc 카메라로, 1~4 단계
 /// 키보드 (공통): R 다시 듣기
 class WorkspaceScreen extends StatefulWidget {
@@ -181,33 +183,31 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
     if (last.isNotEmpty) Speech.announce(context, last);
   }
 
-  // --- 들리는 받아쓰기 ----------------------------------------------------------
+  // --- 설정 · 들리는 받아쓰기 ---------------------------------------------------
 
-  /// 첫 번째 누름의 시각. 3초 안에 한 번 더 눌러야 들어간다 (잘못 눌러 들어가는 일을 막는다)
-  DateTime? _practiceAskedAt;
-
-  void _openPractice() {
-    if (_analyzing) return;
-    final asked = _practiceAskedAt;
-    if (asked != null && DateTime.now().difference(asked) <= const Duration(seconds: 3)) {
-      _practiceAskedAt = null;
-      _enterPractice();
-      return;
-    }
-    _practiceAskedAt = DateTime.now();
-    Speech.announce(context, '들리는 받아쓰기로 갈까요? 3초 안에 한 번 더 누르면 시작해요.');
-  }
-
-  Future<void> _enterPractice() async {
+  /// 새 화면으로 열고(옅어지며 전환), 돌아오면 카메라로 왔다고 알린다. 찍은 페이지와 분석 결과는 그대로다
+  Future<void> _pushOver(Widget screen) async {
+    setState(() => _trayOpen = false);
     await Navigator.of(context).push(
       PageRouteBuilder<void>(
         transitionDuration: const Duration(milliseconds: 280),
-        pageBuilder: (_, _, _) => const PracticeFlow(),
+        pageBuilder: (_, _, _) => screen,
         transitionsBuilder: (_, animation, _, child) => FadeTransition(opacity: animation, child: child),
       ),
     );
     if (!mounted) return;
     Speech.announce(context, '카메라로 돌아왔어요. 찍은 페이지는 그대로 있어요.');
+  }
+
+  void _openSettings() {
+    if (_analyzing) return;
+    _pushOver(const SettingsScreen());
+  }
+
+  /// G 키: 한 번에 바로 들어간다 (예전의 "3초 안에 두 번 누르기" 확인은 사용자 요청으로 없앴다)
+  void _openPractice() {
+    if (_analyzing) return;
+    _pushOver(const PracticeFlow());
   }
 
   @override
@@ -273,22 +273,12 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
         _TopBar(
           title: '들리는계약서',
           onRepeat: _repeat,
-          trailing: _state.hasPages
-              ? IconButton(
-                  tooltip: '모두 지우고 새 문서 찍기',
-                  icon: const Icon(Icons.delete_sweep_outlined),
-                  onPressed: TapFeedback.wrap(_clearPages),
-                )
-              : IconButton(
-                  tooltip: '사용 방법',
-                  icon: const Icon(Icons.info_outline),
-                  onPressed: TapFeedback.wrap(
-                    () => Speech.announce(
-                      context,
-                      '문서를 한 장씩 찍으면 페이지가 쌓여요. 위쪽 가운데 버튼으로 찍은 페이지를 볼 수 있어요. 다 찍으면 분석하기를 누르세요. 키보드는 스페이스로 찍고, 엔터로 분석하고, R로 다시 들어요.',
-                    ),
-                  ),
-                ),
+          // 모두 지우기는 찍은 페이지 목록 안으로, 사용 방법은 설정 안으로 옮겼다
+          trailing: IconButton(
+            tooltip: '설정',
+            icon: const Icon(Icons.settings_outlined),
+            onPressed: TapFeedback.wrap(_openSettings),
+          ),
         ),
         Expanded(
           child: Stack(
@@ -313,14 +303,7 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
                           open: _trayOpen,
                           onToggle: _toggleTray,
                           onRemove: _removePage,
-                          // 들리는 받아쓰기 입구: 페이지 목록 손잡이 바로 옆에 같은 모양으로 매달린다
-                          trailing: PageTrayTab(
-                            label: '받아쓰기',
-                            semanticsLabel: '들리는 받아쓰기, 글씨 연습',
-                            leadingIcon: Icons.edit_rounded,
-                            color: AppColors.accent,
-                            onTap: _openPractice,
-                          ),
+                          onClearAll: _clearPages,
                         ),
                       ),
                     ],
