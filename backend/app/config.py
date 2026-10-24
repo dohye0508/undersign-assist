@@ -6,7 +6,9 @@ from dotenv import load_dotenv
 load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 
 OCR_PROVIDER = os.getenv("OCR_PROVIDER", "tesseract").lower()
-TESSERACT_CMD = os.getenv("TESSERACT_CMD", r"C:\Program Files\Tesseract-OCR\tesseract.exe")
+# Windows 기본 설치 경로가 있으면 그것을, 없으면(리눅스 컨테이너 등) PATH의 tesseract를 쓴다
+_WINDOWS_TESSERACT = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+TESSERACT_CMD = os.getenv("TESSERACT_CMD") or (_WINDOWS_TESSERACT if Path(_WINDOWS_TESSERACT).exists() else "tesseract")
 
 # Groq. 키가 없으면 AI 없이 규칙만으로 동작한다
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")

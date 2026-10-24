@@ -164,6 +164,7 @@ class _JudgePanelState extends State<JudgePanel> {
           ),
           const SizedBox(height: 6),
           Semantics(
+            container: true,
             header: true,
             child: Text(
               _ask(question),

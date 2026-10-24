@@ -410,6 +410,7 @@ class _PracticeScreenState extends State<PracticeScreen> with SingleTickerProvid
           Text('${widget.title} · $n개 중 ${_index + 1}번째', textAlign: TextAlign.center, style: text.labelLarge),
           const SizedBox(height: 4),
           Semantics(
+            container: true,
             header: true,
             child: Text(
               _item.spokenName,

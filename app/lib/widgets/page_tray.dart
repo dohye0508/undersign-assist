@@ -194,6 +194,7 @@ class _Panel extends StatelessWidget {
               ),
               if (pages.isNotEmpty)
                 Semantics(
+                  container: true,
                   button: true,
                   label: '찍은 페이지 모두 지우기',
                   excludeSemantics: true,

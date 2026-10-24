@@ -629,6 +629,7 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
                         Text(_where(), textAlign: TextAlign.center, style: text.labelLarge),
                       const SizedBox(height: 4),
                       Semantics(
+                        container: true,
                         header: true,
                         child: Text(
                           done ? '모두 채웠어요' : _drawingCheck ? '체크 표시' : _target.label,

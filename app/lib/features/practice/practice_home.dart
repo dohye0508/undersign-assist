@@ -243,7 +243,7 @@ class _PracticeFlowState extends State<PracticeFlow> {
               : _Cta('계약서에 자주 나오는 낱말이에요', '계약서 낱말 시작', () => _openWords(WordGroup.contract)),
         );
       case _View.board:
-        return ScoreBoardView(store: _store, onRetryLowest: _retryLowest);
+        return ScoreBoardView(store: _store, onRetryLowest: _retryLowest, onStart: () => _openLearn(PracticeKind.consonant));
       case _View.name:
         return _NameForm(store: _store, onSaved: () => _go(_View.home, say: _savedSpeech()));
       case _View.settings:

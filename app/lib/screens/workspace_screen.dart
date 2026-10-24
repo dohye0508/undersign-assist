@@ -425,6 +425,7 @@ class _TopBar extends StatelessWidget {
       child: Row(
         children: [
           Semantics(
+            container: true,
             header: true,
             child: Text(title, style: Theme.of(context).textTheme.titleLarge),
           ),
@@ -457,6 +458,7 @@ class _BackHeader extends StatelessWidget {
       child: Row(
         children: [
           Semantics(
+            container: true,
             button: true,
             label: tooltip,
             excludeSemantics: true,
@@ -512,6 +514,7 @@ class _BottomBar extends StatelessWidget {
             ),
           ),
           Semantics(
+            container: true,
             button: true,
             label: '찍기',
             excludeSemantics: true,

@@ -60,11 +60,12 @@ class PanelSection extends StatelessWidget {
 /// 구역 제목. 위에 화면 끝까지 닿는 굵은 회색 띠(10px)를 두어 구역을 나눈다 (토스식, 카드 테두리 대신).
 /// 부모의 좌우 여백이 16이라고 보고 그만큼 바깥으로 띠를 늘린다.
 class SectionHeading extends StatelessWidget {
-  const SectionHeading(this.title, {super.key});
+  const SectionHeading(this.title, {super.key, this.inset = 16});
 
   final String title;
 
-  static const bleed = 16.0;
+  /// 이 제목이 들어 있는 목록의 좌우 여백. 회색 띠를 그만큼 밖으로 내밀어 화면 끝까지 닿게 한다
+  final double inset;
 
   @override
   Widget build(BuildContext context) {
@@ -76,14 +77,15 @@ class SectionHeading extends StatelessWidget {
           height: 10,
           child: LayoutBuilder(
             builder: (context, c) => OverflowBox(
-              minWidth: c.maxWidth + bleed * 2,
-              maxWidth: c.maxWidth + bleed * 2,
+              minWidth: c.maxWidth + inset * 2,
+              maxWidth: c.maxWidth + inset * 2,
               child: const ColoredBox(color: AppColors.grey100, child: SizedBox.expand()),
             ),
           ),
         ),
+        // 제목 글자는 목록 여백과 상관없이 화면 가장자리에서 20에 선다 (여백 16이면 4, 8이면 12)
         Padding(
-          padding: const EdgeInsets.fromLTRB(4, 22, 4, 10),
+          padding: EdgeInsets.fromLTRB(20 - inset, 22, 20 - inset, 10),
           child: Semantics(header: true, child: Text(title, style: Theme.of(context).textTheme.titleMedium)),
         ),
       ],
@@ -132,12 +134,16 @@ class NextStepButton extends StatelessWidget {
     required this.subtitle,
     required this.onPressed,
     this.primary = false,
+    this.horizontalPadding = 16,
   });
 
   final String title;
   final String subtitle;
   final VoidCallback onPressed;
   final bool primary;
+
+  /// 안쪽 좌우 여백. 설정 화면처럼 글자 줄을 다른 행과 맞춰야 할 때 줄인다
+  final double horizontalPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -157,7 +163,7 @@ class NextStepButton extends StatelessWidget {
           child: ConstrainedBox(
             constraints: const BoxConstraints(minHeight: 72),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 12),
               child: Row(
                 children: [
                   Expanded(

@@ -62,8 +62,10 @@ class PracticeFrame extends StatelessWidget {
                           child: Row(
                             children: [
                               Semantics(
+                                container: true,
                                 button: true,
-                                label: '뒤로 가기',
+                                // "카메라로 돌아가기"처럼 어디로 가는지 읽어 준다
+                                label: backLabel == '뒤로' ? '뒤로 가기' : '$backLabel 돌아가기',
                                 excludeSemantics: true,
                                 child: TextButton.icon(
                                   onPressed: TapFeedback.wrap(onBack),

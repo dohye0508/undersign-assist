@@ -11,12 +11,15 @@ import 'score_store.dart';
 /// 나의 점수판 (사용자 선택 S1 + W2·W3): 점수 듣기 → 자음·모음·글자·낱말 가로 막대 네 줄(가장 높은 것은 진한 하늘) →
 /// "가장 많이 오른 것 / 가장 낮은 글자" 문장 → "글자별 점수" 목록. 맨 아래 고정 버튼은 가장 낮은 글자 다시 써 보기
 class ScoreBoardView extends StatelessWidget {
-  const ScoreBoardView({super.key, required this.store, this.onRetryLowest});
+  const ScoreBoardView({super.key, required this.store, this.onRetryLowest, this.onStart});
 
   final ScoreStore store;
 
   /// 가장 낮은 글자부터 다시 쓰기. null이면 버튼을 두지 않는다
   final VoidCallback? onRetryLowest;
+
+  /// 아직 점수가 없을 때 맨 아래 버튼: 자음 학습으로. null이면 버튼을 두지 않는다
+  final VoidCallback? onStart;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +32,9 @@ class ScoreBoardView extends StatelessWidget {
       // 맨 아래 고정 버튼: 가장 낮은 글자 다시 써 보기 (사용자 선택 W2)
       cta: lowest != null && onRetryLowest != null && items.isNotEmpty
           ? PracticeCta('가장 낮은 글자예요 · ${items.first.score}점', '$lowest 다시 써 보기', onRetryLowest!)
-          : null,
+          : onStart != null
+              ? PracticeCta('아직 점수가 없어요', '자음부터 시작', onStart!)
+              : null,
       children: [
         ListenButton(
           label: '점수 듣기',

@@ -19,12 +19,21 @@ const usageSpeech = '문서를 한 장씩 찍으면 페이지가 쌓여요. 카�
 /// 촬영 화면 오른쪽 위 설정 버튼으로 연다. Esc 또는 "‹ 카메라로"로 닫는다.
 /// 값은 이 기기 브라우저 저장소에 남고([AppSettings]), 바꾸는 즉시 음성과 효과음에 적용된다.
 /// 한 층으로만 둔다: 카드 안 카드 없이 행 하나가 버튼이고, 단계는 아래에서 올라오는 선택 창에서 고른다.
+///
+/// 줄 맞춤: 글자는 모두 화면 왼쪽에서 [_textInset]에, 상자(하늘색 카드, 행을 눌렀을 때의 회색 바탕)는 모두 [_boxInset]에 선다.
+/// 그래서 제목·행 글자·카드 글자가 한 줄로 서고, 누름 바탕은 글자보다 양쪽으로 12씩 더 넓다.
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
 }
+
+/// 상자(카드·누름 바탕)의 화면 가장자리 여백
+const _boxInset = 8.0;
+
+/// 상자 안쪽 좌우 여백. 글자는 화면 가장자리에서 _boxInset + _rowPadding = 20에 선다
+const _rowPadding = 12.0;
 
 class _SettingsScreenState extends State<SettingsScreen> {
   AppSettings get _s => sharedAppSettings;
@@ -119,18 +128,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
       child: ListenableBuilder(
         listenable: _s,
         builder: (context, _) => ListView(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
+          padding: const EdgeInsets.fromLTRB(_boxInset, 0, _boxInset, 32),
           children: [
-            Semantics(header: true, child: Text('설정', style: Theme.of(context).textTheme.headlineMedium)),
-            const SectionHeading('글씨 연습'),
-            // 가장 중요한 기능이라 하늘색으로 강조한다 (분석 화면의 "다음에 할 일"과 같은 모양)
+            Padding(
+              padding: const EdgeInsets.only(left: _rowPadding),
+              child: Semantics(header: true, child: Text('설정', style: Theme.of(context).textTheme.headlineMedium)),
+            ),
+            const SectionHeading('글씨 연습', inset: _boxInset),
+            // 가장 중요한 기능이라 하늘색으로 강조한다 (분석 화면의 "다음에 할 일"과 같은 모양).
+            // 카드 가장자리는 행 누름 바탕과, 안의 글자는 행 글자와 같은 줄에 선다
             NextStepButton(
               title: '들리는 받아쓰기',
               subtitle: '자음·모음·글자·낱말 글씨 연습',
               primary: true,
+              horizontalPadding: _rowPadding,
               onPressed: _openPractice,
             ),
-            const SectionHeading('소리'),
+            const SectionHeading('소리', inset: _boxInset),
             _ValueRow(
               title: '말하기 속도',
               subtitle: '읽어 주는 목소리의 빠르기',
@@ -167,11 +181,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             _SwitchRow(
               title: '진동',
-              subtitle: '안드로이드 크롬에서만 나요. 받아쓰기 안내 진동도 함께',
+              subtitle: '안드로이드 크롬에서만 나요',
               value: _s.vibrate,
               onChanged: _setVibrate,
             ),
-            const SectionHeading('도움말'),
+            const SectionHeading('도움말', inset: _boxInset),
             _NavRow(
               title: '사용 방법 듣기',
               subtitle: '찍기부터 서명까지 순서',
@@ -227,7 +241,7 @@ class _NavRow extends StatelessWidget {
         child: ConstrainedBox(
           constraints: const BoxConstraints(minHeight: 72),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: _rowPadding, vertical: 12),
             child: Row(
               children: [
                 Expanded(child: _RowText(title: title, subtitle: subtitle)),
@@ -263,7 +277,7 @@ class _ValueRow extends StatelessWidget {
         child: ConstrainedBox(
           constraints: const BoxConstraints(minHeight: 72),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: _rowPadding, vertical: 12),
             child: Row(
               children: [
                 Expanded(child: _RowText(title: title, subtitle: subtitle)),
@@ -390,7 +404,7 @@ class _SwitchRow extends StatelessWidget {
         child: ConstrainedBox(
           constraints: const BoxConstraints(minHeight: 72),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: _rowPadding, vertical: 12),
             child: Row(
               children: [
                 Expanded(child: _RowText(title: title, subtitle: subtitle)),

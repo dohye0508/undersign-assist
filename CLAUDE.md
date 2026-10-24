@@ -41,7 +41,7 @@
   - 카메라 윗변 가운데 탭("찍은 페이지 N장 ⌄") 하나만 있다. 누르면 찍은 페이지 목록이 내려온다(`widgets/page_tray.dart`). 사진을 누르면 한 장씩 지워지고, 목록 머리 줄 오른쪽 "모두 지우기"(`PageTray.onClearAll`, 스크린리더 "찍은 페이지 모두 지우기")로 한 번에 지운다.
   - 아래 버튼 세 개: 사진 불러오기(여러 장), 찍기, 분석하기(N장).
   - 위쪽 막대 오른쪽: 다시 듣기, **설정**(톱니 아이콘). 예전의 휴지통(모두 지우기)은 페이지 목록 안으로, 정보(사용 방법)는 설정의 "사용 방법 듣기"로 옮겼다.
-- **설정**(`features/settings/settings_screen.dart`): 촬영 화면 설정 버튼으로 새 화면이 열린다(옅어지며 전환). "‹ 카메라로" 또는 `Esc`로 닫는다. 큰 제목 "설정" 아래 `SectionHeading` 구역 세 개, 카드 안 카드 없이 **한 층**: **글씨 연습**(들리는 받아쓰기, 가장 중요한 기능이라 `NextStepButton(primary: true)` 하늘색 바탕 + 남색 글씨 + ›로 강조, 한 번 누르면 바로 들어감) / **소리**(말하기 속도 느리게·보통·빠르게·아주 빠르게, 말소리 크기 작게·보통·크게, 효과음 크기 끄기·작게·보통·크게, 진동 켜기/끄기) / **도움말**(사용 방법 듣기만. 키보드 단축키 듣기는 없앴다). 단계 행은 왼쪽 이름·설명, **오른쪽에 지금 값 글씨**("빠르게")만 두고 행 전체가 버튼(높이 72)이다. 누르면 **아래에서 올라오는 선택 창**(`showModalBottomSheet`, 위 모서리 `AppRadius.camera`, 흰 바탕)에 제목과 선택지가 세로 큰 버튼(높이 64, 글씨 18)으로 나열되고, 지금 값은 하늘색 바탕 + 남색 글씨 + 체크, 나머지는 회색. 창이 열릴 때 "말하기 속도. 느리게, 보통, 빠르게, 아주 빠르게 중에서 고르세요. 지금은 빠르게예요."를 읽어 주고, 고르면 즉시 적용·저장·닫힘 뒤 그 값으로 들려준다("이 속도로 말해요", 효과음은 새 크기로 딸깍 한 번). Esc나 바깥을 누르면 닫힌다. 진동만 오른쪽 스위치. 값은 `features/settings/app_settings.dart`(`AppSettings`, 저장 키 `undersign.settings.v1`)가 브라우저 저장소에 남기고, `device_settings.dart`의 `applyAppSettings()`가 앱 시작 때(`main.dart`)와 바꿀 때마다 `Speech`(속도·크기)와 `Haptics`(`effectVolume` 배율, `vibrationEnabled`)에 적용한다. 진동은 이 설정 하나로 합쳤다: 끄면 버튼 진동과 받아쓰기 안내 진동이 모두 꺼진다(받아쓰기 자체 설정에는 거리 소리·보조선 숨기기만 남음).
+- **설정**(`features/settings/settings_screen.dart`): 촬영 화면 설정 버튼으로 새 화면이 열린다(옅어지며 전환). "‹ 카메라로" 또는 `Esc`로 닫는다. 큰 제목 "설정" 아래 `SectionHeading` 구역 세 개, 카드 안 카드 없이 **한 층**: **글씨 연습**(들리는 받아쓰기, 가장 중요한 기능이라 `NextStepButton(primary: true)` 하늘색 바탕 + 남색 글씨 + ›로 강조, 한 번 누르면 바로 들어감) / **소리**(말하기 속도 느리게·보통·빠르게·아주 빠르게, 말소리 크기 작게·보통·크게, 효과음 크기 끄기·작게·보통·크게, 진동 켜기/끄기) / **도움말**(사용 방법 듣기만. 키보드 단축키 듣기는 없앴다). 단계 행은 왼쪽 이름·설명, **오른쪽에 지금 값 글씨**("빠르게")만 두고 행 전체가 버튼(높이 72)이다. 누르면 **아래에서 올라오는 선택 창**(`showModalBottomSheet`, 위 모서리 `AppRadius.camera`, 흰 바탕)에 제목과 선택지가 세로 큰 버튼(높이 64, 글씨 18)으로 나열되고, 지금 값은 하늘색 바탕 + 남색 글씨 + 체크, 나머지는 회색. 창이 열릴 때 "말하기 속도. 느리게, 보통, 빠르게, 아주 빠르게 중에서 고르세요. 지금은 빠르게예요."를 읽어 주고, 고르면 즉시 적용·저장·닫힘 뒤 그 값으로 들려준다("이 속도로 말해요", 효과음은 새 크기로 딸깍 한 번). Esc나 바깥을 누르면 닫힌다. 진동만 오른쪽 스위치. **줄 맞춤**(2026-10-25): 글자는 모두 화면 가장자리에서 20, 상자(하늘색 카드·행 누름 바탕)는 모두 8에 선다(목록 여백 8 + 안쪽 12, `SectionHeading(inset: 8)`, `NextStepButton(horizontalPadding: 12)`). 그래서 제목·행 글자·카드 글자가 한 줄이고 누름 바탕은 글자보다 양쪽 12씩 넓다. 값은 `features/settings/app_settings.dart`(`AppSettings`, 저장 키 `undersign.settings.v1`)가 브라우저 저장소에 남기고, `device_settings.dart`의 `applyAppSettings()`가 앱 시작 때(`main.dart`)와 바꿀 때마다 `Speech`(속도·크기)와 `Haptics`(`effectVolume` 배율, `vibrationEnabled`)에 적용한다. 진동은 이 설정 하나로 합쳤다: 끄면 버튼 진동과 받아쓰기 안내 진동이 모두 꺼진다(받아쓰기 자체 설정에는 거리 소리·보조선 숨기기만 남음).
 - **분석**: 모든 페이지를 한 문서로 읽은 결과. "← 카메라로"로 돌아가도 찍은 페이지는 남는다(페이지가 바뀌면 분석과 서명은 지워진다).
   - **듣기 버튼은 맨 위에 크게**(`ListenButton`, 높이 68, 옅은 파랑 바탕): 문서 읽기는 "전체 듣기"·"요약 듣기", 검토하세요!는 "검토 결과 듣기". 시각장애인이 가장 많이 쓰는 동작이라 구석의 작은 아이콘으로 두지 않는다.
   - 문서 읽기: 맨 위 "요약 듣기", 그 아래 쉬운 말 설명("사진 1장은 근로계약서예요. 중요한 항목 7개를 찾았고, 써야 할 칸은 3곳이에요.")과 항목 표. 펼치기·접기 없음.
@@ -182,6 +182,10 @@ flutter run -d chrome
 - Windows에서 `uvicorn --reload`가 코드 변경을 반영하지 못한 적이 있다. 결과가 그대로면 서버를 껐다 켠다.
 - `pdf` 패키지가 끌어오는 `image` 4.11은 `archive` 4.0.9와 맞지 않아 웹 컴파일이 실패한다. `pubspec.yaml`의 `dependency_overrides`로 `image: 4.4.0`에 고정했다. Flutter를 올려 archive가 새 버전으로 풀리면 고정을 풀어도 된다.
 
+### 배포 (패드에서 서버 없이 쓰려면)
+
+패드 모드(아래)는 노트북 IP·인증서 경고·방화벽·서버 창 멈춤 때문에 매번 흔들렸다. 진짜 배포는 둘 다 **HTTPS가 자동으로 붙는 호스팅**에 올린다: 앱은 GitHub Pages(저장소가 GitHub, `flutter build web --base-href /undersign-assist/`를 Actions가 돌려 올림), 백엔드는 `backend/Dockerfile`(python 3.11 + `tesseract-ocr-kor`, 포트는 `PORT` 환경 변수, HF Spaces 기본 7860)을 Hugging Face Spaces(Docker, 무료 cpu-basic은 48시간 쉬면 잠듦) 또는 Cloud Run(결제 계정 필요, 쓴 만큼만, 안 쓰면 0)에 올린다. Render 무료는 15분 쉬면 잠들고 깨는 데 30~90초라 시연에 맞지 않는다. 앱 빌드 때 `--dart-define=API_BASE=https://<백엔드 주소>`. `GROQ_API_KEY`는 호스팅의 Secret으로만 준다. 배포 뒤에는 패드에서 주소만 열면 되고 인증서 경고가 없다.
+
 ### 대회장 패드 모드
 
 같은 와이파이의 안드로이드 패드에서 카메라까지 되게 하려면 앱과 API를 **둘 다 HTTPS**로 띄워야 한다 (브라우저는 `localhost`가 아니면 HTTPS에서만 카메라를 연다). 한 줄로 끝낸다:
@@ -204,6 +208,7 @@ powershell -ExecutionPolicy Bypass -File scripts/pad-serve.ps1
 - 데이터 모양을 바꾸면 Flutter `models/recognized_document.dart`와 백엔드 `app/models.py`를 함께 고친다.
 - **API 키, 서비스 계정 JSON, `.env`는 절대 커밋하지 않는다.** 이전 프로젝트에서 키가 커밋된 적이 있다. `backend/.env.example`에 이름만 적는다.
 - 접근성: 모든 버튼에 스크린리더용 이름이 있어야 하고, 새 결과는 `Speech.announce`로 음성과 스크린리더 알림을 함께 보낸다.
+- `Semantics(button: true, label: …)`나 `Semantics(header: true)`로 이름을 붙일 때는 **`container: true`를 같이 쓴다.** 없으면 그 이름이 조상 노드로 합쳐져서, 뒤로 버튼 하나 때문에 **화면 전체가 "뒤로 가기" 버튼으로 읽혔다**(2026-10-25 발견, `PracticeFrame`·`_BackHeader`·`_TopBar`·찍기·모두 지우기·제목들에 넣어 고침). 확인법: 브라우저 콘솔에서 `flt-semantics[role=button]`의 크기가 화면 전체면 잘못된 것.
 
 ## 남은 일
 
