@@ -14,6 +14,7 @@ class PageTray extends StatelessWidget {
     required this.open,
     required this.onToggle,
     required this.onRemove,
+    this.trailing,
   });
 
   final List<DocumentPhoto> pages;
@@ -22,6 +23,10 @@ class PageTray extends StatelessWidget {
 
   /// 지울 페이지의 순번 (0부터)
   final ValueChanged<int> onRemove;
+
+  /// 페이지 목록 손잡이 바로 오른쪽에 나란히 매달리는 탭 (촬영 화면: 들리는 받아쓰기).
+  /// 같은 모양으로 맞추려면 [PageTrayTab]을 쓴다
+  final Widget? trailing;
 
   static const _duration = Duration(milliseconds: 250);
 
@@ -51,11 +56,87 @@ class PageTray extends StatelessWidget {
                 );
               },
             ),
-            // 버튼은 패널 아래 가장자리에 붙어 있어 패널과 함께 내려가고 올라간다
-            _ToggleButton(count: pages.length, open: open, onToggle: onToggle),
+            // 버튼은 패널 아래 가장자리에 붙어 있어 패널과 함께 내려가고 올라간다.
+            // 옆 탭(받아쓰기)도 같은 줄에 나란히 매달린다
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _ToggleButton(count: pages.length, open: open, onToggle: onToggle),
+                if (trailing case final trailing?) ...[const SizedBox(width: 6), trailing],
+              ],
+            ),
           ],
         );
       },
+    );
+  }
+}
+
+/// 카메라 윗변에 매달린 손잡이 탭: 위는 평평하게 붙고 아래만 둥근 회색 탭.
+/// 페이지 목록 손잡이와 그 옆 탭(받아쓰기)이 같은 모양을 쓴다
+class PageTrayTab extends StatelessWidget {
+  const PageTrayTab({
+    super.key,
+    required this.label,
+    required this.semanticsLabel,
+    required this.onTap,
+    this.leadingIcon,
+    this.trailingIcon,
+    this.color = AppColors.textStrong,
+  });
+
+  final String label;
+
+  /// 스크린리더가 읽을 이름
+  final String semanticsLabel;
+  final VoidCallback onTap;
+
+  /// 글자 앞 작은 아이콘 (크기 18)
+  final IconData? leadingIcon;
+
+  /// 글자 뒤 아이콘 (크기 20, 목록 열기·닫기 화살표)
+  final IconData? trailingIcon;
+
+  /// 글자와 아이콘 색
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    const radius = BorderRadius.vertical(bottom: Radius.circular(14));
+    return Semantics(
+      button: true,
+      label: semanticsLabel,
+      excludeSemantics: true,
+      child: Material(
+        color: AppColors.grey100,
+        borderRadius: radius,
+        child: InkWell(
+          onTap: TapFeedback.wrap(onTap),
+          borderRadius: radius,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 44, minWidth: 96),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (leadingIcon case final icon?) ...[
+                    Icon(icon, color: color, size: 18),
+                    const SizedBox(width: 4),
+                  ],
+                  Text(label, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: color)),
+                  if (trailingIcon case final icon?) ...[
+                    const SizedBox(width: 4),
+                    Icon(icon, color: color, size: 20),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -69,45 +150,12 @@ class _ToggleButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 카메라 윗변에 붙은 손잡이: 위는 평평하게 붙고 아래만 둥글다. 끌어내리는 느낌
-    const radius = BorderRadius.vertical(bottom: Radius.circular(14));
-    return Padding(
-      padding: EdgeInsets.zero,
-      child: Semantics(
-        button: true,
-        label: '업로드한 페이지 $count장, 목록 ${open ? '닫기' : '열기'}',
-        excludeSemantics: true,
-        child: Material(
-          color: AppColors.grey100,
-          borderRadius: radius,
-          child: InkWell(
-            onTap: TapFeedback.wrap(onToggle),
-            borderRadius: radius,
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(minHeight: 44, minWidth: 96),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      '찍은 페이지 $count장',
-                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: AppColors.textStrong),
-                    ),
-                    const SizedBox(width: 4),
-                    Icon(
-                      open ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded,
-                      color: AppColors.textStrong,
-                      size: 20,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
+    // 카메라 윗변에 붙은 손잡이: 끌어내리는 느낌
+    return PageTrayTab(
+      label: '찍은 페이지 $count장',
+      semanticsLabel: '업로드한 페이지 $count장, 목록 ${open ? '닫기' : '열기'}',
+      trailingIcon: open ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded,
+      onTap: onToggle,
     );
   }
 }

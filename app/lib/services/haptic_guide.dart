@@ -82,7 +82,7 @@ class HapticGuide {
     if (now.difference(_lastOutside).inMilliseconds < 1000) return;
     _lastOutside = now;
     if (settings.vibrate) Haptics.pulse([250]);
-    Haptics.tone(220, length: 0.25, gain: 0.5);
+    Haptics.tone(220, length: 0.25, gain: 0.15);
   }
 
   void dispose() => stop();

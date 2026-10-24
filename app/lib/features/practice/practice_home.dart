@@ -463,12 +463,7 @@ class _NameFormState extends State<_NameForm> {
           autofocus: true,
           maxLength: 6,
           style: const TextStyle(fontSize: 28),
-          decoration: InputDecoration(
-            labelText: '이름 (한글, 1~6글자)',
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppRadius.button)),
-            filled: true,
-            fillColor: AppColors.grey50,
-          ),
+          decoration: const InputDecoration(labelText: '이름 (한글, 1~6글자)'),
           onSubmitted: (_) => _save(),
         ),
         const SizedBox(height: 12),

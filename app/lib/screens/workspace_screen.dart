@@ -273,12 +273,6 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
         _TopBar(
           title: '들리는계약서',
           onRepeat: _repeat,
-          leading: IconButton(
-            tooltip: '들리는 받아쓰기, 글씨 연습',
-            style: IconButton.styleFrom(minimumSize: const Size(60, 60)),
-            icon: const Icon(Icons.edit_note, size: 30, color: AppColors.primary),
-            onPressed: TapFeedback.wrap(_openPractice),
-          ),
           trailing: _state.hasPages
               ? IconButton(
                   tooltip: '모두 지우고 새 문서 찍기',
@@ -319,6 +313,14 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
                           open: _trayOpen,
                           onToggle: _toggleTray,
                           onRemove: _removePage,
+                          // 들리는 받아쓰기 입구: 페이지 목록 손잡이 바로 옆에 같은 모양으로 매달린다
+                          trailing: PageTrayTab(
+                            label: '받아쓰기',
+                            semanticsLabel: '들리는 받아쓰기, 글씨 연습',
+                            leadingIcon: Icons.edit_rounded,
+                            color: AppColors.accent,
+                            onTap: _openPractice,
+                          ),
                         ),
                       ),
                     ],
@@ -390,22 +392,18 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
 }
 
 class _TopBar extends StatelessWidget {
-  const _TopBar({required this.title, required this.onRepeat, this.leading, this.trailing});
+  const _TopBar({required this.title, required this.onRepeat, this.trailing});
 
   final String title;
   final VoidCallback onRepeat;
-
-  /// 제목 앞에 붙는 버튼 (촬영 화면: 들리는 받아쓰기)
-  final Widget? leading;
   final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(leading == null ? 20 : 8, 8, 16, 8),
+      padding: const EdgeInsets.fromLTRB(20, 8, 16, 8),
       child: Row(
         children: [
-          if (leading case final leading?) ...[leading, const SizedBox(width: 4)],
           Semantics(
             header: true,
             child: Text(title, style: Theme.of(context).textTheme.titleLarge),

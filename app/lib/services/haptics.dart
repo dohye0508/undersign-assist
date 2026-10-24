@@ -26,13 +26,13 @@ class Haptics {
   /// 버튼을 눌렀을 때: 아주 짧은 진동 + 작은 딸깍 소리. 모든 버튼이 이걸 낸다 (시각장애인은 눌렸는지 이걸로 안다)
   static void tap() {
     _vibrate([30]);
-    _tones([1200], length: 0.05, gain: 0.35);
+    _tones([1200], length: 0.05, gain: 0.1);
   }
 
   /// 쓴 것을 왼쪽으로 밀어 넘겼을 때: 약한 진동 + 중간음
   static void slide() {
     _vibrate([50]);
-    _tones([660], length: 0.1, gain: 0.6);
+    _tones([660], length: 0.1, gain: 0.18);
   }
 
   /// 받아쓰기의 연속 안내용: 진동만 / 소리만 따로 낸다 (경고·성공처럼 둘을 묶어 내지 않는다)
@@ -41,7 +41,7 @@ class Haptics {
   /// 진행 중인 진동을 멈춘다
   static void cancel() => _vibrate([0]);
 
-  static void tone(double frequency, {double length = 0.05, double gain = 0.3}) =>
+  static void tone(double frequency, {double length = 0.05, double gain = 0.1}) =>
       _tones([frequency], length: length, gain: gain);
 
   static void _vibrate(List<int> pattern) {
@@ -52,7 +52,8 @@ class Haptics {
     }
   }
 
-  static void _tones(List<double> frequencies, {double length = 0.16, double gain = 1}) {
+  // 효과음이 음성(TTS)보다 크게 들린다는 피드백으로 기본 크기를 0.3으로 낮췄다 (2026-10-24)
+  static void _tones(List<double> frequencies, {double length = 0.16, double gain = 0.3}) {
     try {
       final audio = _audio ??= web.AudioContext();
       for (final (i, frequency) in frequencies.indexed) {

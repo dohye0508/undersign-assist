@@ -41,11 +41,15 @@ if ($null -eq $flutter) {
 # ---------- 1. LAN IP ----------
 Step 'LAN IP 찾기'
 $Ip = '127.0.0.1'
+# 기본 게이트웨이가 있는(=실제 와이파이·유선) 어댑터의 주소를 고른다. Cloudflare WARP, Hyper-V 같은 가상 어댑터는 뺀다.
+# (그냥 첫 사설 주소를 고르면 WARP의 172.16.0.2를 골라 패드가 접속하지 못한 적이 있다)
 try {
-    $addr = Get-NetIPAddress -AddressFamily IPv4 -ErrorAction Stop |
-        Where-Object { $_.IPAddress -like '192.168.*' -or $_.IPAddress -like '10.*' -or $_.IPAddress -like '172.*' } |
+    $virtual = 'WARP|vEthernet|VirtualBox|VMware|Loopback|Tailscale|ZeroTier'
+    $cfg = Get-NetIPConfiguration -ErrorAction Stop |
+        Where-Object { $null -ne $_.IPv4DefaultGateway -and $_.NetAdapter.Status -eq 'Up' -and $_.InterfaceAlias -notmatch $virtual } |
+        Sort-Object { if ($_.InterfaceAlias -match 'Wi-?Fi|무선|Wireless') { 0 } else { 1 } } |
         Select-Object -First 1
-    if ($null -ne $addr) { $Ip = $addr.IPAddress }
+    if ($null -ne $cfg) { $Ip = ($cfg.IPv4Address | Select-Object -First 1).IPAddress }
 } catch { }
 if ($Ip -eq '127.0.0.1') {
     Write-Host '와이파이 IP를 찾지 못해 127.0.0.1 을 씁니다. 패드에서는 열 수 없습니다.' -ForegroundColor Yellow
@@ -91,17 +95,28 @@ if (Test-Path $SamplesDir) {
 }
 
 # ---------- 4. 백엔드 (HTTPS, 0.0.0.0:8443) ----------
-Step ('백엔드 시작: 0.0.0.0:' + $ApiPort + ' (새 창)')
+# 두 서버는 창 없이 띄우고 출력은 로그 파일로 보낸다. 창으로 띄우면 창 안을 한 번 클릭(글자 선택)하는 것만으로
+# Windows가 그 프로그램을 멈춰 패드에 "문서를 읽지 못했어요"가 뜬다 (2026-10-24 실제로 겪음).
+# 다시 실행하면 같은 포트의 이전 서버를 먼저 끈다. 끄기만 하려면 scripts/pad-stop.ps1
+foreach ($port in @($ApiPort, $WebPort)) {
+    Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue | ForEach-Object {
+        Stop-Process -Id $_.OwningProcess -Force -Confirm:$false -ErrorAction SilentlyContinue
+    }
+}
+$LogDir = Join-Path $Root 'scripts\.pad-logs'
+New-Item -ItemType Directory -Force $LogDir | Out-Null
+Step ('백엔드 시작: 0.0.0.0:' + $ApiPort + ' (창 없이, 로그 scripts\.pad-logspi.*.log)')
 $backendArgs = @(
     '-m', 'uvicorn', 'app.main:app',
     '--host', '0.0.0.0', '--port', "$ApiPort",
     '--ssl-keyfile', ('"' + $KeyPath + '"'),
     '--ssl-certfile', ('"' + $CertPath + '"')
 )
-$backendProc = Start-Process -FilePath $VenvPython -ArgumentList $backendArgs -WorkingDirectory $BackendDir -PassThru
+$backendProc = Start-Process -FilePath $VenvPython -ArgumentList $backendArgs -WorkingDirectory $BackendDir -PassThru `
+    -WindowStyle Hidden -RedirectStandardOutput (Join-Path $LogDir 'api.out.log') -RedirectStandardError (Join-Path $LogDir 'api.err.log')
 
 # ---------- 5. 정적 서버 (HTTPS, 0.0.0.0:3443) ----------
-Step ('앱 정적 서버 시작: 0.0.0.0:' + $WebPort + ' (새 창)')
+Step ('앱 정적 서버 시작: 0.0.0.0:' + $WebPort + ' (창 없이, 로그 scripts\.pad-logs\web.*.log)')
 $staticArgs = @(
     ('"' + (Join-Path $PSScriptRoot 'https_static.py') + '"'),
     ('"' + $BuildDir + '"'),
@@ -109,7 +124,8 @@ $staticArgs = @(
     ('"' + $CertPath + '"'),
     ('"' + $KeyPath + '"')
 )
-$staticProc = Start-Process -FilePath $VenvPython -ArgumentList $staticArgs -WorkingDirectory $Root -PassThru
+$staticProc = Start-Process -FilePath $VenvPython -ArgumentList $staticArgs -WorkingDirectory $Root -PassThru `
+    -WindowStyle Hidden -RedirectStandardOutput (Join-Path $LogDir 'web.out.log') -RedirectStandardError (Join-Path $LogDir 'web.err.log')
 
 # ---------- 6. 안내 ----------
 $line = '=' * 72
@@ -130,7 +146,7 @@ Write-Host ('       ' + $WebUrl) -ForegroundColor Yellow
 Write-Host ''
 Write-Host '  3) 카메라 권한을 물으면 허용합니다. 진동은 안드로이드 크롬에서만 됩니다.'
 Write-Host ''
-Write-Host '  끝나면: 새로 뜬 두 창(백엔드, 정적 서버)을 닫습니다. 서버가 와이파이에 열려 있으니 꼭 닫으세요.' -ForegroundColor Magenta
+Write-Host '  끝나면: powershell -ExecutionPolicy Bypass -File scripts/pad-stop.ps1  (서버가 와이파이에 열려 있으니 꼭 끄세요)' -ForegroundColor Magenta
 Write-Host ('       PID: 백엔드 ' + $backendProc.Id + ', 정적 서버 ' + $staticProc.Id)
 Write-Host ''
 Write-Host '  패드에서 안 열리면(방화벽): 관리자 PowerShell에서 아래 두 줄을 실행합니다.' -ForegroundColor Cyan

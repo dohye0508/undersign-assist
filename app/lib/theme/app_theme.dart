@@ -24,10 +24,11 @@ class AppColors {
   // 연하늘 바탕에는 흰 글씨가 읽히지 않으므로(1.3:1) 버튼 글씨는 짙은 남색(8.9:1)
 
   /// 주 버튼 바탕
-  static const primary = Color(0xFFCFE5FB);
+  // 처음 고른 #CFE5FB는 흰 바탕에서 버튼이 안 보인다는 피드백으로 한 단계 진하게 (남색 글씨 대비 7:1)
+  static const primary = Color(0xFF9BD0F7);
 
-  /// 조금 더 진한 주 버튼 (쓰고 서명하기의 "다음"). 남색 글씨와 대비 7:1
-  static const primaryStrong = Color(0xFF9BD0F7);
+  /// 조금 더 진한 주 버튼 (쓰고 서명하기의 "다음", 받아쓰기 "다 썼어요"). 남색 글씨와 대비 5.4:1
+  static const primaryStrong = Color(0xFF6CB8F4);
 
   /// 주 버튼 위 글씨·아이콘
   static const onPrimary = Color(0xFF0B3B66);
@@ -138,6 +139,20 @@ class AppTheme {
         backgroundColor: AppColors.grey100,
         side: BorderSide.none,
         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      ),
+      // 입력칸: 회색 바탕에 보이는 테두리, 누르면 진한 하늘 (내 이름 등록 칸이 안 보인다는 피드백)
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: AppColors.surface,
+        labelStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.textStrong),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppRadius.button),
+          borderSide: const BorderSide(color: AppColors.subtle, width: 1.5),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppRadius.button),
+          borderSide: const BorderSide(color: AppColors.accent, width: 2.5),
+        ),
       ),
       dividerTheme: const DividerThemeData(color: AppColors.grey100, thickness: 1, space: 1),
       progressIndicatorTheme: const ProgressIndicatorThemeData(color: AppColors.accent, linearTrackColor: AppColors.grey100),

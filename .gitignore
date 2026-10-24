@@ -15,6 +15,7 @@ venv/
 uploads/
 tts_file/
 *.log
+scripts/.pad-logs/
 
 # 손글씨 데이터셋 등 대용량 로컬 자료
 data/raw/
