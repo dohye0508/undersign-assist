@@ -153,6 +153,24 @@ samples/                시험·시연용 가짜 문서 사진
 - `참가신청서２.png`(２는 전각 숫자): 참가 부문, 학생 3명의 성명·소속·연락처·보호자 칸 → `application`.
 - `작품요약서.png`: 팀명, 작품명, 참가자, 작품 요약 칸 → `summary`.
 
+## 시연 영상 자동 녹화
+
+`scripts/record_demo.py`(Playwright)가 진짜 앱과 진짜 백엔드를 키보드·마우스로 조작하며 촬영 → 읽기 → 검토 → 쓰고 서명하기 → PDF → 들리는 받아쓰기까지 화면을 녹화한다. 카메라는 Chrome 가짜 카메라가 `samples/`의 사진을 비춘다.
+
+```
+pip install playwright pillow
+python -m playwright install chromium
+cd app && flutter build web          # 앱 디자인을 바꿨으면 다시 빌드
+# 백엔드를 127.0.0.1:8000으로 켠 뒤
+python scripts/record_demo.py        # 결과는 demo_out/ (git에 올리지 않음)
+```
+
+- 결과: `demo.webm`(ffmpeg가 있으면 `demo.mp4`도), 장면별 캡처 `shots/`(16장), 앱이 말한 문장 `transcript.txt`, 서명된 `signed.pdf`.
+- **소리는 녹음되지 않는다.** 앱이 말하는 문장(speechSynthesis)을 가로채 아래 자막으로 보여 준다. 진동도 영상에 담기지 않는다. 목소리와 진동까지 보여 주려면 태블릿에서 화면 녹화를 켜고 직접 시연한다.
+- 옵션: `--sample samples/consent_school.png`(다른 문서), `--keys-only`(밀기 대신 Enter), `--no-practice`(받아쓰기 장면 빼기), `--headed`(브라우저를 눈으로 보며).
+- 화면이 바뀌면 스크립트가 멈추거나 엉뚱한 곳을 누를 수 있다. 특히 받아쓰기 보조선 색(`practice_screen.dart`의 `_guideColor`, 지금 `#D7DCE2`)과 안내 문구를 `find_guide`와 `wait_speech`가 따라간다. 로그에 "안 나옴"이 찍히면 그 줄을 본다.
+- 서명 칸 글씨는 정해진 지그재그 낙서다.
+
 ## 실행
 
 백엔드:

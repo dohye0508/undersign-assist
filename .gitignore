@@ -24,3 +24,6 @@ data/raw/
 Thumbs.db
 .idea/
 .vscode/
+
+# 시연 영상 자동 녹화 결과 (scripts/record_demo.py)
+demo_out/
