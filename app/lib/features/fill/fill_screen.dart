@@ -25,13 +25,17 @@ import 'fill_targets.dart';
 /// 넘기기 전에 [SignatureCheck]로 숫자 검사만 한다 (비었는지, 너무 작은지, 너무 빠른지. AI 판단 없음).
 /// 통과하면 쓴 글씨가 문서 사진의 그 칸 자리로 줄어들며 들어가고(0.6초), 다음 칸이 나온다.
 class FillScreen extends StatefulWidget {
-  const FillScreen({super.key, required this.state, required this.targets, this.start = 0});
+  const FillScreen({super.key, required this.state, required this.targets, this.start = 0, this.intro});
 
   final WorkspaceState state;
   final List<FillTarget> targets;
 
   /// 처음 쓸 칸 (targets 안의 순서)
   final int start;
+
+  /// 열리자마자 첫 칸 안내 앞에 한 번 들려줄 말 (예: "써야 할 곳은 3곳이에요. …").
+  /// 패널을 건너뛰고 바로 열릴 때 패널 대신 여기서 말한다
+  final String? intro;
 
   @override
   State<FillScreen> createState() => _FillScreenState();
@@ -79,7 +83,8 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       _precache();
-      Speech.announce(context, _intro(first: true));
+      final before = widget.intro;
+      Speech.announce(context, before == null || before.isEmpty ? _intro(first: true) : '$before ${_intro(first: true)}');
     });
   }
 
@@ -635,8 +640,12 @@ Rect _mapBox(FillTarget t, Size page, Rect pageRect) {
   return Rect.fromLTWH(pageRect.left + b.x * s, pageRect.top + b.y * s, b.width * s, b.height * s);
 }
 
-Rect _fitInk(Size ink, Rect target, bool signature) =>
-    (signature ? Alignment.center : Alignment.centerLeft).inscribe(applyBoxFit(BoxFit.contain, ink, target.size).destination, target);
+/// 글씨 칸은 왼쪽에 붙이되 칸 높이의 15%만큼 안쪽에서 시작한다 (':' 바로 뒤에 붙지 않게). 서명은 가운데
+Rect _fitInk(Size ink, Rect target, bool signature) {
+  final area = signature ? target : fillTextInset(target);
+  return (signature ? Alignment.center : Alignment.centerLeft)
+      .inscribe(applyBoxFit(BoxFit.contain, ink, area.size).destination, area);
+}
 
 /// 패드 글씨: 가는 짙은 파랑 (필압 0.5에서 약 2.5px). 문서 칸에 줄여 넣어도 인쇄 글자와 굵기가 비슷하게
 class _FillInk {

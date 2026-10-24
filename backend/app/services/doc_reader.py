@@ -171,9 +171,13 @@ def build_speech(doc_type: DocType, fields: list[Field], lines: list[TextBlock])
         return f"어떤 문서인지 알아내지 못했어요. 처음 부분을 읽어드릴게요. {opening}"
 
     label = label_of(doc_type)
+    # 페이지 수는 줄의 page 번호(0부터)로 센다. 사진 한 장이면 1
+    page_count = max(line.page for line in lines) + 1
+    # 화면의 쉬운 설명 문장과 같은 투로 시작한다: 무엇으로 보이고, 몇 장을 읽어 몇 개를 찾았는지
     parts = [f"{label}{_euro(label)} 보여요."]
     if fields:
+        parts.append(f"사진 {page_count}장, 중요한 항목 {len(fields)}개를 찾았어요.")
         parts += [f"{f.label}, {f.value}." for f in fields]
     else:
-        parts.append("중요한 항목은 찾지 못했어요. 전체 듣기로 내용을 들어 보세요.")
+        parts.append(f"사진 {page_count}장을 읽었지만 중요한 항목은 찾지 못했어요. 문서가 화면에 다 들어오게 다시 찍어 보세요.")
     return " ".join(parts)

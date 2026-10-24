@@ -318,7 +318,7 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
               borderRadius: BorderRadius.circular(24),
             ),
             child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [

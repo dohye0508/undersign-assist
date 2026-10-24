@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'dart:typed_data';
+import 'dart:ui' show Rect;
 
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -7,6 +8,7 @@ import 'package:pdf/widgets.dart' as pw;
 import '../../models/document_photo.dart';
 import '../../models/fill.dart';
 import '../../models/recognized_document.dart';
+import '../fill/fill_targets.dart';
 
 /// 패드 서명 안내 상자의 가로세로 비율. 서명 PNG도 이 비율로 그려진다
 const _signatureAspect = 2.6;
@@ -156,11 +158,15 @@ String _lineName(String text, int line) {
 
 /// 채운 칸 하나. 글씨 PNG는 획만 잘라낸 것이라 칸 상자에 비율을 지켜 넣는다.
 /// 글씨 칸은 쓰는 자리처럼 왼쪽에 붙이고, 서명은 가운데에 둔다
+/// (화면의 넣기 움직임과 같은 자리: 글씨 칸은 칸 높이의 15%만큼 안쪽에서 시작한다)
 pw.Widget _placeFill(FilledInk fill, double scale) {
-  final rect = fill.target.rect;
+  final b = fill.target.rect;
+  final rect = fill.target.isSignature
+      ? Rect.fromLTWH(b.x.toDouble(), b.y.toDouble(), b.width.toDouble(), b.height.toDouble())
+      : fillTextInset(Rect.fromLTWH(b.x.toDouble(), b.y.toDouble(), b.width.toDouble(), b.height.toDouble()));
   return pw.Positioned(
-    left: rect.x * scale,
-    top: rect.y * scale,
+    left: rect.left * scale,
+    top: rect.top * scale,
     child: pw.Image(
       pw.MemoryImage(fill.png),
       width: rect.width * scale,

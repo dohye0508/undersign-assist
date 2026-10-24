@@ -4,7 +4,6 @@ import '../../models/fill.dart';
 import '../../models/workspace_state.dart';
 import '../../services/speech.dart';
 import '../../theme/app_theme.dart';
-import '../../widgets/panel_section.dart';
 import 'fill_screen.dart';
 import 'fill_targets.dart';
 
@@ -32,6 +31,9 @@ class _FillPanelBody extends StatefulWidget {
 class _FillPanelBodyState extends State<_FillPanelBody> {
   bool _exporting = false;
 
+  /// 아직 아무것도 안 채웠을 때 쓰기 화면을 바로 열었는지. 두 번 열리지 않게 한다
+  bool _autoOpened = false;
+
   List<FillTarget> get _targets {
     final document = widget.state.recognized;
     return document == null ? const [] : findFillTargets(document);
@@ -43,7 +45,16 @@ class _FillPanelBodyState extends State<_FillPanelBody> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) Speech.announce(context, _summary());
+      if (!mounted) return;
+      final targets = _targets;
+      // 아직 하나도 안 채웠으면 목록을 거치지 않고 첫 칸부터 바로 쓴다. 써야 할 곳 목록은 쓰기 화면이 말한다.
+      // 하나라도 채웠으면 목록을 보여 줘서 확인하고 다시 쓸 수 있게 한다
+      if (!_autoOpened && widget.state.fills.isEmpty && targets.isNotEmpty) {
+        _autoOpened = true;
+        _open(0, announceList: true);
+        return;
+      }
+      Speech.announce(context, _summary());
     });
   }
 
@@ -64,12 +75,20 @@ class _FillPanelBodyState extends State<_FillPanelBody> {
     return caution == 0 ? '' : '서명 전에 다시 알려드려요. 확인이 필요한 곳이 $caution개 있어요. ';
   }
 
-  Future<void> _open(int index) async {
+  Future<void> _open(int index, {bool announceList = false}) async {
     final targets = _targets;
     final exported = await Navigator.of(context).push<bool>(
-      MaterialPageRoute(builder: (_) => FillScreen(state: widget.state, targets: targets, start: index)),
+      MaterialPageRoute(
+        builder: (_) => FillScreen(
+          state: widget.state,
+          targets: targets,
+          start: index,
+          intro: announceList ? '${_cautionReminder()}${describeFillTargets(targets)}' : null,
+        ),
+      ),
     );
     if (!mounted) return;
+    setState(() {}); // 돌아오면 목록(채운 칸 표시)을 새로 그린다
     final left = _left(targets);
     final filled = targets.length - left;
     Speech.announce(
@@ -95,34 +114,38 @@ class _FillPanelBodyState extends State<_FillPanelBody> {
     final fills = widget.state.fills;
     final firstEmpty = targets.indexWhere((t) => !fills.containsKey(t.id));
 
-    return PanelSection(
-      title: WorkStep.fill.label,
-      description: WorkStep.fill.guide,
-      actions: [
-        IconButton(
-          tooltip: '써야 할 칸 다시 듣기',
-          icon: const Icon(Icons.volume_up_outlined),
-          onPressed: () => Speech.announce(context, _summary()),
-        ),
-      ],
+    // 단계 이름은 위 막대가 이미 보여 주므로 여기서는 제목 없이 내용만 그린다
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (targets.isEmpty)
           Text(describeFillTargets(targets), style: text.bodyLarge)
         else ...[
-          Text('써야 할 곳 ${targets.length}곳', style: text.labelLarge),
-          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(child: Text('써야 할 곳 ${targets.length}곳', style: text.labelLarge)),
+              IconButton(
+                tooltip: '써야 할 칸 다시 듣기',
+                visualDensity: VisualDensity.compact,
+                icon: const Icon(Icons.volume_up_outlined),
+                onPressed: () => Speech.announce(context, _summary()),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
           for (final (i, target) in targets.indexed)
             _TargetRow(target: target, ink: fills[target.id], onTap: () => _open(i)),
-          const SizedBox(height: 12),
-          if (firstEmpty >= 0)
+          if (firstEmpty >= 0) ...[
+            const SizedBox(height: 4),
             FilledButton.icon(
               onPressed: () => _open(firstEmpty),
               icon: const Icon(Icons.draw_outlined),
               label: const Text('쓰기 시작'),
             ),
+          ],
         ],
         if (fills.isNotEmpty) ...[
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
           // 다 채웠으면 PDF 받기가 가장 큰 버튼이 된다
           if (firstEmpty >= 0)
             OutlinedButton.icon(
@@ -154,12 +177,13 @@ class _TargetRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final ink = this.ink;
     final done = ink != null;
+    final text = Theme.of(context).textTheme;
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: 6),
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
-          minimumSize: const Size.fromHeight(64),
-          padding: const EdgeInsets.symmetric(horizontal: 14),
+          minimumSize: const Size.fromHeight(52),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           backgroundColor: done ? AppColors.okSoft : AppColors.surface,
         ),
         onPressed: onTap,
@@ -168,13 +192,23 @@ class _TargetRow extends StatelessWidget {
           child: ExcludeSemantics(
             child: Row(
               children: [
-                Icon(done ? Icons.check_circle : Icons.edit_outlined, color: done ? AppColors.ok : AppColors.muted),
-                const SizedBox(width: 10),
-                Expanded(child: Text(target.label, style: Theme.of(context).textTheme.titleMedium)),
-                if (done)
-                  SizedBox(width: 80, height: 36, child: Image.memory(ink.png, fit: BoxFit.contain)),
-                const SizedBox(width: 6),
-                Text(done ? '다시 쓰기' : '쓰기', style: Theme.of(context).textTheme.bodyMedium),
+                Icon(done ? Icons.check_circle : Icons.edit_outlined,
+                    size: 20, color: done ? AppColors.ok : AppColors.muted),
+                const SizedBox(width: 8),
+                // 이름은 한 줄로. "사업주 서명"처럼 긴 이름이 두 줄로 꺾이지 않게 작게, 넘치면 말줄임
+                Expanded(
+                  child: Text(
+                    target.label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: text.titleMedium?.copyWith(fontSize: 17),
+                  ),
+                ),
+                if (done) ...[
+                  SizedBox(width: 72, height: 32, child: Image.memory(ink.png, fit: BoxFit.contain)),
+                  const SizedBox(width: 4),
+                ],
+                Text(done ? '다시 쓰기' : '쓰기', style: text.bodySmall?.copyWith(color: AppColors.muted)),
               ],
             ),
           ),

@@ -5,8 +5,12 @@ import '../../models/workspace_state.dart';
 import '../../services/speech.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/panel_section.dart';
+import '../fill/fill_targets.dart';
 
 /// 읽기: 사진을 받으면 자동으로 읽은 결과(문서 종류, 핵심 항목)를 보여주고 다시 들려준다.
+///
+/// 맨 위 큰 듣기 버튼 → 쉬운 말로 된 설명 한 문단 → 항목 표. 펼치기/접기는 두지 않는다.
+/// 단계 이름은 상단 바가 이미 보여 주므로 제목을 다시 쓰지 않는다.
 class ReadPanel extends StatelessWidget {
   const ReadPanel({super.key, required this.state});
 
@@ -16,55 +20,41 @@ class ReadPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final document = state.recognized;
 
-    final List<Widget> body;
     if (state.reading) {
-      body = [const LinearProgressIndicator(), const SizedBox(height: 8), const Text('문서를 읽고 있어요…')];
-    } else if (state.readError != null) {
-      body = [
-        Text(state.readError!),
-        const SizedBox(height: 8),
-        OutlinedButton(onPressed: state.read, child: const Text('다시 읽기')),
-      ];
-    } else if (document == null) {
-      body = [OutlinedButton(onPressed: state.read, child: const Text('문서 읽기'))];
-    } else {
-      // 새 문서를 읽으면 펼침 상태를 처음(접힘)으로 돌린다
-      body = [ReadSummary(key: ObjectKey(document), document: document)];
+      return const Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [LinearProgressIndicator(), SizedBox(height: 8), Text('문서를 읽고 있어요…')],
+      );
+    }
+    if (state.readError != null) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(state.readError!),
+          const SizedBox(height: 8),
+          OutlinedButton(onPressed: state.read, child: const Text('다시 읽기')),
+        ],
+      );
+    }
+    if (document == null) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [OutlinedButton(onPressed: state.read, child: const Text('문서 읽기'))],
+      );
     }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // 듣기는 이 앱에서 가장 많이 쓰는 동작이다. 화면을 보지 않고도 찾도록 맨 위에 크게 둔다.
-        // 두 버튼을 한 줄에 나란히 두어 스크롤 없이 아래 내용까지 한 화면에 들어오게 한다
-        if (document != null && !state.reading) ...[
-          Row(
-            children: [
-              Expanded(
-                child: ListenButton(
-                  label: '전체 듣기',
-                  icon: Icons.record_voice_over_outlined,
-                  primary: true,
-                  onPressed: () => Speech.announce(context, document.fullText),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: ListenButton(
-                  label: '요약 듣기',
-                  icon: Icons.volume_up_outlined,
-                  onPressed: () => Speech.announce(context, document.speech),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-        ],
-        PanelSection(
-          title: WorkStep.read.label,
-          description: '어떤 문서인지와 중요한 항목을 읽어드려요.',
-          children: body,
+        // 듣기는 이 앱에서 가장 많이 쓰는 동작이다. 화면을 보지 않고도 찾도록 맨 위에 크게 하나만 둔다.
+        ListenButton(
+          label: '요약 듣기',
+          icon: Icons.volume_up_outlined,
+          primary: true,
+          onPressed: () => Speech.announce(context, document.speech),
         ),
+        const SizedBox(height: 16),
+        ReadSummary(document: document),
       ],
     );
   }
@@ -115,107 +105,35 @@ class ListenButton extends StatelessWidget {
   }
 }
 
-/// 읽은 결과를 한 줄로 알려주고, 항목 목록과 인식한 글자는 버튼을 눌렀을 때만 펼친다.
-/// 처음부터 목록을 다 펼치면 화면이 길어져 확대해서 보는 사용자가 길을 잃는다.
-class ReadSummary extends StatefulWidget {
+/// 읽은 결과를 쉬운 말 한 문단으로 설명하고, 그 아래에 항목 표를 늘 펼쳐 보여 준다.
+class ReadSummary extends StatelessWidget {
   const ReadSummary({super.key, required this.document});
 
   final RecognizedDocument document;
 
   @override
-  State<ReadSummary> createState() => _ReadSummaryState();
-}
-
-class _ReadSummaryState extends State<ReadSummary> {
-  bool _showFields = false;
-  bool _showFullText = false;
-
-  static const _duration = Duration(milliseconds: 200);
-
-  @override
   Widget build(BuildContext context) {
-    final document = widget.document;
     final text = Theme.of(context).textTheme;
-    // 페이지 정보가 없는 예전 응답도 사진 한 장으로 본다
-    final pageCount = document.pages.isEmpty ? 1 : document.pages.length;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          '${document.docTypeLabel} · $pageCount페이지 · 항목 ${document.fields.length}개',
-          style: text.bodyLarge,
-        ),
-        const SizedBox(height: 4),
-        // 두 펼치기 버튼은 한 줄에 나란히, 펼친 내용은 그 아래에 차례로 둔다
-        Wrap(
-          spacing: 4,
-          children: [
-            _ToggleButton(
-              open: _showFields,
-              openLabel: '요약 접기',
-              closedLabel: '요약 보기',
-              onPressed: () => setState(() => _showFields = !_showFields),
-            ),
-            _ToggleButton(
-              open: _showFullText,
-              openLabel: '인식한 글자 숨기기',
-              closedLabel: '인식한 글자 보기',
-              onPressed: () => setState(() => _showFullText = !_showFullText),
-            ),
-          ],
-        ),
-        AnimatedSize(
-          duration: _duration,
-          alignment: Alignment.topCenter,
-          child: _showFields
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    LabelValueRow(label: '문서 종류', value: document.docTypeLabel),
-                    for (final field in document.fields) LabelValueRow(label: field.label, value: field.value),
-                  ],
-                )
-              : const SizedBox(width: double.infinity),
-        ),
-        AnimatedSize(
-          duration: _duration,
-          alignment: Alignment.topCenter,
-          child: _showFullText
-              ? Padding(
-                  padding: const EdgeInsets.only(top: 8),
-                  child: SelectableText(document.fullText, style: text.bodyLarge),
-                )
-              : const SizedBox(width: double.infinity),
-        ),
+        Text(describeDocument(document), style: text.bodyLarge),
+        const SizedBox(height: 12),
+        LabelValueRow(label: '문서 종류', value: document.docTypeLabel),
+        for (final field in document.fields) LabelValueRow(label: field.label, value: field.value),
       ],
     );
   }
 }
 
-/// 펼치기/접기 버튼. 화살표 아이콘과 글자가 함께 바뀌고, 스크린리더에는 펼침 상태를 알린다.
-class _ToggleButton extends StatelessWidget {
-  const _ToggleButton({
-    required this.open,
-    required this.openLabel,
-    required this.closedLabel,
-    required this.onPressed,
-  });
-
-  final bool open;
-  final String openLabel;
-  final String closedLabel;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      expanded: open,
-      child: TextButton.icon(
-        onPressed: onPressed,
-        icon: Icon(open ? Icons.expand_less : Icons.expand_more),
-        label: Text(open ? openLabel : closedLabel),
-      ),
-    );
-  }
+/// "사진 1장은 근로계약서예요. 중요한 항목 7개를 찾았고, 써야 할 칸은 3곳이에요."
+///
+/// 읽기 결과만으로 쓸 칸까지 세어 한 문단에 담는다. 쓸 칸이 없으면 "써야 할 칸은 찾지 못했어요."
+String describeDocument(RecognizedDocument document) {
+  // 페이지 정보가 없는 예전 응답도 사진 한 장으로 본다
+  final pageCount = document.pages.isEmpty ? 1 : document.pages.length;
+  final fillCount = findFillTargets(document).length;
+  final kind = josa(document.docTypeLabel, '이에요', '예요');
+  final fill = fillCount == 0 ? '써야 할 칸은 찾지 못했어요.' : '써야 할 칸은 $fillCount곳이에요.';
+  return '사진 $pageCount장은 $kind. 중요한 항목 ${document.fields.length}개를 찾았고, $fill';
 }

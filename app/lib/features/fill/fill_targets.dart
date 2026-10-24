@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'dart:ui' show Rect;
 
 import '../../models/fill.dart';
 import '../../models/recognized_document.dart';
@@ -77,6 +78,13 @@ String describeFillTargets(List<FillTarget> targets) {
   return '써야 할 곳은 ${targets.length}곳이에요. ${targets.map((t) => t.label).join(', ')}.';
 }
 
+/// 글씨 칸에 글씨를 넣을 때 쓰는 자리: 칸 높이의 15%만큼 왼쪽을 비운다 (':' 바로 뒤에 붙지 않게).
+/// 화면의 넣기 움직임과 PDF가 같은 함수를 써서 자리가 어긋나지 않게 한다. 서명 칸에는 쓰지 않는다
+Rect fillTextInset(Rect rect) {
+  final inset = rect.height * 0.15;
+  return Rect.fromLTRB(rect.left + inset, rect.top, rect.right, rect.bottom);
+}
+
 /// 받침이 있으면 [withBatchim], 없으면 [without] ("성명을" / "주소를", "성명이에요" / "주소예요")
 String josa(String word, String withBatchim, String without) {
   if (word.isEmpty) return withBatchim;
@@ -92,8 +100,9 @@ PageSize? _pageSize(RecognizedDocument doc, int page) {
 }
 
 class _Found {
+  // 같은 줄 안의 순서는 칸 가운데로 비교한다. 서명 칸은 넓어서 왼쪽 끝으로 비교하면 바로 앞 글씨 칸보다 먼저 올 수 있다
   _Found(this.id, this.label, this.page, this.rect, this.isSignature, this.lineCenter, this.lineHeight)
-      : x = rect.x.toDouble();
+      : x = rect.x + rect.width / 2;
 
   final String id, label;
   final int page;
@@ -237,9 +246,11 @@ List<_Found> _scanLine(TextBlock block, int line, PageSize? page) {
     final content = compact.substring(label.colon + 1, end).replaceAll(_notContent, '');
     if (content.isNotEmpty) continue; // 이미 인쇄된 내용이 있다
 
-    final left = xEnd(label.colon) + h * 0.25;
+    // 빈칸은 ':' 바로 뒤가 아니라 조금 떨어져 시작한다. 글자 폭 어림이 작게 나오면 글씨가 인쇄 글자 위로
+    // 왼쪽에 겹쳐 보이므로 넉넉히 띄운다
+    final left = xEnd(label.colon) + h * 0.35;
     final right = end < compact.length
-        ? xAt(end) - h * 0.25
+        ? xAt(end) - h * 0.15
         : math.min(pageWidth, math.max((box.x + box.width).toDouble(), left + h * 6));
     final owner = label.owner ?? lineOwner;
     final name = owner == null ? label.name : '$owner ${label.name}';
@@ -276,7 +287,7 @@ List<_Found> _scanLine(TextBlock block, int line, PageSize? page) {
 }
 
 /// OCR은 줄 상자만 주므로 글자마다 폭을 어림한다.
-/// 한글은 줄 높이쯤, 숫자·영문·기호는 그보다 좁게 잡고, 남는 폭은 빈칸(공백)에 나눠 준다.
+/// 한글은 줄 높이만큼, 숫자·영문·기호는 그보다 좁게 잡고, 남는 폭은 빈칸(공백)에 나눠 준다.
 /// 공백이 없으면 ':' 뒤에 준다 (양식에서 빈칸은 보통 ':' 뒤다).
 class _LineLayout {
   _LineLayout(String text, Box box) : _x = box.x.toDouble() {
@@ -289,7 +300,8 @@ class _LineLayout {
         widths.add(h * 0.3);
         slots.add(k);
       } else if (_isHangul(c) || c.codeUnitAt(0) >= 0x3000) {
-        widths.add(h * 0.9);
+        // 인쇄 양식의 한글은 대개 줄 높이만큼 넓다. 좁게 잡으면 빈칸이 실제보다 왼쪽에 잡힌다
+        widths.add(h * 1.0);
       } else if (RegExp(r'[0-9A-Za-z]').hasMatch(c)) {
         widths.add(h * 0.55);
       } else {
@@ -314,9 +326,10 @@ class _LineLayout {
     }
     var total = widths.fold(0.0, (a, b) => a + b);
     // OCR이 빈칸 공백을 지워 글자만 남으면, 어림한 글자 폭만으로 상자가 꽉 차 빈칸이 0이 된다.
-    // 인쇄 글자가 상자의 55%를 넘지 않게 줄여 빈칸 자리를 남긴다 (양식은 빈칸이 넓다)
+    // 인쇄 글자가 상자의 65%를 넘지 않게 줄여 빈칸 자리를 남긴다. 더 많이 줄이면(예: 55%) 글자가 실제보다
+    // 좁게 잡혀 빈칸이 인쇄 글자 위로 왼쪽에 잡힌다 ("학생 성명: 보호자 성명: (서명)" 실측으로 맞춤)
     if (slots.isNotEmpty && total > box.width * 0.8) {
-      final shrink = box.width * 0.55 / total;
+      final shrink = box.width * 0.65 / total;
       for (var k = 0; k < widths.length; k++) {
         widths[k] *= shrink;
       }
