@@ -1,0 +1,52 @@
+# 앱(Flutter 웹)을 GitHub Pages에 올린다. main에 푸시할 때마다 다시 빌드한다.
+# 백엔드 주소는 저장소 Variables의 API_BASE (Settings → Secrets and variables → Actions → Variables).
+name: Deploy app to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths: ["app/**", ".github/workflows/pages.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.35.7"
+          channel: stable
+          cache: true
+      - name: Build
+        working-directory: app
+        env:
+          API_BASE: ${{ vars.API_BASE }}
+        run: |
+          flutter pub get
+          flutter build web --release \
+            --base-href "/${{ github.event.repository.name }}/" \
+            --dart-define=API_BASE="${API_BASE}"
+          cp ../samples/*.png build/web/ || true
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: app/build/web
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
