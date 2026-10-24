@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../models/document_photo.dart';
+import '../models/judgement.dart';
 import '../models/recognized_document.dart';
 
 /// 백엔드(FastAPI) 호출. 주소는 `--dart-define=API_BASE=...`로 바꿀 수 있다.
@@ -18,12 +19,11 @@ class ApiClient {
   static Future<Map<String, dynamic>> checkWriting(DocumentPhoto photo, String field) =>
       _postPhoto('/api/write/check', photo, fields: {'field': field});
 
-  // 판단, 서명은 아직 화면만 있다. 기능을 만들 때 아래 두 호출을 쓴다.
-  static Future<Map<String, dynamic>> judge(RecognizedDocument document) =>
-      _postJson('/api/judge', document.toJson());
+  /// 판단: 규칙 엔진(backend/app/services/judge)이 빠진 항목과 확인할 내용을 근거와 함께 돌려준다
+  static Future<Judgement> judge(RecognizedDocument document) async =>
+      Judgement.fromJson(await _postJson('/api/judge', document.toJson()));
 
-  static Future<Map<String, dynamic>> locateSignature(DocumentPhoto photo) =>
-      _postPhoto('/api/sign/locate', photo);
+  // 서명란 찾기는 백엔드를 부르지 않고 앱에서 읽기 결과로 한다 (features/sign/signature_spots.dart).
 
   static Future<Map<String, dynamic>> _postPhoto(
     String path,

@@ -157,11 +157,9 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
                                 fit: StackFit.expand,
                                 children: [
                                   DocumentStage(state: _state, camera: _camera),
+                                  // 계획서: 찍은 뒤 결과 창이 꽉 차도록, 이상한 여백 없이
                                   if (_sheet != null)
-                                    Positioned(
-                                      left: 0,
-                                      right: 0,
-                                      bottom: 0,
+                                    Positioned.fill(
                                       child: _ResultSheet(
                                         onClose: _close,
                                         onBack: _sheet == WorkStep.read ? null : () => _openStep(WorkStep.read),
@@ -388,14 +386,12 @@ class _ResultSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * 0.62),
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(24),
-        boxShadow: const [BoxShadow(color: Color(0x33000000), blurRadius: 24, offset: Offset(0, -4))],
+        boxShadow: const [BoxShadow(color: Color(0x22000000), blurRadius: 16, offset: Offset(0, 2))],
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
@@ -410,7 +406,7 @@ class _ResultSheet extends StatelessWidget {
               IconButton(tooltip: '닫고 카메라로 돌아가기', icon: const Icon(Icons.close), onPressed: onClose),
             ],
           ),
-          Flexible(
+          Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
               child: child,
