@@ -15,6 +15,7 @@ import '../services/camera_service.dart';
 import '../services/haptics.dart';
 import '../services/speech.dart';
 import '../theme/app_theme.dart';
+import '../widgets/app_logo.dart';
 import '../widgets/document_stage.dart';
 import '../widgets/page_tray.dart';
 import '../widgets/panel_section.dart';
@@ -424,6 +425,8 @@ class _TopBar extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(20, 8, 16, 8),
       child: Row(
         children: [
+          const AppLogo(size: 34),
+          const SizedBox(width: 10),
           Semantics(
             container: true,
             header: true,

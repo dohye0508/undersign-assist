@@ -43,6 +43,9 @@ class AppColors {
   /// 진행 동그라미·촬영 버튼처럼 글자가 아닌 표시
   static const marker = Color(0xFF4BA8F0);
 
+  /// 로고의 바탕과 문서 안 줄. 사용자가 "파란 부분은 전부 완전한 검정"으로 정했다
+  static const logoInk = Color(0xFF000000);
+
   // 판단 결과의 의미 색. 강조색과 따로 쓴다
   static const ok = Color(0xFF1B7F3B);
   static const okSoft = Color(0xFFE9F7EE);
