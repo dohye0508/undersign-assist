@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'screens/home_screen.dart';
+import 'screens/workspace_screen.dart';
 import 'theme/app_theme.dart';
 
 class UndersignApp extends StatelessWidget {
@@ -9,10 +9,10 @@ class UndersignApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'undersign-assist',
+      title: 'undersign',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.dark(),
-      home: const HomeScreen(),
+      theme: AppTheme.light(),
+      home: const WorkspaceScreen(),
     );
   }
 }

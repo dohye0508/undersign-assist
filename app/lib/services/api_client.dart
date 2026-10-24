@@ -14,11 +14,13 @@ class ApiClient {
     return RecognizedDocument.fromJson(json);
   }
 
-  static Future<Map<String, dynamic>> judge(RecognizedDocument document) =>
-      _postJson('/api/judge', document.toJson());
-
+  /// 고른 칸에 무엇이 쓰였는지. 응답: field, found, written, box, speech
   static Future<Map<String, dynamic>> checkWriting(DocumentPhoto photo, String field) =>
       _postPhoto('/api/write/check', photo, fields: {'field': field});
+
+  // 판단, 서명은 아직 화면만 있다. 기능을 만들 때 아래 두 호출을 쓴다.
+  static Future<Map<String, dynamic>> judge(RecognizedDocument document) =>
+      _postJson('/api/judge', document.toJson());
 
   static Future<Map<String, dynamic>> locateSignature(DocumentPhoto photo) =>
       _postPhoto('/api/sign/locate', photo);

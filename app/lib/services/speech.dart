@@ -14,4 +14,6 @@ class Speech {
     await _tts.stop();
     await _tts.speak(text);
   }
+
+  static Future<void> stop() => _tts.stop();
 }

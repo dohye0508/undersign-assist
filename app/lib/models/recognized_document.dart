@@ -3,30 +3,89 @@
 class RecognizedDocument {
   const RecognizedDocument({
     required this.docType,
-    required this.fields,
+    required this.docTypeLabel,
     required this.blocks,
+    required this.fields,
+    required this.fullText,
+    required this.imageWidth,
+    required this.imageHeight,
     required this.speech,
   });
 
   /// contract(계약서) / notice(가정통신문) / consent(개인정보 동의서) / unknown
   final String docType;
-  final Map<String, String> fields;
+  final String docTypeLabel;
+  final List<TextBlock> blocks;
+  final List<DocField> fields;
+  final String fullText;
+  final int imageWidth;
+  final int imageHeight;
 
-  /// 글자와 위치 박스. 쓰기(칸 위치)와 서명(서명란 위치)에 쓴다
-  final List<Map<String, dynamic>> blocks;
+  /// 사용자에게 읽어줄 요약
   final String speech;
+
+  bool get isUnknown => docType == 'unknown';
 
   factory RecognizedDocument.fromJson(Map<String, dynamic> json) => RecognizedDocument(
         docType: json['doc_type'] as String? ?? 'unknown',
-        fields: Map<String, String>.from(json['fields'] as Map? ?? {}),
-        blocks: List<Map<String, dynamic>>.from(json['blocks'] as List? ?? []),
+        docTypeLabel: json['doc_type_label'] as String? ?? '알 수 없는 문서',
+        blocks: [for (final b in json['blocks'] as List? ?? []) TextBlock.fromJson(b)],
+        fields: [for (final f in json['fields'] as List? ?? []) DocField.fromJson(f)],
+        fullText: json['full_text'] as String? ?? '',
+        imageWidth: json['image_width'] as int? ?? 0,
+        imageHeight: json['image_height'] as int? ?? 0,
         speech: json['speech'] as String? ?? '',
       );
 
   Map<String, dynamic> toJson() => {
         'doc_type': docType,
-        'fields': fields,
-        'blocks': blocks,
+        'doc_type_label': docTypeLabel,
+        'blocks': [for (final b in blocks) b.toJson()],
+        'fields': [for (final f in fields) f.toJson()],
+        'full_text': fullText,
+        'image_width': imageWidth,
+        'image_height': imageHeight,
         'speech': speech,
       };
+}
+
+/// 사진 픽셀 좌표의 상자 (왼쪽 위가 0, 0)
+class Box {
+  const Box(this.x, this.y, this.width, this.height);
+
+  final int x, y, width, height;
+
+  factory Box.fromJson(Map<String, dynamic> json) =>
+      Box(json['x'] as int, json['y'] as int, json['width'] as int, json['height'] as int);
+
+  Map<String, dynamic> toJson() => {'x': x, 'y': y, 'width': width, 'height': height};
+}
+
+/// 한 줄의 글자와 위치
+class TextBlock {
+  const TextBlock(this.text, this.box);
+
+  final String text;
+  final Box box;
+
+  factory TextBlock.fromJson(Map<String, dynamic> json) =>
+      TextBlock(json['text'] as String, Box.fromJson(json['box'] as Map<String, dynamic>));
+
+  Map<String, dynamic> toJson() => {'text': text, 'box': box.toJson()};
+}
+
+/// 문서에서 찾은 항목 (예: 임금 → 시간급 9,000원)
+class DocField {
+  const DocField(this.label, this.value, this.line);
+
+  final String label;
+  final String value;
+
+  /// [RecognizedDocument.blocks]에서 몇 번째 줄인지
+  final int line;
+
+  factory DocField.fromJson(Map<String, dynamic> json) =>
+      DocField(json['label'] as String, json['value'] as String, json['line'] as int);
+
+  Map<String, dynamic> toJson() => {'label': label, 'value': value, 'line': line};
 }
