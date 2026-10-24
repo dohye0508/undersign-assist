@@ -1,0 +1,16 @@
+# Render 무료 백엔드는 15분 동안 요청이 없으면 잠든다. 10분마다 건강 확인 주소를 불러 깨워 둔다.
+# (GitHub 예약 작업은 몇 분씩 늦게 돌 수 있다. 시연 직전에는 직접 한 번 열어 두면 확실하다)
+# 끄려면: Actions → Keep backend awake → ⋯ → Disable workflow
+name: Keep backend awake
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - run: curl -fsS -m 120 --retry 2 https://undersign-assist-api.onrender.com/api/health
