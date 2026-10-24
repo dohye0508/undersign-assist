@@ -264,19 +264,28 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
             fit: StackFit.expand,
             children: [
               // 카메라를 세로로 최대한 길게. 페이지 목록 버튼은 카메라 위쪽 안에 얹고, 열면 그 자리에서 내려온다
+              // 페이지 목록은 카메라 윗변에 딱 붙어 있다가 그 자리에서 끌려 내려온다 (카메라 둥근 모서리로 함께 자른다)
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: DocumentStage(camera: _camera),
-              ),
-              Positioned(
-                left: 16,
-                right: 16,
-                top: 8,
-                child: PageTray(
-                  pages: _state.pages,
-                  open: _trayOpen,
-                  onToggle: _toggleTray,
-                  onRemove: _removePage,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(AppRadius.camera),
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      DocumentStage(camera: _camera),
+                      Positioned(
+                        left: 0,
+                        right: 0,
+                        top: 0,
+                        child: PageTray(
+                          pages: _state.pages,
+                          open: _trayOpen,
+                          onToggle: _toggleTray,
+                          onRemove: _removePage,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],

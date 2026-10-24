@@ -91,7 +91,8 @@ class SectionHeading extends StatelessWidget {
   }
 }
 
-/// 이름과 값 한 쌍 (예: 임금 / 시간급 9,000원). 이름은 왼쪽 회색, 값은 그 바로 옆에 왼쪽 정렬로 굵게
+/// 이름과 값 한 쌍 (예: 임금 / 시간급 9,000원). 이름은 위에 작은 회색, 값은 그 아래 첫 줄부터 화면 폭 전체를 쓴다.
+/// 옆으로 나란히 두면 이름 칸 폭만큼 왼쪽이 비어 긴 값이 좁게 꺾인다
 class LabelValueRow extends StatelessWidget {
   const LabelValueRow({super.key, required this.label, required this.value});
 
@@ -102,24 +103,19 @@ class LabelValueRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return MergeSemantics(
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 11),
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
         decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: AppColors.grey100))),
-        child: Row(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              width: 84,
-              child: Text(
-                label,
-                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.muted, height: 1.5),
-              ),
+            Text(
+              label,
+              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.muted, height: 1.4),
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                value,
-                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.text, height: 1.5),
-              ),
+            const SizedBox(height: 2),
+            Text(
+              value,
+              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.text, height: 1.5),
             ),
           ],
         ),

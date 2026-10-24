@@ -69,9 +69,10 @@ class _ToggleButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final radius = BorderRadius.circular(999);
+    // 카메라 윗변에 붙은 손잡이: 위는 평평하게 붙고 아래만 둥글다. 끌어내리는 느낌
+    const radius = BorderRadius.vertical(bottom: Radius.circular(14));
     return Padding(
-      padding: const EdgeInsets.only(top: 4),
+      padding: EdgeInsets.zero,
       child: Semantics(
         button: true,
         label: '업로드한 페이지 $count장, 목록 ${open ? '닫기' : '열기'}',
@@ -131,17 +132,23 @@ class _Panel extends StatelessWidget {
       decoration: BoxDecoration(
         // 카메라 안내 글자가 비쳐 보이지 않게 불투명하게
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppRadius.card),
-        boxShadow: const [BoxShadow(color: Color(0x22000000), blurRadius: 18, offset: Offset(0, 6))],
+        // 카메라 윗변에 붙어 내려오므로 위는 평평하고 아래만 둥글다
+        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(AppRadius.card)),
       ),
       padding: const EdgeInsets.all(_padding),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Semantics(header: true, child: Text('찍은 페이지 ${pages.length}장', style: text.titleMedium)),
-          const SizedBox(height: 2),
-          Text('사진을 누르면 지워져요', style: text.bodySmall),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
+            children: [
+              Semantics(header: true, child: Text('찍은 페이지 ${pages.length}장', style: text.titleMedium)),
+              const Spacer(),
+              Text('사진을 누르면 지워져요', style: text.bodySmall),
+            ],
+          ),
           const SizedBox(height: 12),
           if (pages.isEmpty)
             Padding(
