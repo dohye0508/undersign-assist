@@ -49,6 +49,7 @@ class Question(BaseModel):
     id: str
     text: str
     affects: list[str] = []
+    options: dict[str, str] = {}  # yes/no/unknown -> 화면에 보일 말
 
 
 class Judgement(BaseModel):

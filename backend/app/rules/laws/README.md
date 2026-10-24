@@ -55,3 +55,9 @@ git clone --depth 1 https://github.com/legalize-kr/legalize-kr lk
 python3 tools/build_full.py lk full   # backend/app/rules/laws 안에서 실행
 python3 tools/build_rules.py .
 ```
+
+## 추가 (개인정보 보호법)
+
+- 개인정보 보호법·시행령을 `full/personal_info_act.json`, `full/personal_info_decree.json`으로 추가했다. 동의서(`consent`)와 가정통신문(`notice`) 규칙이 이 조문을 근거로 쓴다.
+- 규칙은 55개, 사실값은 36개. 모든 `tts`는 "~로 보여요, 확인이 필요해요" 꼴이며, 단정 표현("무효예요" 등)은 `tools/build_rules.py`가 막는다.
+- 규칙 종류별 실행은 `backend/app/services/judge/evaluators.py`, 시험은 `python backend/tests/smoke_judge.py`.

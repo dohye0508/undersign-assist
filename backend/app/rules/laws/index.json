@@ -1085,6 +1085,60 @@
    },
    "article_count": 53,
    "file": "full/disability_discrimination_act.json"
+  },
+  {
+   "law_id": "personal_info_act",
+   "law_name": "개인정보 보호법",
+   "law_kind": "법률",
+   "category": "개인정보",
+   "doc_types": [
+    "consent",
+    "notice"
+   ],
+   "ministry": [
+    "개인정보보호위원회"
+   ],
+   "promulgation_date": "2026-09-08",
+   "promulgation_no": "21910",
+   "effective_date": "2027-03-09",
+   "status": "시행",
+   "law_mst": "289415",
+   "official_url": "https://www.law.go.kr/법령/개인정보보호법",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/개인정보보호법/법률.md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/개인정보보호법/법률.md"
+   },
+   "article_count": 129,
+   "file": "full/personal_info_act.json"
+  },
+  {
+   "law_id": "personal_info_decree",
+   "law_name": "개인정보 보호법 시행령",
+   "law_kind": "대통령령",
+   "category": "개인정보",
+   "doc_types": [
+    "consent",
+    "notice"
+   ],
+   "ministry": [
+    "개인정보보호위원회"
+   ],
+   "promulgation_date": "2026-09-10",
+   "promulgation_no": "36671",
+   "effective_date": "2026-09-11",
+   "status": "시행",
+   "law_mst": "289537",
+   "official_url": "https://www.law.go.kr/법령/개인정보보호법시행령",
+   "mirror_source": {
+    "repo": "https://github.com/legalize-kr/legalize-kr",
+    "path": "kr/개인정보보호법/시행령.md",
+    "commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
+    "file_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/개인정보보호법/시행령.md"
+   },
+   "article_count": 126,
+   "file": "full/personal_info_decree.json"
   }
  ]
 }

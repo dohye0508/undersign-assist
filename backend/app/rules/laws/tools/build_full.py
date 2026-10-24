@@ -51,9 +51,11 @@ TARGETS = [
     ("kr/주민등록법/시행령.md", "resident_registration_decree", "행정", ["lease_housing", "admin"]),
     ("kr/전자서명법/법률.md", "electronic_signature_act", "서명", ["*"]),
     ("kr/장애인차별금지및권리구제등에관한법률/법률.md", "disability_discrimination_act", "접근성", ["*"]),
+    ("kr/개인정보보호법/법률.md", "personal_info_act", "개인정보", ["consent", "notice"]),
+    ("kr/개인정보보호법/시행령.md", "personal_info_decree", "개인정보", ["consent", "notice"]),
 ]
 
-ART_RE = re.compile(r"^#{5}\s+(제\d+조(?:의\d+)?)\s*(?:\((.*)\))?\s*(.*)$")
+ART_RE =re.compile(r"^#{5}\s+(제\d+조(?:의\d+)?)\s*(?:\((.*)\))?\s*(.*)$")
 HDR_RE = re.compile(r"^(#{1,4})\s+(.*)$")
 
 

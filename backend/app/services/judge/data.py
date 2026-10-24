@@ -68,3 +68,13 @@ def rules_for(subtype: str) -> list[dict]:
         if "*" in doc_types or (subtype and subtype in doc_types):
             out.append(r)
     return out
+
+
+def questions_for(rules: list[dict]) -> list[dict]:
+    """고른 규칙 중 applies_if로 답이 필요한 질문만."""
+    need = {q for r in rules for q in (r.get("applies_if") or {})}
+    return [
+        {"id": q["id"], "text": q["text"], "affects": q.get("affects", []), "options": q.get("options", {})}
+        for q in _check_rules_raw().get("questions", [])
+        if q["id"] in need
+    ]

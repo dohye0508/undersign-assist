@@ -1,13 +1,13 @@
 {
   "meta": {
     "project": "undersign-contract",
-    "generated_at": "2026-10-24T15:40:00+09:00",
+    "generated_at": "2026-10-24T17:00:00+09:00",
     "source": "국가법령정보센터(law.go.kr) 원문을 그대로 미러링한 legalize-kr 저장소",
     "source_repo": "https://github.com/legalize-kr/legalize-kr",
     "source_commit": "9f9b082009c508b816798b1ea63495fd75b66dbf",
     "note": "조문 text는 원문 그대로입니다(요약·의역 없음). 일부 법령은 공포되었지만 시행일이 아직 오지 않은 최신본이므로 effective_date를 확인하세요. 최저임금 금액은 법령이 아니라 고용노동부 고시라서 facts.json에 보도 출처와 함께 따로 넣었습니다.",
     "verified_against_law_go_kr": "미러 경유(직접 접속 불가)",
-    "fact_count": 35
+    "fact_count": 36
   },
   "facts": [
     {
@@ -120,6 +120,32 @@
           "effective_date": "2019-01-01",
           "official_url": "https://www.law.go.kr/법령/최저임금법시행령/제3조",
           "mirror_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/최저임금법/시행령.md"
+        }
+      ]
+    },
+    {
+      "id": "small_workplace_threshold",
+      "value": 5,
+      "unit": "명(상시 근로자)",
+      "note": "5명 미만 사업장은 근로시간 한도·가산수당·연차 등 일부 조항이 적용되지 않음",
+      "basis": [
+        {
+          "law_id": "labor_standards_act",
+          "article_no": "제11조",
+          "law_name": "근로기준법",
+          "title": "적용 범위",
+          "effective_date": "2026-10-02",
+          "official_url": "https://www.law.go.kr/법령/근로기준법/제11조",
+          "mirror_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/근로기준법/법률(법률).md"
+        },
+        {
+          "law_id": "labor_standards_decree",
+          "article_no": "제7조",
+          "law_name": "근로기준법 시행령",
+          "title": "적용범위",
+          "effective_date": "2025-10-23",
+          "official_url": "https://www.law.go.kr/법령/근로기준법시행령/제7조",
+          "mirror_url": "https://github.com/legalize-kr/legalize-kr/blob/9f9b082009c508b816798b1ea63495fd75b66dbf/kr/근로기준법/시행령.md"
         }
       ]
     },
@@ -491,6 +517,7 @@
     {
       "id": "housing_small_deposit_priority",
       "unit": "원",
+      "note": "근저당 등 선순위 담보가 설정된 날의 기준이 적용되므로, 오래된 담보가 있으면 금액이 더 낮을 수 있음",
       "value": {
         "서울특별시": {
           "보증금_상한": 165000000,
