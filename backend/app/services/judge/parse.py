@@ -140,3 +140,79 @@ def parse_date(text: str) -> datetime.date | None:
         return datetime.date(y, mo, d)
     except ValueError:
         return None
+
+
+def parse_dates(text: str) -> list[datetime.date]:
+    """문장 안의 날짜를 모두 (순서대로). '2026.3.1 ~ 2028.2.28' → 두 개."""
+    if not text:
+        return []
+    t = _fix_ocr_digits(text)
+    out = []
+    for m in re.finditer(r"(\d{4})\s*[.\-년/]\s*(\d{1,2})\s*[.\-월/]\s*(\d{1,2})", t):
+        y, mo, d = (int(x) for x in m.groups())
+        try:
+            out.append(datetime.date(y, mo, d))
+        except ValueError:
+            continue
+    return out
+
+
+def parse_duration_years(text: str) -> float | None:
+    """'2년' '24개월' '1년 6개월' → 년(소수). 날짜가 두 개 있으면 그 차이."""
+    if not text:
+        return None
+    dates = parse_dates(text)
+    if len(dates) >= 2 and dates[1] > dates[0]:
+        # 끝나는 날을 하루 포함해서 센다 (2026.3.1~2028.2.28 = 2년)
+        return round(((dates[1] - dates[0]).days + 1) / 365.25, 2)
+    t = _fix_ocr_digits(text)
+    y = re.search(r"(\d+)\s*년(?!\s*\d)", t)
+    mo = re.search(r"(\d+)\s*개월", t)
+    if y or mo:
+        return round((int(y.group(1)) if y else 0) + (int(mo.group(1)) / 12 if mo else 0), 2)
+    return None
+
+
+def parse_hours_per(text: str, unit: str) -> float | None:
+    """'1일 8시간' '하루 6시간' (unit='day') / '주 40시간' '1주 15시간' (unit='week')"""
+    if not text:
+        return None
+    t = _fix_ocr_digits(text)
+    prefix = r"(?:1\s*일|하루|일일|매일)" if unit == "day" else r"(?:1\s*주|주|매주|일주일)"
+    m = re.search(prefix + r"\s*(?:소정)?\s*(?:근로|근무)?\s*(?:시간)?\s*[:은는]?\s*(\d+(?:\.\d+)?)\s*시간", t)
+    return float(m.group(1)) if m else None
+
+
+def parse_days_per_week(text: str) -> int | None:
+    """'주 5일' '월~금' '매주 화,목' → 일 수"""
+    if not text:
+        return None
+    t = _fix_ocr_digits(text)
+    m = re.search(r"주\s*(\d)\s*일", t)
+    if m:
+        return int(m.group(1))
+    days = "월화수목금토일"
+    m = re.search(r"([월화수목금토일])\s*(?:요일)?\s*[~\-–부터]\s*([월화수목금토일])\s*요?일?", t)
+    if m:
+        a, b = days.index(m.group(1)), days.index(m.group(2))
+        if b >= a:
+            return b - a + 1
+    m = re.search(r"(?:매주|주)\s*((?:[월화수목금토일]\s*(?:요일)?\s*[,ㆍ·、 ]\s*)+[월화수목금토일])", t)
+    if m:
+        listed = set(re.findall(r"[월화수목금토일]", m.group(1)))
+        if len(listed) >= 2:
+            return len(listed)
+    return None
+
+
+def parse_annual_rate(text: str) -> float | None:
+    """'연 24%' → 0.24, '월 2%' → 0.24 (월 이자는 12를 곱해 연으로)."""
+    if not text:
+        return None
+    t = _fix_ocr_digits(text)
+    m = re.search(r"(연|년|월)\s*(?:이자|이율)?\s*[:은는]?\s*(\d+(?:\.\d+)?)\s*%", t)
+    if m:
+        rate = float(m.group(2)) / 100
+        return round(rate * 12, 4) if m.group(1) == "월" else rate
+    p = parse_percent(t)
+    return p

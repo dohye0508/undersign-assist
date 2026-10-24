@@ -99,7 +99,6 @@ enum _Kind {
   info('알아두기', Icons.info_outline, AppColors.primary, AppColors.primarySoft);
 
   const _Kind(this.label, this.icon, this.color, this.background);
-
   final String label;
   final IconData icon;
   final Color color;

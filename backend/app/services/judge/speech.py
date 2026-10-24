@@ -9,7 +9,7 @@ _LEVEL_ORDER = {"caution": 0, "missing": 1, "info": 2}
 _SEVERITY_ORDER = {"critical": 0, "high": 1, "medium": 2, "info": 3}
 _ORDINALS = ["첫째", "둘째", "셋째"]
 
-_DISCLAIMER = (
+DISCLAIMER = (
     "최종 판단은 직접 하세요. "
     "정확한 상담은 대한법률구조공단 132나 고용노동부 1350에서 받을 수 있어요."
 )
@@ -17,7 +17,7 @@ _DISCLAIMER = (
 
 def build_summary(findings: list[dict]) -> str:
     if not findings:
-        return f"특별히 확인이 필요한 항목을 찾지 못했어요. {_DISCLAIMER}"
+        return f"특별히 확인이 필요한 항목을 찾지 못했어요. {DISCLAIMER}"
 
     ordered = sorted(
         findings,
@@ -38,5 +38,5 @@ def build_summary(findings: list[dict]) -> str:
     if rest > 0:
         parts.append(f"나머지 {rest}개는 목록에서 들을 수 있어요.")
 
-    parts.append(_DISCLAIMER)
+    parts.append(DISCLAIMER)
     return " ".join(parts)

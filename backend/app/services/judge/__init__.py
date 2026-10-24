@@ -21,7 +21,7 @@ def run(document, answers: dict[str, str] | None = None) -> dict:
 
     # 근로계약서는 주 근로시간을 계산해 15시간 미만이면 단시간으로 재분류한다.
     if doc_subtype == "labor_full_time" and "daily_hours" in values:
-        weekly = values["daily_hours"]["value"] * 5
+        weekly = values.get("weekly_hours", {}).get("value") or values["daily_hours"]["value"] * values.get("days_per_week", {}).get("value", 5)
         if weekly < 15:
             doc_subtype = "labor_part_time"
 
@@ -36,8 +36,12 @@ def run(document, answers: dict[str, str] | None = None) -> dict:
         }
 
     rules = D.rules_for(doc_subtype)
+    questions = D.questions_for(rules)
     findings: list[dict] = []
     for rule in rules:
+        cond = rule.get("applies_if")
+        if cond and any(answers.get(q) != want for q, want in cond.items()):
+            continue  # 모름이거나 답이 없으면 이 규칙은 돌리지 않고 질문으로 묻는다
         result = Ev.run_rule(rule, document, values)
         if result:
             findings.append(result)
@@ -46,9 +50,12 @@ def run(document, answers: dict[str, str] | None = None) -> dict:
     for f in findings:
         counts[f["level"]] = counts.get(f["level"], 0) + 1
 
+    pending = [q for q in questions if answers.get(q["id"]) not in ("yes", "no")]
     return {
         "findings": findings,
         "speech": Sp.build_summary(findings),
         "subtype": doc_subtype,
         "counts": counts,
+        "questions": pending,
+        "disclaimer": Sp.DISCLAIMER,
     }
