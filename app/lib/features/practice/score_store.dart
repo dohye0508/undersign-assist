@@ -136,6 +136,21 @@ class ScoreStore extends ChangeNotifier {
     return best;
   }
 
+  /// 평균 점수가 가장 낮은 글자가 속한 종류. 아직 없으면 null (점수판의 "다시 써 보기"가 어느 묶음을 열지 정한다)
+  PracticeKind? lowestItemKind() {
+    String? lowestKey;
+    var lowest = double.infinity;
+    _scores.forEach((key, list) {
+      if (list.isEmpty) return;
+      final mean = list.reduce((a, b) => a + b) / list.length;
+      if (mean < lowest) {
+        lowest = mean;
+        lowestKey = key;
+      }
+    });
+    return lowestKey == null ? null : _kindOf(lowestKey!);
+  }
+
   /// 평균 점수가 가장 낮은 글자(소리 내어 부르는 이름). 아직 없으면 null
   String? lowestItemName() {
     String? lowestKey;

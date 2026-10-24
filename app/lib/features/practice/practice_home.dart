@@ -9,6 +9,7 @@ import 'hangul.dart';
 import 'practice_frame.dart';
 import 'practice_items.dart';
 import 'practice_screen.dart';
+import '../read/read_panel.dart' show ListenButton;
 import 'score_board.dart';
 import 'score_store.dart';
 
@@ -89,6 +90,17 @@ class _PracticeFlowState extends State<PracticeFlow> {
     }
   }
 
+  /// 점수판에서: 가장 낮은 글자가 속한 묶음을 바로 연다
+  void _retryLowest() {
+    final kind = _store.lowestItemKind();
+    if (kind == null) return;
+    if (kind == PracticeKind.word) {
+      _go(_View.wordMenu);
+    } else {
+      _openLearn(kind);
+    }
+  }
+
   void _openLearn(PracticeKind kind) {
     _kind = kind;
     setState(() => _view = _View.learn);
@@ -147,13 +159,14 @@ class _PracticeFlowState extends State<PracticeFlow> {
       );
     }
     return PracticeFrame(
-      title: _title,
+      title: _view == _View.home ? '' : _title,
+      backLabel: _backLabel,
       onBack: _back,
       letterKeys: _view != _View.name,
       trailing: _view == _View.home
           ? IconButton(
               tooltip: '설정',
-              icon: const Icon(Icons.settings_outlined, color: AppColors.muted),
+              icon: const Icon(Icons.settings_outlined),
               onPressed: TapFeedback.wrap(() => _go(_View.settings)),
             )
           : null,
@@ -164,32 +177,49 @@ class _PracticeFlowState extends State<PracticeFlow> {
     );
   }
 
-  Widget _body() {
+  /// 뒤로 버튼에 적는 곳 이름
+  String get _backLabel {
     switch (_view) {
       case _View.home:
-        return _menu([
-          _Choice('학습하기', '자음, 모음, 글자를 하나씩', Icons.school_outlined, () => _go(_View.learnMenu)),
-          _Choice('연습하기', '낱말을 한 줄로', Icons.edit_outlined, () => _go(_View.wordMenu)),
-          _Choice('나의 점수판', '얼마나 늘었는지', Icons.bar_chart, () => _go(_View.board)),
-          _Choice('내 이름 등록', _store.name.isEmpty ? '아직 등록하지 않았어요' : _store.name, Icons.badge_outlined,
+        return '카메라로';
+      case _View.learn:
+        return '학습하기';
+      case _View.word:
+        return '연습하기';
+      default:
+        return '받아쓰기';
+    }
+  }
+
+  Widget _body() {
+    final avg = _store.average(PracticeKind.consonant) ??
+        _store.average(PracticeKind.vowel) ??
+        _store.average(PracticeKind.syllable) ??
+        _store.average(PracticeKind.word);
+    switch (_view) {
+      case _View.home:
+        // 큰 타일 2×2 (사용자 선택 H2). 타일마다 큰 보기 글자로 무엇인지 짐작하게 한다
+        return _home([
+          _Choice('학습하기', '자음·모음·글자', 'ㄱ', () => _go(_View.learnMenu), primary: true),
+          _Choice('연습하기', '낱말 한 줄', '서명', () => _go(_View.wordMenu)),
+          _Choice('나의 점수판', avg == null ? '아직 없어요' : '최근 평균 $avg점', avg == null ? '점수' : '$avg', () => _go(_View.board)),
+          _Choice('내 이름 등록', _store.name.isEmpty ? '아직 없어요' : _store.name, _store.name.isEmpty ? '이름' : _store.name,
               () => _go(_View.name)),
         ]);
       case _View.learnMenu:
         return _menu([
-          _Choice('자음', 'ㄱ ㄴ ㄷ … 14개', Icons.looks_one_outlined, () => _openLearn(PracticeKind.consonant)),
-          _Choice('모음', 'ㅏ ㅑ ㅓ … 10개', Icons.looks_two_outlined, () => _openLearn(PracticeKind.vowel)),
-          _Choice('글자', '가 나 다 … 받침 있는 글자까지', Icons.looks_3_outlined, () => _openLearn(PracticeKind.syllable)),
+          _Choice('자음', 'ㄱ ㄴ ㄷ … 14개', 'ㄱ', () => _openLearn(PracticeKind.consonant), primary: true),
+          _Choice('모음', 'ㅏ ㅑ ㅓ … 10개', 'ㅏ', () => _openLearn(PracticeKind.vowel)),
+          _Choice('글자', '가 나 다 … 받침 있는 글자까지', '가', () => _openLearn(PracticeKind.syllable)),
         ]);
       case _View.wordMenu:
         return _menu([
-          _Choice('내 이름', _store.name.isEmpty ? '먼저 이름을 등록해요' : _store.name, Icons.person_outline,
-              () => _openWords(WordGroup.myName)),
-          _Choice('계약서 낱말', '동의, 확인, 서명, 성명, 주소 …', Icons.description_outlined,
-              () => _openWords(WordGroup.contract)),
-          _Choice('일반 낱말', '하늘, 나무, 바다 …', Icons.local_florist_outlined, () => _openWords(WordGroup.general)),
+          _Choice('내 이름', _store.name.isEmpty ? '먼저 이름을 등록해요' : _store.name, '名', () => _openWords(WordGroup.myName)),
+          _Choice('계약서 낱말', '동의, 확인, 서명, 성명, 주소 …', '서명', () => _openWords(WordGroup.contract), primary: true),
+          _Choice('일반 낱말', '하늘, 나무, 바다 …', '하늘', () => _openWords(WordGroup.general)),
         ]);
       case _View.board:
-        return ScoreBoardView(store: _store);
+        return ScoreBoardView(store: _store, onRetryLowest: _retryLowest);
       case _View.name:
         return _NameForm(store: _store, onSaved: () => _go(_View.home, say: _savedSpeech()));
       case _View.settings:
@@ -210,13 +240,44 @@ class _PracticeFlowState extends State<PracticeFlow> {
     return n >= 1 && n < words.length ? words[n] : '$n';
   }
 
+  /// 홈: 작은 파란 줄 + 큰 제목 → 타일 2×2 → 사용법 듣기
+  Widget _home(List<_Choice> choices) {
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+      children: [
+        const Text('글씨 연습', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.accent)),
+        const SizedBox(height: 6),
+        Semantics(header: true, child: Text('들리는 받아쓰기', style: Theme.of(context).textTheme.headlineMedium)),
+        const SizedBox(height: 18),
+        for (var i = 0; i < choices.length; i += 2) ...[
+          // ListView 안이라 세로 제약이 없어 stretch 대신 타일 높이를 고정한다
+          Row(
+            children: [
+              Expanded(child: _Tile(choice: choices[i])),
+              const SizedBox(width: 12),
+              Expanded(child: i + 1 < choices.length ? _Tile(choice: choices[i + 1]) : const SizedBox.shrink()),
+            ],
+          ),
+          const SizedBox(height: 12),
+        ],
+        const SizedBox(height: 4),
+        ListenButton(
+          label: '사용법 듣기',
+          icon: Icons.volume_up_rounded,
+          onPressed: () => Speech.announce(context, _intro(_View.home)),
+        ),
+      ],
+    );
+  }
+
+  /// 아래 메뉴(학습하기·연습하기): "다음에 할 일"과 같은 줄 버튼, 왼쪽에 큰 보기 글자
   Widget _menu(List<_Choice> choices) {
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
       children: [
         for (final c in choices) ...[
-          _ChoiceButton(choice: c),
-          const SizedBox(height: 12),
+          _RowButton(choice: c),
+          const SizedBox(height: 10),
         ],
       ],
     );
@@ -224,49 +285,136 @@ class _PracticeFlowState extends State<PracticeFlow> {
 }
 
 class _Choice {
-  const _Choice(this.label, this.hint, this.icon, this.onTap);
+  const _Choice(this.label, this.hint, this.glyph, this.onTap, {this.primary = false});
 
   final String label;
   final String hint;
-  final IconData icon;
+
+  /// 큰 보기 글자 (ㄱ, 서명, 82 …)
+  final String glyph;
   final VoidCallback onTap;
+
+  /// 하늘색으로 강조 (한 화면에 하나)
+  final bool primary;
 }
 
-/// 높이 76의 큰 선택 버튼. 이름과 한 줄 설명
-class _ChoiceButton extends StatelessWidget {
-  const _ChoiceButton({required this.choice});
+/// 홈의 큰 타일: 큰 보기 글자 위, 이름과 한 줄 설명 아래
+class _Tile extends StatelessWidget {
+  const _Tile({required this.choice});
 
   final _Choice choice;
 
   @override
   Widget build(BuildContext context) {
-    final text = Theme.of(context).textTheme;
+    final c = choice;
+    final fg = c.primary ? AppColors.onPrimary : AppColors.text;
+    final sub = c.primary ? AppColors.onPrimary.withValues(alpha: 0.8) : AppColors.muted;
+    final radius = BorderRadius.circular(AppRadius.card);
     return Semantics(
       button: true,
-      label: '${choice.label}. ${choice.hint}',
+      label: '${c.label}. ${c.hint}',
       excludeSemantics: true,
-      child: OutlinedButton(
-        onPressed: TapFeedback.wrap(choice.onTap),
-        style: OutlinedButton.styleFrom(
-          minimumSize: const Size.fromHeight(76),
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          alignment: Alignment.centerLeft,
-        ),
-        child: Row(
-          children: [
-            Icon(choice.icon, color: AppColors.primary),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(choice.label, style: text.titleMedium),
-                  Text(choice.hint, style: text.bodyMedium, overflow: TextOverflow.ellipsis),
-                ],
-              ),
+      child: Material(
+        color: c.primary ? AppColors.primary : AppColors.grey100,
+        borderRadius: radius,
+        child: InkWell(
+          onTap: TapFeedback.wrap(c.onTap),
+          borderRadius: radius,
+          child: Container(
+            height: 150,
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    c.glyph,
+                    style: TextStyle(
+                      fontFamily: 'DoHyeon',
+                      fontSize: c.glyph.length > 2 ? 34 : 50,
+                      height: 1.1,
+                      color: c.primary ? fg : AppColors.accent,
+                    ),
+                  ),
+                ),
+                const Spacer(),
+                Text(c.label, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: fg)),
+                const SizedBox(height: 2),
+                Text(
+                  c.hint,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: sub),
+                ),
+              ],
             ),
-          ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// 아래 메뉴의 줄 버튼
+class _RowButton extends StatelessWidget {
+  const _RowButton({required this.choice});
+
+  final _Choice choice;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = choice;
+    final fg = c.primary ? AppColors.onPrimary : AppColors.text;
+    final sub = c.primary ? AppColors.onPrimary.withValues(alpha: 0.8) : AppColors.muted;
+    final radius = BorderRadius.circular(AppRadius.button);
+    return Semantics(
+      button: true,
+      label: '${c.label}. ${c.hint}',
+      excludeSemantics: true,
+      child: Material(
+        color: c.primary ? AppColors.primary : AppColors.grey100,
+        borderRadius: radius,
+        child: InkWell(
+          onTap: TapFeedback.wrap(c.onTap),
+          borderRadius: radius,
+          child: Container(
+            constraints: const BoxConstraints(minHeight: 76),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 48,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      c.glyph,
+                      style: TextStyle(fontFamily: 'DoHyeon', fontSize: 30, color: c.primary ? fg : AppColors.accent),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(c.label, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: fg)),
+                      const SizedBox(height: 2),
+                      Text(
+                        c.hint,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: sub),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(Icons.chevron_right_rounded, size: 26, color: fg),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -317,7 +465,9 @@ class _NameFormState extends State<_NameForm> {
           style: const TextStyle(fontSize: 28),
           decoration: InputDecoration(
             labelText: '이름 (한글, 1~6글자)',
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(18)),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppRadius.button)),
+            filled: true,
+            fillColor: AppColors.grey50,
           ),
           onSubmitted: (_) => _save(),
         ),
@@ -358,12 +508,9 @@ class _SettingsForm extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppColors.line, width: 1.5),
-        ),
+        decoration: BoxDecoration(color: AppColors.grey100, borderRadius: BorderRadius.circular(AppRadius.card)),
         child: SwitchListTile(
+          activeThumbColor: AppColors.accent,
           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           title: Text(label, style: text.titleMedium),
           subtitle: Text(hint, style: text.bodyMedium),

@@ -46,7 +46,7 @@ class PracticeScreen extends StatefulWidget {
 class _PracticeScreenState extends State<PracticeScreen> with SingleTickerProviderStateMixin {
   /// 판정에 쓰는 펜 색과 글씨 굵기
   static const _inkColor = Color(0xFF1A2A80);
-  static const _guideColor = Color(0xFFC3CAE0);
+  static const _guideColor = Color(0xFFD7DCE2);
 
   /// 칸과 칸 사이 간격 (밀 때 두 칸이 나란히 보인다)
   static const _gap = 12.0;
@@ -388,8 +388,10 @@ class _PracticeScreenState extends State<PracticeScreen> with SingleTickerProvid
   @override
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
+    final n = widget.items.length;
     return PracticeFrame(
-      title: widget.title,
+      title: '',
+      backLabel: widget.title,
       onBack: widget.onExit,
       shortcuts: {
         const SingleActivator(LogicalKeyboardKey.enter): _submit,
@@ -398,112 +400,158 @@ class _PracticeScreenState extends State<PracticeScreen> with SingleTickerProvid
         const SingleActivator(LogicalKeyboardKey.arrowLeft): () => _step(-1),
         const SingleActivator(LogicalKeyboardKey.arrowRight): () => _step(1),
       },
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8, 0, 8, 6),
-              child: Text(
-                '${_index + 1} / ${widget.items.length}  ·  ${_item.spokenName}',
-                style: text.titleMedium,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // 쓰고 서명하기 화면과 같은 짜임: 동그라미 → "N개 중 M번째" → 큰 글자 이름 → 쓰는 법 한 줄 → 쓰는 칸
+          _dots(),
+          const SizedBox(height: 10),
+          Text('${widget.title} · $n개 중 ${_index + 1}번째', textAlign: TextAlign.center, style: text.labelLarge),
+          const SizedBox(height: 4),
+          Semantics(
+            header: true,
+            child: Text(
+              _item.spokenName,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w700, color: AppColors.text, height: 1.3),
+            ),
+          ),
+          const SizedBox(height: 4),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
+              _howTo(),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: AppColors.muted, height: 1.5),
+            ),
+          ),
+          const SizedBox(height: 14),
+          Expanded(
+            child: Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: _writingArea(text)),
+          ),
+          const SizedBox(height: 12),
+          _resultBand(),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+            child: SizedBox(
+              height: 68,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(flex: 2, child: _button('지우기', _undoStroke)),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    flex: 3,
+                    child: FilledButton(
+                      onPressed: TapFeedback.wrap(_submit),
+                      style: FilledButton.styleFrom(
+                        minimumSize: const Size(0, 68),
+                        backgroundColor: AppColors.primaryStrong,
+                        textStyle: const TextStyle(fontFamily: AppFonts.body, fontSize: 18, fontWeight: FontWeight.w700),
+                      ),
+                      child: const Text('다 썼어요'),
+                    ),
+                  ),
+                ],
               ),
             ),
-            _dots(),
-            const SizedBox(height: 8),
-            Expanded(child: _writingArea(text)),
-            const SizedBox(height: 8),
-            _resultStrip(text),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Expanded(child: _button('이전 글자', Icons.chevron_left, () => _step(-1))),
-                const SizedBox(width: 8),
-                Expanded(child: _button('다음 글자', Icons.chevron_right, () => _step(1))),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Expanded(child: _button('지우기', Icons.backspace_outlined, _undoStroke)),
-                const SizedBox(width: 8),
-                Expanded(
-                  flex: 2,
-                  child: FilledButton.icon(
-                    onPressed: TapFeedback.wrap(_submit),
-                    style: FilledButton.styleFrom(minimumSize: const Size(0, 64)),
-                    icon: const Icon(Icons.check),
-                    label: const Text('다 썼어요'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 제목 아래 한 줄: 자모는 쓰는 법, 글자는 자모 배치, 낱말은 줄 맞추기
+  String _howTo() {
+    final speech = _item.speech;
+    // "기역. 가로로 긋고 …" 에서 이름 뒤 설명만
+    final dot = speech.indexOf('. ');
+    final body = dot >= 0 && dot < 8 ? speech.substring(dot + 2) : speech;
+    return body.replaceAll(RegExp(r'[.。]\s*$'), '');
+  }
+
+  /// 칸 수만큼의 동그라미 (쓰고 서명하기의 진행 동그라미와 같은 모양). 입력이 끝난 칸은 채워지고, 지금 칸은 둘레가 빛난다
+  Widget _dots() {
+    final n = widget.items.length;
+    return Semantics(
+      label: '$n개 중 ${_done.length}개 입력했어요',
+      excludeSemantics: true,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Wrap(
+          alignment: WrapAlignment.center,
+          spacing: 10,
+          runSpacing: 8,
+          children: [
+            for (var i = 0; i < n; i++)
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 240),
+                width: 14,
+                height: 14,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: _done.contains(i) ? AppColors.marker : AppColors.surface,
+                  border: Border.all(
+                    color: i == _index || _done.contains(i) ? AppColors.marker : AppColors.grey300,
+                    width: 2.5,
                   ),
+                  boxShadow: i == _index ? const [BoxShadow(color: AppColors.primarySoft, spreadRadius: 4)] : null,
                 ),
-              ],
-            ),
+              ),
           ],
         ),
       ),
     );
   }
 
-  /// 칸 수만큼의 동그라미. 입력이 끝난 칸은 채워지고, 지금 칸은 테두리가 진하다
-  Widget _dots() {
-    return Semantics(
-      label: '${widget.items.length}개 중 ${_done.length}개 입력했어요',
-      excludeSemantics: true,
-      child: Wrap(
-        alignment: WrapAlignment.center,
-        spacing: 6,
-        runSpacing: 6,
-        children: [
-          for (var i = 0; i < widget.items.length; i++)
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 240),
-              width: 14,
-              height: 14,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: _done.contains(i) ? AppColors.primary : Colors.transparent,
-                border: Border.all(
-                  color: i == _index || _done.contains(i) ? AppColors.primary : AppColors.line,
-                  width: i == _index ? 2.5 : 1.5,
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-
-  Widget _button(String label, IconData icon, VoidCallback onPressed) {
-    return OutlinedButton.icon(
+  Widget _button(String label, VoidCallback onPressed) {
+    return OutlinedButton(
       onPressed: TapFeedback.wrap(onPressed),
-      style: OutlinedButton.styleFrom(minimumSize: const Size(0, 64), padding: const EdgeInsets.symmetric(horizontal: 8)),
-      icon: Icon(icon),
-      label: Text(label),
+      style: OutlinedButton.styleFrom(
+        minimumSize: const Size(0, 68),
+        padding: const EdgeInsets.symmetric(horizontal: 4),
+        textStyle: const TextStyle(fontFamily: AppFonts.body, fontSize: 18, fontWeight: FontWeight.w700),
+      ),
+      child: FittedBox(fit: BoxFit.scaleDown, child: Text(label)),
     );
   }
 
-  Widget _resultStrip(TextTheme text) {
+  /// 결과 띠 (사용자 선택 P3): 화면 끝까지 닿는 옅은 색 띠. 쓰기 전엔 회색 안내, 통과면 초록, 아니면 노랑. 점수는 크게
+  Widget _resultBand() {
     final verdict = _verdict;
+    final (bg, fg) = verdict == null
+        ? (AppColors.grey50, AppColors.muted)
+        : verdict.passed
+            ? (AppColors.okSoft, AppColors.ok)
+            : (AppColors.missingSoft, AppColors.missing);
+    final message = verdict == null
+        ? (_learn ? '보조선을 따라 쓰고, 다 쓰면 왼쪽으로 미세요.' : '보조선 줄에 맞춰 한 줄로 쓰고, 다 쓰면 왼쪽으로 미세요.')
+        : verdict.message;
     return Semantics(
       liveRegion: true,
+      label: verdict == null ? message : '${verdict.score}점. $message',
+      excludeSemantics: true,
       child: Container(
-        height: 56,
-        alignment: Alignment.centerLeft,
-        padding: const EdgeInsets.symmetric(horizontal: 14),
-        decoration: BoxDecoration(
-          color: verdict == null
-              ? AppColors.primarySoft
-              : (verdict.passed ? AppColors.okSoft : AppColors.missingSoft),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Text(
-          verdict == null
-              ? (_learn ? '보조선을 따라 쓰세요' : '보조선 줄에 맞춰 한 줄로 쓰세요')
-              : '${verdict.score}점  ${verdict.message}',
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-          style: text.bodyLarge,
+        color: bg,
+        constraints: const BoxConstraints(minHeight: 64),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        child: Row(
+          children: [
+            if (verdict != null) ...[
+              Text('${verdict.score}점', style: TextStyle(fontSize: 32, fontWeight: FontWeight.w800, color: fg, height: 1.1)),
+              const SizedBox(width: 14),
+            ],
+            Expanded(
+              child: Text(
+                message,
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: fg, height: 1.5),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -552,11 +600,7 @@ class _PracticeScreenState extends State<PracticeScreen> with SingleTickerProvid
     final item = widget.items[index];
     final guide = _guideAt(index);
     return Container(
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppColors.line, width: 1.5),
-      ),
+      decoration: BoxDecoration(color: AppColors.grey50, borderRadius: BorderRadius.circular(AppRadius.card)),
       clipBehavior: Clip.antiAlias,
       child: Stack(
         fit: StackFit.expand,

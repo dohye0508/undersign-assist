@@ -13,6 +13,7 @@ class PracticeFrame extends StatelessWidget {
     required this.title,
     required this.onBack,
     required this.child,
+    this.backLabel = '뒤로',
     this.trailing,
     this.shortcuts = const {},
     this.letterKeys = true,
@@ -20,6 +21,9 @@ class PracticeFrame extends StatelessWidget {
 
   final String title;
   final VoidCallback onBack;
+
+  /// "‹ 카메라로"처럼 뒤로 버튼에 적는 곳 이름
+  final String backLabel;
   final Widget child;
   final Widget? trailing;
 
@@ -53,35 +57,44 @@ class PracticeFrame extends StatelessWidget {
                     constraints: const BoxConstraints(maxWidth: 480),
                     child: Column(
                       children: [
-                        SizedBox(
-                          height: 60,
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 4, right: 6),
-                            child: Row(
-                              children: [
-                                IconButton(
-                                  tooltip: '뒤로 가기',
-                                  icon: const Icon(Icons.arrow_back),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(8, 12, 12, 8),
+                          child: Row(
+                            children: [
+                              Semantics(
+                                button: true,
+                                label: '뒤로 가기',
+                                excludeSemantics: true,
+                                child: TextButton.icon(
                                   onPressed: TapFeedback.wrap(onBack),
+                                  style: TextButton.styleFrom(
+                                    foregroundColor: AppColors.text,
+                                    minimumSize: const Size(0, 52),
+                                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                                    textStyle: const TextStyle(fontFamily: AppFonts.body, fontSize: 15, fontWeight: FontWeight.w600),
+                                    iconSize: 20,
+                                  ),
+                                  icon: const Icon(Icons.arrow_back_ios_new_rounded),
+                                  label: Text(backLabel),
                                 ),
-                                Expanded(
-                                  child: Semantics(
-                                    header: true,
-                                    child: Text(
-                                      title,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: Theme.of(context).textTheme.titleLarge,
-                                    ),
+                              ),
+                              Expanded(
+                                child: Semantics(
+                                  header: true,
+                                  child: Text(
+                                    title,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: Theme.of(context).textTheme.titleMedium,
                                   ),
                                 ),
-                                IconButton(
-                                  tooltip: '다시 듣기',
-                                  icon: const Icon(Icons.volume_up_outlined, color: AppColors.muted),
-                                  onPressed: TapFeedback.wrap(() => _repeat(context)),
-                                ),
-                                ?trailing,
-                              ],
-                            ),
+                              ),
+                              IconButton(
+                                tooltip: '다시 듣기',
+                                icon: const Icon(Icons.volume_up_rounded),
+                                onPressed: TapFeedback.wrap(() => _repeat(context)),
+                              ),
+                              if (trailing case final trailing?) ...[const SizedBox(width: 8), trailing],
+                            ],
                           ),
                         ),
                         Expanded(child: child),
