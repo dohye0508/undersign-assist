@@ -25,8 +25,9 @@ class ApiClient {
       _postPhoto('/api/write/check', photo, fields: {'field': field});
 
   /// 판단: 규칙 엔진(backend/app/services/judge)이 빠진 항목과 확인할 내용을 근거와 함께 돌려준다
-  static Future<Judgement> judge(RecognizedDocument document) async =>
-      Judgement.fromJson(await _postJson('/api/judge', document.toJson()));
+  /// [answers]: 판단 질문(예: 사업장 인원)에 사용자가 고른 답. 질문 id → 답 코드
+  static Future<Judgement> judge(RecognizedDocument document, {Map<String, String> answers = const {}}) async =>
+      Judgement.fromJson(await _postJson('/api/judge', {...document.toJson(), 'answers': answers}));
 
   // 서명란 찾기는 백엔드를 부르지 않고 앱에서 읽기 결과로 한다 (features/sign/signature_spots.dart).
 

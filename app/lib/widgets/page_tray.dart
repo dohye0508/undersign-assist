@@ -87,16 +87,16 @@ class _ToggleButton extends StatelessWidget {
             onTap: onToggle,
             borderRadius: radius,
             child: ConstrainedBox(
-              constraints: const BoxConstraints(minHeight: 48, minWidth: 104),
+              constraints: const BoxConstraints(minHeight: 48, minWidth: 96),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(open ? Icons.expand_less : Icons.expand_more, color: AppColors.primary, size: 28),
+                    Icon(open ? Icons.expand_less : Icons.expand_more, color: AppColors.primary, size: 24),
                     const SizedBox(width: 6),
-                    Text('$count장', style: const TextStyle(fontSize: 19, color: AppColors.text)),
+                    Text('$count장', style: const TextStyle(fontSize: 18, color: AppColors.text)),
                   ],
                 ),
               ),
@@ -115,8 +115,8 @@ class _Panel extends StatelessWidget {
   final double maxHeight;
   final ValueChanged<int> onRemove;
 
-  static const _padding = 20.0;
-  static const _gap = 12.0;
+  static const _padding = 16.0;
+  static const _gap = 10.0;
   static const _maxCardWidth = 170.0;
 
   @override
@@ -145,7 +145,7 @@ class _Panel extends StatelessWidget {
               _CountPill(count: pages.length),
             ],
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 10),
           if (pages.isEmpty)
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 12),
@@ -201,7 +201,7 @@ class _CountPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
         color: AppColors.primarySoft,
         borderRadius: BorderRadius.circular(999),
@@ -220,7 +220,7 @@ class _PageCard extends StatelessWidget {
   final VoidCallback onRemove;
 
   static const inset = 8.0;
-  static const footer = 44.0;
+  static const footer = 40.0;
 
   @override
   Widget build(BuildContext context) {

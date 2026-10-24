@@ -4,9 +4,8 @@ import 'package:image_picker/image_picker.dart';
 
 import '../features/judge/judge_panel.dart';
 import '../features/read/read_panel.dart';
-import '../features/sign/sign_panel.dart';
+import '../features/fill/fill_panel.dart';
 import '../features/sign/signature_spots.dart';
-import '../features/write/write_panel.dart';
 import '../models/document_photo.dart';
 import '../models/workspace_state.dart';
 import '../services/camera_service.dart';
@@ -158,10 +157,11 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
       return;
     }
     setState(() => _step = step);
-    Speech.announce(context, '${step.label}. ${step.guide}');
+    // 쓰고 서명하기는 패널이 열리며 써야 할 곳 목록을 직접 읽어준다 (겹치면 앞 말이 끊긴다)
+    if (step != WorkStep.fill) Speech.announce(context, '${step.label}. ${step.guide}');
   }
 
-  /// 한 단계씩 뒤로: 검토하세요·쓴 글씨·서명 → 문서 읽기 → 카메라.
+  /// 한 단계씩 뒤로: 검토하세요·쓰고 서명하기 → 문서 읽기 → 카메라.
   /// 단계에서 나갈 때 바로 카메라로 가면 분석 결과를 다시 찾아야 해서 불편하다
   void _goBack() {
     if (!_analyzing) return;
@@ -325,14 +325,10 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
                   switch (step) {
                     WorkStep.read => ReadPanel(state: _state),
                     WorkStep.judge => JudgePanel(state: _state),
-                    WorkStep.write => WritePanel(
-                      state: _state,
-                      camera: _camera,
-                    ),
-                    WorkStep.sign => SignPanel(state: _state),
+                    WorkStep.fill => FillPanel(state: _state),
                   },
                   if (step == WorkStep.read && _state.recognized != null) ...[
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 16),
                     _NextSteps(onOpen: _openStep),
                   ],
                 ],
@@ -361,7 +357,7 @@ class _TopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 68,
+      height: 60,
       child: Padding(
         padding: EdgeInsets.only(left: leading == null ? 18 : 4, right: 6),
         child: Row(
@@ -396,8 +392,7 @@ class _NextSteps extends StatelessWidget {
 
   static const _icons = {
     WorkStep.judge: Icons.fact_check_outlined,
-    WorkStep.write: Icons.edit_outlined,
-    WorkStep.sign: Icons.draw_outlined,
+    WorkStep.fill: Icons.draw_outlined,
   };
 
   @override
@@ -407,13 +402,13 @@ class _NextSteps extends StatelessWidget {
       children: [
         Text('다음에 할 일', style: Theme.of(context).textTheme.labelLarge),
         const SizedBox(height: 8),
-        for (final step in [WorkStep.judge, WorkStep.write, WorkStep.sign]) ...[
+        for (final step in [WorkStep.judge, WorkStep.fill]) ...[
           OutlinedButton.icon(
             onPressed: () => onOpen(step),
             icon: Icon(_icons[step]),
             label: Text(step.label),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
         ],
       ],
     );
@@ -453,16 +448,16 @@ class _BottomBar extends StatelessWidget {
             label: '찍기',
             excludeSemantics: true,
             child: SizedBox(
-              width: 100,
-              height: 100,
+              width: 84,
+              height: 84,
               child: FilledButton(
                 onPressed: canCapture ? onCapture : null,
                 style: FilledButton.styleFrom(
                   shape: const CircleBorder(),
                   padding: EdgeInsets.zero,
-                  minimumSize: const Size(100, 100),
+                  minimumSize: const Size(84, 84),
                 ),
-                child: const Icon(Icons.photo_camera, size: 46),
+                child: const Icon(Icons.photo_camera, size: 38),
               ),
             ),
           ),
@@ -500,18 +495,18 @@ class _SideButton extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
         child: SizedBox(
-          width: 116,
+          width: 104,
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(icon, size: 40, color: color),
+                Icon(icon, size: 32, color: color),
                 const SizedBox(height: 6),
                 Text(
                   label,
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 18, color: color),
+                  style: TextStyle(fontSize: 16, color: color),
                 ),
               ],
             ),

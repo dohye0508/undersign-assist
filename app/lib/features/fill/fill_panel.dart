@@ -1,0 +1,185 @@
+import 'package:flutter/material.dart';
+
+import '../../models/fill.dart';
+import '../../models/workspace_state.dart';
+import '../../services/speech.dart';
+import '../../theme/app_theme.dart';
+import '../../widgets/panel_section.dart';
+import 'fill_screen.dart';
+import 'fill_targets.dart';
+
+/// 쓰고 서명하기: 써야 할 칸 목록을 들려주고, "쓰기 시작"으로 칸마다 화면 가득 쓰게 한다.
+/// 쓰기와 서명은 하는 일이 같아서(패드에 쓴 글씨가 문서 자리로 들어감) 한 단계로 합쳤다.
+class FillPanel extends StatelessWidget {
+  const FillPanel({super.key, required this.state});
+
+  final WorkspaceState state;
+
+  // 열릴 때 한 번 말해야 해서 상태는 안쪽 위젯이 갖는다
+  @override
+  Widget build(BuildContext context) => _FillPanelBody(state: state);
+}
+
+class _FillPanelBody extends StatefulWidget {
+  const _FillPanelBody({required this.state});
+
+  final WorkspaceState state;
+
+  @override
+  State<_FillPanelBody> createState() => _FillPanelBodyState();
+}
+
+class _FillPanelBodyState extends State<_FillPanelBody> {
+  bool _exporting = false;
+
+  List<FillTarget> get _targets {
+    final document = widget.state.recognized;
+    return document == null ? const [] : findFillTargets(document);
+  }
+
+  int _left(List<FillTarget> targets) => targets.where((t) => !widget.state.fills.containsKey(t.id)).length;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) Speech.announce(context, _summary());
+    });
+  }
+
+  String _summary() {
+    final targets = _targets;
+    final list = describeFillTargets(targets);
+    if (targets.isEmpty) return list;
+    final left = _left(targets);
+    final next = left == 0 ? ' 모두 채웠어요. 서명한 문서 PDF 받기를 누르세요.' : ' 쓰기 시작을 누르면 화면 가득 쓸 수 있어요.';
+    return '${_cautionReminder()}$list$next';
+  }
+
+  /// 판단 결과에 확인이 필요한 곳이 있으면 쓰고 서명하기 전에 먼저 알린다 (판단 없이 서명하지 않게)
+  String _cautionReminder() {
+    final judgement = widget.state.judgement;
+    if (judgement == null) return '서명하기 전에 검토하세요를 먼저 들어 보세요. ';
+    final caution = judgement.counts['caution'] ?? 0;
+    return caution == 0 ? '' : '서명 전에 다시 알려드려요. 확인이 필요한 곳이 $caution개 있어요. ';
+  }
+
+  Future<void> _open(int index) async {
+    final targets = _targets;
+    final exported = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(builder: (_) => FillScreen(state: widget.state, targets: targets, start: index)),
+    );
+    if (!mounted) return;
+    final left = _left(targets);
+    final filled = targets.length - left;
+    Speech.announce(
+      context,
+      exported == true
+          ? '쓰고 서명하기를 닫았어요.'
+          : left == 0
+              ? '모두 채웠어요. 서명한 문서 PDF 받기를 누르면 내려받아요.'
+              : '채운 칸은 $filled곳, 남은 칸은 $left곳이에요.',
+    );
+  }
+
+  Future<void> _export(List<FillTarget> targets) async {
+    setState(() => _exporting = true);
+    await exportFilledPdf(context, widget.state, targets);
+    if (mounted) setState(() => _exporting = false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
+    final targets = _targets;
+    final fills = widget.state.fills;
+    final firstEmpty = targets.indexWhere((t) => !fills.containsKey(t.id));
+
+    return PanelSection(
+      title: WorkStep.fill.label,
+      description: WorkStep.fill.guide,
+      actions: [
+        IconButton(
+          tooltip: '써야 할 칸 다시 듣기',
+          icon: const Icon(Icons.volume_up_outlined),
+          onPressed: () => Speech.announce(context, _summary()),
+        ),
+      ],
+      children: [
+        if (targets.isEmpty)
+          Text(describeFillTargets(targets), style: text.bodyLarge)
+        else ...[
+          Text('써야 할 곳 ${targets.length}곳', style: text.labelLarge),
+          const SizedBox(height: 8),
+          for (final (i, target) in targets.indexed)
+            _TargetRow(target: target, ink: fills[target.id], onTap: () => _open(i)),
+          const SizedBox(height: 12),
+          if (firstEmpty >= 0)
+            FilledButton.icon(
+              onPressed: () => _open(firstEmpty),
+              icon: const Icon(Icons.draw_outlined),
+              label: const Text('쓰기 시작'),
+            ),
+        ],
+        if (fills.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          // 다 채웠으면 PDF 받기가 가장 큰 버튼이 된다
+          if (firstEmpty >= 0)
+            OutlinedButton.icon(
+              onPressed: _exporting ? null : () => _export(targets),
+              icon: const Icon(Icons.picture_as_pdf_outlined),
+              label: Text(_exporting ? 'PDF 만드는 중…' : '서명한 문서 PDF 받기'),
+            )
+          else
+            FilledButton.icon(
+              onPressed: _exporting ? null : () => _export(targets),
+              icon: const Icon(Icons.picture_as_pdf_outlined),
+              label: Text(_exporting ? 'PDF 만드는 중…' : '서명한 문서 PDF 받기'),
+            ),
+        ],
+      ],
+    );
+  }
+}
+
+/// 칸 하나: 채웠으면 ✓와 글씨 미리보기. 누르면 그 칸부터 (다시) 쓴다
+class _TargetRow extends StatelessWidget {
+  const _TargetRow({required this.target, required this.ink, required this.onTap});
+
+  final FillTarget target;
+  final FilledInk? ink;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final ink = this.ink;
+    final done = ink != null;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: OutlinedButton(
+        style: OutlinedButton.styleFrom(
+          minimumSize: const Size.fromHeight(64),
+          padding: const EdgeInsets.symmetric(horizontal: 14),
+          backgroundColor: done ? AppColors.okSoft : AppColors.surface,
+        ),
+        onPressed: onTap,
+        child: Semantics(
+          label: done ? '${target.label}, 채웠어요. 누르면 다시 써요.' : '${target.label}, 아직 비었어요. 누르면 써요.',
+          child: ExcludeSemantics(
+            child: Row(
+              children: [
+                Icon(done ? Icons.check_circle : Icons.edit_outlined, color: done ? AppColors.ok : AppColors.muted),
+                const SizedBox(width: 10),
+                Expanded(child: Text(target.label, style: Theme.of(context).textTheme.titleMedium)),
+                if (done)
+                  SizedBox(width: 80, height: 36, child: Image.memory(ink.png, fit: BoxFit.contain)),
+                const SizedBox(width: 6),
+                Text(done ? '다시 쓰기' : '쓰기', style: Theme.of(context).textTheme.bodyMedium),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

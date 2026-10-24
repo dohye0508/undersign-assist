@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../services/api_client.dart';
 import 'document_photo.dart';
+import 'fill.dart';
 import 'judgement.dart';
 import 'recognized_document.dart';
 
@@ -10,8 +11,8 @@ import 'recognized_document.dart';
 enum WorkStep {
   read('문서 읽기', '어떤 문서인지와 중요한 내용을 읽어드려요'),
   judge('검토하세요!', '빠지거나 확인할 내용을 근거와 함께 알려드려요'),
-  write('쓴 글씨 확인', '칸을 고르고, 종이에 쓴 다음 확인을 누르면 무엇을 썼는지 읽어드려요'),
-  sign('서명 위치', '어디에 서명하는지 알려드리고, 패드에 서명해요');
+  // 쓰기와 서명은 하는 일이 같아서(패드에 쓰면 문서 자리로 들어감) 한 단계로 합쳤다
+  fill('쓰고 서명하기', '써야 할 칸을 하나씩 알려드려요. 화면 가득 쓰고 왼쪽으로 밀면 문서 자리로 들어가요');
 
   const WorkStep(this.label, this.guide);
 
@@ -24,8 +25,8 @@ enum WorkStep {
 /// 화면 전체가 함께 보는 상태.
 ///   1. 업로드: 페이지 사진을 차례로 모은다 ([pages])
 ///   2. 분석: 모든 페이지를 한 문서로 읽고([recognized]) 규칙으로 판단한다([judgement])
-///   3. 서명: 서명란마다 패드 서명을 받는다 ([signatures])
-///   4. 출력: 페이지 사진에 서명을 합성해 PDF로 (features/output)
+///   3. 쓰고 서명하기: 칸마다 패드에 쓴 글씨를 받는다 ([fills])
+///   4. 출력: 페이지 사진에 글씨를 합성해 PDF로 (features/output)
 class WorkspaceState extends ChangeNotifier {
   final List<DocumentPhoto> _pages = [];
   List<DocumentPhoto> get pages => List.unmodifiable(_pages);
@@ -49,7 +50,21 @@ class WorkspaceState extends ChangeNotifier {
   String? _judgeError;
   String? get judgeError => _judgeError;
 
-  /// 서명란(읽기 결과 blocks의 줄 번호)마다 패드에 한 서명 (투명 배경 PNG)
+  /// 칸(FillTarget.id)마다 패드에 쓴 글씨. 쓰기와 서명을 함께 담는다
+  final Map<String, FilledInk> _fills = {};
+  Map<String, FilledInk> get fills => Map.unmodifiable(_fills);
+
+  void setFill(FilledInk ink) {
+    _fills[ink.target.id] = ink;
+    notifyListeners();
+  }
+
+  void removeFill(String id) {
+    _fills.remove(id);
+    notifyListeners();
+  }
+
+  /// (이전 방식, 정리 예정) 서명란 줄 번호마다 서명
   final Map<int, Uint8List> _signatures = {};
   Map<int, Uint8List> get signatures => Map.unmodifiable(_signatures);
 
@@ -99,8 +114,10 @@ class WorkspaceState extends ChangeNotifier {
     _readError = null;
     _judgement = null;
     _judgeError = null;
+    _answers.clear();
     _signatures.clear();
     _notes.clear();
+    _fills.clear();
   }
 
   // --- 2. 분석 ---------------------------------------------------------------
@@ -122,7 +139,18 @@ class WorkspaceState extends ChangeNotifier {
     return _recognized;
   }
 
-  /// 읽기 결과를 규칙 엔진으로 판단한다. 같은 문서는 한 번만 판단한다
+  /// 판단 질문(예: 사업장 인원)에 사용자가 고른 답. 질문 id → 답 코드
+  final Map<String, String> _answers = {};
+  Map<String, String> get answers => Map.unmodifiable(_answers);
+
+  /// 질문에 답하고 그 답으로 다시 판단한다
+  Future<Judgement?> answer(String questionId, String option) {
+    _answers[questionId] = option;
+    _judgement = null;
+    return judge();
+  }
+
+  /// 읽기 결과를 규칙 엔진으로 판단한다. 같은 문서·같은 답이면 한 번만 판단한다
   Future<Judgement?> judge() async {
     final document = _recognized;
     if (document == null) return null;
@@ -131,7 +159,7 @@ class WorkspaceState extends ChangeNotifier {
     _judgeError = null;
     notifyListeners();
     try {
-      _judgement = await ApiClient.judge(document);
+      _judgement = await ApiClient.judge(document, answers: _answers);
     } catch (_) {
       _judgeError = '판단하지 못했어요. 서버가 켜져 있는지 확인하고 다시 시도해 주세요.';
     }

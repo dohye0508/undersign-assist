@@ -18,11 +18,11 @@ class ReadPanel extends StatelessWidget {
 
     final List<Widget> body;
     if (state.reading) {
-      body = [const LinearProgressIndicator(), const SizedBox(height: 12), const Text('문서를 읽고 있어요…')];
+      body = [const LinearProgressIndicator(), const SizedBox(height: 8), const Text('문서를 읽고 있어요…')];
     } else if (state.readError != null) {
       body = [
         Text(state.readError!),
-        const SizedBox(height: 12),
+        const SizedBox(height: 8),
         OutlinedButton(onPressed: state.read, child: const Text('다시 읽기')),
       ];
     } else if (document == null) {
@@ -35,21 +35,30 @@ class ReadPanel extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // 듣기는 이 앱에서 가장 많이 쓰는 동작이다. 화면을 보지 않고도 찾도록 맨 위에 크게 둔다
+        // 듣기는 이 앱에서 가장 많이 쓰는 동작이다. 화면을 보지 않고도 찾도록 맨 위에 크게 둔다.
+        // 두 버튼을 한 줄에 나란히 두어 스크롤 없이 아래 내용까지 한 화면에 들어오게 한다
         if (document != null && !state.reading) ...[
-          ListenButton(
-            label: '전체 듣기',
-            icon: Icons.record_voice_over_outlined,
-            primary: true,
-            onPressed: () => Speech.announce(context, document.fullText),
+          Row(
+            children: [
+              Expanded(
+                child: ListenButton(
+                  label: '전체 듣기',
+                  icon: Icons.record_voice_over_outlined,
+                  primary: true,
+                  onPressed: () => Speech.announce(context, document.fullText),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: ListenButton(
+                  label: '요약 듣기',
+                  icon: Icons.volume_up_outlined,
+                  onPressed: () => Speech.announce(context, document.speech),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 12),
-          ListenButton(
-            label: '요약 듣기',
-            icon: Icons.volume_up_outlined,
-            onPressed: () => Speech.announce(context, document.speech),
-          ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
         ],
         PanelSection(
           title: WorkStep.read.label,
@@ -80,21 +89,27 @@ class ListenButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const size = Size.fromHeight(88);
-    const textStyle = TextStyle(fontFamily: AppFonts.body, fontSize: 26);
+    const size = Size.fromHeight(72);
+    const textStyle = TextStyle(fontFamily: AppFonts.body, fontSize: 22);
+    const padding = EdgeInsets.symmetric(horizontal: 12);
     final child = Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: [Icon(icon, size: 36), const SizedBox(width: 14), Text(label)],
+      children: [
+        Icon(icon, size: 30),
+        const SizedBox(width: 10),
+        // 좁은 화면에서 나란히 놓여도 넘치지 않게 글자를 줄여 맞춘다
+        Flexible(child: FittedBox(fit: BoxFit.scaleDown, child: Text(label))),
+      ],
     );
     return primary
         ? FilledButton(
             onPressed: onPressed,
-            style: FilledButton.styleFrom(minimumSize: size, textStyle: textStyle),
+            style: FilledButton.styleFrom(minimumSize: size, padding: padding, textStyle: textStyle),
             child: child,
           )
         : OutlinedButton(
             onPressed: onPressed,
-            style: OutlinedButton.styleFrom(minimumSize: size, textStyle: textStyle),
+            style: OutlinedButton.styleFrom(minimumSize: size, padding: padding, textStyle: textStyle),
             child: child,
           );
   }
@@ -131,12 +146,24 @@ class _ReadSummaryState extends State<ReadSummary> {
           '${document.docTypeLabel} · $pageCount페이지 · 항목 ${document.fields.length}개',
           style: text.bodyLarge,
         ),
-        const SizedBox(height: 10),
-        _ToggleButton(
-          open: _showFields,
-          openLabel: '요약 접기',
-          closedLabel: '요약 보기',
-          onPressed: () => setState(() => _showFields = !_showFields),
+        const SizedBox(height: 4),
+        // 두 펼치기 버튼은 한 줄에 나란히, 펼친 내용은 그 아래에 차례로 둔다
+        Wrap(
+          spacing: 4,
+          children: [
+            _ToggleButton(
+              open: _showFields,
+              openLabel: '요약 접기',
+              closedLabel: '요약 보기',
+              onPressed: () => setState(() => _showFields = !_showFields),
+            ),
+            _ToggleButton(
+              open: _showFullText,
+              openLabel: '인식한 글자 숨기기',
+              closedLabel: '인식한 글자 보기',
+              onPressed: () => setState(() => _showFullText = !_showFullText),
+            ),
+          ],
         ),
         AnimatedSize(
           duration: _duration,
@@ -151,18 +178,14 @@ class _ReadSummaryState extends State<ReadSummary> {
                 )
               : const SizedBox(width: double.infinity),
         ),
-        const SizedBox(height: 10),
-        _ToggleButton(
-          open: _showFullText,
-          openLabel: '인식한 글자 숨기기',
-          closedLabel: '인식한 글자 보기',
-          onPressed: () => setState(() => _showFullText = !_showFullText),
-        ),
         AnimatedSize(
           duration: _duration,
           alignment: Alignment.topCenter,
           child: _showFullText
-              ? SelectableText(document.fullText, style: text.bodyLarge)
+              ? Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: SelectableText(document.fullText, style: text.bodyLarge),
+                )
               : const SizedBox(width: double.infinity),
         ),
       ],
@@ -186,15 +209,12 @@ class _ToggleButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Semantics(
-        expanded: open,
-        child: TextButton.icon(
-          onPressed: onPressed,
-          icon: Icon(open ? Icons.expand_less : Icons.expand_more),
-          label: Text(open ? openLabel : closedLabel),
-        ),
+    return Semantics(
+      expanded: open,
+      child: TextButton.icon(
+        onPressed: onPressed,
+        icon: Icon(open ? Icons.expand_less : Icons.expand_more),
+        label: Text(open ? openLabel : closedLabel),
       ),
     );
   }

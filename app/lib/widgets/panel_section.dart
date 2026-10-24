@@ -47,9 +47,9 @@ class PanelSection extends StatelessWidget {
             ...actions,
           ],
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 2),
         Text(description, style: text.bodyMedium),
-        const SizedBox(height: 16),
+        const SizedBox(height: 10),
         ...children,
       ],
     );
@@ -67,7 +67,7 @@ class LabelValueRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return MergeSemantics(
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12),
+        padding: const EdgeInsets.symmetric(vertical: 8),
         decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: AppColors.line))),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,

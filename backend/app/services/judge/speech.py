@@ -9,10 +9,7 @@ _LEVEL_ORDER = {"caution": 0, "missing": 1, "info": 2}
 _SEVERITY_ORDER = {"critical": 0, "high": 1, "medium": 2, "info": 3}
 _ORDINALS = ["첫째", "둘째", "셋째"]
 
-DISCLAIMER = (
-    "최종 판단은 직접 하세요. "
-    "정확한 상담은 대한법률구조공단 132나 고용노동부 1350에서 받을 수 있어요."
-)
+DISCLAIMER = "정확한 상담은 대한법률구조공단 132나 고용노동부 1350에서 받을 수 있어요."
 
 
 def build_summary(findings: list[dict]) -> str:

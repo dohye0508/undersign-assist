@@ -5,6 +5,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
 import '../../models/document_photo.dart';
+import '../../models/fill.dart';
 import '../../models/recognized_document.dart';
 
 /// 패드 서명 안내 상자의 가로세로 비율. 서명 PNG도 이 비율로 그려진다
@@ -18,12 +19,15 @@ final _keyword = RegExp(r'서명|\(인\)|날인');
 /// 페이지 사진마다 PDF 한 쪽. 서명란 줄(signatures의 key)에 서명 PNG를 겹쳐 그린다.
 /// [notes](페이지 번호 → 노트 PNG)가 있으면 그 페이지 전체에 먼저 겹친다. 서명이 쓴 글씨에 가리지 않게 서명은 그 위에.
 ///
+/// [fills](쓰고 서명하기에서 채운 칸)는 맨 위에 칸 자리마다 그린다.
+///
 /// 종이를 다시 출력하지 않고 찍은 사진 위에 그리므로, 사용자가 들은 문서와 서명된 문서가 같다.
 Future<Uint8List> buildSignedPdf({
   required List<DocumentPhoto> pages,
   required RecognizedDocument document,
   required Map<int, Uint8List> signatures,
   Map<int, Uint8List> notes = const {},
+  List<FilledInk> fills = const [],
 }) async {
   final pdf = pw.Document();
   for (final (i, photo) in pages.indexed) {
@@ -52,6 +56,9 @@ Future<Uint8List> buildSignedPdf({
         for (final MapEntry(key: line, value: png) in signatures.entries)
           if (line >= 0 && line < document.blocks.length && document.blocks[line].page == i)
             _placeSignature(document.blocks[line], png, scale, format),
+      if (size != null)
+        for (final fill in fills)
+          if (fill.target.page == i) _placeFill(fill, scale),
     ];
 
     pdf.addPage(pw.Page(
@@ -145,4 +152,45 @@ String _lineName(String text, int line) {
   final owner = RegExp(r'^([가-힣]{1,6}?)(상호|주소|성명|대표자?|이름|연락처|[:：(]|서명)').firstMatch(compact)?.group(1);
   final generic = owner == null || RegExp(r'^(성명|이름|주소|상호|대표자?|연락처)$').hasMatch(owner);
   return generic ? '${line + 1}번째 줄' : '$owner 줄';
+}
+
+/// 채운 칸 하나. 글씨 PNG는 획만 잘라낸 것이라 칸 상자에 비율을 지켜 넣는다.
+/// 글씨 칸은 쓰는 자리처럼 왼쪽에 붙이고, 서명은 가운데에 둔다
+pw.Widget _placeFill(FilledInk fill, double scale) {
+  final rect = fill.target.rect;
+  return pw.Positioned(
+    left: rect.x * scale,
+    top: rect.y * scale,
+    child: pw.Image(
+      pw.MemoryImage(fill.png),
+      width: rect.width * scale,
+      height: rect.height * scale,
+      fit: pw.BoxFit.contain,
+      alignment: fill.target.isSignature ? pw.Alignment.center : pw.Alignment.centerLeft,
+    ),
+  );
+}
+
+/// "1페이지 학생 성명, 보호자 서명을 채웠어요. PDF를 내려받았어요." (들려줄 말)
+/// 페이지가 하나면 페이지 번호는 말하지 않는다
+String describeFills(List<FilledInk> fills, int pageCount) {
+  if (fills.isEmpty) return '채운 칸이 없어요. 글씨 없이 PDF를 내려받았어요.';
+  final byPage = <int, List<String>>{};
+  for (final fill in fills) {
+    // 여러 페이지 문서의 칸 이름에는 "2페이지 "가 붙어 있어 페이지별로 묶을 때는 뗀다
+    final name = fill.target.label.replaceFirst(RegExp(r'^\d+페이지 '), '');
+    byPage.putIfAbsent(fill.target.page, () => []).add(name);
+  }
+  final pages = byPage.keys.toList()..sort();
+  final joined = [
+    for (final p in pages) pageCount > 1 ? '${p + 1}페이지 ${byPage[p]!.join(', ')}' : byPage[p]!.join(', '),
+  ].join(', ');
+  return '${_eulReul(joined)} 채웠어요. PDF를 내려받았어요.';
+}
+
+/// 받침이 있으면 "을", 없으면 "를"
+String _eulReul(String word) {
+  final code = word.codeUnitAt(word.length - 1);
+  if (code < 0xAC00 || code > 0xD7A3) return '$word을';
+  return (code - 0xAC00) % 28 == 0 ? '$word를' : '$word을';
 }

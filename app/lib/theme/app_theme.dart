@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 /// 흰 바탕에 아주 옅은 유색 그라데이션을 얹은 밝은 테마.
-/// 저시력 사용자를 위해 글씨와 터치 영역은 크게, 글자 대비는 높게 잡는다.
+/// 저시력 사용자를 위해 글씨와 터치 영역은 넉넉하게(버튼 높이 64 이상), 글자 대비는 높게 잡는다.
+/// 한 화면에 분석 결과가 스크롤 없이 들어오도록 크기는 너무 키우지 않는다.
 class AppColors {
   static const background = Color(0xFFF8F9FC);
   static const surface = Color(0xFFFFFFFF);
@@ -74,34 +75,34 @@ class AppTheme {
 
     // 버튼은 크게: 저시력 사용자가 찾기 쉽고, 손가락으로 누르기 쉽게
     final buttonShape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(18));
-    const buttonText = TextStyle(fontFamily: AppFonts.body, fontSize: 23);
+    const buttonText = TextStyle(fontFamily: AppFonts.body, fontSize: 20);
 
     return ThemeData(
       colorScheme: scheme,
       scaffoldBackgroundColor: AppColors.background,
       fontFamily: AppFonts.body,
       textTheme: const TextTheme(
-        headlineMedium: TextStyle(fontFamily: AppFonts.display, fontSize: 34, color: AppColors.text),
-        titleLarge: TextStyle(fontFamily: AppFonts.display, fontSize: 26, color: AppColors.text),
+        headlineMedium: TextStyle(fontFamily: AppFonts.display, fontSize: 30, color: AppColors.text),
+        titleLarge: TextStyle(fontFamily: AppFonts.display, fontSize: 24, color: AppColors.text),
         titleMedium: TextStyle(fontSize: 19, color: AppColors.text),
-        bodyLarge: TextStyle(fontSize: 19, color: AppColors.text, height: 1.55),
-        bodyMedium: TextStyle(fontSize: 16, color: AppColors.muted, height: 1.5),
+        bodyLarge: TextStyle(fontSize: 19, color: AppColors.text, height: 1.45),
+        bodyMedium: TextStyle(fontSize: 16, color: AppColors.muted, height: 1.45),
         labelLarge: TextStyle(fontSize: 15, color: AppColors.subtle, letterSpacing: 0.3),
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          minimumSize: const Size.fromHeight(76),
+          minimumSize: const Size.fromHeight(64),
           shape: buttonShape,
           textStyle: buttonText,
-          iconSize: 30,
+          iconSize: 26,
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          minimumSize: const Size.fromHeight(76),
+          minimumSize: const Size.fromHeight(64),
           shape: buttonShape,
           textStyle: buttonText,
-          iconSize: 30,
+          iconSize: 26,
           foregroundColor: AppColors.text,
           side: const BorderSide(color: AppColors.line, width: 1.5),
           backgroundColor: AppColors.surface,
@@ -109,17 +110,18 @@ class AppTheme {
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          minimumSize: const Size(64, 60),
-          textStyle: const TextStyle(fontFamily: AppFonts.body, fontSize: 21),
-          iconSize: 28,
+          minimumSize: const Size(64, 52),
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          textStyle: const TextStyle(fontFamily: AppFonts.body, fontSize: 19),
+          iconSize: 24,
         ),
       ),
       iconButtonTheme: IconButtonThemeData(
-        style: IconButton.styleFrom(minimumSize: const Size(60, 60), iconSize: 32),
+        style: IconButton.styleFrom(minimumSize: const Size(52, 52), iconSize: 28),
       ),
       chipTheme: const ChipThemeData(
-        labelStyle: TextStyle(fontFamily: AppFonts.body, fontSize: 20, color: AppColors.text),
-        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        labelStyle: TextStyle(fontFamily: AppFonts.body, fontSize: 18, color: AppColors.text),
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       ),
       focusColor: AppColors.primary.withValues(alpha: 0.18),
     );
