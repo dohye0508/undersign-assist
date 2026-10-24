@@ -10,9 +10,14 @@ import '../models/recognized_document.dart';
 class ApiClient {
   static const base = String.fromEnvironment('API_BASE', defaultValue: 'http://localhost:8000');
 
-  static Future<RecognizedDocument> read(DocumentPhoto photo) async {
-    final json = await _postPhoto('/api/read', photo);
-    return RecognizedDocument.fromJson(json);
+  /// 여러 페이지를 한 문서로 읽는다 (페이지 순서대로 photo 필드를 여러 번 보낸다)
+  static Future<RecognizedDocument> read(List<DocumentPhoto> pages) async {
+    final request = http.MultipartRequest('POST', Uri.parse('$base/api/read'))
+      ..files.addAll([
+        for (final page in pages) http.MultipartFile.fromBytes('photo', page.bytes, filename: page.name),
+      ]);
+    final response = await http.Response.fromStream(await request.send());
+    return RecognizedDocument.fromJson(_decode('/api/read', response));
   }
 
   /// 고른 칸에 무엇이 쓰였는지. 응답: field, found, written, box, speech

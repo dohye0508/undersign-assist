@@ -2,13 +2,16 @@ import '../../models/recognized_document.dart';
 
 /// 문서에서 서명이 필요한 곳 한 군데
 class SignatureSpot {
-  const SignatureSpot({required this.label, required this.line, required this.text});
+  const SignatureSpot({required this.label, required this.line, required this.page, required this.text});
 
-  /// 들려줄 이름 (예: "근로자 줄")
+  /// 들려줄 이름 (예: "근로자 줄", 여러 페이지면 "2페이지 근로자 줄")
   final String label;
 
   /// 읽기 결과 blocks에서 몇 번째 줄인지
   final int line;
+
+  /// 몇 번째 페이지인지 (0부터)
+  final int page;
 
   /// 그 줄의 원문
   final String text;
@@ -21,6 +24,7 @@ List<SignatureSpot> findSignatureSpots(RecognizedDocument document) {
   // 본문 문장 속 "서명하다" 같은 말은 서명란이 아니다
   final sentence = RegExp(r'서\s*명\s*(하|합|함|을|이|한|할|해)');
 
+  final multiPage = document.pages.length > 1;
   final spots = <SignatureSpot>[];
   for (final (i, block) in document.blocks.indexed) {
     final text = block.text.trim();
@@ -31,8 +35,9 @@ List<SignatureSpot> findSignatureSpots(RecognizedDocument document) {
     final owner = RegExp(r'^([가-힣]{1,6}?)(상호|주소|성명|대표자?|이름|연락처|[:：(]|서명)').firstMatch(compact)?.group(1);
     // 주체 없이 칸 이름으로 시작하는 줄(예: "성명: (서명)")은 몇 번째 줄인지로 말한다
     final generic = owner == null || RegExp(r'^(성명|이름|주소|상호|대표자?|연락처)$').hasMatch(owner);
-    final label = generic ? '${i + 1}번째 줄' : '$owner 줄';
-    spots.add(SignatureSpot(label: label, line: i, text: text));
+    final name = generic ? '${i + 1}번째 줄' : '$owner 줄';
+    final label = multiPage ? '${block.page + 1}페이지 $name' : name;
+    spots.add(SignatureSpot(label: label, line: i, page: block.page, text: text));
   }
   return spots;
 }
@@ -45,4 +50,13 @@ String describeSignatureSpots(List<SignatureSpot> spots) {
     for (final (i, spot) in spots.indexed) '${i < ordinals.length ? ordinals[i] : '${i + 1}번째'}, ${spot.label}.',
   ];
   return '서명이 필요한 곳은 ${spots.length}곳이에요. ${parts.join(' ')}';
+}
+
+/// 분석 요약에 붙일 말: "서명이 필요한 페이지는 1페이지와 3페이지예요."
+String describeSignaturePages(List<SignatureSpot> spots) {
+  if (spots.isEmpty) return '서명란은 찾지 못했어요.';
+  final pages = {for (final s in spots) s.page + 1}.toList()..sort();
+  final names = pages.map((p) => '$p페이지').toList();
+  final joined = names.length == 1 ? names.first : '${names.sublist(0, names.length - 1).join(', ')}와 ${names.last}';
+  return '서명이 필요한 페이지는 $joined예요.';
 }

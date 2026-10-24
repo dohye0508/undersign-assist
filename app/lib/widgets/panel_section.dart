@@ -10,6 +10,7 @@ class PanelSection extends StatelessWidget {
     required this.description,
     required this.children,
     this.preparing = false,
+    this.actions = const [],
   });
 
   final String title;
@@ -18,6 +19,9 @@ class PanelSection extends StatelessWidget {
 
   /// 기능은 아직 없고 화면만 있는 단계
   final bool preparing;
+
+  /// 제목 줄 오른쪽 끝의 작은 버튼들 (예: 다시 듣기). 내용을 가리지 않게 제목 옆에 둔다.
+  final List<Widget> actions;
 
   @override
   Widget build(BuildContext context) {
@@ -28,11 +32,19 @@ class PanelSection extends StatelessWidget {
       children: [
         Row(
           children: [
-            Semantics(header: true, child: Text(title, style: text.titleLarge)),
-            if (preparing) ...[
-              const SizedBox(width: 10),
-              const Chip(label: Text('준비 중'), visualDensity: VisualDensity.compact),
-            ],
+            // 글자를 크게 키워도 버튼이 밀려나지 않게 제목 쪽이 남는 폭을 맡는다
+            Expanded(
+              child: Row(
+                children: [
+                  Flexible(child: Semantics(header: true, child: Text(title, style: text.titleLarge))),
+                  if (preparing) ...[
+                    const SizedBox(width: 10),
+                    const Chip(label: Text('준비 중'), visualDensity: VisualDensity.compact),
+                  ],
+                ],
+              ),
+            ),
+            ...actions,
           ],
         ),
         const SizedBox(height: 4),

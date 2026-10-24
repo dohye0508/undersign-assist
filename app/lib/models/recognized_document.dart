@@ -9,6 +9,7 @@ class RecognizedDocument {
     required this.fullText,
     required this.imageWidth,
     required this.imageHeight,
+    required this.pages,
     required this.reader,
     required this.speech,
   });
@@ -21,6 +22,9 @@ class RecognizedDocument {
   final String fullText;
   final int imageWidth;
   final int imageHeight;
+
+  /// 페이지마다 사진 크기. 페이지 수는 pages.length
+  final List<PageSize> pages;
 
   /// 항목을 정리한 방식: "ai"(Groq) 또는 "rules"(규칙 파일)
   final String reader;
@@ -38,6 +42,7 @@ class RecognizedDocument {
         fullText: json['full_text'] as String? ?? '',
         imageWidth: json['image_width'] as int? ?? 0,
         imageHeight: json['image_height'] as int? ?? 0,
+        pages: [for (final p in json['pages'] as List? ?? []) PageSize.fromJson(p)],
         reader: json['reader'] as String? ?? 'rules',
         speech: json['speech'] as String? ?? '',
       );
@@ -50,6 +55,7 @@ class RecognizedDocument {
         'full_text': fullText,
         'image_width': imageWidth,
         'image_height': imageHeight,
+        'pages': [for (final p in pages) p.toJson()],
         'reader': reader,
         'speech': speech,
       };
@@ -69,15 +75,34 @@ class Box {
 
 /// 한 줄의 글자와 위치
 class TextBlock {
-  const TextBlock(this.text, this.box);
+  const TextBlock(this.text, this.box, [this.page = 0]);
 
   final String text;
+
+  /// [page]번째 페이지 사진의 좌표
   final Box box;
 
-  factory TextBlock.fromJson(Map<String, dynamic> json) =>
-      TextBlock(json['text'] as String, Box.fromJson(json['box'] as Map<String, dynamic>));
+  /// 몇 번째 페이지의 줄인지 (0부터)
+  final int page;
 
-  Map<String, dynamic> toJson() => {'text': text, 'box': box.toJson()};
+  factory TextBlock.fromJson(Map<String, dynamic> json) => TextBlock(
+        json['text'] as String,
+        Box.fromJson(json['box'] as Map<String, dynamic>),
+        json['page'] as int? ?? 0,
+      );
+
+  Map<String, dynamic> toJson() => {'text': text, 'box': box.toJson(), 'page': page};
+}
+
+/// 페이지 사진 크기 (백엔드가 방향을 바로잡은 뒤)
+class PageSize {
+  const PageSize(this.width, this.height);
+
+  final int width, height;
+
+  factory PageSize.fromJson(Map<String, dynamic> json) => PageSize(json['width'] as int, json['height'] as int);
+
+  Map<String, dynamic> toJson() => {'width': width, 'height': height};
 }
 
 /// 문서에서 찾은 항목 (예: 임금 → 시간급 9,000원)

@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 
 import '../../models/document_photo.dart';
 import '../../models/recognized_document.dart';
+import '../../models/workspace_state.dart';
 import '../../services/api_client.dart';
+import '../../services/camera_service.dart';
 import '../../services/speech.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/panel_section.dart';
 
 /// 쓰기: 칸을 고르고 종이에 펜으로 쓴 뒤 찍으면, 그 칸에 무엇이 쓰였는지 읽어준다.
 class WriteMode {
@@ -32,7 +35,64 @@ class WriteMode {
   }
 }
 
-/// 쓰기 모드일 때 촬영 버튼 위에 나오는 칸 고르기 줄
+/// 쓰기 단계 화면. 분석 화면에서는 큰 카메라가 없으므로, 종이를 맞춰 놓을 수 있게 작은 카메라를 함께 보여준다.
+class WritePanel extends StatefulWidget {
+  const WritePanel({super.key, required this.state, required this.camera});
+
+  final WorkspaceState state;
+  final CameraService camera;
+
+  @override
+  State<WritePanel> createState() => _WritePanelState();
+}
+
+class _WritePanelState extends State<WritePanel> {
+  bool _busy = false;
+  String? _result;
+
+  Future<void> _check() async {
+    setState(() => _busy = true);
+    Speech.announce(context, '${WriteMode.field.value} 칸을 확인하고 있어요.');
+    // 쓴 뒤의 종이를 새로 찍는다. 카메라가 없으면 첫 페이지 사진으로 확인한다
+    final photo = await widget.camera.snapshot() ?? widget.state.pages.first;
+    final message = await WriteMode.check(photo);
+    if (!mounted) return;
+    setState(() {
+      _busy = false;
+      _result = message;
+    });
+    Speech.announce(context, message);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PanelSection(
+      title: WorkStep.write.label,
+      description: '칸을 고르고, 종이에 쓴 다음 카메라 앞에 놓고 확인을 누르세요.',
+      children: [
+        if (widget.camera.ready)
+          ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: AspectRatio(aspectRatio: 4 / 3, child: widget.camera.preview()),
+          ),
+        const SizedBox(height: 14),
+        WriteFieldPicker(document: widget.state.recognized),
+        const SizedBox(height: 14),
+        FilledButton.icon(
+          onPressed: _busy ? null : _check,
+          icon: const Icon(Icons.photo_camera_outlined),
+          label: Text(_busy ? '확인하는 중…' : '찍어서 확인'),
+        ),
+        if (_result != null) ...[
+          const SizedBox(height: 16),
+          WriteResultView(message: _result!),
+        ],
+      ],
+    );
+  }
+}
+
+/// 칸 고르기 줄
 class WriteFieldPicker extends StatelessWidget {
   const WriteFieldPicker({super.key, required this.document});
 
@@ -76,8 +136,6 @@ class WriteResultView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text('쓴 글씨 확인', style: Theme.of(context).textTheme.titleLarge),
-        const SizedBox(height: 12),
         Semantics(
           liveRegion: true,
           child: Text(message, style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 22)),
