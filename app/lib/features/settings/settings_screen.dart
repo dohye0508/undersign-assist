@@ -15,13 +15,10 @@ const usageSpeech = '문서를 한 장씩 찍으면 페이지가 쌓여요. 카�
     '다 찍으면 오른쪽 아래 분석하기를 누르세요. 분석이 끝나면 검토하세요와 쓰고 서명하기로 이어져요. '
     '오른쪽 위 설정에서는 말하기 속도와 소리 크기를 바꾸고, 들리는 받아쓰기로 글씨를 연습할 수 있어요.';
 
-/// 키보드 단축키
-const shortcutsSpeech = '촬영 화면에서 스페이스나 C는 찍기, O는 사진 불러오기, P는 찍은 페이지 목록, 엔터는 분석하기, G는 들리는 받아쓰기예요. '
-    '분석 화면에서 숫자 1, 2, 3은 단계 고르기, Esc는 한 단계 뒤로예요. 어디서나 R은 다시 듣기예요.';
-
 /// 설정: 글씨 연습(들리는 받아쓰기), 소리(말하기 속도, 말소리 크기, 효과음 크기, 진동), 도움말.
 /// 촬영 화면 오른쪽 위 설정 버튼으로 연다. Esc 또는 "‹ 카메라로"로 닫는다.
 /// 값은 이 기기 브라우저 저장소에 남고([AppSettings]), 바꾸는 즉시 음성과 효과음에 적용된다.
+/// 한 층으로만 둔다: 카드 안 카드 없이 행 하나가 버튼이고, 단계는 아래에서 올라오는 선택 창에서 고른다.
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
@@ -72,7 +69,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Future<void> _setEffectVolume(SettingLevel level) async {
     await updateAppSettings((s) => s.effectVolume = level);
-    // 고른 크기로 딸깍 한 번 (버튼 소리를 바꾼 뒤에 낸다. 그래서 이 버튼들은 TapFeedback으로 감싸지 않는다)
+    // 고른 크기로 딸깍 한 번 (버튼 소리를 바꾼 뒤에 낸다. 그래서 효과음 선택지는 TapFeedback으로 감싸지 않는다)
     Haptics.tap();
     if (!mounted) return;
     Speech.announce(
@@ -89,6 +86,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
     Speech.announce(context, on ? '진동을 켰어요. 안드로이드 크롬에서만 진동이 나요.' : '진동을 껐어요. 받아쓰기 안내 진동도 함께 꺼져요.');
   }
 
+  /// 아래에서 올라오는 선택 창. 열리면 선택지를 읽어 주고, 고르면 바로 적용하고 닫는다.
+  /// [tapSound]를 끄면 선택지 버튼이 딸깍을 내지 않는다(효과음 크기는 바꾼 뒤에 새 크기로 한 번 낸다).
+  Future<void> _pickLevel({
+    required String title,
+    required List<SettingLevel> levels,
+    required SettingLevel selected,
+    required ValueChanged<SettingLevel> onSelect,
+    bool tapSound = true,
+  }) async {
+    final names = levels.map((l) => l.label).join(', ');
+    Speech.announce(context, '$title. $names 중에서 고르세요. 지금은 ${selected.label}예요.');
+    final picked = await showModalBottomSheet<SettingLevel>(
+      context: context,
+      backgroundColor: AppColors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.camera)),
+      ),
+      constraints: const BoxConstraints(maxWidth: 480),
+      builder: (sheetContext) => _LevelSheet(title: title, levels: levels, selected: selected, tapSound: tapSound),
+    );
+    if (picked == null || !mounted) return;
+    onSelect(picked);
+  }
+
   @override
   Widget build(BuildContext context) {
     return PracticeFrame(
@@ -102,33 +123,47 @@ class _SettingsScreenState extends State<SettingsScreen> {
           children: [
             Semantics(header: true, child: Text('설정', style: Theme.of(context).textTheme.headlineMedium)),
             const SectionHeading('글씨 연습'),
-            _NavRow(
+            // 가장 중요한 기능이라 하늘색으로 강조한다 (분석 화면의 "다음에 할 일"과 같은 모양)
+            NextStepButton(
               title: '들리는 받아쓰기',
               subtitle: '자음·모음·글자·낱말 글씨 연습',
-              icon: Icons.chevron_right_rounded,
-              onTap: _openPractice,
+              primary: true,
+              onPressed: _openPractice,
             ),
             const SectionHeading('소리'),
-            _LevelRow(
+            _ValueRow(
               title: '말하기 속도',
               subtitle: '읽어 주는 목소리의 빠르기',
-              levels: speechRates,
-              selected: _s.speechRate,
-              onSelect: TapFeedback.wrapValue(_setRate)!,
+              value: _s.speechRate.label,
+              onTap: () => _pickLevel(
+                title: '말하기 속도',
+                levels: speechRates,
+                selected: _s.speechRate,
+                onSelect: _setRate,
+              ),
             ),
-            _LevelRow(
+            _ValueRow(
               title: '말소리 크기',
               subtitle: '읽어 주는 목소리의 크기',
-              levels: speechVolumes,
-              selected: _s.speechVolume,
-              onSelect: TapFeedback.wrapValue(_setSpeechVolume)!,
+              value: _s.speechVolume.label,
+              onTap: () => _pickLevel(
+                title: '말소리 크기',
+                levels: speechVolumes,
+                selected: _s.speechVolume,
+                onSelect: _setSpeechVolume,
+              ),
             ),
-            _LevelRow(
+            _ValueRow(
               title: '효과음 크기',
               subtitle: '버튼 딸깍, 맞음·틀림 소리',
-              levels: effectVolumes,
-              selected: _s.effectVolume,
-              onSelect: _setEffectVolume,
+              value: _s.effectVolume.label,
+              onTap: () => _pickLevel(
+                title: '효과음 크기',
+                levels: effectVolumes,
+                selected: _s.effectVolume,
+                onSelect: _setEffectVolume,
+                tapSound: false,
+              ),
             ),
             _SwitchRow(
               title: '진동',
@@ -142,12 +177,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               subtitle: '찍기부터 서명까지 순서',
               icon: Icons.volume_up_rounded,
               onTap: () => Speech.announce(context, usageSpeech),
-            ),
-            _NavRow(
-              title: '키보드 단축키 듣기',
-              subtitle: '스페이스 찍기, 엔터 분석하기 …',
-              icon: Icons.volume_up_rounded,
-              onTap: () => Speech.announce(context, shortcutsSpeech),
             ),
           ],
         ),
@@ -212,69 +241,89 @@ class _NavRow extends StatelessWidget {
   }
 }
 
-/// 단계 고르기 행: 위에 이름·설명과 지금 값, 아래에 늘 보이는 큰 선택 버튼 줄(세그먼트, 높이 56).
-/// 고른 버튼은 하늘색 바탕 + 남색 글씨. 스크린리더에는 "말하기 속도 빠르게, 선택됨"처럼 읽힌다
-class _LevelRow extends StatelessWidget {
-  const _LevelRow({
-    required this.title,
-    required this.subtitle,
-    required this.levels,
-    required this.selected,
-    required this.onSelect,
-  });
+/// 값 고르기 행: 왼쪽 이름·설명, 오른쪽에 지금 값 글씨만. 행 전체가 버튼이고 누르면 선택 창이 올라온다.
+/// 스크린리더에는 "말하기 속도. 지금은 빠르게. 누르면 고를 수 있어요"로 읽힌다
+class _ValueRow extends StatelessWidget {
+  const _ValueRow({required this.title, required this.subtitle, required this.value, required this.onTap});
 
   final String title;
   final String subtitle;
-  final List<SettingLevel> levels;
-  final SettingLevel selected;
-  final ValueChanged<SettingLevel> onSelect;
+  final String value;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(4, 12, 4, 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          MergeSemantics(
+    return Semantics(
+      button: true,
+      label: '$title. 지금은 $value. 누르면 고를 수 있어요',
+      excludeSemantics: true,
+      child: InkWell(
+        onTap: TapFeedback.wrap(onTap),
+        borderRadius: BorderRadius.circular(AppRadius.button),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 72),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
             child: Row(
               children: [
                 Expanded(child: _RowText(title: title, subtitle: subtitle)),
-                Text(
-                  selected.label,
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.accent),
-                ),
+                const SizedBox(width: 12),
+                Text(value, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700, color: AppColors.accent)),
+                const SizedBox(width: 2),
+                const Icon(Icons.chevron_right_rounded, size: 26, color: AppColors.subtle),
               ],
             ),
           ),
-          const SizedBox(height: 10),
-          Container(
-            padding: const EdgeInsets.all(4),
-            decoration: BoxDecoration(color: AppColors.grey100, borderRadius: BorderRadius.circular(AppRadius.button)),
-            child: Row(
-              children: [
-                for (final (i, level) in levels.indexed) ...[
-                  if (i > 0) const SizedBox(width: 4),
-                  Expanded(
-                    child: _Segment(
-                      label: level.label,
-                      semanticsLabel: '$title ${level.label}',
-                      selected: level.id == selected.id,
-                      onTap: () => onSelect(level),
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
 }
 
-class _Segment extends StatelessWidget {
-  const _Segment({required this.label, required this.semanticsLabel, required this.selected, required this.onTap});
+/// 아래에서 올라오는 선택 창: 제목과 선택지를 세로로 큰 버튼(높이 64)으로 나열.
+/// 지금 값은 하늘색 바탕 + 남색 글씨 + 체크, 나머지는 회색 바탕. 고르면 그 값을 돌려주며 닫힌다
+class _LevelSheet extends StatelessWidget {
+  const _LevelSheet({required this.title, required this.levels, required this.selected, required this.tapSound});
+
+  final String title;
+  final List<SettingLevel> levels;
+  final SettingLevel selected;
+  final bool tapSound;
+
+  @override
+  Widget build(BuildContext context) {
+    final bottom = MediaQuery.paddingOf(context).bottom;
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(16, 20, 16, 16 + bottom),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Semantics(header: true, child: Text(title, style: Theme.of(context).textTheme.titleLarge)),
+            const SizedBox(height: 14),
+            for (final (i, level) in levels.indexed) ...[
+              if (i > 0) const SizedBox(height: 8),
+              _LevelOption(
+                label: level.label,
+                semanticsLabel: '$title ${level.label}',
+                selected: level.id == selected.id,
+                onTap: () {
+                  if (tapSound) Haptics.tap();
+                  Navigator.of(context).pop(level);
+                },
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _LevelOption extends StatelessWidget {
+  const _LevelOption({required this.label, required this.semanticsLabel, required this.selected, required this.onTap});
 
   final String label;
   final String semanticsLabel;
@@ -283,7 +332,8 @@ class _Segment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final radius = BorderRadius.circular(AppRadius.button - 4);
+    final radius = BorderRadius.circular(AppRadius.button);
+    final fg = selected ? AppColors.onPrimary : AppColors.textStrong;
     return Semantics(
       button: true,
       selected: selected,
@@ -291,28 +341,22 @@ class _Segment extends StatelessWidget {
       label: semanticsLabel,
       excludeSemantics: true,
       child: Material(
-        color: selected ? AppColors.primary : Colors.transparent,
+        color: selected ? AppColors.primary : AppColors.grey100,
         borderRadius: radius,
         child: InkWell(
           onTap: onTap,
           borderRadius: radius,
-          child: SizedBox(
-            height: 56,
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    label,
-                    maxLines: 1,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: selected ? FontWeight.w800 : FontWeight.w600,
-                      color: selected ? AppColors.onPrimary : AppColors.textStrong,
-                    ),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 64),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 18),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(label, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: fg)),
                   ),
-                ),
+                  if (selected) Icon(Icons.check_rounded, size: 26, color: fg),
+                ],
               ),
             ),
           ),
