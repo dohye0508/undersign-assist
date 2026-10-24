@@ -47,7 +47,7 @@
   - 아래 "다음에 할 일": 검토하세요!, 쓰고 서명하기.
   - 뒤로 가기(← , Esc)는 한 단계씩: 각 단계 → 문서 읽기 → 카메라. 분석 결과와 노트·서명은 남는다.
 - 분석을 마치면 계획서 문장대로 들려준다: "총 N페이지예요. (요약) 서명이 필요한 페이지는 1페이지와 2페이지예요."
-- 키보드: 촬영 `Space`/`C` 찍기, `O` 불러오기, `P` 페이지 목록, `Enter` 분석 / 분석 `Esc` 카메라로, `1`~`4` 단계 / 공통 `R` 다시 듣기.
+- 키보드: 촬영 `Space`/`C` 찍기, `O` 불러오기, `P` 페이지 목록, `Enter` 분석 / 분석 `Esc` 카메라로, `G` 들리는 받아쓰기(3초 안에 두 번) / `1`~`4` 단계 / 공통 `R` 다시 듣기.
 - 카메라: 미리보기마다 새 video 요소를 만들고 같은 스트림을 붙인다. Flutter 웹은 플랫폼 뷰를 다음 프레임에야 페이지에 붙이는데 그 전에 `play()`를 부르면 소용없고 브라우저가 멈춘 채로 둔다(카메라 멈춤 버그의 원인). 그래서 `isConnected`가 된 뒤에 재생하고, `pause`가 나면 다시 튼다. 웹 컴파일러는 Future를 돌려주는 JS 콜백을 거부하므로 `.toJS` 콜백은 void로 감싼다(analyze는 못 잡는다).
 - 빌드 후 브라우저가 옛 `main.dart.js`를 계속 쓰면 강력 새로고침(Ctrl+Shift+R)한다.
 
@@ -99,7 +99,7 @@
 app/                    Flutter 앱 (웹으로 실행)
   lib/main.dart         시작점. 웹 스크린리더용 의미 정보를 켠다
   lib/screens/          한 화면 (workspace_screen)
-  lib/features/<단계>/  단계별 패널. read, judge, fill, write, sign, output
+  lib/features/<단계>/  단계별 패널. read, judge, fill, write, sign, output, practice(들리는 받아쓰기)
   lib/models/           사진, 읽기 결과, 판단 결과, 화면 공유 상태
   lib/services/         백엔드 호출, 카메라, 음성(speech), 진동·소리(haptics), 내려받기
   lib/widgets/          카메라·사진 영역, 페이지 목록, 패널 공통 틀, 배경
@@ -209,11 +209,11 @@ powershell -ExecutionPolicy Bypass -File scripts/pad-serve.ps1
 - **실물 사진 검증**: 판단 네 종류(근로·주택임대차·동의서·가정통신문)가 가짜 데이터가 아니라 실제 OCR 사진으로도 똑같이 동작하는지 `samples/` 사진 이상으로 한 번은 확인한다. 데모 리허설 때 꼭.
 - PDF 파일 자체를 업로드로 받기(지금은 사진만), 인쇄.
 - `backend/app/routers/sign.py`는 자리표시자다. 쓰지 않으면 지운다.
-- 들리는 받아쓰기(글씨 연습): 아래 절의 계획대로 구현한다.
+- 들리는 받아쓰기(글씨 연습): 코드는 다 만들었지만 이 PC에 Flutter가 없어 `flutter analyze`·`flutter test`를 못 돌렸고 태블릿에서도 못 써 봤다. 아래 "들리는 받아쓰기" 절의 확인 목록을 실행해 본다.
 
-## 들리는 받아쓰기 (계획, 미구현)
+## 들리는 받아쓰기 (구현됨, 분석·시험·실기기 확인 전)
 
-계약서 칸에 쓰기 전에 패드에서 글씨를 연습하는 부가 기능. 팀의 이전 연구 「시각장애인을 위한 손글씨 작성 방법 안내 및 교정 애플리케이션 고안」(2025 과학영재 창의연구 R&E 보고서)의 설계를 이 앱에 맞게 옮긴다.
+계약서 칸에 쓰기 전에 패드에서 글씨를 연습하는 부가 기능. 코드는 `app/lib/features/practice/`에 있다. 팀의 이전 연구 「시각장애인을 위한 손글씨 작성 방법 안내 및 교정 애플리케이션 고안」(2025 과학영재 창의연구 R&E 보고서)의 설계를 이 앱에 맞게 옮긴다.
 
 ### 이전 연구에서 가져오는 것과 바꾸는 것
 
@@ -269,6 +269,7 @@ powershell -ExecutionPolicy Bypass -File scripts/pad-serve.ps1
 - 시작 음성: 자모는 미리 적어 둔 설명("기역. 가로로 긋고, 끝에서 아래로 내려 긋습니다."), 글자는 한글 분해로 코드가 만든다("가. 왼쪽에 기역, 오른쪽에 아를 씁니다." / "강. 위 왼쪽에 기역, 오른쪽에 아, 아래에 이응을 씁니다.").
 - **쓰는 동안 거리 진동**(`HapticGuide`, 아래 절): 보조선 위에 있으면 이어지는 진동, 멀어질수록 띄엄띄엄. 손끝 감각으로 모양을 따라가게 한다.
 - 다 쓰고 왼쪽으로 밀거나 Enter → 판정 → 점수와 한 가지 고칠 점을 음성으로 → 통과면 다음 글자.
+- **슬라이드 모양**(`practice_screen.dart`): 오른쪽에서 왼쪽으로 끌면 쓰기 칸이 손가락을 따라 움직이고 다음 작성란이 오른쪽에서 같이 딸려 온다(앞 칸은 반대로 끌 때). 끄는 획은 글씨로 그리지 않는다. 손을 떼면 쓴 글씨가 입력되어(점수 저장) 위쪽 동그라미가 채워지고 칸이 나간다. 통과하지 못했거나 덜 밀었으면 칸이 제자리로 돌아오고 글씨는 남는다. 이웃 칸의 보조선 지도를 미리 만들어 두어서 딸려 오는 칸에도 보조선이 보인다. 판정은 슬라이드 조건: 오른쪽 35%에서 시작, 너비의 35% 넘게 왼쪽, 거의 수평, 0.9초 안(천천히 밀어도 된다).
 
 ### 연습하기 (낱말, 회색 보조선)
 
@@ -296,7 +297,7 @@ powershell -ExecutionPolicy Bypass -File scripts/pad-serve.ps1
 - **자모 부분별 모양**(이전 연구의 자모 단위 분석): 한글 분해로 음절의 모음 종류를 보고 칸을 나눈다. 세로 모음(ㅏ ㅣ…)이면 초성 왼쪽 55% / 중성 오른쪽, 가로 모음(ㅗ ㅜ…)이면 초성 위 / 중성 아래, 받침이 있으면 아래 35%가 종성. 나눈 부분마다 덮은 비율을 따로 내서 가장 낮은 부분을 "{부분}"으로 말한다 ("가에서 기역 부분이 덜 그려졌어요"). 글꼴마다 나누는 비율이 조금 다르므로 근사다.
 - 실패한 항목이 여러 개여도 **가장 크게 벗어난 하나만** 말한다 (이전 연구: 핵심 1~2개로 요약).
 - 점수: `100 × (안쪽 비율 + 덮은 비율) / 2`에서 크기·위치·기울기·자간 실패마다 5점씩 뺀다. 0~100.
-- 통과: 학습하기는 안쪽 ≥ 0.70 이고 덮은 ≥ 0.60. 연습하기는 점수만 주고 늘 다음으로 넘어갈 수 있다(같은 낱말 다시 쓰기도 가능).
+- 통과: 학습하기는 안쪽 ≥ 0.70 이고 덮은 ≥ 0.60. 연습하기는 점수만 주고 늘 다음으로 넘어간다(같은 낱말을 다시 쓰려면 이전 글자 버튼).
 - 같은 글자 3번 연속 실패하면 "이번 글자는 넘어갈게요"로 넘긴다.
 - 음성 순서: 결과 진동(`Haptics.ok()`/`warn()`) → "{점수}점이에요." → 고칠 점 하나 → 다음 안내.
 
@@ -324,33 +325,35 @@ powershell -ExecutionPolicy Bypass -File scripts/pad-serve.ps1
 - 내 이름 등록: 키보드로 입력(스크린리더 입력 가능). 저장하면 "김이름, 세 글자로 등록했어요." 낱말 연습 "내 이름"에 쓰인다. 이름은 이 기기 밖으로 보내지 않는다.
 - 설정(홈 오른쪽 위): 진동 켜기/끄기, 거리 소리 켜기/끄기, 보조선 숨기기.
 
-### 만들 파일
+### 만든 파일
 
 | 파일 | 내용 |
 |---|---|
-| `app/lib/features/practice/practice_home.dart` | 받아쓰기 홈 (네 버튼, 설정) |
-| `app/lib/features/practice/practice_screen.dart` | 쓰기 화면: 보조선, `Listener` 입력, 넘기기·지우기, 판정 호출 |
-| `app/lib/features/practice/glyph_guide.dart` | 글꼴 → 마스크 → 거리 지도, 음절 상자, 자모 부분 나누기 |
-| `app/lib/features/practice/stroke_metrics.dart` | 안쪽·덮은 비율, 크기, 위치, 기울기, 자간, 점수 (순수 함수) |
-| `app/lib/features/practice/hangul.dart` | 한글 분해(초·중·종성), 자모 이름(기역…), 배치 설명 문장 |
-| `app/lib/features/practice/practice_items.dart` | 자음·모음 목록과 쓰는 법 설명, 글자 목록, 낱말 목록 |
-| `app/lib/features/practice/feedback.dart` | 가장 크게 벗어난 항목 고르기 → 문장 틀 |
-| `app/lib/features/practice/score_store.dart` / `score_board.dart` | 점수 저장, 막대 점수판 |
-| `app/lib/services/haptic_guide.dart` | 위 진동 설계 (공유 폴더, 팀 공지) |
-| `app/lib/screens/workspace_screen.dart` | 왼쪽 위 버튼, 두 번 누르기 확인, `G` 키 (공유 파일, 팀 공지) |
-| `app/test/hangul_test.dart`, `app/test/stroke_metrics_test.dart` | 분해·판정 단위 시험 (`flutter test`) |
+| `app/lib/features/practice/practice_home.dart` | `PracticeFlow`: 홈, 학습·연습 메뉴, 이름 등록, 설정. 화면 안에서 단계를 바꾸고 뒤로 가기는 한 단계씩 |
+| `app/lib/features/practice/practice_frame.dart` | 공통 틀(배경, 위쪽 줄, Esc·R 키) |
+| `app/lib/features/practice/practice_screen.dart` | 쓰기 화면(학습 모드와 낱말 모드): `Listener` 입력, 왼쪽 밀기·다 썼어요, 판정 호출, 진동 연결 |
+| `app/lib/features/practice/glyph_guide.dart` | 글꼴 → 마스크 → 거리 지도, 글자별 상자와 초·중·종성 칸. 도현체 파일을 `FontLoader`로 직접 불러 항상 준비된 상태로 그린다 |
+| `app/lib/features/practice/stroke_metrics.dart` | `GuideMap`(거리 지도)과 `StrokeMetrics.measure`(안쪽·덮은 비율, 크기, 위치, 기울기, 자간, 덜 그려진 부분). 순수 함수 |
+| `app/lib/features/practice/feedback.dart` | `PracticeJudge`: 점수, 통과, 가장 크게 벗어난 항목 하나, 문장 틀 |
+| `app/lib/features/practice/hangul.dart` | 한글 분해, 자모 이름, 을/를·이/가, 배치 설명, 음절 부분 칸 |
+| `app/lib/features/practice/practice_items.dart` | 자음·모음 쓰는 법, 글자·낱말 목록 |
+| `app/lib/features/practice/score_store.dart` | 이름·설정·글자별 최근 점수 10개, 점수판 말. 저장소는 `KeyValueStorage`로 갈아 끼운다 |
+| `app/lib/features/practice/browser_storage.dart` | 브라우저 `localStorage` 구현과 앱 전체가 같이 쓰는 `sharedScoreStore`. 웹 전용이라 따로 둬서 `score_store.dart`는 `flutter test`로 시험된다 |
+| `app/lib/features/practice/score_board.dart` | 나의 점수판 막대 네 개 |
+| `app/lib/services/haptic_guide.dart` | 거리 진동 루프, 줄 벗어남, 칸 밖 신호 (공유 폴더) |
+| `app/lib/services/haptics.dart` | `pulse`, `cancel`, `tone`을 공개로 추가 (공유 파일) |
+| `app/lib/screens/workspace_screen.dart` | 왼쪽 위 버튼, 3초 안 두 번 누르기 확인, `G` 키 (공유 파일) |
+| `app/test/hangul_test.dart`, `stroke_metrics_test.dart`, `score_store_test.dart` | 분해, 판정, 점수 저장 단위 시험 (`flutter test`) |
 
-다시 쓰는 것: `sign/signature_check.dart`의 `PenPoint`, `fill/fill_screen.dart`의 펜 입력·왼쪽 밀기 판정, `Haptics`, `TapFeedback`, `Speech`, `AppTheme`.
+다시 쓴 것: `fill/fill_screen.dart`의 펜 입력·왼쪽 밀기 판정, `Haptics`, `TapFeedback`, `Speech`, `AppTheme`.
 
-### 만드는 순서 (시간이 모자라면 위에서 끊는다)
+글꼴 마스크 때문에 생기는 차이:
+- 보조선 지도는 쓰기 칸 크기에 맞춰 칸마다 새로 만든다(수십 ms). 만드는 동안은 "보조선을 준비하고 있어요"가 보이고 쓸 수 없다.
+- 낱말은 글자 상자를 `TextPainter`로 얻어 음절별로 자간·기울기를 잰다.
+- 낱말 모드에서는 모양이 어느 정도 맞을 때만 위치·기울기·자간을 따진다. 덜 쓴 글씨는 가운데가 쏠려 보여서 엉뚱한 말이 되기 때문이다. 크기가 많이 어긋나면 모양 말 대신 크기부터 말한다.
+- 3번 연속 실패하면 "이번 글자는 넘어갈게요"로 넘긴다.
 
-1. **뼈대**: 왼쪽 위 버튼과 두 번 확인 → 홈 → 학습하기 자음 14개. 보조선 지도, 안쪽·덮은 비율 판정, ok/warn, 점수 음성. (여기까지면 시연 가능)
-2. **진동**: `HapticGuide` 거리 진동과 소리 대체, 칸 밖 신호.
-3. 모음, 글자(한글 분해 설명, 자모 부분별 피드백).
-4. 연습하기 낱말 + 내 이름 등록, 줄 진동, 크기·위치·기울기·자간 피드백.
-5. 점수 저장과 점수판, 설정.
-
-### 다 됐는지 확인
+### 다 됐는지 확인 (아직 하나도 확인 못 함)
 
 - [ ] 촬영 화면 왼쪽 위 버튼을 한 번 누르면 묻기만 하고, 3초 안에 한 번 더 눌러야 들어간다. 찍은 페이지가 그대로 남아 있다.
 - [ ] 안드로이드 태블릿 크롬에서 학습하기 중 펜이 보조선에 가까워질수록 진동이 촘촘해지고, 위에서는 이어진다. 노트북에서는 같은 변화를 소리로 들을 수 있다.

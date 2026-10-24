@@ -35,6 +35,15 @@ class Haptics {
     _tones([660], length: 0.1, gain: 0.6);
   }
 
+  /// 받아쓰기의 연속 안내용: 진동만 / 소리만 따로 낸다 (경고·성공처럼 둘을 묶어 내지 않는다)
+  static void pulse(List<int> pattern) => _vibrate(pattern);
+
+  /// 진행 중인 진동을 멈춘다
+  static void cancel() => _vibrate([0]);
+
+  static void tone(double frequency, {double length = 0.05, double gain = 0.3}) =>
+      _tones([frequency], length: length, gain: gain);
+
   static void _vibrate(List<int> pattern) {
     try {
       web.window.navigator.vibrate(pattern.jsify()!);
