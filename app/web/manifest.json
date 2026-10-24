@@ -1,11 +1,11 @@
 {
-    "name": "undersign_assist",
-    "short_name": "undersign_assist",
+    "name": "들리는계약서",
+    "short_name": "들리는계약서",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#F4F7FB",
+    "theme_color": "#2F6FDE",
+    "description": "시각장애인이 종이 문서를 혼자 읽고, 쓰고, 서명하고, 판단할 수 있게 돕는 앱",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

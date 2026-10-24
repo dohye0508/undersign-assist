@@ -9,6 +9,7 @@ class RecognizedDocument {
     required this.fullText,
     required this.imageWidth,
     required this.imageHeight,
+    required this.reader,
     required this.speech,
   });
 
@@ -20,6 +21,9 @@ class RecognizedDocument {
   final String fullText;
   final int imageWidth;
   final int imageHeight;
+
+  /// 항목을 정리한 방식: "ai"(Groq) 또는 "rules"(규칙 파일)
+  final String reader;
 
   /// 사용자에게 읽어줄 요약
   final String speech;
@@ -34,6 +38,7 @@ class RecognizedDocument {
         fullText: json['full_text'] as String? ?? '',
         imageWidth: json['image_width'] as int? ?? 0,
         imageHeight: json['image_height'] as int? ?? 0,
+        reader: json['reader'] as String? ?? 'rules',
         speech: json['speech'] as String? ?? '',
       );
 
@@ -45,6 +50,7 @@ class RecognizedDocument {
         'full_text': fullText,
         'image_width': imageWidth,
         'image_height': imageHeight,
+        'reader': reader,
         'speech': speech,
       };
 }

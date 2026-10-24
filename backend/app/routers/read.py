@@ -18,8 +18,8 @@ async def read_document(photo: UploadFile = File(...)) -> RecognizedDocument:
     except Exception as error:
         raise HTTPException(status_code=502, detail=f"글자 인식 실패: {error}") from error
 
-    doc_type, scores = doc_reader.classify(result.full_text)
-    fields = doc_reader.extract_fields(result.lines, doc_type)
+    # AI 호출도 네트워크를 기다리므로 별도 스레드에서
+    doc_type, scores, fields, reader = await asyncio.to_thread(doc_reader.read, result.lines)
     return RecognizedDocument(
         doc_type=doc_type,
         doc_type_label=doc_reader.label_of(doc_type),
@@ -29,5 +29,6 @@ async def read_document(photo: UploadFile = File(...)) -> RecognizedDocument:
         full_text=result.full_text,
         image_width=result.width,
         image_height=result.height,
+        reader=reader,
         speech=doc_reader.build_speech(doc_type, fields, result.lines),
     )

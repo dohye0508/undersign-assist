@@ -1,5 +1,5 @@
 name: undersign_assist
-description: "시각장애인이 종이 문서를 혼자 읽고, 쓰고, 서명하고, 판단할 수 있게 돕는 앱"
+description: "들리는계약서: 시각장애인이 종이 문서를 혼자 읽고, 쓰고, 서명하고, 판단할 수 있게 돕는 앱"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -62,10 +62,12 @@ flutter:
   uses-material-design: true
 
   fonts:
-    # 둘 다 OFL 라이선스. 오프라인에서도 동작하도록 파일을 앱에 포함한다
+    # 모두 OFL 라이선스. 오프라인에서도 동작하도록 파일을 앱에 포함한다
+    # 본문과 화면 전체: 팀 디자인 시안(Undersign 촬영 화면.html)과 같은 Noto Sans KR
+    - family: NotoSansKR
+      fonts:
+        - asset: assets/fonts/NotoSansKR-Variable.ttf
+    # 앱 이름 글자
     - family: DoHyeon
       fonts:
         - asset: assets/fonts/DoHyeon-Regular.ttf
-    - family: Jua
-      fonts:
-        - asset: assets/fonts/Jua-Regular.ttf

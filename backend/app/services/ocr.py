@@ -36,6 +36,22 @@ def recognize(image_bytes: bytes) -> OcrResult:
     return OcrResult(lines=lines, width=image.width, height=image.height)
 
 
+def to_jpeg(image_bytes: bytes, around: Box | None = None, max_side: int = 1024) -> bytes:
+    """AI에 보낼 사진. 방향을 바로잡고 너무 크면 줄인다.
+
+    around를 주면 그 상자가 있는 가로 띠만 잘라 보낸다. 사진이 작을수록 AI 요금 한도(입력 토큰)를 덜 쓴다.
+    """
+    image = _open(image_bytes)
+    if around is not None:
+        top = max(0, around.y - around.height * 2)
+        bottom = min(image.height, around.y + around.height * 4)
+        image = image.crop((0, top, image.width, bottom))
+    image.thumbnail((max_side, max_side))
+    buffer = io.BytesIO()
+    image.save(buffer, format="JPEG", quality=90)
+    return buffer.getvalue()
+
+
 def _open(image_bytes: bytes) -> Image.Image:
     image = Image.open(io.BytesIO(image_bytes))
     # 휴대폰 사진은 회전 정보가 따로 있어서, 실제 방향으로 돌려야 좌표가 맞는다

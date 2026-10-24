@@ -1,20 +1,41 @@
 """인식한 글자 → 문서 종류, 핵심 항목, 읽어줄 요약.
 
-AI가 아니라 규칙으로 판단한다: 문서 종류는 `rules/doc_types.json`의 핵심어가 몇 개 나왔는지로,
-항목은 항목 이름(예: 시급)이 있는 줄에서 그 뒤의 값을 가져온다. 규칙 파일만 고치면 문서 종류를 늘릴 수 있다.
+두 가지 방식이 있다.
+- AI(Groq): 글자를 주고 문서 종류와 항목 값을 JSON으로 받는다. 깨진 글자나 문장 중간에 걸친 값도 자연스럽게 정리한다.
+- 규칙: `rules/doc_types.json`의 핵심어 수로 종류를 고르고, 항목 이름 뒤의 글자를 잘라 값으로 쓴다.
+AI를 쓸 수 없으면(키 없음, 실패) 규칙으로 돌아간다.
+
+어느 쪽이든 AI는 **문서에 적힌 것을 옮겨 적기만** 한다. 읽어줄 문장은 코드가 항목으로 만든다.
+시험해 보니 AI에게 요약 문장을 맡기면 문서에 없는 내용(예: "매일 근무")을 지어냈다.
 """
 
 import json
 import re
+from difflib import SequenceMatcher
 from pathlib import Path
 
 from app.models import DocType, Field, TextBlock
+from app.services import llm
 
 RULES = json.loads((Path(__file__).resolve().parents[1] / "rules" / "doc_types.json").read_text("utf-8"))
 
 # 이 개수보다 적게 나오면 종류를 단정하지 않는다
 MIN_KEYWORD_HITS = 2
-MAX_VALUE_LENGTH = 60
+MAX_VALUE_LENGTH = 80
+
+
+def read(lines: list[TextBlock]) -> tuple[DocType, dict[str, int], list[Field], str]:
+    """문서 종류, 종류별 핵심어 수, 항목, 읽은 방식("ai" 또는 "rules")."""
+    full_text = "\n".join(line.text for line in lines)
+    scores = keyword_scores(full_text)
+    if lines and llm.available():
+        try:
+            doc_type, fields = _read_with_ai(full_text, lines)
+            return doc_type, scores, fields, "ai"
+        except llm.LlmError:
+            pass
+    doc_type = _classify_by_keywords(scores)
+    return doc_type, scores, _extract_by_rules(lines, doc_type), "rules"
 
 
 def compact(text: str) -> str:
@@ -22,20 +43,80 @@ def compact(text: str) -> str:
     return re.sub(r"\s+", "", text)
 
 
-def classify(full_text: str) -> tuple[DocType, dict[str, int]]:
+def keyword_scores(full_text: str) -> dict[str, int]:
     text = compact(full_text)
-    scores = {kind: sum(text.count(k) for k in rule["keywords"]) for kind, rule in RULES.items()}
-    best = max(scores, key=scores.get)
-    if scores[best] < MIN_KEYWORD_HITS:
-        return DocType.UNKNOWN, scores
-    return DocType(best), scores
+    return {kind: sum(text.count(k) for k in rule["keywords"]) for kind, rule in RULES.items()}
 
 
 def label_of(doc_type: DocType) -> str:
     return RULES.get(doc_type.value, {}).get("label", "알 수 없는 문서")
 
 
-def extract_fields(lines: list[TextBlock], doc_type: DocType) -> list[Field]:
+# --- AI ---------------------------------------------------------------------
+
+
+def _read_with_ai(full_text: str, lines: list[TextBlock]) -> tuple[DocType, list[Field]]:
+    kinds = "\n".join(
+        f'- "{kind}" ({rule["label"]}): 항목 {json.dumps([f["label"] for f in rule["fields"]], ensure_ascii=False)}'
+        for kind, rule in RULES.items()
+    )
+    prompt = f"""다음은 종이 문서 사진을 OCR로 읽은 글자다. 글자 일부가 깨지거나 띄어쓰기가 틀렸을 수 있다.
+
+1. 문서 종류를 아래에서 하나 고른다. 어느 것도 아니면 "unknown".
+{kinds}
+2. 고른 종류의 항목마다 문서에 적힌 값을 옮겨 적는다.
+   - 문서에 실제로 적힌 내용만 쓴다. 적혀 있지 않으면 null.
+   - 숫자, 날짜, 금액은 문서에 적힌 그대로 쓴다. 계산하거나 추측하지 않는다.
+   - 띄어쓰기와 명백한 OCR 오타만 바로잡는다.
+   - 값은 짧은 구절로 쓴다. 설명이나 의견을 덧붙이지 않는다.
+
+JSON만 출력한다: {{"doc_type": "...", "fields": {{"항목 이름": "값 또는 null"}}}}
+
+OCR 글자:
+{full_text}"""
+    answer = llm.ask_json(prompt)
+
+    try:
+        doc_type = DocType(answer.get("doc_type", "unknown"))
+    except ValueError:
+        doc_type = DocType.UNKNOWN
+    if doc_type == DocType.UNKNOWN:
+        return doc_type, []
+
+    values = answer.get("fields") or {}
+    fields = []
+    for spec in RULES[doc_type.value]["fields"]:
+        value = values.get(spec["label"])
+        if isinstance(value, str) and value.strip():
+            value = value.strip()[:MAX_VALUE_LENGTH]
+            fields.append(Field(label=spec["label"], value=value, line=_line_of(value, lines)))
+    return doc_type, fields
+
+
+def _line_of(value: str, lines: list[TextBlock]) -> int:
+    """AI가 정리한 값이 사진의 어느 줄에서 왔는지 찾는다 (사진 위 표시용). 못 찾으면 -1."""
+    target = compact(value)
+    best, best_index = 0.0, -1
+    for index, line in enumerate(lines):
+        text = compact(line.text)
+        match = SequenceMatcher(None, target, text).find_longest_match(0, len(target), 0, len(text))
+        score = match.size / max(len(target), 1)
+        if score > best:
+            best, best_index = score, index
+    return best_index if best >= 0.4 else -1
+
+
+# --- 규칙 -------------------------------------------------------------------
+
+
+def _classify_by_keywords(scores: dict[str, int]) -> DocType:
+    best = max(scores, key=scores.get)
+    if scores[best] < MIN_KEYWORD_HITS:
+        return DocType.UNKNOWN
+    return DocType(best)
+
+
+def _extract_by_rules(lines: list[TextBlock], doc_type: DocType) -> list[Field]:
     if doc_type == DocType.UNKNOWN:
         return []
     fields = []
@@ -68,6 +149,9 @@ def value_after(text: str, key: str) -> str | None:
     if not match:
         return None
     return text[match.end():].strip(" :：.)]-|\t")
+
+
+# --- 읽어줄 문장 -------------------------------------------------------------
 
 
 def _euro(word: str) -> str:

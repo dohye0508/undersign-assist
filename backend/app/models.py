@@ -35,7 +35,7 @@ class TextBlock(BaseModel):
 class Field(BaseModel):
     label: str  # 항목 이름 (예: 임금)
     value: str  # 문서에 적힌 값
-    line: int  # 몇 번째 줄에서 찾았는지 (blocks의 위치)
+    line: int  # 몇 번째 줄에서 찾았는지 (blocks의 위치). 못 찾으면 -1
 
 
 class RecognizedDocument(BaseModel):
@@ -47,4 +47,5 @@ class RecognizedDocument(BaseModel):
     full_text: str = ""
     image_width: int = 0
     image_height: int = 0
+    reader: str = "rules"  # 항목을 정리한 방식: "ai"(Groq) 또는 "rules"(규칙 파일)
     speech: str = ""  # 사용자에게 읽어줄 요약
