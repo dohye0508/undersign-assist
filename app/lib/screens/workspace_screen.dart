@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../features/judge/judge_panel.dart';
+import '../features/practice/practice_home.dart';
 import '../features/read/read_panel.dart';
 import '../features/fill/fill_panel.dart';
 import '../features/sign/signature_spots.dart';
@@ -179,6 +180,35 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
     if (last.isNotEmpty) Speech.announce(context, last);
   }
 
+  // --- 들리는 받아쓰기 ----------------------------------------------------------
+
+  /// 첫 번째 누름의 시각. 3초 안에 한 번 더 눌러야 들어간다 (잘못 눌러 들어가는 일을 막는다)
+  DateTime? _practiceAskedAt;
+
+  void _openPractice() {
+    if (_analyzing) return;
+    final asked = _practiceAskedAt;
+    if (asked != null && DateTime.now().difference(asked) <= const Duration(seconds: 3)) {
+      _practiceAskedAt = null;
+      _enterPractice();
+      return;
+    }
+    _practiceAskedAt = DateTime.now();
+    Speech.announce(context, '들리는 받아쓰기로 갈까요? 3초 안에 한 번 더 누르면 시작해요.');
+  }
+
+  Future<void> _enterPractice() async {
+    await Navigator.of(context).push(
+      PageRouteBuilder<void>(
+        transitionDuration: const Duration(milliseconds: 280),
+        pageBuilder: (_, _, _) => const PracticeFlow(),
+        transitionsBuilder: (_, animation, _, child) => FadeTransition(opacity: animation, child: child),
+      ),
+    );
+    if (!mounted) return;
+    Speech.announce(context, '카메라로 돌아왔어요. 찍은 페이지는 그대로 있어요.');
+  }
+
   @override
   Widget build(BuildContext context) {
     return CallbackShortcuts(
@@ -189,6 +219,7 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
         const SingleActivator(LogicalKeyboardKey.keyP): _toggleTray,
         const SingleActivator(LogicalKeyboardKey.enter): _analyze,
         const SingleActivator(LogicalKeyboardKey.keyR): _repeat,
+        const SingleActivator(LogicalKeyboardKey.keyG): _openPractice,
         const SingleActivator(LogicalKeyboardKey.escape): _goBack,
         for (final (i, step) in WorkStep.values.indexed)
           SingleActivator(
@@ -246,6 +277,12 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
         _TopBar(
           title: '들리는계약서',
           onRepeat: _repeat,
+          leading: IconButton(
+            tooltip: '들리는 받아쓰기, 글씨 연습',
+            style: IconButton.styleFrom(minimumSize: const Size(60, 60)),
+            icon: const Icon(Icons.edit_note, size: 30, color: AppColors.primary),
+            onPressed: TapFeedback.wrap(_openPractice),
+          ),
           trailing: _state.hasPages
               ? IconButton(
                   tooltip: '모두 지우고 새 문서 찍기',
