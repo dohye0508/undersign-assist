@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 
 import '../models/recognized_document.dart';
@@ -19,7 +18,6 @@ class DocumentStage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final photo = state.photo;
-    final controller = camera.controller;
 
     final Widget content;
     if (photo != null) {
@@ -51,8 +49,8 @@ class DocumentStage extends StatelessWidget {
           ),
         ),
       );
-    } else if (controller != null && camera.ready) {
-      content = Center(child: CameraPreview(controller));
+    } else if (camera.ready) {
+      content = camera.preview();
     } else {
       content = const Center(child: CircularProgressIndicator());
     }
