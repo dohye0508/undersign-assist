@@ -33,9 +33,9 @@
 | 단계 | 상태 | Flutter | 백엔드 |
 |---|---|---|---|
 | 읽기 | 동작함: 글자와 위치 인식, 문서 종류 구분, 항목 추출, 요약·전체 듣기 | `app/lib/features/read/` | `backend/app/routers/read.py` |
-| 판단 | 화면만 있음 (예시 카드) | `app/lib/features/judge/` | `backend/app/routers/judge.py` |
+| 판단 (화면 이름 "검토하세요!") | 동작함: 규칙 엔진 `backend/app/services/judge/`가 법령 DB `rules/laws/`로 판정하고, 화면은 결과 카드와 근거 듣기를 보여준다 | `app/lib/features/judge/` | `backend/app/routers/judge.py` |
 | 쓰기 | 동작함: 칸 고르기 → 종이에 쓰기 → 다시 찍어 그 칸에 쓰인 글자 읽어주기 | `app/lib/features/write/` | `backend/app/routers/write.py` |
-| 서명 | 화면만 있음 (판단 다시 듣기 → 서명란 찾기 → 서명 전 확인) | `app/lib/features/sign/` | `backend/app/routers/sign.py` |
+| 서명 | 동작함: 읽기 결과에서 서명란(서명, (인), 날인) 찾기 → 패드 서명 → 위치·품질 교정 → PNG 저장. 여러 페이지 업로드와 PDF 출력은 다음 작업 | `app/lib/features/sign/` | 쓰지 않음 (`/api/sign/locate`는 빈 자리) |
 
 공유 상태는 `models/workspace_state.dart`(사진, 읽기 결과, 고른 단계)에 있다. 읽기 결과는 `models/recognized_document.dart`이며 백엔드 `app/models.py`와 모양이 같다.
 
@@ -54,6 +54,19 @@
 - 읽기: OCR 글자를 `openai/gpt-oss-120b`에 주고 문서 종류와 항목 값을 JSON으로 받는다. 응답의 `reader`가 `ai`/`rules`로 어느 쪽이 정리했는지 알려준다.
 - 쓰기: 손글씨는 `qwen/qwen3.8-27b`(이미지 입력)가 읽는다. 무료 한도가 분당 입력 7,000토큰이라 칸 이름이 있는 가로 띠만 잘라 보낸다. 연속으로 여러 번 누르면 한도에 걸려 규칙 방식으로 돌아간다.
 - AI에게 읽어줄 **문장**은 맡기지 않는다. 시험해 보니 요약 문장에 문서에 없는 내용("매일 근무")을 지어냈다. 문장은 코드가 항목으로 만든다.
+
+## 계획서 (`계획성.txt`)
+
+팀이 정한 다음 흐름: 업로드(여러 페이지) → 문서 분석 → 패드 서명 → 서명을 합성한 PDF 출력.
+- 반영함: 전체 듣기 버튼 맨 위, 결과 창 꽉 차게, 판단 이름 "검토하세요!", 패드 서명(위치·품질 교정).
+- 아직: 여러 페이지 업로드, PDF 출력(pdf-lib 등으로 서명란 좌표에 서명 PNG 합성). 서명 PNG는 `WorkspaceState.signaturePng`에 있다.
+
+## 패드 서명
+
+- 화면: `features/sign/signature_pad_screen.dart`. Flutter `Listener`로 마우스·터치·스타일러스를 받고 필압을 굵기에 반영한다.
+- 위치 교정: 펜이 가운데 칸을 벗어나면 그 순간 진동 + 경고음 + "칸을 벗어났어요" (1초에 한 번까지), 칸 테두리가 빨갛게 바뀐다.
+- 품질 교정: `features/sign/signature_check.dart`. 획 수, 크기(칸 대비 면적), 시간, 칸 밖 비율로만 판단한다(AI 안 씀). 기준값: 면적 8% 미만, 0.4초 미만이면 다시. 같은 세션에서 처음 통과한 서명을 기준값으로 저장해, 그보다 절반 이하로 작거나 획 수가 크게 다르면 다시.
+- 진동 주체는 패드(디바이스)로 확정. `services/haptics.dart`가 `navigator.vibrate`(안드로이드 크롬에서만 동작)와 Web Audio 소리를 함께 낸다. 쓸 기기가 정해지지 않았으므로 소리를 빼지 않는다.
 
 ## 판단의 원칙
 
@@ -110,7 +123,7 @@ cd backend
 python -m venv .venv
 .venv\Scripts\activate
 pip install -r requirements.txt
-uvicorn app.main:app --reload --port 8000
+uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
 앱 (다른 터미널):
@@ -123,6 +136,7 @@ flutter run -d chrome
 
 - 백엔드 주소를 바꾸려면 `flutter run -d chrome --dart-define=API_BASE=http://주소:포트`.
 - Windows 데스크톱 빌드는 이 PC에서 개발자 모드가 꺼져 있어 플러그인 링크를 만들 수 없다. 그래서 웹만 대상으로 한다.
+- **서버는 반드시 `127.0.0.1`에만 묶는다.** 대회장에서 같은 와이파이의 다른 사람이 볼 수 있기 때문이다. `--host 0.0.0.0`을 쓰지 않는다. 빌드한 앱을 띄울 때도 `python -m http.server 3000 --bind 127.0.0.1`처럼 묶는다(`--bind` 없이 띄우면 모든 네트워크에 열린다).
 - 카메라는 `localhost`나 HTTPS에서만 열린다.
 - Tesseract가 기본 경로(`C:\Program Files\Tesseract-OCR`)에 없으면 `backend/.env`의 `TESSERACT_CMD`를 고친다. 한국어 데이터(`kor.traineddata`)가 있어야 한다.
 - Windows에서 `uvicorn --reload`가 코드 변경을 반영하지 못한 적이 있다. 결과가 그대로면 서버를 껐다 켠다.
