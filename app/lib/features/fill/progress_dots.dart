@@ -80,9 +80,9 @@ class _Dot extends StatelessWidget {
       height: ProgressDots._size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: filled ? AppColors.primary : AppColors.surface,
+        color: filled ? AppColors.marker : AppColors.surface,
         border: Border.all(
-          color: filled || current ? AppColors.primary : AppColors.grey300,
+          color: filled || current ? AppColors.marker : AppColors.grey300,
           width: 2.5,
         ),
         boxShadow: current ? const [BoxShadow(color: AppColors.primarySoft, spreadRadius: 4)] : null,

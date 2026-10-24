@@ -464,7 +464,7 @@ class _BottomBar extends StatelessWidget {
                 height: 84,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: canCapture ? AppColors.primary : AppColors.grey300,
+                  color: canCapture ? AppColors.marker : AppColors.grey300,
                   border: Border.all(color: AppColors.primarySoft, width: 6),
                 ),
               ),
@@ -503,8 +503,8 @@ class _SideButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final enabled = onTap != null;
     final circle = !enabled ? AppColors.grey100 : primary ? AppColors.primary : AppColors.grey100;
-    final iconColor = !enabled ? AppColors.subtle : primary ? Colors.white : AppColors.textStrong;
-    final textColor = !enabled ? AppColors.subtle : primary ? AppColors.primary : AppColors.textStrong;
+    final iconColor = !enabled ? AppColors.subtle : primary ? AppColors.onPrimary : AppColors.textStrong;
+    final textColor = !enabled ? AppColors.subtle : primary ? AppColors.accent : AppColors.textStrong;
     return Semantics(
       button: true,
       enabled: enabled,

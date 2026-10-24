@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// 토스(Toss) 스타일: 흰 바탕, 포인트 색은 파랑 하나, 카드 테두리 대신 굵은 회색 띠와 여백으로 구역을 나눈다.
+/// 토스(Toss) 구조에 하늘색 톤: 흰 바탕, 포인트 색은 하늘색 하나, 카드 테두리 대신 굵은 회색 띠와 여백으로 구역을 나눈다.
 /// 저시력 사용자를 위해 버튼 높이는 64 이상, 글자 대비는 4.5:1 이상을 지킨다.
 /// 값은 디자인 후보 A(토스형) 시안을 그대로 옮겼다.
 class AppColors {
@@ -20,8 +20,24 @@ class AppColors {
   static const muted = Color(0xFF6B7684);
   static const subtle = Color(0xFF8B95A1);
 
-  static const primary = Color(0xFF0064FF);
-  static const primarySoft = Color(0xFFE8F2FF);
+  // 하늘색 톤 (2026-10-24 사용자가 후보 S1 "연하늘 버튼 + 남색 글씨"를 고름).
+  // 연하늘 바탕에는 흰 글씨가 읽히지 않으므로(1.3:1) 버튼 글씨는 짙은 남색(8.9:1)
+
+  /// 주 버튼 바탕
+  static const primary = Color(0xFFCFE5FB);
+
+  /// 주 버튼 위 글씨·아이콘
+  static const onPrimary = Color(0xFF0B3B66);
+
+  /// 흰 바탕 위 강조 글자·아이콘·테두리 (4.6:1)
+  static const accent = Color(0xFF1479C8);
+
+  /// 약한 강조 바탕 (듣기 버튼, 진행 동그라미 둘레)
+  static const primarySoft = Color(0xFFE6F2FD);
+  static const primarySoftInk = Color(0xFF0B5E9E);
+
+  /// 진행 동그라미·촬영 버튼처럼 글자가 아닌 표시
+  static const marker = Color(0xFF4BA8F0);
 
   // 판단 결과의 의미 색. 강조색과 따로 쓴다
   static const ok = Color(0xFF1B7F3B);
@@ -52,7 +68,7 @@ class AppTheme {
   static ThemeData light() {
     const scheme = ColorScheme.light(
       primary: AppColors.primary,
-      onPrimary: Colors.white,
+      onPrimary: AppColors.onPrimary,
       surface: AppColors.surface,
       onSurface: AppColors.text,
       outline: AppColors.grey200,
@@ -99,7 +115,7 @@ class AppTheme {
         style: TextButton.styleFrom(
           minimumSize: const Size(52, 44),
           padding: const EdgeInsets.symmetric(horizontal: 8),
-          foregroundColor: AppColors.primary,
+          foregroundColor: AppColors.accent,
           textStyle: const TextStyle(fontFamily: AppFonts.body, fontSize: 14, fontWeight: FontWeight.w700),
           iconSize: 18,
         ),
@@ -120,8 +136,8 @@ class AppTheme {
         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       ),
       dividerTheme: const DividerThemeData(color: AppColors.grey100, thickness: 1, space: 1),
-      progressIndicatorTheme: const ProgressIndicatorThemeData(color: AppColors.primary, linearTrackColor: AppColors.grey100),
-      focusColor: AppColors.primary.withValues(alpha: 0.18),
+      progressIndicatorTheme: const ProgressIndicatorThemeData(color: AppColors.accent, linearTrackColor: AppColors.grey100),
+      focusColor: AppColors.accent.withValues(alpha: 0.18),
     );
   }
 }

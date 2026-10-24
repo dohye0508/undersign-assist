@@ -58,7 +58,7 @@ class ReadPanel extends StatelessWidget {
               children: [
                 Text(
                   '문서 읽기 · $pageCount페이지',
-                  style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.primary),
+                  style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.accent),
                 ),
                 const SizedBox(height: 6),
                 Semantics(header: true, child: Text(document.docTypeLabel, style: text.headlineMedium)),
@@ -98,7 +98,7 @@ class ListenButton extends StatelessWidget {
       style: FilledButton.styleFrom(
         minimumSize: const Size.fromHeight(68),
         backgroundColor: AppColors.primarySoft,
-        foregroundColor: AppColors.primary,
+        foregroundColor: AppColors.primarySoftInk,
         padding: const EdgeInsets.symmetric(horizontal: 12),
         textStyle: const TextStyle(fontFamily: AppFonts.body, fontSize: 19, fontWeight: FontWeight.w700),
       ),
@@ -150,7 +150,7 @@ TextSpan highlightCounts(String sentence) {
     spans.add(TextSpan(text: sentence.substring(last, m.start)));
     spans.add(TextSpan(
       text: m.group(0),
-      style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w800),
+      style: const TextStyle(color: AppColors.accent, fontWeight: FontWeight.w800),
     ));
     last = m.end;
   }

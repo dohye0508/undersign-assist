@@ -845,8 +845,8 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
                 opacity: fade * (1 - t * 0.6),
                 child: DecoratedBox(
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.12),
-                    border: Border.all(color: AppColors.primary, width: 2),
+                    color: AppColors.accent.withValues(alpha: 0.12),
+                    border: Border.all(color: AppColors.accent, width: 2),
                     borderRadius: BorderRadius.circular(6),
                   ),
                 ),
@@ -1158,7 +1158,7 @@ class _ChoiceButton extends StatelessWidget {
                 style: FilledButton.styleFrom(
                   minimumSize: const Size(0, 120),
                   shape: shape,
-                  side: selected ? const BorderSide(color: AppColors.primary, width: 5) : null,
+                  side: selected ? const BorderSide(color: AppColors.accent, width: 5) : null,
                 ),
                 onPressed: TapFeedback.wrap(onPressed),
                 child: child,
@@ -1169,7 +1169,7 @@ class _ChoiceButton extends StatelessWidget {
                   shape: shape,
                   backgroundColor: AppColors.surface,
                   foregroundColor: AppColors.text,
-                  side: BorderSide(color: selected ? AppColors.primary : AppColors.grey200, width: selected ? 4 : 1.5),
+                  side: BorderSide(color: selected ? AppColors.accent : AppColors.grey200, width: selected ? 4 : 1.5),
                 ),
                 onPressed: TapFeedback.wrap(onPressed),
                 child: child,

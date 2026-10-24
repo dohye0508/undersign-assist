@@ -141,8 +141,8 @@ class NextStepButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fg = primary ? Colors.white : AppColors.text;
-    final sub = primary ? Colors.white.withValues(alpha: 0.85) : AppColors.muted;
+    final fg = primary ? AppColors.onPrimary : AppColors.text;
+    final sub = primary ? AppColors.onPrimary.withValues(alpha: 0.8) : AppColors.muted;
     final radius = BorderRadius.circular(AppRadius.button);
     return Semantics(
       button: true,

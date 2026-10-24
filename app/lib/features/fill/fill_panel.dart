@@ -194,7 +194,7 @@ class _TargetRow extends StatelessWidget {
               Icon(
                 done ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded,
                 size: 22,
-                color: done ? AppColors.primary : AppColors.grey300,
+                color: done ? AppColors.accent : AppColors.grey300,
               ),
               const SizedBox(width: 12),
               // 이름은 한 줄로. 넘치면 말줄임
@@ -215,7 +215,7 @@ class _TargetRow extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
-                  color: done ? AppColors.muted : AppColors.primary,
+                  color: done ? AppColors.muted : AppColors.accent,
                 ),
               ),
               const Icon(Icons.chevron_right_rounded, size: 20, color: AppColors.subtle),
