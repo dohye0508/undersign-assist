@@ -69,35 +69,37 @@ class _ToggleButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final radius = BorderRadius.circular(14);
+    final radius = BorderRadius.circular(999);
     return Padding(
-      padding: const EdgeInsets.only(top: 8),
+      padding: const EdgeInsets.only(top: 4),
       child: Semantics(
         button: true,
         label: '업로드한 페이지 $count장, 목록 ${open ? '닫기' : '열기'}',
         excludeSemantics: true,
         child: Material(
-          color: AppColors.surface.withValues(alpha: 0.96),
-          elevation: 3,
-          shadowColor: Colors.black26,
-          shape: RoundedRectangleBorder(
-            borderRadius: radius,
-            side: const BorderSide(color: AppColors.line),
-          ),
+          color: AppColors.grey100,
+          borderRadius: radius,
           child: InkWell(
             onTap: TapFeedback.wrap(onToggle),
             borderRadius: radius,
             child: ConstrainedBox(
-              constraints: const BoxConstraints(minHeight: 48, minWidth: 96),
+              constraints: const BoxConstraints(minHeight: 44, minWidth: 96),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(open ? Icons.expand_less : Icons.expand_more, color: AppColors.primary, size: 24),
-                    const SizedBox(width: 6),
-                    Text('$count장', style: const TextStyle(fontSize: 18, color: AppColors.text)),
+                    Text(
+                      '찍은 페이지 $count장',
+                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: AppColors.textStrong),
+                    ),
+                    const SizedBox(width: 4),
+                    Icon(
+                      open ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded,
+                      color: AppColors.textStrong,
+                      size: 20,
+                    ),
                   ],
                 ),
               ),
@@ -141,7 +143,7 @@ class _Panel extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: Semantics(header: true, child: Text('업로드된 페이지', style: text.titleLarge)),
+                child: Semantics(header: true, child: Text('찍은 페이지', style: text.titleMedium)),
               ),
               _CountPill(count: pages.length),
             ],
@@ -207,7 +209,7 @@ class _CountPill extends StatelessWidget {
         color: AppColors.primarySoft,
         borderRadius: BorderRadius.circular(999),
       ),
-      child: Text('$count장', style: const TextStyle(fontSize: 17, color: AppColors.primary)),
+      child: Text('$count장', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: AppColors.primary)),
     );
   }
 }
@@ -265,7 +267,7 @@ class _PageCard extends StatelessWidget {
                     label,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontSize: 16, color: AppColors.text),
+                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.text),
                   ),
                 ),
                 IconButton(

@@ -93,7 +93,6 @@ class _JudgePanelState extends State<JudgePanel> {
       );
     }
 
-    final status = _caution(judgement) + _missing(judgement) > 0 ? AppColors.caution : AppColors.ok;
     final pending = _unanswered(judgement);
     // 답하지 않은 질문이 먼저. 다 답했고 답한 줄을 눌렀으면 그 질문을 다시 보여준다
     final question = pending ?? (_editing ? _answered : null);
@@ -106,62 +105,135 @@ class _JudgePanelState extends State<JudgePanel> {
         // 1. 듣기 버튼
         ListenButton(
           label: '검토 결과 듣기',
-          icon: Icons.volume_up_outlined,
-          primary: true,
+          icon: Icons.volume_up_rounded,
           onPressed: () => Speech.announce(context, judgement.speech),
         ),
-        const SizedBox(height: 16),
 
         // 2. 한 줄 결론 (+ 질문 또는 답한 줄)
-        Text(_conclusion(judgement), style: text.titleMedium?.copyWith(color: status)),
-        if (question != null) ...[
-          const SizedBox(height: 12),
-          Text(question.text, style: text.bodyLarge),
-          for (final option in question.options.entries) ...[
-            const SizedBox(height: 8),
-            _optionButton(question, option.key, option.value),
-          ],
-        ] else if (_answered != null) ...[
-          const SizedBox(height: 8),
-          InkWell(
-            onTap: TapFeedback.wrap(() => setState(() => _editing = true)),
-            child: Semantics(
-              button: true,
-              hint: '누르면 답을 다시 고를 수 있어요',
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                child: Text(_answeredLine(judgement), style: text.bodyLarge?.copyWith(color: AppColors.muted)),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(2, 18, 2, 0),
+          child: Text.rich(_conclusionSpan(judgement), style: _verdictStyle),
+        ),
+        if (question != null)
+          Container(
+            margin: const EdgeInsets.only(top: 16),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(color: AppColors.grey50, borderRadius: BorderRadius.circular(AppRadius.card)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(question.text, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, height: 1.5)),
+                const SizedBox(height: 2),
+                Text('답하면 결과가 바로 바뀌어요', style: text.bodySmall),
+                const SizedBox(height: 12),
+                _optionGrid(question),
+              ],
+            ),
+          )
+        else if (_answered != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 16),
+            child: Material(
+              color: AppColors.grey50,
+              borderRadius: BorderRadius.circular(AppRadius.card),
+              child: InkWell(
+                onTap: TapFeedback.wrap(() => setState(() => _editing = true)),
+                borderRadius: BorderRadius.circular(AppRadius.card),
+                child: Semantics(
+                  button: true,
+                  hint: '누르면 답을 다시 고를 수 있어요',
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Text(_answeredLine(judgement), style: text.bodyMedium),
+                  ),
+                ),
               ),
             ),
           ),
-        ],
-        const SizedBox(height: 16),
+        const SizedBox(height: 8),
 
         // 3. 번호 붙은 결과 목록
-        for (var i = 0; i < findings.length; i++) ...[
-          if (i > 0) const Divider(height: 16, thickness: 1, color: AppColors.line),
-          _findingRow(context, i + 1, findings[i], status),
-        ],
+        for (var i = 0; i < findings.length; i++)
+          _findingRow(context, i + 1, findings[i], last: i == findings.length - 1),
 
         // 4. 마지막 안내
         if (disclaimer.isNotEmpty) ...[
-          const SizedBox(height: 16),
-          Text(disclaimer, style: text.bodyMedium?.copyWith(color: AppColors.muted)),
+          const SizedBox(height: 18),
+          Text(disclaimer, style: text.bodySmall),
         ],
       ],
     );
   }
 
-  /// 질문의 답 버튼 하나. 이미 고른 답은 꽉 찬 색
+  static const _verdictStyle = TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: AppColors.text, height: 1.4);
+
+  /// "확인할 곳 1개,\n빠진 것 2개예요." 앞부분은 상태 색
+  static TextSpan _conclusionSpan(Judgement j) {
+    final c = _caution(j), m = _missing(j);
+    if (c + m == 0) return const TextSpan(text: '특별히 확인할 것이 없어요.');
+    if (c == 0) {
+      return TextSpan(children: [
+        TextSpan(text: '빠진 것 $m개', style: const TextStyle(color: AppColors.missing)),
+        const TextSpan(text: '가 있어요.'),
+      ]);
+    }
+    return TextSpan(children: [
+      TextSpan(text: '확인할 곳 $c개', style: const TextStyle(color: AppColors.caution)),
+      TextSpan(text: m == 0 ? '가 있어요.' : ',\n빠진 것 $m개예요.'),
+    ]);
+  }
+
+  /// 답 버튼을 두 개씩 한 줄에
+  Widget _optionGrid(Question question) {
+    final options = question.options.entries.toList();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        for (var i = 0; i < options.length; i += 2) ...[
+          if (i > 0) const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(child: _optionButton(question, options[i].key, options[i].value)),
+              const SizedBox(width: 8),
+              Expanded(
+                child: i + 1 < options.length
+                    ? _optionButton(question, options[i + 1].key, options[i + 1].value)
+                    : const SizedBox.shrink(),
+              ),
+            ],
+          ),
+        ],
+      ],
+    );
+  }
+
+  /// 질문의 답 버튼 하나. 이미 고른 답은 꽉 찬 색, 나머지는 흰 바탕에 옅은 테두리
   Widget _optionButton(Question question, String code, String label) {
     final selected = widget.state.answers[question.id] == code;
     final onPressed = TapFeedback.wrap(() => _answer(question, code));
-    const size = Size.fromHeight(64);
+    const textStyle = TextStyle(fontFamily: AppFonts.body, fontSize: 18, fontWeight: FontWeight.w700);
+    final shape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.button));
+    final child = FittedBox(fit: BoxFit.scaleDown, child: Text(label, textAlign: TextAlign.center));
     return Semantics(
       selected: selected,
       child: selected
-          ? FilledButton(onPressed: onPressed, style: FilledButton.styleFrom(minimumSize: size), child: Text(label))
-          : OutlinedButton(onPressed: onPressed, style: OutlinedButton.styleFrom(minimumSize: size), child: Text(label)),
+          ? FilledButton(
+              onPressed: onPressed,
+              style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(64), shape: shape, textStyle: textStyle),
+              child: child,
+            )
+          : OutlinedButton(
+              onPressed: onPressed,
+              style: OutlinedButton.styleFrom(
+                minimumSize: const Size.fromHeight(64),
+                shape: shape,
+                textStyle: textStyle,
+                backgroundColor: AppColors.surface,
+                foregroundColor: AppColors.text,
+                side: const BorderSide(color: AppColors.grey200, width: 1.5),
+              ),
+              child: child,
+            ),
     );
   }
 
@@ -172,48 +244,76 @@ class _JudgePanelState extends State<JudgePanel> {
         '빠진 것 ${_missing(_before)}→${_missing(after)}.';
   }
 
-  /// 결과 한 항목: "n. 항목 — 상태" / 설명 한 줄 / 근거 듣기
-  Widget _findingRow(BuildContext context, int n, Finding finding, Color status) {
-    final text = Theme.of(context).textTheme;
-    final statusWord = switch (finding.level) { 'caution' => '확인 필요', 'missing' => '빠짐', _ => '알아두기' };
+  /// 결과 한 항목: 번호와 제목 / 상태 꼬리표 / 설명 / 근거 듣기
+  Widget _findingRow(BuildContext context, int n, Finding finding, {required bool last}) {
+    final (statusWord, fg, bg) = switch (finding.level) {
+      'caution' => ('확인 필요', AppColors.caution, AppColors.cautionSoft),
+      'missing' => ('빠짐', AppColors.missing, AppColors.missingSoft),
+      _ => ('알아두기', AppColors.muted, AppColors.grey100),
+    };
     final prefix = switch (_changeOf(finding)) { _Change.added => '새로: ', _Change.changed => '바뀜: ', null => '' };
     final sentence = finding.speech.isNotEmpty ? finding.speech : finding.reason;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        MergeSemantics(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text.rich(
-                TextSpan(
-                  style: text.titleMedium?.copyWith(color: AppColors.text),
+    const indent = 26.0;
+    return Container(
+      padding: const EdgeInsets.fromLTRB(2, 16, 2, 6),
+      decoration: BoxDecoration(
+        border: last ? null : const Border(bottom: BorderSide(color: AppColors.grey100)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          MergeSemantics(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    TextSpan(text: '$n. $prefix${finding.item} — '),
-                    TextSpan(text: statusWord, style: TextStyle(color: status)),
+                    SizedBox(
+                      width: indent,
+                      child: Text(
+                        '$n',
+                        style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700, color: AppColors.muted, height: 1.4),
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        '$prefix${finding.item}',
+                        style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700, color: AppColors.text, height: 1.4),
+                      ),
+                    ),
                   ],
                 ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                sentence,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: text.bodyMedium?.copyWith(color: AppColors.text),
-              ),
-            ],
+                Padding(
+                  padding: const EdgeInsets.only(left: indent, top: 6),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(6)),
+                    child: Text(statusWord, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: fg)),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: indent, top: 6),
+                  child: Text(
+                    sentence,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        TextButton(
-          onPressed: TapFeedback.wrap(() => Speech.announce(context, _basisSpeech(finding))),
-          style: TextButton.styleFrom(
-            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
-            minimumSize: const Size(0, 36),
-            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          Padding(
+            padding: const EdgeInsets.only(left: indent - 8),
+            child: TextButton.icon(
+              onPressed: TapFeedback.wrap(() => Speech.announce(context, _basisSpeech(finding))),
+              icon: const Icon(Icons.volume_up_rounded),
+              label: const Text('근거 듣기'),
+            ),
           ),
-          child: const Text('근거 듣기'),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

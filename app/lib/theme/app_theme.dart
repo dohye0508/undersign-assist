@@ -1,66 +1,51 @@
 import 'package:flutter/material.dart';
 
-/// 흰 바탕에 아주 옅은 유색 그라데이션을 얹은 밝은 테마.
-/// 저시력 사용자를 위해 글씨와 터치 영역은 넉넉하게(버튼 높이 64 이상), 글자 대비는 높게 잡는다.
-/// 한 화면에 분석 결과가 스크롤 없이 들어오도록 크기는 너무 키우지 않는다.
+/// 토스(Toss) 스타일: 흰 바탕, 포인트 색은 파랑 하나, 카드 테두리 대신 굵은 회색 띠와 여백으로 구역을 나눈다.
+/// 저시력 사용자를 위해 버튼 높이는 64 이상, 글자 대비는 4.5:1 이상을 지킨다.
+/// 값은 디자인 후보 A(토스형) 시안을 그대로 옮겼다.
 class AppColors {
-  static const background = Color(0xFFF8F9FC);
+  static const background = Color(0xFFFFFFFF);
   static const surface = Color(0xFFFFFFFF);
-  static const line = Color(0xFFE3E7F0);
-  static const text = Color(0xFF1B1F2B);
-  static const muted = Color(0xFF5E6577);
-  static const subtle = Color(0xFF8A91A3);
 
-  static const primary = Color(0xFF4A63E7);
-  static const primarySoft = Color(0xFFEEF1FE);
+  // 토스 회색 단계
+  static const grey50 = Color(0xFFF9FAFB);
+  static const grey100 = Color(0xFFF2F4F6);
+  static const grey200 = Color(0xFFE5E8EB);
+  static const grey300 = Color(0xFFD1D6DB);
+
+  /// 얇은 구분선
+  static const line = grey100;
+  static const text = Color(0xFF191F28);
+  static const textStrong = Color(0xFF333D4B);
+  static const muted = Color(0xFF6B7684);
+  static const subtle = Color(0xFF8B95A1);
+
+  static const primary = Color(0xFF0064FF);
+  static const primarySoft = Color(0xFFE8F2FF);
 
   // 판단 결과의 의미 색. 강조색과 따로 쓴다
-  static const ok = Color(0xFF2B8A3E);
-  static const okSoft = Color(0xFFEBF8EE);
-  static const missing = Color(0xFFB35C00);
-  static const missingSoft = Color(0xFFFFF4E5);
-  static const caution = Color(0xFFC92A2A);
-  static const cautionSoft = Color(0xFFFFF0F0);
+  static const ok = Color(0xFF1B7F3B);
+  static const okSoft = Color(0xFFE9F7EE);
+  static const missing = Color(0xFFB42318);
+  static const missingSoft = Color(0xFFFEECEB);
+  static const caution = Color(0xFFC2410C);
+  static const cautionSoft = Color(0xFFFFF1E6);
 
-  /// 화면 전체에 깔리는 아주 옅은 그라데이션 (파랑 → 흰색 → 민트)
-  static const pageGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [Color(0xFFEFF2FF), Color(0xFFFFFFFF), Color(0xFFEEFAF5)],
-    stops: [0, 0.55, 1],
-  );
-
-  /// 흰 바탕 곳곳에 번진 옅은 색 (파랑, 민트, 분홍, 보라, 노랑)
-  static const blobs = [
-    Blob(0.08, 0.10, 340, Color(0x2E7C93F2)),
-    Blob(0.92, 0.22, 300, Color(0x2659D3B4)),
-    Blob(0.15, 0.62, 280, Color(0x22F2A0C4)),
-    Blob(0.88, 0.78, 360, Color(0x26A98BF0)),
-    Blob(0.50, 0.95, 260, Color(0x1FF5C86B)),
-  ];
-
-  /// 선택된 항목, 머리 부분에 쓰는 옅은 그라데이션 (파랑 → 보라)
-  static const accentGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [Color(0xFFEEF1FE), Color(0xFFF5F0FF)],
-  );
-}
-
-/// 배경에 번진 옅은 색 하나. x, y는 화면 너비·높이에 대한 비율(0~1), radius는 픽셀
-class Blob {
-  const Blob(this.x, this.y, this.radius, this.color);
-
-  final double x, y, radius;
-  final Color color;
+  /// 카메라 바탕
+  static const camera = Color(0xFF101318);
 }
 
 class AppFonts {
-  /// 제목
-  static const display = 'DoHyeon';
+  /// 제목과 본문 모두 Pretendard (OFL, assets에 포함)
+  static const display = 'Pretendard';
+  static const body = 'Pretendard';
+}
 
-  /// 본문, 버튼, 안내 문장
-  static const body = 'Jua';
+/// 모서리 둥글기
+class AppRadius {
+  static const button = 14.0;
+  static const card = 16.0;
+  static const camera = 24.0;
 }
 
 class AppTheme {
@@ -70,59 +55,72 @@ class AppTheme {
       onPrimary: Colors.white,
       surface: AppColors.surface,
       onSurface: AppColors.text,
-      outline: AppColors.line,
+      outline: AppColors.grey200,
     );
 
-    // 버튼은 높이는 크게(64 이상), 글씨는 사용자 요청으로 25% 줄임
-    final buttonShape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(18));
-    const buttonText = TextStyle(fontFamily: AppFonts.body, fontSize: 15);
+    final buttonShape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.button));
+    const buttonText = TextStyle(fontFamily: AppFonts.body, fontSize: 17, fontWeight: FontWeight.w700);
 
     return ThemeData(
       colorScheme: scheme,
       scaffoldBackgroundColor: AppColors.background,
       fontFamily: AppFonts.body,
       textTheme: const TextTheme(
-        headlineMedium: TextStyle(fontFamily: AppFonts.display, fontSize: 22, color: AppColors.text),
-        titleLarge: TextStyle(fontFamily: AppFonts.display, fontSize: 18, color: AppColors.text),
-        titleMedium: TextStyle(fontSize: 14, color: AppColors.text),
-        bodyLarge: TextStyle(fontSize: 14, color: AppColors.text, height: 1.45),
-        bodyMedium: TextStyle(fontSize: 12, color: AppColors.muted, height: 1.45),
-        labelLarge: TextStyle(fontSize: 11, color: AppColors.subtle, letterSpacing: 0.3),
+        headlineMedium: TextStyle(fontSize: 26, fontWeight: FontWeight.w800, color: AppColors.text, height: 1.3),
+        titleLarge: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.text),
+        titleMedium: TextStyle(fontSize: 17, fontWeight: FontWeight.w700, color: AppColors.text, height: 1.4),
+        bodyLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: AppColors.text, height: 1.6),
+        bodyMedium: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: AppColors.textStrong, height: 1.55),
+        bodySmall: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.muted, height: 1.5),
+        labelLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: AppColors.muted),
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
           minimumSize: const Size.fromHeight(64),
           shape: buttonShape,
           textStyle: buttonText,
-          iconSize: 20,
+          iconSize: 22,
+          elevation: 0,
         ),
       ),
+      // 토스의 "약한 버튼": 테두리 없이 회색 바탕
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           minimumSize: const Size.fromHeight(64),
           shape: buttonShape,
           textStyle: buttonText,
-          iconSize: 20,
-          foregroundColor: AppColors.text,
-          side: const BorderSide(color: AppColors.line, width: 1.5),
-          backgroundColor: AppColors.surface,
+          iconSize: 22,
+          foregroundColor: AppColors.textStrong,
+          side: BorderSide.none,
+          backgroundColor: AppColors.grey100,
         ),
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          minimumSize: const Size(64, 52),
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          textStyle: const TextStyle(fontFamily: AppFonts.body, fontSize: 14),
+          minimumSize: const Size(52, 44),
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          foregroundColor: AppColors.primary,
+          textStyle: const TextStyle(fontFamily: AppFonts.body, fontSize: 14, fontWeight: FontWeight.w700),
           iconSize: 18,
         ),
       ),
       iconButtonTheme: IconButtonThemeData(
-        style: IconButton.styleFrom(minimumSize: const Size(52, 52), iconSize: 21),
+        style: IconButton.styleFrom(
+          minimumSize: const Size(52, 52),
+          iconSize: 22,
+          foregroundColor: AppColors.text,
+          backgroundColor: AppColors.grey100,
+          shape: buttonShape,
+        ),
       ),
       chipTheme: const ChipThemeData(
-        labelStyle: TextStyle(fontFamily: AppFonts.body, fontSize: 14, color: AppColors.text),
+        labelStyle: TextStyle(fontFamily: AppFonts.body, fontSize: 14, fontWeight: FontWeight.w700, color: AppColors.textStrong),
+        backgroundColor: AppColors.grey100,
+        side: BorderSide.none,
         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       ),
+      dividerTheme: const DividerThemeData(color: AppColors.grey100, thickness: 1, space: 1),
+      progressIndicatorTheme: const ProgressIndicatorThemeData(color: AppColors.primary, linearTrackColor: AppColors.grey100),
       focusColor: AppColors.primary.withValues(alpha: 0.18),
     );
   }

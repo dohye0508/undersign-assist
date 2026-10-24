@@ -155,6 +155,25 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
     }
   }
 
+  /// 제목 위 작은 줄: "3페이지 중 1페이지 · 4번째 칸"
+  String _where() {
+    final pages = widget.state.pages.length;
+    final n = '${_index + 1}번째 칸';
+    return pages <= 1 ? '$n / 모두 ${_targets.length}칸' : '$pages페이지 중 ${_target.page + 1}페이지 · $n';
+  }
+
+  /// 제목 아래 무엇을 할지 한 줄
+  String _hint() {
+    final t = _target;
+    if (_drawingCheck) return '한 번만 그리면 다음부터 그대로 써요';
+    return switch (t.kind) {
+      FillKind.check => '예 또는 아니요를 골라 주세요',
+      FillKind.signature => '크게 서명해 주세요',
+      FillKind.text when t.isDate => t.dateNeedsYear ? '연도, 월, 일을 모두 써 주세요' : '월과 일만 써 주세요',
+      FillKind.text => '또박또박 써 주세요',
+    };
+  }
+
   /// 넣을 때 문서 사진이 바로 보이게 미리 읽어 둔다
   void _precache() {
     precacheImage(_photo(_target.page), context).ignore();
@@ -552,7 +571,6 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
     final done = _phase == _Phase.done;
-    final title = done ? '모두 채웠어요' : '${_target.label} (${_index + 1}/${_targets.length})';
     return CallbackShortcuts(
       bindings: {
         const SingleActivator(LogicalKeyboardKey.enter): done ? _export : _next,
@@ -573,26 +591,28 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 960),
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(8, 4, 8, 12),
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 18),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      // 맨 위 한 줄: 닫기 · 진행 동그라미 · 다시 듣기
                       Row(
                         children: [
                           IconButton(
                             tooltip: '닫기',
-                            icon: const Icon(Icons.arrow_back),
+                            icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
                             onPressed: TapFeedback.wrap(() => Navigator.of(context).pop(_exported)),
                           ),
                           Expanded(
-                            child: Semantics(
-                              header: true,
-                              child: Text(title, style: text.titleLarge?.copyWith(fontSize: 22), maxLines: 2),
+                            child: ProgressDots(
+                              targets: _targets,
+                              filledIds: widget.state.fills.keys.toSet(),
+                              currentIndex: done ? -1 : _index,
                             ),
                           ),
                           IconButton(
                             tooltip: '다시 듣기',
-                            icon: const Icon(Icons.volume_up_outlined),
+                            icon: const Icon(Icons.volume_up_rounded),
                             onPressed: TapFeedback.wrap(() => Speech.announce(
                                   context,
                                   done
@@ -604,14 +624,27 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
                           ),
                         ],
                       ),
+                      const SizedBox(height: 10),
+                      // 몇 페이지 몇 번째 칸 → 큰 칸 이름 → 무엇을 쓸지
+                      if (!done)
+                        Text(_where(), textAlign: TextAlign.center, style: text.labelLarge),
                       const SizedBox(height: 4),
-                      // 진행 동그라미: 칸마다 하나. 채운 칸은 ✓, 지금 칸은 크게
-                      ProgressDots(
-                        targets: _targets,
-                        filledIds: widget.state.fills.keys.toSet(),
-                        currentIndex: done ? -1 : _index,
+                      Semantics(
+                        header: true,
+                        child: Text(
+                          done ? '모두 채웠어요' : _drawingCheck ? '체크 표시' : _target.label,
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w700, color: AppColors.text, height: 1.3),
+                        ),
                       ),
-                      const SizedBox(height: 6),
+                      const SizedBox(height: 4),
+                      Text(
+                        done ? '서명한 문서를 PDF로 받을 수 있어요' : _hint(),
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: AppColors.muted),
+                      ),
+                      const SizedBox(height: 18),
                       Expanded(
                         child: done
                             ? _donePages()
@@ -630,7 +663,23 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
                           ),
                         ),
                       ],
-                      const SizedBox(height: 10),
+                      if (!done && !(_target.kind == FillKind.check && !_drawingCheck)) ...[
+                        const SizedBox(height: 12),
+                        const ExcludeSemantics(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.arrow_back_rounded, size: 18, color: AppColors.muted),
+                              SizedBox(width: 6),
+                              Text(
+                                '다 쓰면 오른쪽에서 왼쪽으로 밀어 넘기세요',
+                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.muted),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                      const SizedBox(height: 14),
                       done ? _doneButtons() : _writingButtons(),
                     ],
                   ),
@@ -661,9 +710,8 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
             onPointerCancel: _cancel,
             child: Container(
               decoration: BoxDecoration(
-                color: AppColors.surface,
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: AppColors.line, width: 1.5),
+                color: AppColors.grey50,
+                borderRadius: BorderRadius.circular(AppRadius.card),
               ),
               clipBehavior: Clip.antiAlias,
               child: Stack(
@@ -681,7 +729,7 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
                                   ? '${target.label}\n이미 채웠어요'
                                   : '여기에 ${target.label}',
                           textAlign: TextAlign.center,
-                          style: text.headlineMedium?.copyWith(color: AppColors.line, fontSize: 30),
+                          style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w700, color: AppColors.grey300, height: 1.4),
                         ),
                       ),
                     ),
@@ -707,9 +755,8 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
         if (_phase == _Phase.placing) {
           return Container(
             decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: AppColors.line, width: 1.5),
+              color: AppColors.grey50,
+              borderRadius: BorderRadius.circular(AppRadius.card),
             ),
             clipBehavior: Clip.antiAlias,
             child: Stack(fit: StackFit.expand, children: [_placing()]),
@@ -724,7 +771,7 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(8, 4, 8, 10),
-                child: Text(question, textAlign: TextAlign.center, style: text.titleLarge?.copyWith(fontSize: 20)),
+                child: Text(question, textAlign: TextAlign.center, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700, height: 1.4)),
               ),
               Expanded(
                 child: _ChoiceButton(
@@ -857,30 +904,32 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
 
   Widget _writingButtons() {
     final enabled = _phase == _Phase.writing && !_busy;
+    final isCheck = _target.kind == FillKind.check && !_drawingCheck;
     return SizedBox(
-      height: 72,
+      height: 68,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Expanded(child: _ToolButton(icon: Icons.chevron_left, label: '이전', onPressed: enabled ? _previous : null)),
-          const SizedBox(width: 6),
-          Expanded(child: _ToolButton(icon: Icons.undo, label: '되돌리기', onPressed: enabled ? _undo : null)),
-          const SizedBox(width: 6),
-          Expanded(child: _ToolButton(icon: Icons.refresh, label: '다시 쓰기', onPressed: enabled ? _clear : null)),
-          const SizedBox(width: 6),
+          Expanded(flex: 2, child: _ToolButton(label: '이전', onPressed: enabled && _index > 0 ? _previous : null)),
+          const SizedBox(width: 8),
+          if (!isCheck) ...[
+            Expanded(flex: 2, child: _ToolButton(label: '다시 쓰기', onPressed: enabled ? _clear : null)),
+            const SizedBox(width: 8),
+          ],
           Expanded(
-            flex: 2,
-            child: FilledButton.icon(
-              style: FilledButton.styleFrom(minimumSize: const Size(0, 72)),
+            flex: isCheck ? 5 : 3,
+            child: FilledButton(
+              style: FilledButton.styleFrom(minimumSize: const Size(0, 68), textStyle: _buttonText),
               onPressed: TapFeedback.wrap(enabled ? _next : null),
-              icon: const Icon(Icons.arrow_forward),
-              label: const Text('다음'),
+              child: const Text('다음'),
             ),
           ),
         ],
       ),
     );
   }
+
+  static const _buttonText = TextStyle(fontFamily: AppFonts.body, fontSize: 18, fontWeight: FontWeight.w700);
 
   Widget _doneButtons() {
     return Column(
@@ -1030,14 +1079,14 @@ class _InkPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     if (baseline) {
+      // 옅은 점선 밑줄
       final y = size.height * 0.7;
-      canvas.drawLine(
-        Offset(size.width * 0.06, y),
-        Offset(size.width * 0.94, y),
-        Paint()
-          ..color = AppColors.line
-          ..strokeWidth = 2,
-      );
+      final paint = Paint()
+        ..color = AppColors.grey300
+        ..strokeWidth = 2;
+      for (var x = size.width * 0.06; x < size.width * 0.94; x += 10) {
+        canvas.drawLine(Offset(x, y), Offset(math.min(x + 5, size.width * 0.94), y), paint);
+      }
     }
     _FillInk.paint(canvas, strokes);
   }
@@ -1089,16 +1138,16 @@ class _ChoiceButton extends StatelessWidget {
     final child = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(icon, size: 33),
-        const SizedBox(width: 16),
-        Text(label, style: const TextStyle(fontSize: 36, fontWeight: FontWeight.w700)),
+        Icon(icon, size: 30),
+        const SizedBox(width: 14),
+        Text(label, style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w800)),
         if (selected) ...[
           const SizedBox(width: 12),
           const Text('(고름)', style: TextStyle(fontSize: 16)),
         ],
       ],
     );
-    final shape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(24));
+    final shape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.card));
     return Semantics(
       button: true,
       selected: selected,
@@ -1119,7 +1168,9 @@ class _ChoiceButton extends StatelessWidget {
                 style: OutlinedButton.styleFrom(
                   minimumSize: const Size(0, 120),
                   shape: shape,
-                  side: BorderSide(color: selected ? AppColors.primary : AppColors.line, width: selected ? 5 : 2),
+                  backgroundColor: AppColors.surface,
+                  foregroundColor: AppColors.text,
+                  side: BorderSide(color: selected ? AppColors.primary : AppColors.grey200, width: selected ? 4 : 1.5),
                 ),
                 onPressed: TapFeedback.wrap(onPressed),
                 child: child,
@@ -1129,26 +1180,23 @@ class _ChoiceButton extends StatelessWidget {
   }
 }
 
-/// 아이콘 위, 글자 아래의 작은 버튼. 네 개가 한 줄에 들어가도 72px 높이를 지킨다
+/// 회색 바탕의 약한 버튼 (이전, 다시 쓰기). 68px 높이
 class _ToolButton extends StatelessWidget {
-  const _ToolButton({required this.icon, required this.label, required this.onPressed});
+  const _ToolButton({required this.label, required this.onPressed});
 
-  final IconData icon;
   final String label;
   final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
     return OutlinedButton(
-      style: OutlinedButton.styleFrom(minimumSize: const Size(0, 72), padding: const EdgeInsets.symmetric(horizontal: 4)),
-      onPressed: TapFeedback.wrap(onPressed),
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [Icon(icon, size: 21), Text(label, style: const TextStyle(fontSize: 13))],
-        ),
+      style: OutlinedButton.styleFrom(
+        minimumSize: const Size(0, 68),
+        padding: const EdgeInsets.symmetric(horizontal: 4),
+        textStyle: _FillScreenState._buttonText,
       ),
+      onPressed: TapFeedback.wrap(onPressed),
+      child: FittedBox(fit: BoxFit.scaleDown, child: Text(label)),
     );
   }
 }
