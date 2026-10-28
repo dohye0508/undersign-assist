@@ -29,7 +29,7 @@ function Step([string]$Text) {
 
 # ---------- 0. 준비물 확인 ----------
 if (-not (Test-Path $VenvPython)) {
-    Write-Host "backend\.venv 가 없습니다. CLAUDE.md '실행' 절대로 먼저 가상환경을 만드세요." -ForegroundColor Red
+    Write-Host "backend\.venv 가 없습니다. README '실행' 절을 따라 먼저 가상환경을 만드세요." -ForegroundColor Red
     exit 1
 }
 $flutter = Get-Command flutter -ErrorAction SilentlyContinue

@@ -2,7 +2,7 @@
 
 사용법: python3 tools/build_rules.py <laws 폴더>   (full/ 이 먼저 있어야 한다)
 
-안내 문장(tts) 원칙 (CLAUDE.md 판단의 원칙)
+안내 문장(tts) 원칙 (README "판단 원칙")
 - 단정하지 않는다: "무효예요" 대신 "~로 보여요, 확인이 필요해요".
 - 문서 원문과 비교 기준은 Finding의 evidence/reason/basis에 따로 담기므로, 문장은 짧게 한 가지만 말한다.
 - 빈칸: {missing} {value} {limit} {year} {hours} {priority} 는 코드가 채운다.
