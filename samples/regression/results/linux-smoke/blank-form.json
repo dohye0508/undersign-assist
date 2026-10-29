@@ -19,7 +19,7 @@
       "expected_review": false,
       "needs_review": false,
       "valid_boxes": true,
-      "seconds": 5.905,
+      "seconds": 5.569,
       "reference_characters": 0,
       "edits": null,
       "text": "00\n+ 작품 요약서\n팀명\n작품명\n구분\n성 명\n참가자\n작품 요약",
@@ -121,10 +121,10 @@
       "expected_review": false,
       "needs_review": false,
       "valid_boxes": true,
-      "seconds": 4.975,
+      "seconds": 4.048,
       "reference_characters": 0,
       "edits": null,
-      "text": "작품 요약서\n팀명\n작품명\n성 명\n구분\n소 속\n참가자\n작품 요약",
+      "text": "작품 요약서\n팀명\n작품명\n성 명\n구분\n소 속\n참가자\n작씀 요약",
       "blocks": [
         {
           "text": "작품 요약서",
@@ -204,15 +204,15 @@
           "confidence": 96.0
         },
         {
-          "text": "작품 요약",
+          "text": "작씀 요약",
           "box": {
             "x": 430,
-            "y": 206,
+            "y": 197,
             "width": 78,
-            "height": 18
+            "height": 34
           },
           "page": 0,
-          "confidence": 94.5
+          "confidence": 63.0
         }
       ]
     },
@@ -223,7 +223,7 @@
       "expected_review": false,
       "needs_review": false,
       "valid_boxes": true,
-      "seconds": 4.08,
+      "seconds": 3.022,
       "reference_characters": 0,
       "edits": null,
       "text": "작품 요약서\n팀명\n작품명\n구분\n성 명\n참가자\n소 속\n작품 요약",
@@ -325,7 +325,7 @@
       "expected_review": false,
       "needs_review": false,
       "valid_boxes": true,
-      "seconds": 6.652,
+      "seconds": 5.625,
       "reference_characters": 0,
       "edits": null,
       "text": "팀명\n작품명\n작품 요약서\n구분\n참가자\n성 명\n수 족\n작품 요약",

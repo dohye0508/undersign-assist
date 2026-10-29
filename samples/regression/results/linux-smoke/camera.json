@@ -5,7 +5,7 @@
     "expected": "application",
     "actual": "application",
     "reason": "first_page_title",
-    "seconds": 0.715,
+    "seconds": 0.661,
     "valid_boxes": true,
     "dimensions": [
       [
@@ -110,7 +110,7 @@
     "expected": "application",
     "actual": "application",
     "reason": "body_evidence",
-    "seconds": 0.573,
+    "seconds": 0.503,
     "valid_boxes": true,
     "dimensions": [
       [
@@ -204,7 +204,7 @@
     "expected": "application",
     "actual": "application",
     "reason": "first_page_title",
-    "seconds": 0.863,
+    "seconds": 0.716,
     "valid_boxes": true,
     "dimensions": [
       [
@@ -309,7 +309,7 @@
     "expected": "application",
     "actual": "application",
     "reason": "first_page_title",
-    "seconds": 3.992,
+    "seconds": 3.281,
     "valid_boxes": true,
     "dimensions": [
       [
@@ -414,7 +414,7 @@
     "expected": "application",
     "actual": "application",
     "reason": "first_page_title",
-    "seconds": 2.826,
+    "seconds": 2.113,
     "valid_boxes": true,
     "dimensions": [
       [
@@ -519,7 +519,7 @@
     "expected": "consent",
     "actual": "consent",
     "reason": "privacy_form_under_generic_heading",
-    "seconds": 0.909,
+    "seconds": 0.69,
     "valid_boxes": true,
     "dimensions": [
       [
@@ -624,7 +624,7 @@
     "expected": "consent",
     "actual": "consent",
     "reason": "body_evidence",
-    "seconds": 0.815,
+    "seconds": 0.456,
     "valid_boxes": true,
     "dimensions": [
       [
@@ -718,7 +718,7 @@
     "expected": "consent",
     "actual": "consent",
     "reason": "privacy_form_under_generic_heading",
-    "seconds": 0.928,
+    "seconds": 0.752,
     "valid_boxes": true,
     "dimensions": [
       [
@@ -823,7 +823,7 @@
     "expected": "consent",
     "actual": "consent",
     "reason": "privacy_form_under_generic_heading",
-    "seconds": 4.214,
+    "seconds": 3.188,
     "valid_boxes": true,
     "dimensions": [
       [
@@ -928,7 +928,7 @@
     "expected": "consent",
     "actual": "consent",
     "reason": "privacy_form_under_generic_heading",
-    "seconds": 2.863,
+    "seconds": 2.18,
     "valid_boxes": true,
     "dimensions": [
       [
@@ -1033,7 +1033,7 @@
     "expected": "contract",
     "actual": "contract",
     "reason": "first_page_title",
-    "seconds": 0.945,
+    "seconds": 0.795,
     "valid_boxes": true,
     "dimensions": [
       [
@@ -1127,7 +1127,7 @@
     "expected": "contract",
     "actual": "contract",
     "reason": "body_evidence",
-    "seconds": 0.621,
+    "seconds": 0.483,
     "valid_boxes": true,
     "dimensions": [
       [
@@ -1210,7 +1210,7 @@
     "expected": "contract",
     "actual": "contract",
     "reason": "first_page_title",
-    "seconds": 0.975,
+    "seconds": 0.764,
     "valid_boxes": true,
     "dimensions": [
       [
@@ -1304,7 +1304,7 @@
     "expected": "contract",
     "actual": "contract",
     "reason": "first_page_title",
-    "seconds": 3.924,
+    "seconds": 3.058,
     "valid_boxes": true,
     "dimensions": [
       [
@@ -1398,7 +1398,7 @@
     "expected": "contract",
     "actual": "contract",
     "reason": "first_page_title",
-    "seconds": 2.442,
+    "seconds": 1.912,
     "valid_boxes": true,
     "dimensions": [
       [
@@ -1492,7 +1492,7 @@
     "expected": "contract",
     "actual": "contract",
     "reason": "first_page_title",
-    "seconds": 0.728,
+    "seconds": 0.569,
     "valid_boxes": true,
     "dimensions": [
       [
@@ -1586,7 +1586,7 @@
     "expected": "contract",
     "actual": "contract",
     "reason": "body_evidence",
-    "seconds": 0.686,
+    "seconds": 0.558,
     "valid_boxes": true,
     "dimensions": [
       [
@@ -1669,7 +1669,7 @@
     "expected": "contract",
     "actual": "contract",
     "reason": "first_page_title",
-    "seconds": 0.698,
+    "seconds": 0.56,
     "valid_boxes": true,
     "dimensions": [
       [
@@ -1763,7 +1763,7 @@
     "expected": "contract",
     "actual": "contract",
     "reason": "first_page_title",
-    "seconds": 4.042,
+    "seconds": 2.837,
     "valid_boxes": true,
     "dimensions": [
       [
@@ -1857,7 +1857,7 @@
     "expected": "contract",
     "actual": "contract",
     "reason": "first_page_title",
-    "seconds": 2.174,
+    "seconds": 1.841,
     "valid_boxes": true,
     "dimensions": [
       [
@@ -1951,7 +1951,7 @@
     "expected": "notice",
     "actual": "notice",
     "reason": "first_page_title",
-    "seconds": 0.774,
+    "seconds": 0.679,
     "valid_boxes": true,
     "dimensions": [
       [
@@ -2056,7 +2056,7 @@
     "expected": "notice",
     "actual": "notice",
     "reason": "body_evidence",
-    "seconds": 0.678,
+    "seconds": 0.681,
     "valid_boxes": true,
     "dimensions": [
       [
@@ -2150,7 +2150,7 @@
     "expected": "notice",
     "actual": "notice",
     "reason": "first_page_title",
-    "seconds": 0.989,
+    "seconds": 0.785,
     "valid_boxes": true,
     "dimensions": [
       [
@@ -2255,7 +2255,7 @@
     "expected": "notice",
     "actual": "notice",
     "reason": "first_page_title",
-    "seconds": 4.352,
+    "seconds": 3.684,
     "valid_boxes": true,
     "dimensions": [
       [
@@ -2360,7 +2360,7 @@
     "expected": "notice",
     "actual": "notice",
     "reason": "first_page_title",
-    "seconds": 2.866,
+    "seconds": 2.171,
     "valid_boxes": true,
     "dimensions": [
       [
@@ -2465,7 +2465,7 @@
     "expected": "unknown",
     "actual": "unknown",
     "reason": "insufficient_evidence",
-    "seconds": 0.532,
+    "seconds": 0.398,
     "valid_boxes": true,
     "dimensions": [
       [
@@ -2548,7 +2548,7 @@
     "expected": "unknown",
     "actual": "unknown",
     "reason": "insufficient_evidence",
-    "seconds": 0.456,
+    "seconds": 0.321,
     "valid_boxes": true,
     "dimensions": [
       [
@@ -2620,7 +2620,7 @@
     "expected": "unknown",
     "actual": "unknown",
     "reason": "insufficient_evidence",
-    "seconds": 0.558,
+    "seconds": 0.381,
     "valid_boxes": true,
     "dimensions": [
       [
@@ -2703,7 +2703,7 @@
     "expected": "unknown",
     "actual": "unknown",
     "reason": "insufficient_evidence",
-    "seconds": 3.015,
+    "seconds": 2.171,
     "valid_boxes": true,
     "dimensions": [
       [
@@ -2786,7 +2786,7 @@
     "expected": "unknown",
     "actual": "unknown",
     "reason": "insufficient_evidence",
-    "seconds": 1.624,
+    "seconds": 1.265,
     "valid_boxes": true,
     "dimensions": [
       [
@@ -2869,7 +2869,7 @@
     "expected": "summary",
     "actual": "summary",
     "reason": "first_page_title",
-    "seconds": 0.851,
+    "seconds": 0.646,
     "valid_boxes": true,
     "dimensions": [
       [
@@ -2963,7 +2963,7 @@
     "expected": "summary",
     "actual": "summary",
     "reason": "body_evidence",
-    "seconds": 0.628,
+    "seconds": 0.563,
     "valid_boxes": true,
     "dimensions": [
       [
@@ -3046,7 +3046,7 @@
     "expected": "summary",
     "actual": "summary",
     "reason": "first_page_title",
-    "seconds": 0.825,
+    "seconds": 0.672,
     "valid_boxes": true,
     "dimensions": [
       [
@@ -3140,7 +3140,7 @@
     "expected": "summary",
     "actual": "summary",
     "reason": "first_page_title",
-    "seconds": 4.053,
+    "seconds": 3.388,
     "valid_boxes": true,
     "dimensions": [
       [
@@ -3234,7 +3234,7 @@
     "expected": "summary",
     "actual": "summary",
     "reason": "first_page_title",
-    "seconds": 2.69,
+    "seconds": 2.043,
     "valid_boxes": true,
     "dimensions": [
       [
