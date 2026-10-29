@@ -11,7 +11,7 @@ import re
 from dataclasses import dataclass
 from statistics import mean, median
 
-from PIL import Image, ImageOps
+from PIL import Image, ImageChops, ImageFilter, ImageOps
 
 from app import config
 from app.models import Box, TextBlock
@@ -84,7 +84,7 @@ def _tesseract(image: Image.Image) -> list[TextBlock]:
     import pytesseract
 
     pytesseract.pytesseract.tesseract_cmd = config.TESSERACT_CMD
-    gray = image.convert("L")
+    gray = _flatten_lighting(image.convert("L"))
     # 작은 사진은 키워야 한글 획이 뭉개지지 않는다
     if gray.width < 1600:
         scale = 1600 / gray.width
@@ -96,10 +96,80 @@ def _tesseract(image: Image.Image) -> list[TextBlock]:
     # 엉뚱한 글자("순 버 베 괴")로 읽는다. 그런 칸은 psm 11(흩어진 글자)이 잘 읽으므로 한 번 더 읽어서
     # 신뢰도 낮은 줄만 바꿔 넣는다. 신뢰도 높은 psm 6 줄은 건드리지 않아 깨끗한 문서의 결과는 그대로다.
     primary = _tesseract_lines(pytesseract, gray, 6, scale)
+    orientation = 0
+    # EXIF is handled by _open. Screenshots/scans can have no orientation tag.
+    # Try bounded orthogonal rotations only when the normal pass is unreliable.
+    initial_quality = _quality(primary)
+    if initial_quality < 55 and _has_ink(gray):
+        best_quality = initial_quality
+        best_image = gray
+        for angle, transpose in ((90, Image.Transpose.ROTATE_90),
+                                 (180, Image.Transpose.ROTATE_180),
+                                 (270, Image.Transpose.ROTATE_270)):
+            candidate_image = gray.transpose(transpose)
+            candidate = _tesseract_lines(pytesseract, candidate_image, 6, scale)
+            quality = _quality(candidate)
+            if quality >= 55 and quality >= initial_quality + 15 and quality > best_quality:
+                primary, best_image, orientation, best_quality = candidate, candidate_image, angle, quality
+        gray = best_image
     secondary = _tesseract_lines(pytesseract, gray, 11, scale)
     lines = [line.block for line in _merge_passes(primary, secondary)]
+    # Sort in reading orientation, then map boxes back to the unchanged photo.
     lines.sort(key=lambda line: (line.box.y, line.box.x))
+    if orientation:
+        lines = [line.model_copy(update={"box": _original_box(line.box, orientation, image.width, image.height)})
+                 for line in lines]
     return lines
+
+
+def _flatten_lighting(gray: Image.Image) -> Image.Image:
+    """Remove broad shadows without changing geometry or adding a dependency."""
+    background = gray.resize((max(1, gray.width // 32), max(1, gray.height // 32)), Image.Resampling.BOX)
+    background = background.filter(ImageFilter.GaussianBlur(3))
+    histogram = background.histogram()
+    total = sum(histogram)
+
+    def percentile(fraction: float) -> int:
+        count = 0
+        for value, frequency in enumerate(histogram):
+            count += frequency
+            if count >= total * fraction:
+                return value
+        return 255
+
+    if percentile(0.9) - percentile(0.1) < 35 and percentile(0.5) >= 210:
+        return gray
+    background = background.resize(gray.size, Image.Resampling.BILINEAR)
+    corrected = ImageChops.subtract(gray, background, offset=255)
+    # Do not discard the darkest percentile: a short heading/signature can
+    # occupy less than 1% of a mostly blank form.
+    return ImageOps.autocontrast(corrected, cutoff=(0, 1))
+
+
+def _quality(lines: list[_Line]) -> float:
+    counts = [_letters(line.block.text) for line in lines]
+    total = sum(counts)
+    if not total:
+        return 0.0
+    return sum(line.conf * count for line, count in zip(lines, counts)) / total * min(total / 40, 1)
+
+
+def _has_ink(gray: Image.Image) -> bool:
+    histogram = gray.histogram()
+    return sum(histogram[:160]) > gray.width * gray.height * 0.001
+
+
+def _original_box(box: Box, angle: int, width: int, height: int) -> Box:
+    """Inverse of a lossless PIL transpose, in original photo pixel coordinates."""
+    if angle == 90:
+        x, y, w, h = width - box.y - box.height, box.x, box.height, box.width
+    elif angle == 180:
+        x, y, w, h = width - box.x - box.width, height - box.y - box.height, box.width, box.height
+    else:  # 270
+        x, y, w, h = box.y, height - box.x - box.width, box.height, box.width
+    left, top = max(0, min(x, width - 1)), max(0, min(y, height - 1))
+    right, bottom = max(left + 1, min(x + w, width)), max(top + 1, min(y + h, height))
+    return Box(x=left, y=top, width=right - left, height=bottom - top)
 
 
 def _tesseract_lines(pytesseract, gray: Image.Image, psm: int, scale: float) -> list[_Line]:

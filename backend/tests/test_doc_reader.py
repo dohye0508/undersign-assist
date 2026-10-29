@@ -49,6 +49,14 @@ class DocumentCorpusTest(unittest.TestCase):
                 text = main + "\n" + "개인정보 수집 이용에 동의합니다.\n" * repetitions
                 self.assertEqual(DocType.CONTRACT, doc_reader.CLASSIFIER.classify(blocks([text])).doc_type)
 
+    def test_cover_does_not_hide_conflicting_contract_families(self):
+        sample = blocks(["제출 표지\n접수번호 123",
+                         "근로계약서\n근로자 사업주\n임금 200만원\n근로시간 8시간",
+                         "임대차계약서\n임대인 임차인\n보증금 300만원\n임대차기간 2년"])
+        result = doc_reader.CLASSIFIER.classify(sample)
+        self.assertEqual(DocType.UNKNOWN, result.doc_type)
+        self.assertEqual("conflicting_documents", result.reason)
+
 
 class ReaderFallbackTest(unittest.TestCase):
     def setUp(self):

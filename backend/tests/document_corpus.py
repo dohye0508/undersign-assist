@@ -23,6 +23,9 @@ def cases():
     authored = json.loads((FIXTURES / "document_cases.json").read_text("utf-8"))
     for case in authored["cases"]:
         yield case["id"], case["expected"], blocks(case.get("pages", [case.get("text", "")])), "authored"
+    general = json.loads((FIXTURES / "document_generalization.json").read_text("utf-8"))
+    for case in general["cases"]:
+        yield case["id"], case["expected"], blocks(case.get("pages", [case.get("text", "")])), "generalization"
     recorded = json.loads((FIXTURES / "document_ocr.json").read_text("utf-8"))
     for case in recorded["samples"]:
         yield case["id"], case["expected"], [TextBlock(**b) for b in case["blocks"]], "local_ocr"

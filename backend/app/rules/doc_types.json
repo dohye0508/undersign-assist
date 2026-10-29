@@ -12,7 +12,7 @@
     ],
     "classification": {
       "titles": ["계약서", "차용증", "약정서"],
-      "required_any": ["agreement", "labor_parties", "lease_parties", "loan_parties", "trade_parties"],
+      "required_any": ["agreement", "labor_parties", "lease_parties", "loan_parties", "trade_parties", "service_parties"],
       "groups": {
         "agreement": ["계약서", "계약을체결", "계약체결", "차용증", "약정서"],
         "labor_parties": ["근로자", "사업주", "고용주"],
@@ -29,6 +29,7 @@
         "trade_parties": ["매도인", "매수인", "위탁자", "수탁자"],
         "trade_payment": ["매매대금", "용역대금", "계약금", "잔금", "할부금"],
         "service": ["회원권", "이용료", "할부수수료", "선수금"],
+        "service_parties": ["가입자와사업자", "회원과사업자", "이용자와사업자"],
         "termination": ["중도해지", "계약해지", "환불조건", "위약금"],
         "term": ["계약기간", "이용기간"]
       },
@@ -71,7 +72,7 @@
     ],
     "classification": {
       "titles": ["개인정보동의서", "개인정보수집이용동의서", "개인정보수집및이용동의서", "개인정보수집이용에대한동의서", "개인정보수집및이용에대한동의서", "개인정보제공동의서", "개인정보제공및이용동의서", "개인정보수집동의서", "개인정보제3자제공동의서", "민감정보처리동의서", "고유식별정보처리동의서"],
-      "required_all": ["privacy", "agreement"],
+      "required_sets": [["privacy", "agreement"], ["purpose", "items", "retention", "agreement"]],
       "groups": {
         "privacy": ["개인정보", "민감정보", "고유식별정보"],
         "agreement": ["동의", "통의하십니까", "거부할권리"],

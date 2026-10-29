@@ -19,10 +19,12 @@ HEADER_LINES = 8
 
 # These describe documents rather than being a document to complete/sign.
 _REFERENCE_HEADINGS = (
-    "제출서류목록", "구비서류목록", "개인정보처리방침", "개인정보보호교육자료",
-    "계약서작성방법안내", "계약서작성안내", "계약서작성요령", "계약서작성가이드",
+    "서류목록", "처리방침", "교육자료", "교육안내", "작성방법", "작성방법안내",
+    "작성안내", "작성요령", "작성가이드",
 )
 _FIELD_PREFIXES = ("제출서류", "구비서류", "준비물", "교육내용", "작품명", "작품요약", "예시문서")
+_APPENDICES = {"contract": {"consent"}, "notice": {"consent", "application"},
+               "application": {"consent", "summary"}, "summary": {"consent"}, "consent": set()}
 
 
 def _unicode_text(text: str) -> str:
@@ -58,27 +60,73 @@ class DocumentClassifier:
         return {kind: {name for name, terms in groups.items() if any(t in text for t in terms)}
                 for kind, groups in self.groups.items()}
 
-    def _titles(self, first_page: list[TextBlock]) -> set[str]:
-        found = set()
-        for block in first_page[:HEADER_LINES]:
-            # Parenthetical form labels such as '(예시)' are not part of a title.
-            text = _unicode_text(block.text)
-            text = re.sub(r"\([^()]*\)\s*$", "", text)
-            heading = normalize(text)
-            if len(heading) > 65 or any(mark in text for mark in (":", "：")):
-                continue
-            if any(heading.startswith(p) and heading != p + "서" for p in _FIELD_PREFIXES):
-                continue
-            for kind, titles in self.titles.items():
-                if any(heading.endswith(title) for title in titles):
-                    found.add(kind)
+    def _title_kinds(self, text: str) -> set[str]:
+        text = _unicode_text(text)
+        # Form labels, page counts and school correspondence numbers are metadata.
+        text = re.sub(r"(?:\([^()]*\)|\[[^\[\]]*\])\s*$", "", text)
+        heading = normalize(text)
+        heading = re.sub(r"(?:제?\d{4}\d{1,4}호|제\d+호)$", "", heading)
+        if len(heading) > 65 or ":" in text:
+            return set()
+        if any(heading.startswith(p) and heading != p + "서" for p in _FIELD_PREFIXES):
+            return set()
+        found = {kind for kind, titles in self.titles.items() if any(heading.endswith(t) for t in titles)}
+        if re.search(r"(?:개인정보|민감정보|고유식별정보)(?:수집|이용|활용|제공|처리|제3자|및|에대한)*동의서$", heading):
+            found.add("consent")
         return found
+
+    def _titles(self, page: list[TextBlock]) -> set[str]:
+        found = set()
+        header = page[:HEADER_LINES]
+        for index, block in enumerate(header):
+            found.update(self._title_kinds(block.text))
+            if index and not self._title_kinds(header[index - 1].text):
+                # A photographed heading may be emitted as two OCR lines.
+                found.update(self._title_kinds(header[index - 1].text + block.text))
+        return found
+
+    def _reference_page(self, page: list[TextBlock]) -> bool:
+        for block in page[:3]:
+            if self._title_kinds(block.text):
+                return False
+            if any(normalize(block.text).endswith(marker) for marker in _REFERENCE_HEADINGS):
+                return True
+        return False
+
+    def _form_evidence(self, page: list[TextBlock]) -> dict[str, set[str]]:
+        # '수집 목적: 신청자 확인' and '수집 항목: 성명, 소속, 연락처'
+        # describe personal data, not application fields to complete.
+        privacy_keys = tuple(t for name, terms in self.groups["consent"].items()
+                             if name not in {"privacy", "agreement"} for t in terms)
+        return self._evidence([b for b in page if not any(t in normalize(b.text) for t in privacy_keys)])
+
+    @staticmethod
+    def _contract_families(groups: set[str]) -> set[str]:
+        return {prefix for prefix in ("labor_", "lease_", "loan_", "trade_")
+                if sum(g.startswith(prefix) for g in groups) >= 2}
+
+    def _conflicting_pages(self, kind: str, pages: list[list[TextBlock]]) -> bool:
+        main_families = self._contract_families(self._evidence(pages[0])["contract"])
+        for page in pages[1:]:
+            if self._reference_page(page):
+                continue
+            evidence = self._form_evidence(page)
+            for other in self._titles(page):
+                if other != kind and other not in _APPENDICES[kind] and self._substantive(other, evidence[other]):
+                    return True
+                if kind == other == "contract":
+                    families = self._contract_families(evidence["contract"])
+                    if families and main_families and not families.intersection(main_families):
+                        return True
+                    main_families.update(families)
+        return False
 
     def _eligible(self, kind: str, groups: set[str]) -> bool:
         rule = self.rules[kind]
         return (
             len(groups) >= rule["min_groups"]
             and set(rule.get("required_all", ())) <= groups
+            and (not rule.get("required_sets") or any(set(required) <= groups for required in rule["required_sets"]))
             and (not rule.get("required_any") or bool(groups.intersection(rule["required_any"])))
         )
 
@@ -97,8 +145,11 @@ class DocumentClassifier:
 
     def classify(self, lines: list[TextBlock]) -> Classification:
         lines = [b for b in lines if normalize(b.text)]
-        page = min((b.page for b in lines), default=0)
-        first_page = [b for b in lines if b.page == page]
+        by_page: dict[int, list[TextBlock]] = {}
+        for block in lines:
+            by_page.setdefault(block.page, []).append(block)
+        pages = [by_page[p] for p in sorted(by_page)] or [[]]
+        first_page = pages[0]
         titles = self._titles(first_page)
         evidence = self._evidence(lines)
         primary = self._evidence(first_page)
@@ -106,13 +157,13 @@ class DocumentClassifier:
                   for kind, groups in evidence.items()}
 
         def result(kind: str, reason: str) -> Classification:
+            if kind != "unknown" and self._conflicting_pages(kind, pages):
+                return Classification(DocType.UNKNOWN, scores, "conflicting_documents")
             return Classification(DocType(kind), scores, reason)
 
         # Check only the opening, so a list/reference inside a real form is harmless.
-        for block in first_page[:3]:
-            heading = normalize(block.text)
-            if any(heading.endswith(marker) for marker in _REFERENCE_HEADINGS):
-                return result("unknown", "reference_material")
+        if self._reference_page(first_page):
+            return result("unknown", "reference_material")
 
         # Application/notice/summary headings sometimes sit on a privacy-only page.
         privacy = primary["consent"]
@@ -120,12 +171,14 @@ class DocumentClassifier:
             self._eligible("consent", privacy)
             and len(privacy & {"purpose", "items", "retention", "third_party", "refusal"}) >= 2
         )
-        supported_titles = {kind for kind in titles if self._substantive(kind, primary[kind])}
+        form_evidence = self._form_evidence(first_page)
+        supported_titles = {kind for kind in titles if self._substantive(kind, form_evidence[kind])}
         if privacy_form and titles and titles <= {"application", "summary", "notice", "consent"} and not supported_titles:
             return result("consent", "privacy_form_under_generic_heading")
 
         if len(titles) == 1:
-            return result(next(iter(titles)), "first_page_title")
+            kind = next(iter(titles))
+            return result(kind, "first_page_title")
         if len(titles) > 1:
             if len(supported_titles) == 1:
                 return result(next(iter(supported_titles)), "main_form_fields")
