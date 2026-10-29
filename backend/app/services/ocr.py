@@ -45,7 +45,7 @@ def recognize(image_bytes: bytes) -> OcrResult:
                 candidate = [_Line(b, b.confidence or 0) for b in recovered]
                 # Region segmentation must not silently turn an unreadable long
                 # body into a confident heading. Keep most of the reliable text.
-                accepted = _improves(candidate, original, 5)
+                accepted = _recovery_improves(candidate, original)
                 if accepted:
                     lines = recovered
                 if accepted and not _needs_review(lines):
@@ -197,6 +197,23 @@ def _improves(candidate: list[_Line], original: list[_Line], margin: float) -> b
     reliable_before = sum(_letters(b.block.text) for b in original if b.conf >= WEAK_CONF)
     reliable_after = sum(_letters(b.block.text) for b in candidate if b.conf >= WEAK_CONF)
     return _quality(candidate) >= _quality(original) + margin and reliable_after >= reliable_before * KEEP_LETTERS_RATIO
+
+
+def _recovery_improves(candidate: list[_Line], original: list[_Line]) -> bool:
+    if _improves(candidate, original, 5):
+        return True
+    # Whole-page scoring discounts fewer than 40 characters. A correctly read
+    # blank form can therefore score below a long string of border/ruler noise.
+    # Require several strong labels, not just a high-confidence heading.
+    total = sum(_letters(b.block.text) for b in candidate)
+    trusted = [b for b in candidate if b.conf >= STRONG_CONF]
+    before = sum(_letters(b.block.text) for b in original if b.conf >= WEAK_CONF)
+    after = sum(_letters(b.block.text) for b in trusted)
+    confidence = sum(b.conf * _letters(b.block.text) for b in candidate) / max(1, total)
+    return (12 <= total <= 60 and len(trusted) >= 4 and confidence >= 80
+            and after >= before * KEEP_LETTERS_RATIO
+            and _needs_review([b.block for b in original])
+            and not _needs_review([b.block for b in candidate]))
 
 
 def _light_background(gray: Image.Image) -> Image.Image:

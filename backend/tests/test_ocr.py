@@ -185,7 +185,7 @@ class OcrFallbackTest(unittest.TestCase):
         labels = [TextBlock(text=t, confidence=93, box=Box(x=20, y=30+i*40, width=100, height=25))
                   for i, t in enumerate(("작품요약서", "팀명", "작품명", "참가자", "작품요약"))]
         noise = TextBlock(text="가나다"*20, confidence=70, box=Box(x=20, y=5, width=600, height=20))
-        unreadable = noise.model_copy(update={"confidence": 20})
+        unreadable = noise.model_copy(update={"confidence": 55})
         buffer = io.BytesIO()
         self.image.save(buffer, "PNG")
         with patch.object(ocr.config, "OCR_PROVIDER", "tesseract"), \
