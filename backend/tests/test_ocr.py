@@ -215,6 +215,11 @@ class OcrFallbackTest(unittest.TestCase):
         from app.services import doc_reader
         self.assertEqual("summary", doc_reader.CLASSIFIER.classify([b.block for b in recovered]).doc_type.value)
 
+    def test_empty_recovery_cannot_promote_only_the_trusted_subset(self):
+        original = [line("성명 연락처", 90, Box(x=20, y=30+i*40, width=100, height=25)) for i in range(4)]
+        original.append(line("손상된 본문 "*20, 20))
+        self.assertEqual([], ocr._preserve_reliable_regions([], original))
+
     def test_rejected_fine_rotation_keeps_original_geometry(self):
         with patch.object(ocr, "_skew_angle", return_value=12), patch.object(ocr, "_tesseract_lines", return_value=[line(self.text, 70)]):
             image, lines, angle = ocr._deskew(self.image.convert("L"), [line(self.text, 80)], None, 1)

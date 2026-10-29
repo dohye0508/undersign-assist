@@ -229,10 +229,6 @@ def _preserve_reliable_regions(candidate: list[_Line], original: list[_Line]) ->
         replacement = max(matches, key=lambda b: b.conf) if line.conf < WEAK_CONF and matches else line
         if replacement not in kept:
             kept.append(replacement)
-    for line in original:
-        if (line.conf >= STRONG_CONF and _letters(line.block.text) >= 2
-                and not any(_overlaps(line.block.box, other.block.box) for other in kept)):
-            kept.append(line)
     by_block = {id(line.block): line for line in kept}
     return [by_block[id(block)] for block in _reading_order([line.block for line in kept])]
 
