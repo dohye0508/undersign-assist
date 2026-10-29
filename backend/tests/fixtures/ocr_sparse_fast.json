@@ -1,0 +1,207 @@
+{
+  "source": "samples/regression/originals/original_06/clean.jpg",
+  "provenance": "Tesseract 5.5.0 on Windows with official tessdata_fast Korean model, 2026-10-29; regression for the model family used by Ubuntu apt.",
+  "model_sha256": "6b85e11d9bbf07863b97b3523b1b112844c43e713df8b66418a081fd1060b3b2",
+  "original": [
+    {
+      "text": "=벅",
+      "box": {
+        "x": 421,
+        "y": 24,
+        "width": 27,
+        "height": 18
+      },
+      "page": 0,
+      "confidence": 25.0
+    },
+    {
+      "text": "+ 작품 요약서",
+      "box": {
+        "x": 50,
+        "y": 26,
+        "width": 508,
+        "height": 30
+      },
+      "page": 0,
+      "confidence": 74.0
+    },
+    {
+      "text": "(~ 팀명 개… 시",
+      "box": {
+        "x": 81,
+        "y": 66,
+        "width": 775,
+        "height": 26
+      },
+      "page": 0,
+      "confidence": 28.0
+    },
+    {
+      "text": "| 잘품명 |0000000000000000000000000000000000000000000000000000000000000000000겨",
+      "box": {
+        "x": 87,
+        "y": 95,
+        "width": 763,
+        "height": 29
+      },
+      "page": 0,
+      "confidence": 46.333333333333336
+    },
+    {
+      "text": "| 구분 | 000 성명 | 촉촉 」",
+      "box": {
+        "x": 87,
+        "y": 117,
+        "width": 764,
+        "height": 29
+      },
+      "page": 0,
+      "confidence": 47.44444444444444
+    },
+    {
+      "text": "02020기0000 고",
+      "box": {
+        "x": 230,
+        "y": 139,
+        "width": 622,
+        "height": 29
+      },
+      "page": 0,
+      "confidence": 5.5
+    },
+    {
+      "text": "참가자 | 00000 00000",
+      "box": {
+        "x": 133,
+        "y": 160,
+        "width": 716,
+        "height": 30
+      },
+      "page": 0,
+      "confidence": 13.5
+    },
+    {
+      "text": "ㄴㄴㄴ`,,ㅣ스ㄴㄴ》ㄴㄴㄴㄴㄴㄴ쓰",
+      "box": {
+        "x": 228,
+        "y": 183,
+        "width": 623,
+        "height": 29
+      },
+      "page": 0,
+      "confidence": 27.4375
+    },
+    {
+      "text": "작품 요약",
+      "box": {
+        "x": 430,
+        "y": 205,
+        "width": 86,
+        "height": 19
+      },
+      "page": 0,
+      "confidence": 79.5
+    },
+    {
+      "text": "9------ㅜㅜㅜ 0 --ㄱㅋㅋㅠㅠㄴ<",
+      "box": {
+        "x": 83,
+        "y": 1081,
+        "width": 775,
+        "height": 19
+      },
+      "page": 0,
+      "confidence": 19.75
+    }
+  ],
+  "candidate": [
+    {
+      "text": "00",
+      "box": {
+        "x": 852,
+        "y": 6,
+        "width": 13,
+        "height": 7
+      },
+      "page": 0,
+      "confidence": 54.0
+    },
+    {
+      "text": "작품 요약서",
+      "box": {
+        "x": 387,
+        "y": 26,
+        "width": 170,
+        "height": 31
+      },
+      "page": 0,
+      "confidence": 48.0
+    },
+    {
+      "text": "팀명",
+      "box": {
+        "x": 143,
+        "y": 75,
+        "width": 31,
+        "height": 18
+      },
+      "page": 0,
+      "confidence": 97.0
+    },
+    {
+      "text": "작품명",
+      "box": {
+        "x": 133,
+        "y": 98,
+        "width": 51,
+        "height": 17
+      },
+      "page": 0,
+      "confidence": 63.333333333333336
+    },
+    {
+      "text": "구분",
+      "box": {
+        "x": 142,
+        "y": 119,
+        "width": 34,
+        "height": 17
+      },
+      "page": 0,
+      "confidence": 97.0
+    },
+    {
+      "text": "성 명",
+      "box": {
+        "x": 346,
+        "y": 119,
+        "width": 50,
+        "height": 18
+      },
+      "page": 0,
+      "confidence": 94.5
+    },
+    {
+      "text": "참가자",
+      "box": {
+        "x": 133,
+        "y": 163,
+        "width": 52,
+        "height": 18
+      },
+      "page": 0,
+      "confidence": 96.0
+    },
+    {
+      "text": "작눔 요약",
+      "box": {
+        "x": 430,
+        "y": 197,
+        "width": 78,
+        "height": 36
+      },
+      "page": 0,
+      "confidence": 63.333333333333336
+    }
+  ]
+}

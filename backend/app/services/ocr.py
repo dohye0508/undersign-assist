@@ -43,6 +43,8 @@ def recognize(image_bytes: bytes) -> OcrResult:
                 recovered = _layout_recovery(working, adaptive=adaptive)
                 original = [_Line(b, b.confidence or 0) for b in lines]
                 candidate = [_Line(b, b.confidence or 0) for b in recovered]
+                candidate = _preserve_reliable_regions(candidate, original)
+                recovered = [b.block for b in candidate]
                 # Region segmentation must not silently turn an unreadable long
                 # body into a confident heading. Keep most of the reliable text.
                 accepted = _recovery_improves(candidate, original)
@@ -214,6 +216,25 @@ def _recovery_improves(candidate: list[_Line], original: list[_Line]) -> bool:
             and after >= before * KEEP_LETTERS_RATIO
             and _needs_review([b.block for b in original])
             and not _needs_review([b.block for b in candidate]))
+
+
+def _preserve_reliable_regions(candidate: list[_Line], original: list[_Line]) -> list[_Line]:
+    """Keep a good heading/label when region OCR weakens the same photo area."""
+    kept = []
+    for line in candidate:
+        letters = _letters(line.block.text)
+        matches = [old for old in original if old.conf >= WEAK_CONF
+                   and _overlaps(line.block.box, old.block.box)
+                   and letters * KEEP_LETTERS_RATIO <= _letters(old.block.text) <= max(letters*2, letters+8)]
+        replacement = max(matches, key=lambda b: b.conf) if line.conf < WEAK_CONF and matches else line
+        if replacement not in kept:
+            kept.append(replacement)
+    for line in original:
+        if (line.conf >= STRONG_CONF and _letters(line.block.text) >= 2
+                and not any(_overlaps(line.block.box, other.block.box) for other in kept)):
+            kept.append(line)
+    by_block = {id(line.block): line for line in kept}
+    return [by_block[id(block)] for block in _reading_order([line.block for line in kept])]
 
 
 def _light_background(gray: Image.Image) -> Image.Image:

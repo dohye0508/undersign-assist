@@ -1,6 +1,7 @@
 """Geometry and bounded OCR fallback tests; no Tesseract executable required."""
 
 import io
+import json
 import sys
 import unittest
 from pathlib import Path
@@ -200,6 +201,19 @@ class OcrFallbackTest(unittest.TestCase):
                             box=Box(x=20, y=30+i*45, width=600, height=25))
                   for i, conf in enumerate((70, 70, 70, 45, 45))]
         self.assertTrue(ocr._needs_review(blocks))
+
+    def test_fast_model_sparse_form_keeps_a_reliable_original_heading(self):
+        fixture = json.loads((Path(__file__).parent / "fixtures/ocr_sparse_fast.json").read_text("utf-8"))
+        def lines(key):
+            return [ocr._Line(TextBlock(**b), b["confidence"]) for b in fixture[key]]
+        original, candidate = lines("original"), lines("candidate")
+        self.assertTrue(ocr._needs_review([b.block for b in original]))
+        self.assertTrue(ocr._needs_review([b.block for b in candidate]))
+        recovered = ocr._preserve_reliable_regions(candidate, original)
+        self.assertTrue(ocr._recovery_improves(recovered, original))
+        self.assertFalse(ocr._needs_review([b.block for b in recovered]))
+        from app.services import doc_reader
+        self.assertEqual("summary", doc_reader.CLASSIFIER.classify([b.block for b in recovered]).doc_type.value)
 
     def test_rejected_fine_rotation_keeps_original_geometry(self):
         with patch.object(ocr, "_skew_angle", return_value=12), patch.object(ocr, "_tesseract_lines", return_value=[line(self.text, 70)]):
