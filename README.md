@@ -32,7 +32,7 @@
 ## 동작 방식
 
 - **글자 인식** (`backend/app/services/ocr.py`): 기본은 Tesseract 한국어(키·인터넷 없이 동작)입니다. 표 머리글을 놓치는 경우가 있어 두 번 읽고(psm 6, psm 11), 신뢰도가 낮은 줄만 바꿉니다. `OCR_PROVIDER=google`이면 Google Cloud Vision을 씁니다(손글씨에 더 정확).
-- **문서 종류·항목** (`services/doc_reader.py`, `rules/doc_types.json`): 핵심어 수로 종류(계약서, 가정통신문, 개인정보 동의서, 신청서, 요약서)를 고르고 항목 값을 뽑습니다. 종류나 항목을 늘릴 때는 규칙 파일만 고칩니다. `GROQ_API_KEY`가 있으면 AI(Groq)가 먼저 정리하고, 없거나 실패하면 규칙 방식으로 돌아갑니다.
+- **문서 종류·항목** (`services/doc_classifier.py`, `services/doc_reader.py`, `rules/doc_types.json`): OCR 후 첫 페이지 제목과 서로 다른 본문 근거를 함께 보고 계약서, 가정통신문, 개인정보 동의서, 신청서, 요약서를 구분합니다. 반복 단어·중복 페이지는 점수를 늘리지 않으며, 근거가 부족하거나 충돌하면 종류를 단정하지 않습니다. 근로계약 외에 임대차·차용증·서비스 계약의 근거도 포함합니다. 작성 칸이 있는 본문에 붙은 개인정보 동의서는 원래 종류를 유지하고, 제목만 신청서·통신문인 개인정보 중심 서식은 동의서로 구분합니다. 종류를 정한 뒤 `GROQ_API_KEY`가 있으면 AI(Groq)가 항목을 옮겨 적고, 없거나 실패하거나 종류를 바꾸면 규칙 추출로 돌아갑니다.
 - **판단** (`services/judge/`, `rules/laws/`): 필수 기재 누락, 숫자 비교, 무효 특약 키워드, 안내 규칙. 사업장 규모처럼 답에 따라 결과가 바뀌는 경우에만 결과보다 먼저 질문합니다. 법령 데이터의 출처와 다시 만드는 법은 [backend/app/rules/laws/README.md](backend/app/rules/laws/README.md)에 있습니다.
 - **칸 찾기** (`app/lib/features/fill/`): 읽기 결과에서 "성명:", "(서명)", "년 월 일", "□예 □아니요" 같은 빈칸을 찾습니다. 날짜는 연·월·일을 따로 받습니다. 글씨 품질은 획 수·크기·시간으로만 검사합니다(AI 안 씀).
 - **받아쓰기 판정** (`app/lib/features/practice/`): 목표 글자를 도현체로 그려 거리 지도를 만들고, 펜 좌표로 모양·크기·위치·기울기·자간을 잽니다.
@@ -88,8 +88,18 @@ flutter run -d chrome
 
 ```
 python backend/tests/smoke_judge.py
+python -m unittest discover -s backend/tests -p "test_*.py" -v
+python backend/tests/evaluate_documents.py
 cd app
 flutter test
+```
+
+문서 분류 시험은 직접 작성한 85개 사례, 기존 사진 9장의 실제 OCR, 배포 서버 OCR 3개를 사용합니다. 공백·유니코드·중복 페이지 변형까지 485건을 확인하며, AI 응답 오류와 여러 페이지 읽기 연결도 시험합니다. 구성과 측정 결과는 `backend/tests/README.md`에 있습니다. 백엔드 회귀 시험은 GitHub Actions에서도 실행합니다.
+
+Tesseract와 한국어 데이터가 설치된 환경에서는 새 서식 18개를 두 가지 이미지 배치로 렌더링해 실제 OCR도 시험할 수 있습니다. 사진과 AI API를 외부로 보내지 않습니다.
+
+```
+python backend/tests/smoke_ocr_documents.py
 ```
 
 ## 배포

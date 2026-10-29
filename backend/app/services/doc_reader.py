@@ -1,9 +1,7 @@
 """인식한 글자 → 문서 종류, 핵심 항목, 읽어줄 요약.
 
-두 가지 방식이 있다.
-- AI(Groq): 글자를 주고 문서 종류와 항목 값을 JSON으로 받는다. 깨진 글자나 문장 중간에 걸친 값도 자연스럽게 정리한다.
-- 규칙: `rules/doc_types.json`의 핵심어 수로 종류를 고르고, 항목 이름 뒤의 글자를 잘라 값으로 쓴다.
-AI를 쓸 수 없으면(키 없음, 실패) 규칙으로 돌아간다.
+종류는 제목·본문 근거·혼합 서식 규칙으로 먼저 정한다. 근거가 부족하면 unknown으로 남긴다.
+항목은 AI(Groq)로 옮겨 적되, 키가 없거나 실패하면 규칙으로 추출한다.
 
 어느 쪽이든 AI는 **문서에 적힌 것을 옮겨 적기만** 한다. 읽어줄 문장은 코드가 항목으로 만든다.
 시험해 보니 AI에게 요약 문장을 맡기면 문서에 없는 내용(예: "매일 근무")을 지어냈다.
@@ -16,59 +14,36 @@ from pathlib import Path
 
 from app.models import DocType, Field, TextBlock
 from app.services import llm
+from app.services.doc_classifier import DocumentClassifier
 
 RULES = json.loads((Path(__file__).resolve().parents[1] / "rules" / "doc_types.json").read_text("utf-8"))
+CLASSIFIER = DocumentClassifier(RULES)
 
-# 이 개수보다 적게 나오면 종류를 단정하지 않는다
-MIN_KEYWORD_HITS = 2
 MAX_VALUE_LENGTH = 80
 
 
 def read(lines: list[TextBlock]) -> tuple[DocType, dict[str, int], list[Field], str]:
-    """문서 종류, 종류별 핵심어 수, 항목, 읽은 방식("ai" 또는 "rules")."""
+    """문서 종류, 종류별 근거 점수, 항목, 읽은 방식("ai" 또는 "rules")."""
     full_text = "\n".join(line.text for line in lines)
-    scores = keyword_scores(full_text)
-    if lines and llm.available():
+    classification = CLASSIFIER.classify(lines)
+    doc_type, scores = classification.doc_type, classification.scores
+    if doc_type == DocType.UNKNOWN:
+        return doc_type, scores, [], "rules"
+    by_rules = _extract_by_rules(lines, doc_type)
+    if llm.available():
         try:
-            doc_type, fields = _read_with_ai(full_text, lines)
-            settled = _yield_form_type(doc_type, scores)
-            if settled == doc_type:
-                # 빈 서식(신청서·요약서)은 AI가 항목을 거의 못 뽑는다. 규칙이 더 찾으면 그쪽을 쓴다
-                by_rules = _extract_by_rules(lines, doc_type)
-                return (doc_type, scores, fields, "ai") if len(fields) >= len(by_rules) else (doc_type, scores, by_rules, "rules")
-            # AI가 제목만 보고 서식 종류를 골랐다. 종류는 핵심어 수를 따르고 항목은 규칙으로 뽑는다
-            return settled, scores, _extract_by_rules(lines, settled), "rules"
+            fields = _read_with_ai(full_text, lines, doc_type)
+            # 빈 서식은 규칙이 더 많은 항목을 찾기도 한다.
+            if len(fields) >= len(by_rules):
+                return doc_type, scores, fields, "ai"
         except llm.LlmError:
             pass
-    doc_type = _yield_form_type(_classify_by_keywords(scores), scores)
-    return doc_type, scores, _extract_by_rules(lines, doc_type), "rules"
-
-
-# 서식 종류(신청서·요약서)가 다른 종류에 양보하려면 그 종류의 핵심어가 이 배수 이상 많아야 한다
-YIELD_RATIO = 2
-
-
-def _yield_form_type(doc_type: DocType, scores: dict[str, int]) -> DocType:
-    """"참가신청서"라는 제목의 개인정보 동의서처럼, 제목은 서식인데 내용은 다른 종류인 문서를 바로잡는다.
-
-    규칙 파일의 `yields_to`에 적힌 종류의 핵심어가 고른 종류보다 YIELD_RATIO배 넘게 많으면 그 종류로 본다.
-    """
-    rule = RULES.get(doc_type.value, {})
-    mine = scores.get(doc_type.value, 0)
-    candidates = [k for k in rule.get("yields_to", []) if scores.get(k, 0) >= MIN_KEYWORD_HITS and scores[k] >= YIELD_RATIO * mine]
-    if not candidates:
-        return doc_type
-    return DocType(max(candidates, key=scores.get))
+    return doc_type, scores, by_rules, "rules"
 
 
 def compact(text: str) -> str:
     """OCR 띄어쓰기는 믿기 어려워서 비교할 때는 공백을 지운다."""
     return re.sub(r"\s+", "", text)
-
-
-def keyword_scores(full_text: str) -> dict[str, int]:
-    text = compact(full_text)
-    return {kind: sum(text.count(k) for k in rule["keywords"]) for kind, rule in RULES.items()}
 
 
 def label_of(doc_type: DocType) -> str:
@@ -78,17 +53,12 @@ def label_of(doc_type: DocType) -> str:
 # --- AI ---------------------------------------------------------------------
 
 
-def _read_with_ai(full_text: str, lines: list[TextBlock]) -> tuple[DocType, list[Field]]:
-    kinds = "\n".join(
-        f'- "{kind}" ({rule["label"]}): 항목 {json.dumps([f["label"] for f in rule["fields"]], ensure_ascii=False)}'
-        + (f'. {rule["hint"]}' if rule.get("hint") else "")
-        for kind, rule in RULES.items()
-    )
+def _read_with_ai(full_text: str, lines: list[TextBlock], doc_type: DocType) -> list[Field]:
+    labels = json.dumps([f["label"] for f in RULES[doc_type.value]["fields"]], ensure_ascii=False)
     prompt = f"""다음은 종이 문서 사진을 OCR로 읽은 글자다. 여러 페이지를 이어 붙인 **한 문서**이니 페이지마다 따로 나누지 말고 하나로 정리한다. 글자 일부가 깨지거나 띄어쓰기가 틀렸을 수 있다.
 
-1. 문서 종류를 아래에서 하나 고른다. 어느 것도 아니면 "unknown".
-{kinds}
-2. 고른 종류의 항목마다 문서에 적힌 값을 옮겨 적는다.
+1. 문서 종류는 "{doc_type.value}" ({label_of(doc_type)})로 정해져 있다. 종류를 바꾸지 않는다.
+2. 다음 항목마다 문서에 적힌 값을 옮겨 적는다: {labels}
    - 문서에 실제로 적힌 내용만 쓴다. 적혀 있지 않으면 null.
    - 숫자, 날짜, 금액은 문서에 적힌 그대로 쓴다. 계산하거나 추측하지 않는다.
    - 띄어쓰기와 명백한 OCR 오타만 바로잡는다.
@@ -100,21 +70,19 @@ OCR 글자:
 {full_text}"""
     answer = llm.ask_json(prompt)
 
-    try:
-        doc_type = DocType(answer.get("doc_type", "unknown"))
-    except ValueError:
-        doc_type = DocType.UNKNOWN
-    if doc_type == DocType.UNKNOWN:
-        return doc_type, []
+    if not isinstance(answer, dict) or answer.get("doc_type") != doc_type.value:
+        raise llm.LlmError("AI가 지정된 문서 종류와 다른 응답을 반환했어요")
 
     values = answer.get("fields") or {}
+    if not isinstance(values, dict):
+        raise llm.LlmError("AI 항목 응답이 객체가 아니에요")
     fields = []
     for spec in RULES[doc_type.value]["fields"]:
         value = values.get(spec["label"])
         if isinstance(value, str) and value.strip():
             value = value.strip()[:MAX_VALUE_LENGTH]
             fields.append(Field(label=spec["label"], value=value, line=_line_of(value, lines)))
-    return doc_type, fields
+    return fields
 
 
 def _line_of(value: str, lines: list[TextBlock]) -> int:
@@ -131,13 +99,6 @@ def _line_of(value: str, lines: list[TextBlock]) -> int:
 
 
 # --- 규칙 -------------------------------------------------------------------
-
-
-def _classify_by_keywords(scores: dict[str, int]) -> DocType:
-    best = max(scores, key=scores.get)
-    if scores[best] < MIN_KEYWORD_HITS:
-        return DocType.UNKNOWN
-    return DocType(best)
 
 
 def _extract_by_rules(lines: list[TextBlock], doc_type: DocType) -> list[Field]:

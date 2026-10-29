@@ -51,7 +51,7 @@ class Field(BaseModel):
 class RecognizedDocument(BaseModel):
     doc_type: DocType = DocType.UNKNOWN
     doc_type_label: str = "알 수 없는 문서"
-    type_scores: dict[str, int] = {}  # 문서 종류별 핵심어가 몇 개 나왔는지
+    type_scores: dict[str, int] = {}  # 제목·서로 다른 본문 근거의 가중 점수 (확률·출현 횟수가 아님)
     blocks: list[TextBlock] = []
     fields: list[Field] = []
     full_text: str = ""
