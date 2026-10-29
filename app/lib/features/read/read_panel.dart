@@ -133,7 +133,7 @@ class ReadSummary extends StatelessWidget {
             style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w500, color: AppColors.text, height: 1.6),
           ),
         ),
-        if (document.fields.isNotEmpty) ...[
+        if (document.fields.isNotEmpty && !document.needsReview) ...[
           const SectionHeading('중요한 항목'),
           for (final field in document.fields) LabelValueRow(label: field.label, value: field.value),
         ],
@@ -163,6 +163,7 @@ TextSpan highlightCounts(String sentence) {
 /// 여러 장은 한 문서의 여러 페이지로만 말한다. 페이지별로 반복하면 길어지므로
 /// 쓸 칸이 있는 페이지 번호만 괄호에 넣는다. 쓸 칸이 없으면 "써야 할 칸은 찾지 못했어요."
 String describeDocument(RecognizedDocument document) {
+  if (document.needsReview) return document.speech;
   final pageCount = document.pages.isEmpty ? 1 : document.pages.length;
   final targets = findFillTargets(document);
   final doc = pageCount > 1 ? '$pageCount페이지짜리 ${document.docTypeLabel}' : document.docTypeLabel;

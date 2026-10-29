@@ -11,7 +11,8 @@ from app.models import DocType, RecognizedDocument
 from app.routers.read import read_document
 from app.services import doc_reader, judge, llm, ocr
 from document_corpus import blocks, cases, variants
-from fastapi import UploadFile
+from fastapi import HTTPException, UploadFile
+from app.routers.judge import JudgeRequest, judge_document
 
 
 class DocumentCorpusTest(unittest.TestCase):
@@ -124,6 +125,30 @@ class ReaderFallbackTest(unittest.TestCase):
 
 
 class ReadRouteTest(unittest.IsolatedAsyncioTestCase):
+    async def test_partial_page_warns_and_skips_field_ai_and_judgement(self):
+        first = blocks(["근로계약서\n임금: 300만원"])
+        uploads = [UploadFile(file=io.BytesIO(b"image")) for _ in range(2)]
+        with patch.object(llm, "ask_json") as ask, patch.object(ocr, "recognize", side_effect=[
+            ocr.OcrResult(first, 800, 1000), ocr.OcrResult(first[:1], 800, 1000, needs_review=True)
+        ]):
+            result = await read_document(uploads)
+        self.assertTrue(result.needs_review)
+        self.assertEqual([1], result.review_pages)
+        self.assertEqual([], result.fields)
+        self.assertIn("2페이지", result.speech)
+        self.assertIn("다시 찍어", result.speech)
+        ask.assert_not_called()
+        with self.assertRaises(HTTPException) as error:
+            await judge_document(JudgeRequest(**result.model_dump()))
+        self.assertEqual(422, error.exception.status_code)
+        for upload in uploads:
+            await upload.close()
+
+    async def test_empty_upload_list_is_actionable(self):
+        with self.assertRaises(HTTPException) as error:
+            await read_document([])
+        self.assertEqual(400, error.exception.status_code)
+
     async def test_multipage_route_keeps_boxes_and_classifies_main_form(self):
         first = blocks(["가정통신문\n일시: 내일\n장소: 박물관\n준비물: 물"])
         appendix = blocks(["개인정보 수집 이용 동의서\n수집 목적: 행사\n수집 항목: 성명\n보유 기간: 1년"])

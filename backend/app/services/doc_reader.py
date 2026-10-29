@@ -22,6 +22,13 @@ CLASSIFIER = DocumentClassifier(RULES)
 MAX_VALUE_LENGTH = 80
 
 
+def review_speech(pages: list[int]) -> str:
+    numbers = ", ".join(str(page + 1) for page in pages)
+    return (f"{numbers}페이지의 글자를 충분히 읽지 못했어요. "
+            "문서 전체가 보이도록 가까이에서 흔들리지 않게 다시 찍어 주세요. "
+            "화면 사진이라면 원본 이미지나 스크린샷을 사용해 주세요.")
+
+
 def read(lines: list[TextBlock]) -> tuple[DocType, dict[str, int], list[Field], str]:
     """문서 종류, 종류별 근거 점수, 항목, 읽은 방식("ai" 또는 "rules")."""
     full_text = "\n".join(line.text for line in lines)

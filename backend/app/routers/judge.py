@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from enum import Enum
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 from app.models import RecognizedDocument
@@ -68,5 +68,7 @@ class JudgeRequest(RecognizedDocument):
 
 @router.post("", response_model=Judgement)
 async def judge_document(request: JudgeRequest) -> Judgement:
+    if request.needs_review:
+        raise HTTPException(status_code=422, detail="문서 글자를 충분히 읽지 못했어요. 안내된 페이지를 다시 찍어 주세요.")
     result = run_judge(request, request.answers)
     return Judgement(**result)

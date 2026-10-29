@@ -75,6 +75,7 @@ final _bullet = RegExp(r'^[※*•○●▶►■□ㅁ口▪]');
 /// 이름은 칸 이름 앞의 주체 + 칸 이름 ("보호자 성명", "보호자 서명"). 주체를 모르면 줄 맨 앞 주체를 쓴다.
 /// 순서는 페이지, 위에서 아래, 왼쪽에서 오른쪽.
 List<FillTarget> findFillTargets(RecognizedDocument doc) {
+  if (doc.needsReview) return [];
   final found = <_Found>[];
   for (final (i, block) in doc.blocks.indexed) {
     found.addAll(_scanLine(block, i, _pageSize(doc, block.page), doc.blocks));

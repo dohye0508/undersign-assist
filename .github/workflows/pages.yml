@@ -37,6 +37,9 @@ jobs:
             --base-href "/${{ github.event.repository.name }}/" \
             --dart-define=API_BASE="${API_BASE}"
           cp ../samples/*.png build/web/ || true
+      - name: Check read quality guidance in browser
+        working-directory: app
+        run: flutter test --platform chrome test/read_quality_test.dart
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

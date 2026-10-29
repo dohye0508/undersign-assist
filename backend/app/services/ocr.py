@@ -7,7 +7,9 @@
 """
 
 import io
+import math
 import re
+from collections import deque
 from dataclasses import dataclass
 from statistics import mean, median
 
@@ -22,6 +24,7 @@ class OcrResult:
     lines: list[TextBlock]
     width: int
     height: int
+    needs_review: bool = False
 
     @property
     def full_text(self) -> str:
@@ -34,7 +37,7 @@ def recognize(image_bytes: bytes) -> OcrResult:
         lines = _google(image)
     else:
         lines = _tesseract(image)
-    return OcrResult(lines=lines, width=image.width, height=image.height)
+    return OcrResult(lines=lines, width=image.width, height=image.height, needs_review=_needs_review(lines))
 
 
 def to_jpeg(image_bytes: bytes, around: Box | None = None, max_side: int = 1024) -> bytes:
@@ -84,7 +87,7 @@ def _tesseract(image: Image.Image) -> list[TextBlock]:
     import pytesseract
 
     pytesseract.pytesseract.tesseract_cmd = config.TESSERACT_CMD
-    gray = _flatten_lighting(image.convert("L"))
+    gray = _flatten_lighting(_clear_background(_light_background(image.convert("L"))))
     # 작은 사진은 키워야 한글 획이 뭉개지지 않는다
     if gray.width < 1600:
         scale = 1600 / gray.width
@@ -96,6 +99,23 @@ def _tesseract(image: Image.Image) -> list[TextBlock]:
     # 엉뚱한 글자("순 버 베 괴")로 읽는다. 그런 칸은 psm 11(흩어진 글자)이 잘 읽으므로 한 번 더 읽어서
     # 신뢰도 낮은 줄만 바꿔 넣는다. 신뢰도 높은 psm 6 줄은 건드리지 않아 깨끗한 문서의 결과는 그대로다.
     primary = _tesseract_lines(pytesseract, gray, 6, scale)
+    deskew_angle = 0.0
+    oriented_size = gray.size
+    if _quality(primary) < 95 and _has_ink(gray):
+        gray, primary, deskew_angle = _deskew(gray, primary, pytesseract, scale)
+    if _quality(primary) < 85:
+        cleaned = _remove_rules(gray)
+        if cleaned is not gray:
+            candidate = _tesseract_lines(pytesseract, cleaned, 6, scale)
+            if _improves(candidate, primary, 10):
+                gray, primary = cleaned, candidate
+    if _quality(primary) < 70 and _has_ink(gray):
+        # Periodic screen scanlines split glyphs into stripes. A small median
+        # reconnects strokes, then a threshold rejects the pale scanlines.
+        cleaned = gray.filter(ImageFilter.MedianFilter(3)).point(lambda p: 0 if p < 145 else 255)
+        candidate = _tesseract_lines(pytesseract, cleaned, 6, scale)
+        if _improves(candidate, primary, 10):
+            gray, primary = cleaned, candidate
     orientation = 0
     # EXIF is handled by _open. Screenshots/scans can have no orientation tag.
     # Try bounded orthogonal rotations only when the normal pass is unreliable.
@@ -112,14 +132,145 @@ def _tesseract(image: Image.Image) -> list[TextBlock]:
             if quality >= 55 and quality >= initial_quality + 15 and quality > best_quality:
                 primary, best_image, orientation, best_quality = candidate, candidate_image, angle, quality
         gray = best_image
+    # Correct the small tilt left after orientation recovery. Projection uses
+    # pixels, not document keywords; accept a retry only if OCR improves.
+    if orientation:
+        oriented_size = gray.size
+        if _quality(primary) < 85:
+            gray, primary, deskew_angle = _deskew(gray, primary, pytesseract, scale)
     secondary = _tesseract_lines(pytesseract, gray, 11, scale)
     lines = [line.block for line in _merge_passes(primary, secondary)]
     # Sort in reading orientation, then map boxes back to the unchanged photo.
-    lines.sort(key=lambda line: (line.box.y, line.box.x))
+    lines = _reading_order(lines)
+    if deskew_angle:
+        lines = [line.model_copy(update={"box": _unrotate_box(
+            line.box, deskew_angle, tuple(v / scale for v in oriented_size), tuple(v / scale for v in gray.size)
+        )}) for line in lines]
     if orientation:
         lines = [line.model_copy(update={"box": _original_box(line.box, orientation, image.width, image.height)})
                  for line in lines]
     return lines
+
+
+def _deskew(gray, primary, pytesseract, scale):
+    angle = _skew_angle(gray)
+    if abs(angle) >= 1.5:
+        candidate_image = gray.rotate(angle, Image.Resampling.BICUBIC, expand=True, fillcolor=255)
+        candidate = _tesseract_lines(pytesseract, candidate_image, 6, scale)
+        if _quality(candidate) >= max(55, _quality(primary) + 3):
+            return candidate_image, candidate, angle
+    return gray, primary, 0.0
+
+
+def _improves(candidate: list[_Line], original: list[_Line], margin: float) -> bool:
+    # Noise can increase mean confidence while destroying a previously legible
+    # heading. Keep most of the reliably recognized characters on a retry.
+    reliable_before = sum(_letters(b.block.text) for b in original if b.conf >= WEAK_CONF)
+    reliable_after = sum(_letters(b.block.text) for b in candidate if b.conf >= WEAK_CONF)
+    return _quality(candidate) >= _quality(original) + margin and reliable_after >= reliable_before * KEEP_LETTERS_RATIO
+
+
+def _light_background(gray: Image.Image) -> Image.Image:
+    """Invert white text on a dark screen, without inverting shaded paper."""
+    histogram = gray.histogram()
+    peak = max(range(256), key=histogram.__getitem__)
+    dark = sum(histogram[:max(0, peak - 35)])
+    light = sum(histogram[min(256, peak + 35):])
+    area = gray.width * gray.height
+    if peak < 120 and max(dark * 2, area * 0.002) < light < area * 0.3:
+        return ImageOps.invert(gray)
+    return gray
+
+
+def _clear_background(gray: Image.Image) -> Image.Image:
+    """Whiten a dark desk connected to all four corners, preserving geometry."""
+    sample = gray.copy()
+    sample.thumbnail((240, 240), Image.Resampling.BOX)
+    width, height = sample.size
+    pixels = sample.tobytes()
+    corners = (0, width - 1, width * (height - 1), len(pixels) - 1)
+    if any(pixels[i] >= 150 for i in corners) or sum(p > 230 for p in pixels) < len(pixels) * 0.35:
+        return gray
+    mask = bytearray(len(pixels))
+    queue = deque(corners)
+    while queue:
+        index = queue.popleft()
+        if mask[index] or pixels[index] >= 150:
+            continue
+        mask[index] = 255
+        x, y = index % width, index // width
+        if x: queue.append(index - 1)
+        if x + 1 < width: queue.append(index + 1)
+        if y: queue.append(index - width)
+        if y + 1 < height: queue.append(index + width)
+    if sum(v == 255 for v in mask) < len(mask) * 0.05:
+        return gray
+    background = Image.frombytes("L", sample.size, bytes(mask)).filter(ImageFilter.MaxFilter(3)).resize(gray.size, Image.Resampling.NEAREST)
+    return Image.composite(Image.new("L", gray.size, 255), gray, background)
+
+
+def _remove_rules(gray: Image.Image) -> Image.Image:
+    """Remove long horizontal/vertical rules, preserving short letter strokes."""
+    ink = gray.point(lambda p: 255 if p < 180 else 0)
+
+    def shifted(image, dx, dy):
+        output = Image.new("L", image.size, 0)
+        output.paste(image, (dx, dy))
+        return output
+
+    def opened(axis):
+        # Power-of-two erosion/dilation implements a 128-pixel line kernel.
+        result = ink
+        for step in (1, 2, 4, 8, 16, 32, 64):
+            result = ImageChops.darker(result, shifted(result, step if axis == 0 else 0, step if axis else 0))
+        for step in (64, 32, 16, 8, 4, 2, 1):
+            result = ImageChops.lighter(result, shifted(result, -step if axis == 0 else 0, -step if axis else 0))
+        return result
+
+    mask = ImageChops.lighter(opened(0), opened(1))
+    pixels = mask.histogram()[255]
+    if not 0.0005 < pixels / (gray.width * gray.height) < 0.25:
+        return gray
+    return Image.composite(Image.new("L", gray.size, 255), gray, mask)
+
+
+def _skew_angle(gray: Image.Image) -> float:
+    """Estimate bounded fine rotation from horizontal text projection peaks."""
+    sample = gray.copy()
+    sample.thumbnail((800, 1000), Image.Resampling.BOX)
+    # Ignore photograph edges, which otherwise dominate short documents.
+    inset_x, inset_y = round(sample.width * 0.03), round(sample.height * 0.03)
+    sample = sample.crop((inset_x, inset_y, sample.width - inset_x, sample.height - inset_y))
+    ink = sample.point(lambda p: 255 if p < 150 else 0)
+
+    def score(angle):
+        rotated = ink.rotate(angle, Image.Resampling.NEAREST, expand=True, fillcolor=0)
+        rows = rotated.resize((1, rotated.height), Image.Resampling.BOX).tobytes()
+        # Differences emphasize distinct text baselines over broad shadows.
+        return sum((a - b) ** 2 for a, b in zip(rows, rows[1:]))
+
+    scores = [(score(angle), angle) for angle in range(-18, 19)]
+    best, angle = max(scores)
+    if best < max(score(0) * 1.2, 100):
+        return 0.0
+    return max((score(angle + delta), angle + delta) for delta in (-0.5, 0, 0.5))[1]
+
+
+def _unrotate_box(box: Box, angle: float, original_size, rotated_size) -> Box:
+    """Inverse expanded Pillow rotation; enclose all four transformed corners."""
+    width, height = original_size
+    rw, rh = rotated_size
+    c, s = math.cos(math.radians(angle)), math.sin(math.radians(angle))
+    points = []
+    for x in (box.x, box.x + box.width):
+        for y in (box.y, box.y + box.height):
+            dx, dy = x - rw / 2, y - rh / 2
+            points.append((width / 2 + c * dx - s * dy, height / 2 + s * dx + c * dy))
+    left = max(0, min(round(width) - 1, math.floor(min(p[0] for p in points))))
+    top = max(0, min(round(height) - 1, math.floor(min(p[1] for p in points))))
+    right = max(left + 1, min(round(width), math.ceil(max(p[0] for p in points))))
+    bottom = max(top + 1, min(round(height), math.ceil(max(p[1] for p in points))))
+    return Box(x=left, y=top, width=right - left, height=bottom - top)
 
 
 def _flatten_lighting(gray: Image.Image) -> Image.Image:
@@ -192,9 +343,51 @@ def _tesseract_lines(pytesseract, gray: Image.Image, psm: int, scale: float) -> 
     lines = []
     for words in grouped.values():
         words.sort(key=lambda w: w[1][0])
-        block = TextBlock(text=_join_words([(t, b) for t, b, _ in words]), box=_union([b for _, b, _ in words]))
-        lines.append(_Line(block=block, conf=mean(c for _, _, c in words)))
+        # PSM 6 sometimes joins two independent columns into one long line.
+        # Short labels beside their values are kept together as a table row.
+        splits = [i for i in range(1, len(words))
+                  if words[i][1][0] - sum((words[i-1][1][0], words[i-1][1][2])) > 5 * median(w[1][3] for w in words)
+                  and _letters("".join(w[0] for w in words[:i])) >= 4
+                  and _letters("".join(w[0] for w in words[i:])) >= 4]
+        starts = [0, *splits, len(words)]
+        for start, end in zip(starts, starts[1:]):
+            part = words[start:end]
+            confidence = mean(c for _, _, c in part)
+            block = TextBlock(text=_join_words([(t, b) for t, b, _ in part]), box=_union([b for _, b, _ in part]), confidence=confidence)
+            lines.append(_Line(block=block, conf=confidence))
     return lines
+
+
+def _reading_order(lines: list[TextBlock]) -> list[TextBlock]:
+    """Read two sustained columns top-to-bottom, retaining spanning headers."""
+    ordered = sorted(lines, key=lambda b: (b.box.y, b.box.x))
+    gaps = []
+    for i, first in enumerate(ordered):
+        for second in ordered[i+1:]:
+            if second.box.y > first.box.y + first.box.height:
+                break
+            left, right = sorted((first, second), key=lambda line: line.box.x)
+            a, b = left.box, right.box
+            if min(a.y+a.height, b.y+b.height) - max(a.y, b.y) < min(a.height, b.height) * 0.5:
+                continue
+            if b.x - a.x - a.width > 4 * min(a.height, b.height) and _letters(left.text) >= 6 and _letters(right.text) >= 4:
+                gaps.append((a.x + a.width, b.x, min(a.y, b.y), max(a.y+a.height, b.y+b.height)))
+    if len(gaps) < 3:
+        return ordered
+    cuts = [(sum(lo < (a+b)/2 < hi for lo, hi, _, _ in gaps), (a+b)/2) for a, b, _, _ in gaps]
+    count, cut = max(cuts)
+    if count < 3:
+        return ordered
+    matched = [g for g in gaps if g[0] < cut < g[1]]
+    top = min(g[2] for g in matched)
+    bottom = min((b.box.y for b in ordered if b.box.y >= top and b.box.x < cut < b.box.x + b.box.width), default=float("inf"))
+    band = [b for b in ordered if top <= b.box.y < bottom]
+    if any(b.box.x < cut < b.box.x + b.box.width for b in band):
+        return ordered
+    return ([b for b in ordered if b.box.y < top]
+            + [b for b in band if b.box.x < cut]
+            + [b for b in band if b.box.x >= cut]
+            + [b for b in ordered if b.box.y >= bottom])
 
 
 def _overlaps(a: Box, b: Box) -> bool:
@@ -281,5 +474,19 @@ def _google(image: Image.Image) -> list[TextBlock]:
                 box = Box(x=min(xs), y=min(ys), width=max(xs) - min(xs), height=max(ys) - min(ys))
                 for part in text.strip().split("\n"):
                     if part.strip():
-                        lines.append(TextBlock(text=part.strip(), box=box))
+                        lines.append(TextBlock(text=part.strip(), box=box, confidence=paragraph.confidence * 100))
     return lines
+
+
+def _needs_review(lines: list[TextBlock]) -> bool:
+    """Flag weak/partial readings; OCR confidence is not a calibrated probability."""
+    if not lines:
+        return True
+    measured = [b for b in lines if b.confidence is not None and _letters(b.text)]
+    if not measured:  # Old stored results and third-party adapters have no score.
+        return False
+    trusted = [b for b in measured if b.confidence >= 65]
+    total = sum(_letters(b.text) for b in measured)
+    reliable = sum(_letters(b.text) for b in trusted)
+    quality = sum(b.confidence * _letters(b.text) for b in measured) / total
+    return quality < 60 or reliable < total * 0.55 or reliable < 24 or len(trusted) < 2

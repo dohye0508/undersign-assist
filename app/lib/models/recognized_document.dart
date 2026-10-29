@@ -12,6 +12,8 @@ class RecognizedDocument {
     required this.pages,
     required this.reader,
     required this.speech,
+    this.needsReview = false,
+    this.reviewPages = const [],
   });
 
   /// contract(계약서) / notice(가정통신문) / consent(개인정보 동의서) / application(신청서) / summary(요약서) / unknown
@@ -31,6 +33,8 @@ class RecognizedDocument {
 
   /// 사용자에게 읽어줄 요약
   final String speech;
+  final bool needsReview;
+  final List<int> reviewPages;
 
   bool get isUnknown => docType == 'unknown';
 
@@ -45,6 +49,8 @@ class RecognizedDocument {
         pages: [for (final p in json['pages'] as List? ?? []) PageSize.fromJson(p)],
         reader: json['reader'] as String? ?? 'rules',
         speech: json['speech'] as String? ?? '',
+        needsReview: json['needs_review'] as bool? ?? false,
+        reviewPages: [for (final p in json['review_pages'] as List? ?? []) p as int],
       );
 
   Map<String, dynamic> toJson() => {
@@ -58,6 +64,8 @@ class RecognizedDocument {
         'pages': [for (final p in pages) p.toJson()],
         'reader': reader,
         'speech': speech,
+        'needs_review': needsReview,
+        'review_pages': reviewPages,
       };
 }
 
@@ -75,7 +83,8 @@ class Box {
 
 /// 한 줄의 글자와 위치
 class TextBlock {
-  const TextBlock(this.text, this.box, [this.page = 0]);
+  const TextBlock(this.text, this.box, [this.page = 0, this.confidence]);
+  final double? confidence;
 
   final String text;
 
@@ -89,9 +98,10 @@ class TextBlock {
         json['text'] as String,
         Box.fromJson(json['box'] as Map<String, dynamic>),
         json['page'] as int? ?? 0,
+        (json['confidence'] as num?)?.toDouble(),
       );
 
-  Map<String, dynamic> toJson() => {'text': text, 'box': box.toJson(), 'page': page};
+  Map<String, dynamic> toJson() => {'text': text, 'box': box.toJson(), 'page': page, 'confidence': confidence};
 }
 
 /// 페이지 사진 크기 (백엔드가 방향을 바로잡은 뒤)

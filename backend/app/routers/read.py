@@ -17,7 +17,9 @@ router = APIRouter(prefix="/api/read", tags=["읽기"])
 @router.post("", response_model=RecognizedDocument)
 async def read_document(photo: list[UploadFile] = File(...)) -> RecognizedDocument:
     """`photo` 필드를 페이지 순서대로 여러 번 보낸다. 한 장만 보내도 된다."""
-    lines, pages = [], []
+    if not photo:
+        raise HTTPException(status_code=400, detail="문서 사진을 한 장 이상 보내 주세요.")
+    lines, pages, review_pages = [], [], []
     for index, upload in enumerate(photo):
         image = await upload.read()
         try:
@@ -26,9 +28,15 @@ async def read_document(photo: list[UploadFile] = File(...)) -> RecognizedDocume
             raise HTTPException(status_code=502, detail=f"{index + 1}페이지 글자 인식 실패: {error}") from error
         lines += [line.model_copy(update={"page": index}) for line in result.lines]
         pages.append(PageInfo(width=result.width, height=result.height))
+        if result.needs_review:
+            review_pages.append(index)
 
     # AI 호출도 네트워크를 기다리므로 별도 스레드에서
-    doc_type, scores, fields, reader = await asyncio.to_thread(doc_reader.read, lines)
+    if review_pages:
+        classification = doc_reader.CLASSIFIER.classify(lines)
+        doc_type, scores, fields, reader = classification.doc_type, classification.scores, [], "rules"
+    else:
+        doc_type, scores, fields, reader = await asyncio.to_thread(doc_reader.read, lines)
     return RecognizedDocument(
         doc_type=doc_type,
         doc_type_label=doc_reader.label_of(doc_type),
@@ -40,5 +48,7 @@ async def read_document(photo: list[UploadFile] = File(...)) -> RecognizedDocume
         image_height=pages[0].height,
         pages=pages,
         reader=reader,
-        speech=doc_reader.build_speech(doc_type, fields, lines),
+        speech=(doc_reader.review_speech(review_pages) if review_pages else doc_reader.build_speech(doc_type, fields, lines)),
+        needs_review=bool(review_pages),
+        review_pages=review_pages,
     )

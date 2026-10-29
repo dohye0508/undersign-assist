@@ -53,6 +53,40 @@ class OcrGeometryTest(unittest.TestCase):
         corrected = ocr._flatten_lighting(page)
         self.assertGreater(corrected.getpixel((250, 90)) - corrected.getpixel((35, 31)), 150)
 
+    def test_fine_rotation_boxes_enclose_original_ink(self):
+        mask = Image.new("L", (420, 260))
+        ImageDraw.Draw(mask).rectangle((31, 45, 186, 73), fill=255)
+        for angle in (-17.5, -5, 3.5, 14):
+            with self.subTest(angle=angle):
+                rotated = mask.rotate(angle, Image.Resampling.BICUBIC, expand=True)
+                x, y, right, bottom = rotated.getbbox()
+                restored = ocr._unrotate_box(Box(x=x, y=y, width=right-x, height=bottom-y), angle, mask.size, rotated.size)
+                self.assertLessEqual(restored.x, 31)
+                self.assertLessEqual(restored.y, 45)
+                self.assertGreaterEqual(restored.x + restored.width, 187)
+                self.assertGreaterEqual(restored.y + restored.height, 74)
+                self.assertLessEqual(restored.x + restored.width, mask.width)
+                self.assertLessEqual(restored.y + restored.height, mask.height)
+
+    def test_dark_screen_inverts_but_shaded_paper_does_not(self):
+        for background, text, inverted in ((10, 230, True), (100, 10, False), (255, 0, False)):
+            image = Image.new("L", (320, 180), background)
+            ImageDraw.Draw(image).rectangle((30, 30, 150, 40), fill=text)
+            actual = ocr._light_background(image)
+            self.assertEqual(255-background if inverted else background, actual.getpixel((0, 0)))
+
+    def test_two_columns_keep_unpaired_last_left_line_before_right(self):
+        # Right baselines begin a few pixels BEFORE the corresponding left ones.
+        header = TextBlock(text="문서 제목", box=Box(x=20, y=5, width=700, height=25))
+        left = [TextBlock(text=f"왼쪽 본문 항목 {i}", box=Box(x=20, y=60+i*50, width=250, height=25)) for i in range(4)]
+        right = [TextBlock(text=f"오른쪽 본문 항목 {i}", box=Box(x=600, y=58+i*50, width=250, height=25)) for i in range(3)]
+        self.assertEqual([header, *left, *right], ocr._reading_order([*right, header, *left]))
+
+    def test_short_table_labels_do_not_become_columns(self):
+        labels = [TextBlock(text="성명", box=Box(x=20, y=60+i*50, width=70, height=25)) for i in range(3)]
+        values = [TextBlock(text="가상 학생 이름", box=Box(x=600, y=60+i*50, width=250, height=25)) for i in range(3)]
+        self.assertEqual([item for pair in zip(labels, values) for item in pair], ocr._reading_order([*labels, *values]))
+
 
 class OcrFallbackTest(unittest.TestCase):
     def setUp(self):
@@ -74,21 +108,43 @@ class OcrFallbackTest(unittest.TestCase):
     def test_rotation_selection_preserves_reading_order_and_original_boxes(self):
         upright = [line(self.text, 90, Box(x=60, y=100, width=700, height=40)),
                    line("두번째 줄입니다", 90, Box(x=60, y=180, width=300, height=40))]
-        with patch.object(ocr, "_tesseract_lines", side_effect=[
-            [line("ㅇㅁ", 20)], upright, [], [], [],
+        with patch.object(ocr, "_remove_rules", side_effect=lambda image: image), patch.object(ocr, "_skew_angle", return_value=0), patch.object(ocr, "_tesseract_lines", side_effect=[
+            [line("ㅇㅁ", 20)], [], upright, [], [], [],
         ]) as recognize:
             result = ocr._tesseract(self.image)
-        self.assertEqual(5, recognize.call_count)
+        self.assertEqual(6, recognize.call_count)
         self.assertEqual([self.text, "두번째 줄입니다"], [b.text for b in result])
         self.assertEqual(Box(x=1460, y=60, width=40, height=700), result[0].box)
         self.assertEqual(Box(x=1380, y=60, width=40, height=300), result[1].box)
 
     def test_unreliable_rotations_do_not_replace_original(self):
-        with patch.object(ocr, "_tesseract_lines", side_effect=[
-            [line("읽을 수 있는 원문", 50)], [line("가짜", 30)], [], [], [],
+        with patch.object(ocr, "_remove_rules", side_effect=lambda image: image), patch.object(ocr, "_skew_angle", return_value=0), patch.object(ocr, "_tesseract_lines", side_effect=[
+            [line("읽을 수 있는 원문", 50)], [], [line("가짜", 30)], [], [], [],
         ]):
             result = ocr._tesseract(self.image)
         self.assertEqual("읽을 수 있는 원문", result[0].text)
+
+    def test_quality_does_not_trust_title_without_body(self):
+        title = TextBlock(text="개인정보 수집 이용 동의서", box=Box(x=1, y=1, width=200, height=20), confidence=96)
+        unreadable = title.model_copy(update={"text": "오류 글자 조각 " * 12, "confidence": 20})
+        self.assertTrue(ocr._needs_review([]))
+        self.assertTrue(ocr._needs_review([title]))
+        self.assertTrue(ocr._needs_review([title, unreadable]))
+        body = title.model_copy(update={"text": "수집 목적은 행사 참가 확인이며 보유 기간은 행사 종료일까지입니다.", "confidence": 92})
+        self.assertFalse(ocr._needs_review([title, body]))
+
+    def test_rejected_fine_rotation_keeps_original_geometry(self):
+        with patch.object(ocr, "_skew_angle", return_value=12), patch.object(ocr, "_tesseract_lines", return_value=[line(self.text, 70)]):
+            image, lines, angle = ocr._deskew(self.image.convert("L"), [line(self.text, 80)], None, 1)
+        self.assertEqual(self.image.size, image.size)
+        self.assertEqual(0, angle)
+        self.assertEqual(80, lines[0].conf)
+
+    def test_cleanup_cannot_replace_legible_title_with_many_weak_characters(self):
+        original = [line("작품 요약서", 90)]
+        candidate = [line("의미 없는 글자 " * 20, 60)]
+        self.assertGreater(ocr._quality(candidate), ocr._quality(original) + 10)
+        self.assertFalse(ocr._improves(candidate, original, 10))
 
 
 if __name__ == "__main__":

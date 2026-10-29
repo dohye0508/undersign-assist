@@ -171,6 +171,11 @@ class WorkspaceState extends ChangeNotifier {
   Future<Judgement?> judge() async {
     final document = _recognized;
     if (document == null) return null;
+    if (document.needsReview) {
+      _judgeError = document.speech;
+      notifyListeners();
+      return null;
+    }
     if (_judgement != null) return _judgement;
     _judging = true;
     _judgeError = null;

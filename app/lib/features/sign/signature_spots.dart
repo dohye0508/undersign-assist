@@ -20,6 +20,7 @@ class SignatureSpot {
 /// 읽기 결과에서 "서명", "(인)", "날인"이 있는 줄을 찾는다 (계획서: 빈칸 검출 로직 재사용).
 /// 백엔드를 부르지 않고 앱에서 바로 한다.
 List<SignatureSpot> findSignatureSpots(RecognizedDocument document) {
+  if (document.needsReview) return [];
   final keyword = RegExp(r'서\s*명|\(\s*인\s*\)|날\s*인');
   // 본문 문장 속 "서명하다" 같은 말은 서명란이 아니다
   final sentence = RegExp(r'서\s*명\s*(하|합|함|을|이|한|할|해)');

@@ -148,6 +148,10 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
       Speech.announce(context, _state.readError ?? '');
       return;
     }
+    if (document.needsReview) {
+      Speech.announce(context, document.speech);
+      return;
+    }
     // 계획서: "총 7페이지입니다. … 서명이 필요한 페이지는 1페이지와 7페이지입니다."
     final signPages = describeSignaturePages(findSignatureSpots(document));
     Speech.announce(
@@ -160,6 +164,10 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
     if (!_analyzing) return;
     if (_state.recognized == null) {
       Speech.announce(context, '먼저 분석이 끝나야 해요.');
+      return;
+    }
+    if (step != WorkStep.read && _state.recognized!.needsReview) {
+      Speech.announce(context, _state.recognized!.speech);
       return;
     }
     setState(() => _step = step);

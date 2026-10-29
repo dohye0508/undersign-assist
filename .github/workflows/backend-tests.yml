@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       full_ocr_matrix:
-        description: Run all 240 synthetic camera cases
+        description: Run the camera matrix and extended scene evaluation
         type: boolean
         default: false
 
@@ -18,7 +18,7 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -44,6 +44,20 @@ jobs:
         env:
           OMP_THREAD_LIMIT: "1"
         run: python backend/tests/stress_ocr_documents.py --output work/camera-full.json
+      - name: Difficult scene and partial reading regression
+        env:
+          OMP_THREAD_LIMIT: "1"
+        run: >-
+          python backend/tests/realistic_ocr_documents.py
+          --profiles tilted desk grid dark_screen screen_moire body_blurred
+          --require-correct --output work/camera-scenes.json
+      - name: Extended scene evaluation
+        if: github.event_name == 'workflow_dispatch' && inputs.full_ocr_matrix
+        env:
+          OMP_THREAD_LIMIT: "1"
+        run: |
+          python backend/tests/realistic_ocr_documents.py --suite holdout --output work/camera-holdout.json
+          python backend/tests/realistic_ocr_documents.py --suite samples --output work/camera-samples.json
       - name: Save OCR diagnostics
         if: always()
         uses: actions/upload-artifact@v4

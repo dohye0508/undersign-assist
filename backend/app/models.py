@@ -33,6 +33,7 @@ class TextBlock(BaseModel):
     text: str
     box: Box
     page: int = 0  # 몇 번째 사진(페이지)의 줄인지. 0부터. box는 그 페이지 사진의 좌표
+    confidence: float | None = None  # OCR 엔진 신뢰도(0~100), 정확도 확률은 아님
 
 
 class PageInfo(BaseModel):
@@ -60,3 +61,5 @@ class RecognizedDocument(BaseModel):
     pages: list[PageInfo] = []  # 페이지마다 사진 크기. 페이지 수는 len(pages)
     reader: str = "rules"  # 항목을 정리한 방식: "ai"(Groq) 또는 "rules"(규칙 파일)
     speech: str = ""  # 사용자에게 읽어줄 요약
+    needs_review: bool = False
+    review_pages: list[int] = []  # 다시 확인할 페이지, 0부터
