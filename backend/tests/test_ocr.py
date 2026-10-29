@@ -220,6 +220,21 @@ class OcrFallbackTest(unittest.TestCase):
         original.append(line("손상된 본문 "*20, 20))
         self.assertEqual([], ocr._preserve_reliable_regions([], original))
 
+    def test_independent_retries_precede_merging_partial_regions(self):
+        labels = [TextBlock(text=t, confidence=93, box=Box(x=20, y=30+i*40, width=100, height=25))
+                  for i, t in enumerate(("작품요약서", "팀명", "작품명", "참가자", "작품요약"))]
+        weak = [b.model_copy(update={"confidence": 40}) for b in labels]
+        bad_merge = [ocr._Line(b.model_copy(update={"text": "엉뚱한 긴 글자"}), 93) for b in labels]
+        buffer = io.BytesIO()
+        self.image.save(buffer, "PNG")
+        with patch.object(ocr.config, "OCR_PROVIDER", "tesseract"), \
+             patch.object(ocr, "_tesseract", return_value=weak), \
+             patch.object(ocr, "_layout_recovery", side_effect=[weak, labels]), \
+             patch.object(ocr, "_preserve_reliable_regions", return_value=bad_merge):
+            result = ocr.recognize(buffer.getvalue())
+        self.assertFalse(result.needs_review)
+        self.assertEqual([b.text for b in labels], [b.text for b in result.lines])
+
     def test_rejected_fine_rotation_keeps_original_geometry(self):
         with patch.object(ocr, "_skew_angle", return_value=12), patch.object(ocr, "_tesseract_lines", return_value=[line(self.text, 70)]):
             image, lines, angle = ocr._deskew(self.image.convert("L"), [line(self.text, 80)], None, 1)

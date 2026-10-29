@@ -39,15 +39,13 @@ def recognize(image_bytes: bytes) -> OcrResult:
         working, offset = _page_crop(image, distant_only=True)
         lines = _tesseract(working)
         if _needs_review(lines) or _quality([_Line(b, b.confidence or 0) for b in lines]) < 70:
+            first_pass = [_Line(b, b.confidence or 0) for b in lines]
+            retries = []
             for adaptive in (False, True):
                 recovered = _layout_recovery(working, adaptive=adaptive)
                 original = [_Line(b, b.confidence or 0) for b in lines]
                 candidate = [_Line(b, b.confidence or 0) for b in recovered]
-                # This repair is for short, still-incomplete forms. Do not
-                # overwrite a successful retry or promote a partial long body.
-                if _needs_review(recovered) and sum(_letters(b.block.text) for b in candidate) <= 60:
-                    candidate = _preserve_reliable_regions(candidate, original)
-                    recovered = [b.block for b in candidate]
+                retries.append(candidate)
                 # Region segmentation must not silently turn an unreadable long
                 # body into a confident heading. Keep most of the reliable text.
                 accepted = _recovery_improves(candidate, original)
@@ -55,6 +53,17 @@ def recognize(image_bytes: bytes) -> OcrResult:
                     lines = recovered
                 if accepted and not _needs_review(lines):
                     break
+            # Try both image thresholds before combining OCR passes. A merge
+            # must not stop a better independent reading (e.g. a creased form).
+            if _needs_review(lines):
+                for candidate in retries:
+                    if sum(_letters(b.block.text) for b in candidate) > 60:
+                        continue
+                    merged = _preserve_reliable_regions(candidate, first_pass)
+                    if (not _needs_review([b.block for b in merged])
+                            and _recovery_improves(merged, first_pass)):
+                        lines = [b.block for b in merged]
+                        break
         if offset != (0, 0):
             lines = [b.model_copy(update={"box": b.box.model_copy(update={"x": b.box.x + offset[0], "y": b.box.y + offset[1]})}) for b in lines]
     return OcrResult(lines=lines, width=image.width, height=image.height,
