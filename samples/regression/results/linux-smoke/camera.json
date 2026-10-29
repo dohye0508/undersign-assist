@@ -1,0 +1,3325 @@
+[
+  {
+    "id": "g_application",
+    "profile": "clean",
+    "expected": "application",
+    "actual": "application",
+    "reason": "first_page_title",
+    "seconds": 0.715,
+    "valid_boxes": true,
+    "dimensions": [
+      [
+        1800,
+        912
+      ]
+    ],
+    "blocks": [
+      {
+        "text": "청소년과학캠프 참가신청서",
+        "box": {
+          "x": 76,
+          "y": 78,
+          "width": 536,
+          "height": 45
+        },
+        "page": 0,
+        "confidence": 93.57142857142857
+      },
+      {
+        "text": "신청인:가상학생",
+        "box": {
+          "x": 77,
+          "y": 153,
+          "width": 281,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.33333333333333
+      },
+      {
+        "text": "참가부문:중등부",
+        "box": {
+          "x": 77,
+          "y": 229,
+          "width": 283,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.0
+      },
+      {
+        "text": "성명:가상학생",
+        "box": {
+          "x": 77,
+          "y": 305,
+          "width": 244,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.0
+      },
+      {
+        "text": "소속: 예시중학교",
+        "box": {
+          "x": 76,
+          "y": 381,
+          "width": 273,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 92.0
+      },
+      {
+        "text": "연락처:010-0000-0000",
+        "box": {
+          "x": 77,
+          "y": 457,
+          "width": 431,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 90.5
+      },
+      {
+        "text": "이메일:94406111@6×8170[016.165[",
+        "box": {
+          "x": 78,
+          "y": 533,
+          "width": 548,
+          "height": 41
+        },
+        "page": 0,
+        "confidence": 46.5
+      },
+      {
+        "text": "신청합니다.",
+        "box": {
+          "x": 77,
+          "y": 608,
+          "width": 187,
+          "height": 37
+        },
+        "page": 0,
+        "confidence": 91.0
+      }
+    ]
+  },
+  {
+    "id": "g_application",
+    "profile": "cropped_title",
+    "expected": "application",
+    "actual": "application",
+    "reason": "body_evidence",
+    "seconds": 0.573,
+    "valid_boxes": true,
+    "dimensions": [
+      [
+        1800,
+        777
+      ]
+    ],
+    "blocks": [
+      {
+        "text": "신청인:가상학생",
+        "box": {
+          "x": 77,
+          "y": 18,
+          "width": 281,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.0
+      },
+      {
+        "text": "참가부문:중등부",
+        "box": {
+          "x": 77,
+          "y": 94,
+          "width": 283,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.0
+      },
+      {
+        "text": "성명:가상학생",
+        "box": {
+          "x": 77,
+          "y": 170,
+          "width": 244,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.0
+      },
+      {
+        "text": "소속: 예시중학교",
+        "box": {
+          "x": 76,
+          "y": 246,
+          "width": 273,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 91.25
+      },
+      {
+        "text": "연락처:010-0000-0000",
+        "box": {
+          "x": 77,
+          "y": 322,
+          "width": 431,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 90.5
+      },
+      {
+        "text": "이메일:9406111@6×8170[016.165[",
+        "box": {
+          "x": 78,
+          "y": 398,
+          "width": 548,
+          "height": 41
+        },
+        "page": 0,
+        "confidence": 49.0
+      },
+      {
+        "text": "신청합니다.",
+        "box": {
+          "x": 77,
+          "y": 473,
+          "width": 187,
+          "height": 37
+        },
+        "page": 0,
+        "confidence": 90.66666666666667
+      }
+    ]
+  },
+  {
+    "id": "g_application",
+    "profile": "shadow",
+    "expected": "application",
+    "actual": "application",
+    "reason": "first_page_title",
+    "seconds": 0.863,
+    "valid_boxes": true,
+    "dimensions": [
+      [
+        1800,
+        912
+      ]
+    ],
+    "blocks": [
+      {
+        "text": "청소년과학캠프 참가신청서",
+        "box": {
+          "x": 77,
+          "y": 78,
+          "width": 535,
+          "height": 45
+        },
+        "page": 0,
+        "confidence": 92.71428571428571
+      },
+      {
+        "text": "신청인:가상학생",
+        "box": {
+          "x": 77,
+          "y": 153,
+          "width": 281,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.0
+      },
+      {
+        "text": "참가부문:중등부",
+        "box": {
+          "x": 77,
+          "y": 229,
+          "width": 283,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 95.66666666666667
+      },
+      {
+        "text": "성명:가상학생",
+        "box": {
+          "x": 77,
+          "y": 305,
+          "width": 244,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.0
+      },
+      {
+        "text": "소속: 예시중학교",
+        "box": {
+          "x": 77,
+          "y": 381,
+          "width": 272,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 92.25
+      },
+      {
+        "text": "연락처:010-0000-0000",
+        "box": {
+          "x": 77,
+          "y": 457,
+          "width": 431,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 86.5
+      },
+      {
+        "text": "이메일:698406111@6@×810[016.165[",
+        "box": {
+          "x": 78,
+          "y": 533,
+          "width": 548,
+          "height": 41
+        },
+        "page": 0,
+        "confidence": 58.0
+      },
+      {
+        "text": "신청합니다.",
+        "box": {
+          "x": 77,
+          "y": 609,
+          "width": 187,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 94.0
+      }
+    ]
+  },
+  {
+    "id": "g_application",
+    "profile": "sideways",
+    "expected": "application",
+    "actual": "application",
+    "reason": "first_page_title",
+    "seconds": 3.992,
+    "valid_boxes": true,
+    "dimensions": [
+      [
+        912,
+        1800
+      ]
+    ],
+    "blocks": [
+      {
+        "text": "청소년 과학캠프 참가신청서",
+        "box": {
+          "x": 78,
+          "y": 1188,
+          "width": 44,
+          "height": 536
+        },
+        "page": 0,
+        "confidence": 77.0
+      },
+      {
+        "text": "신청인:가상학생",
+        "box": {
+          "x": 153,
+          "y": 1442,
+          "width": 36,
+          "height": 281
+        },
+        "page": 0,
+        "confidence": 76.66666666666667
+      },
+      {
+        "text": "참가부문:중등부",
+        "box": {
+          "x": 229,
+          "y": 1440,
+          "width": 37,
+          "height": 283
+        },
+        "page": 0,
+        "confidence": 78.66666666666667
+      },
+      {
+        "text": "성명:과상학생",
+        "box": {
+          "x": 302,
+          "y": 1479,
+          "width": 51,
+          "height": 244
+        },
+        "page": 0,
+        "confidence": 79.75
+      },
+      {
+        "text": "소속: 예시중학교",
+        "box": {
+          "x": 381,
+          "y": 1451,
+          "width": 36,
+          "height": 273
+        },
+        "page": 0,
+        "confidence": 93.6
+      },
+      {
+        "text": "연락처:010-0000-0000",
+        "box": {
+          "x": 457,
+          "y": 1292,
+          "width": 37,
+          "height": 431
+        },
+        "page": 0,
+        "confidence": 91.5
+      },
+      {
+        "text": "이메일:64406111@6@×8310016.165[",
+        "box": {
+          "x": 533,
+          "y": 1174,
+          "width": 41,
+          "height": 548
+        },
+        "page": 0,
+        "confidence": 59.5
+      },
+      {
+        "text": "신청합니다.",
+        "box": {
+          "x": 608,
+          "y": 1536,
+          "width": 37,
+          "height": 187
+        },
+        "page": 0,
+        "confidence": 91.5
+      }
+    ]
+  },
+  {
+    "id": "g_application",
+    "profile": "upside_down",
+    "expected": "application",
+    "actual": "application",
+    "reason": "first_page_title",
+    "seconds": 2.826,
+    "valid_boxes": true,
+    "dimensions": [
+      [
+        1800,
+        912
+      ]
+    ],
+    "blocks": [
+      {
+        "text": "청소년과학캠프 참가신청서",
+        "box": {
+          "x": 1188,
+          "y": 789,
+          "width": 536,
+          "height": 45
+        },
+        "page": 0,
+        "confidence": 93.57142857142857
+      },
+      {
+        "text": "신청인:가상학생",
+        "box": {
+          "x": 1442,
+          "y": 723,
+          "width": 281,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.33333333333333
+      },
+      {
+        "text": "참가부문:중등부",
+        "box": {
+          "x": 1440,
+          "y": 647,
+          "width": 283,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.0
+      },
+      {
+        "text": "성명:가상학생",
+        "box": {
+          "x": 1479,
+          "y": 571,
+          "width": 244,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.0
+      },
+      {
+        "text": "소속: 예시중학교",
+        "box": {
+          "x": 1451,
+          "y": 495,
+          "width": 273,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 92.0
+      },
+      {
+        "text": "연락처:010-0000-0000",
+        "box": {
+          "x": 1292,
+          "y": 419,
+          "width": 431,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 90.5
+      },
+      {
+        "text": "이메일:94406111@6×8170[016.165[",
+        "box": {
+          "x": 1174,
+          "y": 338,
+          "width": 548,
+          "height": 41
+        },
+        "page": 0,
+        "confidence": 46.5
+      },
+      {
+        "text": "신청합니다.",
+        "box": {
+          "x": 1536,
+          "y": 267,
+          "width": 187,
+          "height": 37
+        },
+        "page": 0,
+        "confidence": 90.66666666666667
+      }
+    ]
+  },
+  {
+    "id": "g_consent",
+    "profile": "clean",
+    "expected": "consent",
+    "actual": "consent",
+    "reason": "privacy_form_under_generic_heading",
+    "seconds": 0.909,
+    "valid_boxes": true,
+    "dimensions": [
+      [
+        1800,
+        912
+      ]
+    ],
+    "blocks": [
+      {
+        "text": "개인정보수집및이용동의서",
+        "box": {
+          "x": 76,
+          "y": 78,
+          "width": 560,
+          "height": 45
+        },
+        "page": 0,
+        "confidence": 94.71428571428571
+      },
+      {
+        "text": "수집목적:행사참가확인",
+        "box": {
+          "x": 76,
+          "y": 153,
+          "width": 412,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 94.6
+      },
+      {
+        "text": "수집항목:성명연락처소속",
+        "box": {
+          "x": 76,
+          "y": 229,
+          "width": 450,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 95.8
+      },
+      {
+        "text": "보유기간:행사종료후30일",
+        "box": {
+          "x": 76,
+          "y": 283,
+          "width": 476,
+          "height": 80
+        },
+        "page": 0,
+        "confidence": 93.28571428571429
+      },
+      {
+        "text": "제3자 제공:없음",
+        "box": {
+          "x": 76,
+          "y": 381,
+          "width": 273,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 93.4
+      },
+      {
+        "text": "동의를 거부할 권리가 있습니다.",
+        "box": {
+          "x": 76,
+          "y": 435,
+          "width": 511,
+          "height": 80
+        },
+        "page": 0,
+        "confidence": 93.6
+      },
+      {
+        "text": "동의함ㅁ 동의하지않음ㅁ",
+        "box": {
+          "x": 76,
+          "y": 511,
+          "width": 437,
+          "height": 80
+        },
+        "page": 0,
+        "confidence": 89.0
+      },
+      {
+        "text": "성명:가상참가자",
+        "box": {
+          "x": 77,
+          "y": 609,
+          "width": 284,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.0
+      }
+    ]
+  },
+  {
+    "id": "g_consent",
+    "profile": "cropped_title",
+    "expected": "consent",
+    "actual": "consent",
+    "reason": "body_evidence",
+    "seconds": 0.815,
+    "valid_boxes": true,
+    "dimensions": [
+      [
+        1800,
+        777
+      ]
+    ],
+    "blocks": [
+      {
+        "text": "수집목적:행사참가확인",
+        "box": {
+          "x": 76,
+          "y": 18,
+          "width": 412,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 95.4
+      },
+      {
+        "text": "수집항목:성명연락처소속",
+        "box": {
+          "x": 76,
+          "y": 94,
+          "width": 450,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.0
+      },
+      {
+        "text": "보유기간:행사종료후30일",
+        "box": {
+          "x": 76,
+          "y": 148,
+          "width": 476,
+          "height": 76
+        },
+        "page": 0,
+        "confidence": 94.85714285714286
+      },
+      {
+        "text": "제3자 제공:없음",
+        "box": {
+          "x": 76,
+          "y": 223,
+          "width": 273,
+          "height": 77
+        },
+        "page": 0,
+        "confidence": 93.8
+      },
+      {
+        "text": "동의를거부할권리가있습니다.",
+        "box": {
+          "x": 76,
+          "y": 300,
+          "width": 511,
+          "height": 76
+        },
+        "page": 0,
+        "confidence": 92.0
+      },
+      {
+        "text": "동의함ㅁ동의하지않음ㅁ",
+        "box": {
+          "x": 76,
+          "y": 376,
+          "width": 437,
+          "height": 76
+        },
+        "page": 0,
+        "confidence": 92.0
+      },
+      {
+        "text": "성명:가상참가자",
+        "box": {
+          "x": 77,
+          "y": 474,
+          "width": 284,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.0
+      }
+    ]
+  },
+  {
+    "id": "g_consent",
+    "profile": "shadow",
+    "expected": "consent",
+    "actual": "consent",
+    "reason": "privacy_form_under_generic_heading",
+    "seconds": 0.928,
+    "valid_boxes": true,
+    "dimensions": [
+      [
+        1800,
+        912
+      ]
+    ],
+    "blocks": [
+      {
+        "text": "개인정보 수집및이용동의서",
+        "box": {
+          "x": 76,
+          "y": 53,
+          "width": 560,
+          "height": 93
+        },
+        "page": 0,
+        "confidence": 95.42857142857143
+      },
+      {
+        "text": "수집목적:행사참가확인",
+        "box": {
+          "x": 77,
+          "y": 153,
+          "width": 411,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 93.8
+      },
+      {
+        "text": "수집항목:성명연락처소속",
+        "box": {
+          "x": 77,
+          "y": 229,
+          "width": 449,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 88.6
+      },
+      {
+        "text": "보유기간:행사종료후30일",
+        "box": {
+          "x": 77,
+          "y": 282,
+          "width": 476,
+          "height": 80
+        },
+        "page": 0,
+        "confidence": 93.57142857142857
+      },
+      {
+        "text": "제3자 제공:없음",
+        "box": {
+          "x": 76,
+          "y": 381,
+          "width": 273,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 93.4
+      },
+      {
+        "text": "동의를 거부할 권리가 있습니다.",
+        "box": {
+          "x": 77,
+          "y": 435,
+          "width": 510,
+          "height": 79
+        },
+        "page": 0,
+        "confidence": 93.5
+      },
+      {
+        "text": "동의함ㅁ 동의하지않음ㅁ",
+        "box": {
+          "x": 77,
+          "y": 510,
+          "width": 436,
+          "height": 80
+        },
+        "page": 0,
+        "confidence": 90.77777777777777
+      },
+      {
+        "text": "성명:가상참가자",
+        "box": {
+          "x": 77,
+          "y": 609,
+          "width": 284,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.0
+      }
+    ]
+  },
+  {
+    "id": "g_consent",
+    "profile": "sideways",
+    "expected": "consent",
+    "actual": "consent",
+    "reason": "privacy_form_under_generic_heading",
+    "seconds": 4.214,
+    "valid_boxes": true,
+    "dimensions": [
+      [
+        912,
+        1800
+      ]
+    ],
+    "blocks": [
+      {
+        "text": "개인정보수집및이용동의서",
+        "box": {
+          "x": 76,
+          "y": 1164,
+          "width": 62,
+          "height": 560
+        },
+        "page": 0,
+        "confidence": 94.14285714285714
+      },
+      {
+        "text": "수집목적:행사참가확인",
+        "box": {
+          "x": 153,
+          "y": 1312,
+          "width": 36,
+          "height": 412
+        },
+        "page": 0,
+        "confidence": 96.2
+      },
+      {
+        "text": "수집항목:성명연락처소속",
+        "box": {
+          "x": 229,
+          "y": 1274,
+          "width": 37,
+          "height": 450
+        },
+        "page": 0,
+        "confidence": 85.0
+      },
+      {
+        "text": "보유기간:행사종료후30일",
+        "box": {
+          "x": 284,
+          "y": 1250,
+          "width": 75,
+          "height": 474
+        },
+        "page": 0,
+        "confidence": 94.85714285714286
+      },
+      {
+        "text": "제3자 제공:없음",
+        "box": {
+          "x": 360,
+          "y": 1451,
+          "width": 75,
+          "height": 273
+        },
+        "page": 0,
+        "confidence": 92.8
+      },
+      {
+        "text": "동의를 거부할 권리가 있습니다.",
+        "box": {
+          "x": 436,
+          "y": 1213,
+          "width": 76,
+          "height": 511
+        },
+        "page": 0,
+        "confidence": 93.5
+      },
+      {
+        "text": "동의함ㅁ 동의하지않음ㅁ",
+        "box": {
+          "x": 512,
+          "y": 1287,
+          "width": 76,
+          "height": 437
+        },
+        "page": 0,
+        "confidence": 91.88888888888889
+      },
+      {
+        "text": "성명:가상참가자",
+        "box": {
+          "x": 609,
+          "y": 1439,
+          "width": 36,
+          "height": 284
+        },
+        "page": 0,
+        "confidence": 96.0
+      }
+    ]
+  },
+  {
+    "id": "g_consent",
+    "profile": "upside_down",
+    "expected": "consent",
+    "actual": "consent",
+    "reason": "privacy_form_under_generic_heading",
+    "seconds": 2.863,
+    "valid_boxes": true,
+    "dimensions": [
+      [
+        1800,
+        912
+      ]
+    ],
+    "blocks": [
+      {
+        "text": "개인정보수집및이용동의서",
+        "box": {
+          "x": 1164,
+          "y": 789,
+          "width": 560,
+          "height": 45
+        },
+        "page": 0,
+        "confidence": 95.14285714285714
+      },
+      {
+        "text": "수집목적:행사참가확인",
+        "box": {
+          "x": 1312,
+          "y": 723,
+          "width": 412,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 94.6
+      },
+      {
+        "text": "수집항목:성명연락처소속",
+        "box": {
+          "x": 1274,
+          "y": 647,
+          "width": 450,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 95.8
+      },
+      {
+        "text": "보유기간:행사종료후30일",
+        "box": {
+          "x": 1248,
+          "y": 549,
+          "width": 476,
+          "height": 80
+        },
+        "page": 0,
+        "confidence": 93.28571428571429
+      },
+      {
+        "text": "제3자 제공:없음",
+        "box": {
+          "x": 1451,
+          "y": 495,
+          "width": 273,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 93.4
+      },
+      {
+        "text": "동의를 거부할 권리가 있습니다.",
+        "box": {
+          "x": 1213,
+          "y": 397,
+          "width": 511,
+          "height": 80
+        },
+        "page": 0,
+        "confidence": 93.7
+      },
+      {
+        "text": "동의함ㅁ 동의하지않음ㅁ",
+        "box": {
+          "x": 1287,
+          "y": 321,
+          "width": 437,
+          "height": 80
+        },
+        "page": 0,
+        "confidence": 88.77777777777777
+      },
+      {
+        "text": "성명:가상참가자",
+        "box": {
+          "x": 1439,
+          "y": 267,
+          "width": 284,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.0
+      }
+    ]
+  },
+  {
+    "id": "g_labor",
+    "profile": "clean",
+    "expected": "contract",
+    "actual": "contract",
+    "reason": "first_page_title",
+    "seconds": 0.945,
+    "valid_boxes": true,
+    "dimensions": [
+      [
+        1800,
+        836
+      ]
+    ],
+    "blocks": [
+      {
+        "text": "기간제 근로계약서",
+        "box": {
+          "x": 77,
+          "y": 78,
+          "width": 351,
+          "height": 45
+        },
+        "page": 0,
+        "confidence": 92.5
+      },
+      {
+        "text": "근로자:가상근로자",
+        "box": {
+          "x": 76,
+          "y": 153,
+          "width": 321,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.0
+      },
+      {
+        "text": "고용주:가상상점",
+        "box": {
+          "x": 76,
+          "y": 229,
+          "width": 281,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.33333333333333
+      },
+      {
+        "text": "근무장소:매장",
+        "box": {
+          "x": 76,
+          "y": 300,
+          "width": 238,
+          "height": 55
+        },
+        "page": 0,
+        "confidence": 91.75
+      },
+      {
+        "text": "근로시간:하루6시간",
+        "box": {
+          "x": 76,
+          "y": 377,
+          "width": 351,
+          "height": 54
+        },
+        "page": 0,
+        "confidence": 92.88888888888889
+      },
+      {
+        "text": "시급:12000원",
+        "box": {
+          "x": 77,
+          "y": 453,
+          "width": 245,
+          "height": 49
+        },
+        "page": 0,
+        "confidence": 91.66666666666667
+      },
+      {
+        "text": "계약기간:2026년11월부터3개월",
+        "box": {
+          "x": 77,
+          "y": 528,
+          "width": 565,
+          "height": 50
+        },
+        "page": 0,
+        "confidence": 92.15384615384616
+      }
+    ]
+  },
+  {
+    "id": "g_labor",
+    "profile": "cropped_title",
+    "expected": "contract",
+    "actual": "contract",
+    "reason": "body_evidence",
+    "seconds": 0.621,
+    "valid_boxes": true,
+    "dimensions": [
+      [
+        1800,
+        701
+      ]
+    ],
+    "blocks": [
+      {
+        "text": "근로자:가상근로자",
+        "box": {
+          "x": 76,
+          "y": 18,
+          "width": 321,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.33333333333333
+      },
+      {
+        "text": "고용주:가상상점",
+        "box": {
+          "x": 76,
+          "y": 94,
+          "width": 281,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.66666666666667
+      },
+      {
+        "text": "근무장소:매장",
+        "box": {
+          "x": 76,
+          "y": 165,
+          "width": 238,
+          "height": 54
+        },
+        "page": 0,
+        "confidence": 94.25
+      },
+      {
+        "text": "근로시간:하루6시간",
+        "box": {
+          "x": 76,
+          "y": 242,
+          "width": 351,
+          "height": 53
+        },
+        "page": 0,
+        "confidence": 93.28571428571429
+      },
+      {
+        "text": "시급:12000원",
+        "box": {
+          "x": 77,
+          "y": 318,
+          "width": 245,
+          "height": 48
+        },
+        "page": 0,
+        "confidence": 90.33333333333333
+      },
+      {
+        "text": "계약기간:2026년11월부터3개월",
+        "box": {
+          "x": 77,
+          "y": 393,
+          "width": 565,
+          "height": 50
+        },
+        "page": 0,
+        "confidence": 92.15384615384616
+      }
+    ]
+  },
+  {
+    "id": "g_labor",
+    "profile": "shadow",
+    "expected": "contract",
+    "actual": "contract",
+    "reason": "first_page_title",
+    "seconds": 0.975,
+    "valid_boxes": true,
+    "dimensions": [
+      [
+        1800,
+        836
+      ]
+    ],
+    "blocks": [
+      {
+        "text": "기간제 근로계약서",
+        "box": {
+          "x": 77,
+          "y": 78,
+          "width": 351,
+          "height": 45
+        },
+        "page": 0,
+        "confidence": 94.0
+      },
+      {
+        "text": "근로자:가상근로자",
+        "box": {
+          "x": 77,
+          "y": 153,
+          "width": 320,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.0
+      },
+      {
+        "text": "고용주:가상상점",
+        "box": {
+          "x": 77,
+          "y": 229,
+          "width": 280,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.0
+      },
+      {
+        "text": "근무장소:매장",
+        "box": {
+          "x": 77,
+          "y": 305,
+          "width": 236,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 92.5
+      },
+      {
+        "text": "근로시간:하루6시간",
+        "box": {
+          "x": 76,
+          "y": 376,
+          "width": 351,
+          "height": 55
+        },
+        "page": 0,
+        "confidence": 92.88888888888889
+      },
+      {
+        "text": "시급:12000원",
+        "box": {
+          "x": 77,
+          "y": 451,
+          "width": 247,
+          "height": 52
+        },
+        "page": 0,
+        "confidence": 89.66666666666667
+      },
+      {
+        "text": "계약기 간:2026년11월부터3개월",
+        "box": {
+          "x": 77,
+          "y": 528,
+          "width": 565,
+          "height": 52
+        },
+        "page": 0,
+        "confidence": 92.46153846153847
+      }
+    ]
+  },
+  {
+    "id": "g_labor",
+    "profile": "sideways",
+    "expected": "contract",
+    "actual": "contract",
+    "reason": "first_page_title",
+    "seconds": 3.924,
+    "valid_boxes": true,
+    "dimensions": [
+      [
+        836,
+        1800
+      ]
+    ],
+    "blocks": [
+      {
+        "text": "기간제 근로계약서",
+        "box": {
+          "x": 78,
+          "y": 1372,
+          "width": 45,
+          "height": 351
+        },
+        "page": 0,
+        "confidence": 92.25
+      },
+      {
+        "text": "근로자:가상근로자",
+        "box": {
+          "x": 153,
+          "y": 1403,
+          "width": 36,
+          "height": 321
+        },
+        "page": 0,
+        "confidence": 96.0
+      },
+      {
+        "text": "고용주:가상상점",
+        "box": {
+          "x": 229,
+          "y": 1444,
+          "width": 37,
+          "height": 280
+        },
+        "page": 0,
+        "confidence": 95.66666666666667
+      },
+      {
+        "text": "근무장소:매장",
+        "box": {
+          "x": 294,
+          "y": 1487,
+          "width": 66,
+          "height": 237
+        },
+        "page": 0,
+        "confidence": 94.5
+      },
+      {
+        "text": "근로시간:하루6시간",
+        "box": {
+          "x": 370,
+          "y": 1377,
+          "width": 66,
+          "height": 347
+        },
+        "page": 0,
+        "confidence": 93.42857142857143
+      },
+      {
+        "text": "시급: 12000원",
+        "box": {
+          "x": 457,
+          "y": 1481,
+          "width": 37,
+          "height": 242
+        },
+        "page": 0,
+        "confidence": 92.33333333333333
+      },
+      {
+        "text": "계약기간:2026년11월부터3개월",
+        "box": {
+          "x": 520,
+          "y": 1160,
+          "width": 66,
+          "height": 563
+        },
+        "page": 0,
+        "confidence": 92.81818181818181
+      }
+    ]
+  },
+  {
+    "id": "g_labor",
+    "profile": "upside_down",
+    "expected": "contract",
+    "actual": "contract",
+    "reason": "first_page_title",
+    "seconds": 2.442,
+    "valid_boxes": true,
+    "dimensions": [
+      [
+        1800,
+        836
+      ]
+    ],
+    "blocks": [
+      {
+        "text": "기간제 근로계약서",
+        "box": {
+          "x": 1372,
+          "y": 713,
+          "width": 351,
+          "height": 45
+        },
+        "page": 0,
+        "confidence": 92.5
+      },
+      {
+        "text": "근로자:가상근로자",
+        "box": {
+          "x": 1403,
+          "y": 647,
+          "width": 321,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.0
+      },
+      {
+        "text": "고용주:가상상점",
+        "box": {
+          "x": 1443,
+          "y": 571,
+          "width": 281,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.0
+      },
+      {
+        "text": "근무장소:매장",
+        "box": {
+          "x": 1486,
+          "y": 481,
+          "width": 238,
+          "height": 55
+        },
+        "page": 0,
+        "confidence": 91.75
+      },
+      {
+        "text": "근로시간:하루6시간",
+        "box": {
+          "x": 1373,
+          "y": 405,
+          "width": 351,
+          "height": 54
+        },
+        "page": 0,
+        "confidence": 92.88888888888889
+      },
+      {
+        "text": "시급:12000원",
+        "box": {
+          "x": 1475,
+          "y": 334,
+          "width": 248,
+          "height": 49
+        },
+        "page": 0,
+        "confidence": 90.33333333333333
+      },
+      {
+        "text": "계약기간:2026년11월부터3개월",
+        "box": {
+          "x": 1158,
+          "y": 258,
+          "width": 565,
+          "height": 50
+        },
+        "page": 0,
+        "confidence": 91.92307692307692
+      }
+    ]
+  },
+  {
+    "id": "g_loan",
+    "profile": "clean",
+    "expected": "contract",
+    "actual": "contract",
+    "reason": "first_page_title",
+    "seconds": 0.728,
+    "valid_boxes": true,
+    "dimensions": [
+      [
+        1800,
+        836
+      ]
+    ],
+    "blocks": [
+      {
+        "text": "금전차용증",
+        "box": {
+          "x": 76,
+          "y": 78,
+          "width": 225,
+          "height": 45
+        },
+        "page": 0,
+        "confidence": 95.0
+      },
+      {
+        "text": "채권자:가상채권자",
+        "box": {
+          "x": 76,
+          "y": 153,
+          "width": 321,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.33333333333333
+      },
+      {
+        "text": "채무자:가상채무자",
+        "box": {
+          "x": 76,
+          "y": 229,
+          "width": 321,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.33333333333333
+      },
+      {
+        "text": "차용금:300만원",
+        "box": {
+          "x": 77,
+          "y": 298,
+          "width": 272,
+          "height": 52
+        },
+        "page": 0,
+        "confidence": 92.57142857142857
+      },
+      {
+        "text": "이자율:연3퍼센트",
+        "box": {
+          "x": 78,
+          "y": 381,
+          "width": 307,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 93.2
+      },
+      {
+        "text": "변제기:2027년4월30일",
+        "box": {
+          "x": 78,
+          "y": 451,
+          "width": 432,
+          "height": 54
+        },
+        "page": 0,
+        "confidence": 89.33333333333333
+      },
+      {
+        "text": "상환방법: 계좌이체",
+        "box": {
+          "x": 77,
+          "y": 527,
+          "width": 306,
+          "height": 55
+        },
+        "page": 0,
+        "confidence": 91.5
+      }
+    ]
+  },
+  {
+    "id": "g_loan",
+    "profile": "cropped_title",
+    "expected": "contract",
+    "actual": "contract",
+    "reason": "body_evidence",
+    "seconds": 0.686,
+    "valid_boxes": true,
+    "dimensions": [
+      [
+        1800,
+        701
+      ]
+    ],
+    "blocks": [
+      {
+        "text": "채권자:가상채권자",
+        "box": {
+          "x": 76,
+          "y": 18,
+          "width": 321,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.33333333333333
+      },
+      {
+        "text": "채무자:가상채무자",
+        "box": {
+          "x": 76,
+          "y": 94,
+          "width": 321,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.33333333333333
+      },
+      {
+        "text": "차용금:300만원",
+        "box": {
+          "x": 77,
+          "y": 163,
+          "width": 272,
+          "height": 52
+        },
+        "page": 0,
+        "confidence": 92.57142857142857
+      },
+      {
+        "text": "이자율:연3퍼센트",
+        "box": {
+          "x": 78,
+          "y": 246,
+          "width": 307,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 93.0
+      },
+      {
+        "text": "변제기:2027년4월30일",
+        "box": {
+          "x": 78,
+          "y": 316,
+          "width": 432,
+          "height": 54
+        },
+        "page": 0,
+        "confidence": 89.44444444444444
+      },
+      {
+        "text": "상환방법: 계좌이체",
+        "box": {
+          "x": 77,
+          "y": 392,
+          "width": 306,
+          "height": 55
+        },
+        "page": 0,
+        "confidence": 91.66666666666667
+      }
+    ]
+  },
+  {
+    "id": "g_loan",
+    "profile": "shadow",
+    "expected": "contract",
+    "actual": "contract",
+    "reason": "first_page_title",
+    "seconds": 0.698,
+    "valid_boxes": true,
+    "dimensions": [
+      [
+        1800,
+        836
+      ]
+    ],
+    "blocks": [
+      {
+        "text": "금전차용증",
+        "box": {
+          "x": 76,
+          "y": 78,
+          "width": 225,
+          "height": 45
+        },
+        "page": 0,
+        "confidence": 96.5
+      },
+      {
+        "text": "채권자:가상채권자",
+        "box": {
+          "x": 77,
+          "y": 153,
+          "width": 320,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.0
+      },
+      {
+        "text": "채무자:가상채무자",
+        "box": {
+          "x": 76,
+          "y": 229,
+          "width": 321,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.0
+      },
+      {
+        "text": "차용 금:300만원",
+        "box": {
+          "x": 77,
+          "y": 298,
+          "width": 273,
+          "height": 53
+        },
+        "page": 0,
+        "confidence": 92.28571428571429
+      },
+      {
+        "text": "이자율:연 3퍼센트",
+        "box": {
+          "x": 78,
+          "y": 381,
+          "width": 307,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 92.4
+      },
+      {
+        "text": "변제기:2027년4월30일",
+        "box": {
+          "x": 78,
+          "y": 451,
+          "width": 432,
+          "height": 54
+        },
+        "page": 0,
+        "confidence": 91.11111111111111
+      },
+      {
+        "text": "상환방법: 계좌이체",
+        "box": {
+          "x": 77,
+          "y": 533,
+          "width": 306,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 91.71428571428571
+      }
+    ]
+  },
+  {
+    "id": "g_loan",
+    "profile": "sideways",
+    "expected": "contract",
+    "actual": "contract",
+    "reason": "first_page_title",
+    "seconds": 4.042,
+    "valid_boxes": true,
+    "dimensions": [
+      [
+        836,
+        1800
+      ]
+    ],
+    "blocks": [
+      {
+        "text": "금전차용증",
+        "box": {
+          "x": 78,
+          "y": 1499,
+          "width": 45,
+          "height": 225
+        },
+        "page": 0,
+        "confidence": 96.0
+      },
+      {
+        "text": "채권자:가상채권자",
+        "box": {
+          "x": 153,
+          "y": 1403,
+          "width": 37,
+          "height": 321
+        },
+        "page": 0,
+        "confidence": 95.33333333333333
+      },
+      {
+        "text": "채무자:가상채무자",
+        "box": {
+          "x": 229,
+          "y": 1403,
+          "width": 37,
+          "height": 321
+        },
+        "page": 0,
+        "confidence": 96.0
+      },
+      {
+        "text": "차용 금:300만원",
+        "box": {
+          "x": 302,
+          "y": 1450,
+          "width": 50,
+          "height": 274
+        },
+        "page": 0,
+        "confidence": 91.42857142857143
+      },
+      {
+        "text": "이자율:연3퍼센트",
+        "box": {
+          "x": 381,
+          "y": 1415,
+          "width": 37,
+          "height": 307
+        },
+        "page": 0,
+        "confidence": 92.6
+      },
+      {
+        "text": "변제기:2027년4월30일",
+        "box": {
+          "x": 455,
+          "y": 1293,
+          "width": 48,
+          "height": 429
+        },
+        "page": 0,
+        "confidence": 91.44444444444444
+      },
+      {
+        "text": "상환방법: 계좌이체",
+        "box": {
+          "x": 531,
+          "y": 1417,
+          "width": 51,
+          "height": 306
+        },
+        "page": 0,
+        "confidence": 91.0
+      }
+    ]
+  },
+  {
+    "id": "g_loan",
+    "profile": "upside_down",
+    "expected": "contract",
+    "actual": "contract",
+    "reason": "first_page_title",
+    "seconds": 2.174,
+    "valid_boxes": true,
+    "dimensions": [
+      [
+        1800,
+        836
+      ]
+    ],
+    "blocks": [
+      {
+        "text": "금전차용증",
+        "box": {
+          "x": 1499,
+          "y": 713,
+          "width": 225,
+          "height": 45
+        },
+        "page": 0,
+        "confidence": 95.5
+      },
+      {
+        "text": "채권자:가상채권자",
+        "box": {
+          "x": 1403,
+          "y": 647,
+          "width": 321,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.0
+      },
+      {
+        "text": "채무자:가상채무자",
+        "box": {
+          "x": 1403,
+          "y": 571,
+          "width": 321,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.0
+      },
+      {
+        "text": "차용 금:300만원",
+        "box": {
+          "x": 1451,
+          "y": 485,
+          "width": 272,
+          "height": 53
+        },
+        "page": 0,
+        "confidence": 92.57142857142857
+      },
+      {
+        "text": "이자율:연 3퍼센트",
+        "box": {
+          "x": 1415,
+          "y": 419,
+          "width": 307,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 92.6
+      },
+      {
+        "text": "변제기:2027년4월30일",
+        "box": {
+          "x": 1290,
+          "y": 331,
+          "width": 432,
+          "height": 54
+        },
+        "page": 0,
+        "confidence": 89.22222222222223
+      },
+      {
+        "text": "상환방법: 계좌이체",
+        "box": {
+          "x": 1417,
+          "y": 267,
+          "width": 306,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 92.28571428571429
+      }
+    ]
+  },
+  {
+    "id": "g_notice",
+    "profile": "clean",
+    "expected": "notice",
+    "actual": "notice",
+    "reason": "first_page_title",
+    "seconds": 0.774,
+    "valid_boxes": true,
+    "dimensions": [
+      [
+        1800,
+        912
+      ]
+    ],
+    "blocks": [
+      {
+        "text": "2026년11월 가정통신문",
+        "box": {
+          "x": 77,
+          "y": 63,
+          "width": 495,
+          "height": 82
+        },
+        "page": 0,
+        "confidence": 91.0
+      },
+      {
+        "text": "학부모님께학교소식을 안내드립니다.",
+        "box": {
+          "x": 76,
+          "y": 131,
+          "width": 619,
+          "height": 82
+        },
+        "page": 0,
+        "confidence": 92.0909090909091
+      },
+      {
+        "text": "현장체험학습일시:11월15일 오전9시",
+        "box": {
+          "x": 76,
+          "y": 205,
+          "width": 636,
+          "height": 82
+        },
+        "page": 0,
+        "confidence": 87.92307692307692
+      },
+      {
+        "text": "장소:어린이박물관",
+        "box": {
+          "x": 77,
+          "y": 305,
+          "width": 319,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.0
+      },
+      {
+        "text": "준비물: 물과 운동화",
+        "box": {
+          "x": 76,
+          "y": 381,
+          "width": 321,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 94.75
+      },
+      {
+        "text": "참가비:15000원",
+        "box": {
+          "x": 77,
+          "y": 433,
+          "width": 283,
+          "height": 82
+        },
+        "page": 0,
+        "confidence": 92.2
+      },
+      {
+        "text": "회신기한:다음주월요일",
+        "box": {
+          "x": 77,
+          "y": 533,
+          "width": 411,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.2
+      },
+      {
+        "text": "학교장드림",
+        "box": {
+          "x": 76,
+          "y": 609,
+          "width": 187,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.0
+      }
+    ]
+  },
+  {
+    "id": "g_notice",
+    "profile": "cropped_title",
+    "expected": "notice",
+    "actual": "notice",
+    "reason": "body_evidence",
+    "seconds": 0.678,
+    "valid_boxes": true,
+    "dimensions": [
+      [
+        1800,
+        777
+      ]
+    ],
+    "blocks": [
+      {
+        "text": "학부모님께학교소식을 안내드립니다.",
+        "box": {
+          "x": 76,
+          "y": 0,
+          "width": 619,
+          "height": 75
+        },
+        "page": 0,
+        "confidence": 92.27272727272727
+      },
+      {
+        "text": "현장체험학습일시:11월15일 오전9시",
+        "box": {
+          "x": 76,
+          "y": 70,
+          "width": 636,
+          "height": 79
+        },
+        "page": 0,
+        "confidence": 90.38461538461539
+      },
+      {
+        "text": "장소:어린이박물관",
+        "box": {
+          "x": 77,
+          "y": 170,
+          "width": 319,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 92.0
+      },
+      {
+        "text": "준비물: 물과 운동화",
+        "box": {
+          "x": 76,
+          "y": 246,
+          "width": 321,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 93.25
+      },
+      {
+        "text": "참가비:15000원",
+        "box": {
+          "x": 77,
+          "y": 307,
+          "width": 281,
+          "height": 68
+        },
+        "page": 0,
+        "confidence": 30.666666666666668
+      },
+      {
+        "text": "회신기한:다음주월요일",
+        "box": {
+          "x": 77,
+          "y": 398,
+          "width": 411,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.2
+      },
+      {
+        "text": "학교장드림",
+        "box": {
+          "x": 76,
+          "y": 474,
+          "width": 187,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.0
+      }
+    ]
+  },
+  {
+    "id": "g_notice",
+    "profile": "shadow",
+    "expected": "notice",
+    "actual": "notice",
+    "reason": "first_page_title",
+    "seconds": 0.989,
+    "valid_boxes": true,
+    "dimensions": [
+      [
+        1800,
+        912
+      ]
+    ],
+    "blocks": [
+      {
+        "text": "2026년11월 가정통신문",
+        "box": {
+          "x": 78,
+          "y": 72,
+          "width": 494,
+          "height": 60
+        },
+        "page": 0,
+        "confidence": 92.625
+      },
+      {
+        "text": "학부모님께학교소식을안내드립니다.",
+        "box": {
+          "x": 77,
+          "y": 146,
+          "width": 618,
+          "height": 56
+        },
+        "page": 0,
+        "confidence": 93.0909090909091
+      },
+      {
+        "text": "현장제험학습일시:11월15일 오전9시",
+        "box": {
+          "x": 77,
+          "y": 221,
+          "width": 635,
+          "height": 58
+        },
+        "page": 0,
+        "confidence": 88.84615384615384
+      },
+      {
+        "text": "장소:어린이박물관",
+        "box": {
+          "x": 77,
+          "y": 305,
+          "width": 319,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.0
+      },
+      {
+        "text": "준비물: 물과운동화",
+        "box": {
+          "x": 77,
+          "y": 381,
+          "width": 320,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 91.75
+      },
+      {
+        "text": "참가비:15000원",
+        "box": {
+          "x": 77,
+          "y": 449,
+          "width": 280,
+          "height": 59
+        },
+        "page": 0,
+        "confidence": 64.0
+      },
+      {
+        "text": "회신기한:다음주월요일",
+        "box": {
+          "x": 77,
+          "y": 533,
+          "width": 411,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 94.4
+      },
+      {
+        "text": "학교장드림",
+        "box": {
+          "x": 77,
+          "y": 609,
+          "width": 186,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.0
+      }
+    ]
+  },
+  {
+    "id": "g_notice",
+    "profile": "sideways",
+    "expected": "notice",
+    "actual": "notice",
+    "reason": "first_page_title",
+    "seconds": 4.352,
+    "valid_boxes": true,
+    "dimensions": [
+      [
+        912,
+        1800
+      ]
+    ],
+    "blocks": [
+      {
+        "text": "2026년11월 가정통신문",
+        "box": {
+          "x": 76,
+          "y": 1228,
+          "width": 50,
+          "height": 494
+        },
+        "page": 0,
+        "confidence": 90.0
+      },
+      {
+        "text": "학부모님께학교 소식을 안내드립니다.",
+        "box": {
+          "x": 149,
+          "y": 1105,
+          "width": 47,
+          "height": 619
+        },
+        "page": 0,
+        "confidence": 90.72727272727273
+      },
+      {
+        "text": "현장체험학습일시:11월15일오전9시",
+        "box": {
+          "x": 223,
+          "y": 1088,
+          "width": 47,
+          "height": 636
+        },
+        "page": 0,
+        "confidence": 92.5
+      },
+      {
+        "text": "장소:어린이 박물관",
+        "box": {
+          "x": 305,
+          "y": 1403,
+          "width": 36,
+          "height": 320
+        },
+        "page": 0,
+        "confidence": 95.66666666666667
+      },
+      {
+        "text": "준비물:물과운동화",
+        "box": {
+          "x": 377,
+          "y": 1403,
+          "width": 47,
+          "height": 321
+        },
+        "page": 0,
+        "confidence": 94.0
+      },
+      {
+        "text": "참가비:15000원",
+        "box": {
+          "x": 453,
+          "y": 1443,
+          "width": 46,
+          "height": 280
+        },
+        "page": 0,
+        "confidence": 90.66666666666667
+      },
+      {
+        "text": "회신기한:다음주월요일",
+        "box": {
+          "x": 533,
+          "y": 1312,
+          "width": 36,
+          "height": 411
+        },
+        "page": 0,
+        "confidence": 96.0
+      },
+      {
+        "text": "학교장드림",
+        "box": {
+          "x": 609,
+          "y": 1537,
+          "width": 36,
+          "height": 187
+        },
+        "page": 0,
+        "confidence": 96.0
+      }
+    ]
+  },
+  {
+    "id": "g_notice",
+    "profile": "upside_down",
+    "expected": "notice",
+    "actual": "notice",
+    "reason": "first_page_title",
+    "seconds": 2.866,
+    "valid_boxes": true,
+    "dimensions": [
+      [
+        1800,
+        912
+      ]
+    ],
+    "blocks": [
+      {
+        "text": "2026년11월 가정통신문",
+        "box": {
+          "x": 1228,
+          "y": 767,
+          "width": 495,
+          "height": 82
+        },
+        "page": 0,
+        "confidence": 91.0
+      },
+      {
+        "text": "학부모님께학교소식을 안내드립니다.",
+        "box": {
+          "x": 1105,
+          "y": 699,
+          "width": 619,
+          "height": 82
+        },
+        "page": 0,
+        "confidence": 91.72727272727273
+      },
+      {
+        "text": "현장체험학습일시:11월15일 오전9시",
+        "box": {
+          "x": 1088,
+          "y": 625,
+          "width": 636,
+          "height": 82
+        },
+        "page": 0,
+        "confidence": 92.46153846153847
+      },
+      {
+        "text": "장소:어린이박물관",
+        "box": {
+          "x": 1404,
+          "y": 571,
+          "width": 319,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.0
+      },
+      {
+        "text": "준비물: 물과 운동화",
+        "box": {
+          "x": 1403,
+          "y": 495,
+          "width": 321,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 95.0
+      },
+      {
+        "text": "참가비:15000원",
+        "box": {
+          "x": 1440,
+          "y": 397,
+          "width": 283,
+          "height": 82
+        },
+        "page": 0,
+        "confidence": 92.2
+      },
+      {
+        "text": "회신기한:다음주월요일",
+        "box": {
+          "x": 1312,
+          "y": 343,
+          "width": 411,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.2
+      },
+      {
+        "text": "학교장드림",
+        "box": {
+          "x": 1537,
+          "y": 267,
+          "width": 187,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.0
+      }
+    ]
+  },
+  {
+    "id": "g_receipt",
+    "profile": "clean",
+    "expected": "unknown",
+    "actual": "unknown",
+    "reason": "insufficient_evidence",
+    "seconds": 0.532,
+    "valid_boxes": true,
+    "dimensions": [
+      [
+        1800,
+        760
+      ]
+    ],
+    "blocks": [
+      {
+        "text": "거래영수증",
+        "box": {
+          "x": 76,
+          "y": 78,
+          "width": 225,
+          "height": 45
+        },
+        "page": 0,
+        "confidence": 96.0
+      },
+      {
+        "text": "가상문구점",
+        "box": {
+          "x": 77,
+          "y": 153,
+          "width": 186,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.5
+      },
+      {
+        "text": "물품:공책 5권",
+        "box": {
+          "x": 76,
+          "y": 229,
+          "width": 234,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 93.75
+      },
+      {
+        "text": "금액:10000원",
+        "box": {
+          "x": 76,
+          "y": 301,
+          "width": 245,
+          "height": 51
+        },
+        "page": 0,
+        "confidence": 90.66666666666667
+      },
+      {
+        "text": "카드승인완료",
+        "box": {
+          "x": 77,
+          "y": 381,
+          "width": 236,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.66666666666667
+      },
+      {
+        "text": "구매해주셔서감사합니다.",
+        "box": {
+          "x": 76,
+          "y": 456,
+          "width": 427,
+          "height": 37
+        },
+        "page": 0,
+        "confidence": 94.4
+      }
+    ]
+  },
+  {
+    "id": "g_receipt",
+    "profile": "cropped_title",
+    "expected": "unknown",
+    "actual": "unknown",
+    "reason": "insufficient_evidence",
+    "seconds": 0.456,
+    "valid_boxes": true,
+    "dimensions": [
+      [
+        1800,
+        625
+      ]
+    ],
+    "blocks": [
+      {
+        "text": "가상문구점",
+        "box": {
+          "x": 77,
+          "y": 18,
+          "width": 186,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 97.0
+      },
+      {
+        "text": "물품:공책5권",
+        "box": {
+          "x": 76,
+          "y": 94,
+          "width": 234,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 93.75
+      },
+      {
+        "text": "금액:10000원",
+        "box": {
+          "x": 76,
+          "y": 166,
+          "width": 246,
+          "height": 47
+        },
+        "page": 0,
+        "confidence": 87.66666666666667
+      },
+      {
+        "text": "카드승인완료",
+        "box": {
+          "x": 77,
+          "y": 246,
+          "width": 236,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 97.0
+      },
+      {
+        "text": "구매해주셔서감사합니다.",
+        "box": {
+          "x": 76,
+          "y": 321,
+          "width": 427,
+          "height": 37
+        },
+        "page": 0,
+        "confidence": 94.0
+      }
+    ]
+  },
+  {
+    "id": "g_receipt",
+    "profile": "shadow",
+    "expected": "unknown",
+    "actual": "unknown",
+    "reason": "insufficient_evidence",
+    "seconds": 0.558,
+    "valid_boxes": true,
+    "dimensions": [
+      [
+        1800,
+        760
+      ]
+    ],
+    "blocks": [
+      {
+        "text": "거래영수증",
+        "box": {
+          "x": 76,
+          "y": 78,
+          "width": 225,
+          "height": 45
+        },
+        "page": 0,
+        "confidence": 96.0
+      },
+      {
+        "text": "가상문구점",
+        "box": {
+          "x": 77,
+          "y": 153,
+          "width": 186,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.5
+      },
+      {
+        "text": "물품:공책 5권",
+        "box": {
+          "x": 77,
+          "y": 229,
+          "width": 233,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 92.25
+      },
+      {
+        "text": "금액:10000원",
+        "box": {
+          "x": 76,
+          "y": 301,
+          "width": 246,
+          "height": 47
+        },
+        "page": 0,
+        "confidence": 88.33333333333333
+      },
+      {
+        "text": "카드승인완료",
+        "box": {
+          "x": 77,
+          "y": 381,
+          "width": 236,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 97.0
+      },
+      {
+        "text": "구매해주셔서감사합니다.",
+        "box": {
+          "x": 76,
+          "y": 456,
+          "width": 427,
+          "height": 38
+        },
+        "page": 0,
+        "confidence": 94.0
+      }
+    ]
+  },
+  {
+    "id": "g_receipt",
+    "profile": "sideways",
+    "expected": "unknown",
+    "actual": "unknown",
+    "reason": "insufficient_evidence",
+    "seconds": 3.015,
+    "valid_boxes": true,
+    "dimensions": [
+      [
+        760,
+        1800
+      ]
+    ],
+    "blocks": [
+      {
+        "text": "거래영수증",
+        "box": {
+          "x": 78,
+          "y": 1499,
+          "width": 45,
+          "height": 225
+        },
+        "page": 0,
+        "confidence": 96.0
+      },
+      {
+        "text": "가상문구점",
+        "box": {
+          "x": 153,
+          "y": 1537,
+          "width": 37,
+          "height": 186
+        },
+        "page": 0,
+        "confidence": 96.5
+      },
+      {
+        "text": "물품:공책 5권",
+        "box": {
+          "x": 229,
+          "y": 1491,
+          "width": 37,
+          "height": 233
+        },
+        "page": 0,
+        "confidence": 90.25
+      },
+      {
+        "text": "금액:10000원",
+        "box": {
+          "x": 303,
+          "y": 1479,
+          "width": 48,
+          "height": 245
+        },
+        "page": 0,
+        "confidence": 91.0
+      },
+      {
+        "text": "카드승인완료",
+        "box": {
+          "x": 381,
+          "y": 1487,
+          "width": 37,
+          "height": 236
+        },
+        "page": 0,
+        "confidence": 96.33333333333333
+      },
+      {
+        "text": "구매해주셔서감사합니다.",
+        "box": {
+          "x": 456,
+          "y": 1297,
+          "width": 38,
+          "height": 427
+        },
+        "page": 0,
+        "confidence": 93.6
+      }
+    ]
+  },
+  {
+    "id": "g_receipt",
+    "profile": "upside_down",
+    "expected": "unknown",
+    "actual": "unknown",
+    "reason": "insufficient_evidence",
+    "seconds": 1.624,
+    "valid_boxes": true,
+    "dimensions": [
+      [
+        1800,
+        760
+      ]
+    ],
+    "blocks": [
+      {
+        "text": "거래영수증",
+        "box": {
+          "x": 1499,
+          "y": 637,
+          "width": 225,
+          "height": 45
+        },
+        "page": 0,
+        "confidence": 95.5
+      },
+      {
+        "text": "가상문구점",
+        "box": {
+          "x": 1537,
+          "y": 571,
+          "width": 186,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.5
+      },
+      {
+        "text": "물품:공책 5권",
+        "box": {
+          "x": 1490,
+          "y": 495,
+          "width": 234,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 93.25
+      },
+      {
+        "text": "금액:10000원",
+        "box": {
+          "x": 1479,
+          "y": 408,
+          "width": 245,
+          "height": 51
+        },
+        "page": 0,
+        "confidence": 89.33333333333333
+      },
+      {
+        "text": "카드승인완료",
+        "box": {
+          "x": 1487,
+          "y": 343,
+          "width": 236,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.66666666666667
+      },
+      {
+        "text": "구매해주셔서 감사합니다.",
+        "box": {
+          "x": 1297,
+          "y": 267,
+          "width": 427,
+          "height": 37
+        },
+        "page": 0,
+        "confidence": 94.4
+      }
+    ]
+  },
+  {
+    "id": "g_summary",
+    "profile": "clean",
+    "expected": "summary",
+    "actual": "summary",
+    "reason": "first_page_title",
+    "seconds": 0.851,
+    "valid_boxes": true,
+    "dimensions": [
+      [
+        1800,
+        836
+      ]
+    ],
+    "blocks": [
+      {
+        "text": "연구작품요약서",
+        "box": {
+          "x": 77,
+          "y": 78,
+          "width": 308,
+          "height": 45
+        },
+        "page": 0,
+        "confidence": 94.5
+      },
+      {
+        "text": "작품명:음성길잡이",
+        "box": {
+          "x": 77,
+          "y": 146,
+          "width": 316,
+          "height": 60
+        },
+        "page": 0,
+        "confidence": 94.8
+      },
+      {
+        "text": "팀명:가상연구팀",
+        "box": {
+          "x": 79,
+          "y": 229,
+          "width": 278,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.0
+      },
+      {
+        "text": "작품요약:길을 소리로 안내하는서비스",
+        "box": {
+          "x": 77,
+          "y": 293,
+          "width": 641,
+          "height": 58
+        },
+        "page": 0,
+        "confidence": 93.45454545454545
+      },
+      {
+        "text": "기획의도:안전한이동지원",
+        "box": {
+          "x": 77,
+          "y": 374,
+          "width": 435,
+          "height": 59
+        },
+        "page": 0,
+        "confidence": 94.66666666666667
+      },
+      {
+        "text": "사용기술:음성인식과지도",
+        "box": {
+          "x": 76,
+          "y": 457,
+          "width": 450,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 94.85714285714286
+      },
+      {
+        "text": "개발환경:웹브라우저",
+        "box": {
+          "x": 77,
+          "y": 504,
+          "width": 352,
+          "height": 84
+        },
+        "page": 0,
+        "confidence": 93.2
+      }
+    ]
+  },
+  {
+    "id": "g_summary",
+    "profile": "cropped_title",
+    "expected": "summary",
+    "actual": "summary",
+    "reason": "body_evidence",
+    "seconds": 0.628,
+    "valid_boxes": true,
+    "dimensions": [
+      [
+        1800,
+        701
+      ]
+    ],
+    "blocks": [
+      {
+        "text": "작품명:음성길잡이",
+        "box": {
+          "x": 77,
+          "y": 11,
+          "width": 316,
+          "height": 60
+        },
+        "page": 0,
+        "confidence": 94.8
+      },
+      {
+        "text": "팀명:가상연구팀",
+        "box": {
+          "x": 79,
+          "y": 94,
+          "width": 278,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.0
+      },
+      {
+        "text": "작품요약:길을 소리로 안내하는서비스",
+        "box": {
+          "x": 77,
+          "y": 158,
+          "width": 641,
+          "height": 58
+        },
+        "page": 0,
+        "confidence": 93.9090909090909
+      },
+      {
+        "text": "기획의도:안전한이동지원",
+        "box": {
+          "x": 77,
+          "y": 239,
+          "width": 436,
+          "height": 59
+        },
+        "page": 0,
+        "confidence": 93.33333333333333
+      },
+      {
+        "text": "사용기술:음성인식과지도",
+        "box": {
+          "x": 76,
+          "y": 322,
+          "width": 450,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 94.85714285714286
+      },
+      {
+        "text": "개발환경:웹브라우저",
+        "box": {
+          "x": 77,
+          "y": 369,
+          "width": 352,
+          "height": 84
+        },
+        "page": 0,
+        "confidence": 93.2
+      }
+    ]
+  },
+  {
+    "id": "g_summary",
+    "profile": "shadow",
+    "expected": "summary",
+    "actual": "summary",
+    "reason": "first_page_title",
+    "seconds": 0.825,
+    "valid_boxes": true,
+    "dimensions": [
+      [
+        1800,
+        836
+      ]
+    ],
+    "blocks": [
+      {
+        "text": "연구작품요약서",
+        "box": {
+          "x": 77,
+          "y": 78,
+          "width": 308,
+          "height": 45
+        },
+        "page": 0,
+        "confidence": 93.75
+      },
+      {
+        "text": "작품명:음성길잡이",
+        "box": {
+          "x": 77,
+          "y": 147,
+          "width": 316,
+          "height": 56
+        },
+        "page": 0,
+        "confidence": 94.8
+      },
+      {
+        "text": "팀명:가상연구팀",
+        "box": {
+          "x": 79,
+          "y": 229,
+          "width": 278,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 95.33333333333333
+      },
+      {
+        "text": "작품요약: 길을소리로 안내하는 서비스",
+        "box": {
+          "x": 77,
+          "y": 295,
+          "width": 641,
+          "height": 54
+        },
+        "page": 0,
+        "confidence": 93.75
+      },
+      {
+        "text": "기획의도:안전한이동지원",
+        "box": {
+          "x": 78,
+          "y": 375,
+          "width": 435,
+          "height": 55
+        },
+        "page": 0,
+        "confidence": 95.16666666666667
+      },
+      {
+        "text": "사용기술:음성인식과지도",
+        "box": {
+          "x": 76,
+          "y": 451,
+          "width": 450,
+          "height": 56
+        },
+        "page": 0,
+        "confidence": 95.0
+      },
+      {
+        "text": "개발환경:웹브라우저",
+        "box": {
+          "x": 77,
+          "y": 528,
+          "width": 352,
+          "height": 55
+        },
+        "page": 0,
+        "confidence": 93.0
+      }
+    ]
+  },
+  {
+    "id": "g_summary",
+    "profile": "sideways",
+    "expected": "summary",
+    "actual": "summary",
+    "reason": "first_page_title",
+    "seconds": 4.053,
+    "valid_boxes": true,
+    "dimensions": [
+      [
+        836,
+        1800
+      ]
+    ],
+    "blocks": [
+      {
+        "text": "연구작품요약서",
+        "box": {
+          "x": 78,
+          "y": 1415,
+          "width": 45,
+          "height": 308
+        },
+        "page": 0,
+        "confidence": 92.5
+      },
+      {
+        "text": "작품명:음성 길잡이",
+        "box": {
+          "x": 150,
+          "y": 1407,
+          "width": 56,
+          "height": 316
+        },
+        "page": 0,
+        "confidence": 94.0
+      },
+      {
+        "text": "팀명:가상연구팀",
+        "box": {
+          "x": 229,
+          "y": 1443,
+          "width": 37,
+          "height": 279
+        },
+        "page": 0,
+        "confidence": 95.66666666666667
+      },
+      {
+        "text": "작품요약:길을 소리로 안내하는서비스",
+        "box": {
+          "x": 298,
+          "y": 1082,
+          "width": 48,
+          "height": 641
+        },
+        "page": 0,
+        "confidence": 92.66666666666667
+      },
+      {
+        "text": "기획의도:안전한이동지원",
+        "box": {
+          "x": 375,
+          "y": 1287,
+          "width": 54,
+          "height": 436
+        },
+        "page": 0,
+        "confidence": 93.5
+      },
+      {
+        "text": "사용기술:음성 인식과 지도",
+        "box": {
+          "x": 452,
+          "y": 1274,
+          "width": 50,
+          "height": 450
+        },
+        "page": 0,
+        "confidence": 94.85714285714286
+      },
+      {
+        "text": "개발환경:웹브라우저",
+        "box": {
+          "x": 531,
+          "y": 1371,
+          "width": 50,
+          "height": 352
+        },
+        "page": 0,
+        "confidence": 93.42857142857143
+      }
+    ]
+  },
+  {
+    "id": "g_summary",
+    "profile": "upside_down",
+    "expected": "summary",
+    "actual": "summary",
+    "reason": "first_page_title",
+    "seconds": 2.69,
+    "valid_boxes": true,
+    "dimensions": [
+      [
+        1800,
+        836
+      ]
+    ],
+    "blocks": [
+      {
+        "text": "연구작품요약서",
+        "box": {
+          "x": 1415,
+          "y": 713,
+          "width": 308,
+          "height": 45
+        },
+        "page": 0,
+        "confidence": 94.5
+      },
+      {
+        "text": "작품명:음성길잡이",
+        "box": {
+          "x": 1407,
+          "y": 630,
+          "width": 316,
+          "height": 60
+        },
+        "page": 0,
+        "confidence": 94.8
+      },
+      {
+        "text": "팀명:가상연구팀",
+        "box": {
+          "x": 1443,
+          "y": 571,
+          "width": 278,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 96.0
+      },
+      {
+        "text": "작품요약:길을 소리로 안내하는서비스",
+        "box": {
+          "x": 1082,
+          "y": 485,
+          "width": 641,
+          "height": 58
+        },
+        "page": 0,
+        "confidence": 93.63636363636364
+      },
+      {
+        "text": "기획의도:안전한이동지원",
+        "box": {
+          "x": 1288,
+          "y": 403,
+          "width": 435,
+          "height": 59
+        },
+        "page": 0,
+        "confidence": 94.33333333333333
+      },
+      {
+        "text": "사용기술:음성인식과지도",
+        "box": {
+          "x": 1274,
+          "y": 343,
+          "width": 450,
+          "height": 36
+        },
+        "page": 0,
+        "confidence": 94.71428571428571
+      },
+      {
+        "text": "개발환경:웹브라우저",
+        "box": {
+          "x": 1371,
+          "y": 248,
+          "width": 352,
+          "height": 84
+        },
+        "page": 0,
+        "confidence": 93.2
+      }
+    ]
+  }
+]

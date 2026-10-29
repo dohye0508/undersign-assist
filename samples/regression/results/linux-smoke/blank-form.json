@@ -1,0 +1,424 @@
+{
+  "revision": "working-tree",
+  "stats": {
+    "count": 4,
+    "type_correct": 4,
+    "ordinary": 4,
+    "usable": 4,
+    "false_review": 0,
+    "negative_detected": 0,
+    "negatives": 0,
+    "invalid_boxes": 0,
+    "cer": null
+  },
+  "results": [
+    {
+      "id": "originals/original_06/clean",
+      "expected": "summary",
+      "actual": "summary",
+      "expected_review": false,
+      "needs_review": false,
+      "valid_boxes": true,
+      "seconds": 5.905,
+      "reference_characters": 0,
+      "edits": null,
+      "text": "00\n+ 작품 요약서\n팀명\n작품명\n구분\n성 명\n참가자\n작품 요약",
+      "blocks": [
+        {
+          "text": "00",
+          "box": {
+            "x": 852,
+            "y": 6,
+            "width": 13,
+            "height": 7
+          },
+          "page": 0,
+          "confidence": 63.0
+        },
+        {
+          "text": "+ 작품 요약서",
+          "box": {
+            "x": 50,
+            "y": 26,
+            "width": 508,
+            "height": 30
+          },
+          "page": 0,
+          "confidence": 73.66666666666667
+        },
+        {
+          "text": "팀명",
+          "box": {
+            "x": 143,
+            "y": 75,
+            "width": 31,
+            "height": 18
+          },
+          "page": 0,
+          "confidence": 96.0
+        },
+        {
+          "text": "작품명",
+          "box": {
+            "x": 133,
+            "y": 93,
+            "width": 51,
+            "height": 30
+          },
+          "page": 0,
+          "confidence": 94.0
+        },
+        {
+          "text": "구분",
+          "box": {
+            "x": 142,
+            "y": 119,
+            "width": 34,
+            "height": 17
+          },
+          "page": 0,
+          "confidence": 97.0
+        },
+        {
+          "text": "성 명",
+          "box": {
+            "x": 346,
+            "y": 119,
+            "width": 50,
+            "height": 18
+          },
+          "page": 0,
+          "confidence": 94.5
+        },
+        {
+          "text": "참가자",
+          "box": {
+            "x": 133,
+            "y": 163,
+            "width": 52,
+            "height": 18
+          },
+          "page": 0,
+          "confidence": 96.0
+        },
+        {
+          "text": "작품 요약",
+          "box": {
+            "x": 430,
+            "y": 205,
+            "width": 86,
+            "height": 19
+          },
+          "page": 0,
+          "confidence": 80.5
+        }
+      ]
+    },
+    {
+      "id": "originals/original_06/dark_screen",
+      "expected": "summary",
+      "actual": "summary",
+      "expected_review": false,
+      "needs_review": false,
+      "valid_boxes": true,
+      "seconds": 4.975,
+      "reference_characters": 0,
+      "edits": null,
+      "text": "작품 요약서\n팀명\n작품명\n성 명\n구분\n소 속\n참가자\n작품 요약",
+      "blocks": [
+        {
+          "text": "작품 요약서",
+          "box": {
+            "x": 387,
+            "y": 26,
+            "width": 170,
+            "height": 31
+          },
+          "page": 0,
+          "confidence": 96.0
+        },
+        {
+          "text": "팀명",
+          "box": {
+            "x": 143,
+            "y": 75,
+            "width": 31,
+            "height": 18
+          },
+          "page": 0,
+          "confidence": 96.0
+        },
+        {
+          "text": "작품명",
+          "box": {
+            "x": 133,
+            "y": 87,
+            "width": 51,
+            "height": 34
+          },
+          "page": 0,
+          "confidence": 78.0
+        },
+        {
+          "text": "성 명",
+          "box": {
+            "x": 346,
+            "y": 119,
+            "width": 50,
+            "height": 18
+          },
+          "page": 0,
+          "confidence": 94.0
+        },
+        {
+          "text": "구분",
+          "box": {
+            "x": 142,
+            "y": 120,
+            "width": 33,
+            "height": 16
+          },
+          "page": 0,
+          "confidence": 96.0
+        },
+        {
+          "text": "소 속",
+          "box": {
+            "x": 656,
+            "y": 120,
+            "width": 51,
+            "height": 17
+          },
+          "page": 0,
+          "confidence": 92.5
+        },
+        {
+          "text": "참가자",
+          "box": {
+            "x": 133,
+            "y": 163,
+            "width": 52,
+            "height": 18
+          },
+          "page": 0,
+          "confidence": 96.0
+        },
+        {
+          "text": "작품 요약",
+          "box": {
+            "x": 430,
+            "y": 206,
+            "width": 78,
+            "height": 18
+          },
+          "page": 0,
+          "confidence": 94.5
+        }
+      ]
+    },
+    {
+      "id": "originals/original_06/desk",
+      "expected": "summary",
+      "actual": "summary",
+      "expected_review": false,
+      "needs_review": false,
+      "valid_boxes": true,
+      "seconds": 4.08,
+      "reference_characters": 0,
+      "edits": null,
+      "text": "작품 요약서\n팀명\n작품명\n구분\n성 명\n참가자\n소 속\n작품 요약",
+      "blocks": [
+        {
+          "text": "작품 요약서",
+          "box": {
+            "x": 743,
+            "y": 238,
+            "width": 175,
+            "height": 59
+          },
+          "page": 0,
+          "confidence": 96.5
+        },
+        {
+          "text": "팀명",
+          "box": {
+            "x": 496,
+            "y": 247,
+            "width": 34,
+            "height": 24
+          },
+          "page": 0,
+          "confidence": 96.0
+        },
+        {
+          "text": "작품명",
+          "box": {
+            "x": 482,
+            "y": 268,
+            "width": 53,
+            "height": 25
+          },
+          "page": 0,
+          "confidence": 94.33333333333333
+        },
+        {
+          "text": "구분",
+          "box": {
+            "x": 488,
+            "y": 292,
+            "width": 37,
+            "height": 23
+          },
+          "page": 0,
+          "confidence": 97.0
+        },
+        {
+          "text": "성 명",
+          "box": {
+            "x": 689,
+            "y": 324,
+            "width": 54,
+            "height": 26
+          },
+          "page": 0,
+          "confidence": 93.0
+        },
+        {
+          "text": "참가자",
+          "box": {
+            "x": 472,
+            "y": 332,
+            "width": 56,
+            "height": 27
+          },
+          "page": 0,
+          "confidence": 96.0
+        },
+        {
+          "text": "소 속",
+          "box": {
+            "x": 995,
+            "y": 374,
+            "width": 55,
+            "height": 27
+          },
+          "page": 0,
+          "confidence": 84.5
+        },
+        {
+          "text": "작품 요약",
+          "box": {
+            "x": 758,
+            "y": 425,
+            "width": 81,
+            "height": 30
+          },
+          "page": 0,
+          "confidence": 88.5
+        }
+      ]
+    },
+    {
+      "id": "originals/original_06/tilted",
+      "expected": "summary",
+      "actual": "summary",
+      "expected_review": false,
+      "needs_review": false,
+      "valid_boxes": true,
+      "seconds": 6.652,
+      "reference_characters": 0,
+      "edits": null,
+      "text": "팀명\n작품명\n작품 요약서\n구분\n참가자\n성 명\n수 족\n작품 요약",
+      "blocks": [
+        {
+          "text": "팀명",
+          "box": {
+            "x": 396,
+            "y": 108,
+            "width": 36,
+            "height": 27
+          },
+          "page": 0,
+          "confidence": 96.0
+        },
+        {
+          "text": "작품명",
+          "box": {
+            "x": 378,
+            "y": 119,
+            "width": 61,
+            "height": 48
+          },
+          "page": 0,
+          "confidence": 94.33333333333333
+        },
+        {
+          "text": "작품 요약서",
+          "box": {
+            "x": 642,
+            "y": 122,
+            "width": 174,
+            "height": 74
+          },
+          "page": 0,
+          "confidence": 96.5
+        },
+        {
+          "text": "구분",
+          "box": {
+            "x": 384,
+            "y": 151,
+            "width": 38,
+            "height": 26
+          },
+          "page": 0,
+          "confidence": 95.0
+        },
+        {
+          "text": "참가자",
+          "box": {
+            "x": 364,
+            "y": 190,
+            "width": 57,
+            "height": 32
+          },
+          "page": 0,
+          "confidence": 96.0
+        },
+        {
+          "text": "성 명",
+          "box": {
+            "x": 581,
+            "y": 202,
+            "width": 55,
+            "height": 31
+          },
+          "page": 0,
+          "confidence": 92.0
+        },
+        {
+          "text": "수 족",
+          "box": {
+            "x": 882,
+            "y": 280,
+            "width": 55,
+            "height": 31
+          },
+          "page": 0,
+          "confidence": 38.5
+        },
+        {
+          "text": "작품 요약",
+          "box": {
+            "x": 641,
+            "y": 308,
+            "width": 81,
+            "height": 37
+          },
+          "page": 0,
+          "confidence": 95.5
+        }
+      ]
+    }
+  ]
+}

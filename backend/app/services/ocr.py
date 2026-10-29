@@ -43,8 +43,11 @@ def recognize(image_bytes: bytes) -> OcrResult:
                 recovered = _layout_recovery(working, adaptive=adaptive)
                 original = [_Line(b, b.confidence or 0) for b in lines]
                 candidate = [_Line(b, b.confidence or 0) for b in recovered]
-                candidate = _preserve_reliable_regions(candidate, original)
-                recovered = [b.block for b in candidate]
+                # This repair is for short, still-incomplete forms. Do not
+                # overwrite a successful retry or promote a partial long body.
+                if _needs_review(recovered) and sum(_letters(b.block.text) for b in candidate) <= 60:
+                    candidate = _preserve_reliable_regions(candidate, original)
+                    recovered = [b.block for b in candidate]
                 # Region segmentation must not silently turn an unreadable long
                 # body into a confident heading. Keep most of the reliable text.
                 accepted = _recovery_improves(candidate, original)
