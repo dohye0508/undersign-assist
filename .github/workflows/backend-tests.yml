@@ -2,9 +2,9 @@ name: Backend regression tests
 
 on:
   push:
-    paths: ["backend/**", "app/test/fixtures/**", ".github/workflows/backend-tests.yml"]
+    paths: ["backend/**", "samples/**", "app/test/fixtures/**", ".github/workflows/backend-tests.yml"]
   pull_request:
-    paths: ["backend/**", "app/test/fixtures/**", ".github/workflows/backend-tests.yml"]
+    paths: ["backend/**", "samples/**", "app/test/fixtures/**", ".github/workflows/backend-tests.yml"]
   workflow_dispatch:
     inputs:
       full_ocr_matrix:
@@ -18,7 +18,7 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -36,7 +36,7 @@ jobs:
           OMP_THREAD_LIMIT: "1"
         run: >-
           python backend/tests/stress_ocr_documents.py
-          --cases g_labor g_notice g_consent g_application g_summary g_receipt
+          --cases g_labor g_loan g_notice g_consent g_application g_summary g_receipt
           --profiles clean shadow sideways upside_down cropped_title
           --output work/camera-ci.json
       - name: Full camera matrix
@@ -58,6 +58,21 @@ jobs:
         run: |
           python backend/tests/realistic_ocr_documents.py --suite holdout --output work/camera-holdout.json
           python backend/tests/realistic_ocr_documents.py --suite samples --output work/camera-samples.json
+      - name: Saved blank form regression
+        run: >-
+          python backend/tests/sample_corpus.py evaluate
+          --suites originals --cases 작품요약서.png
+          --profiles clean desk tilted dark_screen --require-correct
+          --output work/camera-saved-form.json
+      - name: Saved everyday scenes and unreadable negatives
+        run: >-
+          python backend/tests/sample_corpus.py evaluate
+          --suites everyday_text
+          --cases g_labor g_loan g_notice g_consent g_application g_summary g_receipt
+          --profiles distant_desk sideways_desk body_glare tiny_unreadable --require-correct
+          --output work/camera-saved-scenes.json
+      - name: Original photo coordinates after crop and rotation
+        run: python backend/tests/check_sample_geometry.py work/camera-saved-scenes.json
       - name: Save OCR diagnostics
         if: always()
         uses: actions/upload-artifact@v4

@@ -130,8 +130,76 @@ class OcrFallbackTest(unittest.TestCase):
         self.assertTrue(ocr._needs_review([]))
         self.assertTrue(ocr._needs_review([title]))
         self.assertTrue(ocr._needs_review([title, unreadable]))
-        body = title.model_copy(update={"text": "수집 목적은 행사 참가 확인이며 보유 기간은 행사 종료일까지입니다.", "confidence": 92})
+        body = title.model_copy(update={"text": "수집 목적은 행사 참가 확인이며 보유 기간은 행사 종료일까지입니다.", "confidence": 92,
+                                        "box": Box(x=1, y=60, width=400, height=20)})
         self.assertFalse(ocr._needs_review([title, body]))
+
+    def test_sparse_form_is_not_confused_with_fragmented_heading(self):
+        labels = [TextBlock(text=t, confidence=93, box=Box(x=20, y=30+i*40, width=100, height=25))
+                  for i, t in enumerate(("작품요약서", "팀명", "작품명", "참가자", "작품요약"))]
+        self.assertFalse(ocr._needs_review(labels))
+        heading = [b.model_copy(update={"box": Box(x=20+i*110, y=30+i, width=100, height=25)}) for i, b in enumerate(labels)]
+        self.assertTrue(ocr._needs_review(heading))
+
+    def test_distant_page_crop_preserves_marks_near_all_edges(self):
+        image = Image.new("RGB", (1800, 1400), "#665544")
+        draw = ImageDraw.Draw(image)
+        draw.rectangle((650, 400, 1150, 1000), fill="white")
+        for x, y in ((655, 410), (1130, 410), (655, 975), (1130, 975)):
+            draw.rectangle((x, y, x+8, y+8), fill="black")
+        cropped, (left, top) = ocr._page_crop(image, distant_only=True)
+        self.assertLess(cropped.width, image.width // 2)
+        for x, y in ((655, 410), (1130, 410), (655, 975), (1130, 975)):
+            self.assertEqual((0, 0, 0), cropped.getpixel((x-left, y-top)))
+
+    def test_white_text_on_dark_screen_is_not_cropped_as_paper(self):
+        image = Image.new("RGB", (1000, 800), "#111111")
+        draw = ImageDraw.Draw(image)
+        for x in range(50, 900, 80):
+            draw.rectangle((x, 60, x+40, 110), fill="white")
+        cropped, offset = ocr._page_crop(image, distant_only=True)
+        self.assertEqual((0, 0), offset)
+        self.assertEqual(image.size, cropped.size)
+
+    def test_symbols_are_not_text_but_legacy_results_remain_compatible(self):
+        symbol = TextBlock(text="==~", confidence=90, box=Box(x=20, y=20, width=100, height=20))
+        self.assertTrue(ocr._needs_review([symbol]))
+        legacy = symbol.model_copy(update={"text": "이전 저장 결과", "confidence": None})
+        self.assertFalse(ocr._needs_review([legacy]))
+
+    def test_bright_part_of_shaded_paper_is_not_the_whole_page(self):
+        image = Image.new("RGB", (1800, 1400), "#665544")
+        draw = ImageDraw.Draw(image)
+        draw.rectangle((600, 300, 1200, 1100), fill="#bbbbbb")
+        draw.rectangle((900, 300, 1200, 1100), fill="white")
+        cropped, offset = ocr._page_crop(image, distant_only=True)
+        self.assertEqual(image.size, cropped.size)
+        self.assertEqual((0, 0), offset)
+
+    def test_sideways_text_does_not_look_like_one_heading(self):
+        blocks = [TextBlock(text="서로 다른 본문 줄입니다", confidence=90,
+                            box=Box(x=100+i*60, y=100, width=30, height=450)) for i in range(5)]
+        self.assertFalse(ocr._needs_review(blocks))
+
+    def test_recovered_blank_form_is_not_replaced_by_longer_graphics_noise(self):
+        labels = [TextBlock(text=t, confidence=93, box=Box(x=20, y=30+i*40, width=100, height=25))
+                  for i, t in enumerate(("작품요약서", "팀명", "작품명", "참가자", "작품요약"))]
+        noise = TextBlock(text="가나다"*20, confidence=70, box=Box(x=20, y=5, width=600, height=20))
+        unreadable = noise.model_copy(update={"confidence": 20})
+        buffer = io.BytesIO()
+        self.image.save(buffer, "PNG")
+        with patch.object(ocr.config, "OCR_PROVIDER", "tesseract"), \
+             patch.object(ocr, "_tesseract", return_value=[unreadable]), \
+             patch.object(ocr, "_layout_recovery", side_effect=lambda image, adaptive=False: [noise] if adaptive else labels):
+            result = ocr.recognize(buffer.getvalue())
+        self.assertFalse(result.needs_review)
+        self.assertEqual([b.text for b in labels], [b.text for b in result.lines])
+
+    def test_many_weak_body_characters_require_review_despite_readable_lines(self):
+        blocks = [TextBlock(text="본문 글자 "*15, confidence=conf,
+                            box=Box(x=20, y=30+i*45, width=600, height=25))
+                  for i, conf in enumerate((70, 70, 70, 45, 45))]
+        self.assertTrue(ocr._needs_review(blocks))
 
     def test_rejected_fine_rotation_keeps_original_geometry(self):
         with patch.object(ocr, "_skew_angle", return_value=12), patch.object(ocr, "_tesseract_lines", return_value=[line(self.text, 70)]):

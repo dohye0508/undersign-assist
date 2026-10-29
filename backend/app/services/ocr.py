@@ -9,7 +9,7 @@
 import io
 import math
 import re
-from collections import deque
+from collections import Counter, deque
 from dataclasses import dataclass
 from statistics import mean, median
 
@@ -36,8 +36,24 @@ def recognize(image_bytes: bytes) -> OcrResult:
     if config.OCR_PROVIDER == "google":
         lines = _google(image)
     else:
-        lines = _tesseract(image)
-    return OcrResult(lines=lines, width=image.width, height=image.height, needs_review=_needs_review(lines))
+        working, offset = _page_crop(image, distant_only=True)
+        lines = _tesseract(working)
+        if _needs_review(lines) or _quality([_Line(b, b.confidence or 0) for b in lines]) < 70:
+            for adaptive in (False, True):
+                recovered = _layout_recovery(working, adaptive=adaptive)
+                original = [_Line(b, b.confidence or 0) for b in lines]
+                candidate = [_Line(b, b.confidence or 0) for b in recovered]
+                # Region segmentation must not silently turn an unreadable long
+                # body into a confident heading. Keep most of the reliable text.
+                accepted = _improves(candidate, original, 5)
+                if accepted:
+                    lines = recovered
+                if accepted and not _needs_review(lines):
+                    break
+        if offset != (0, 0):
+            lines = [b.model_copy(update={"box": b.box.model_copy(update={"x": b.box.x + offset[0], "y": b.box.y + offset[1]})}) for b in lines]
+    return OcrResult(lines=lines, width=image.width, height=image.height,
+                     needs_review=_needs_review(lines, group_lines=config.OCR_PROVIDER != "google"))
 
 
 def to_jpeg(image_bytes: bytes, around: Box | None = None, max_side: int = 1024) -> bytes:
@@ -120,21 +136,30 @@ def _tesseract(image: Image.Image) -> list[TextBlock]:
     # EXIF is handled by _open. Screenshots/scans can have no orientation tag.
     # Try bounded orthogonal rotations only when the normal pass is unreliable.
     initial_quality = _quality(primary)
-    if initial_quality < 55 and _has_ink(gray):
+    before_orientation_angle, before_orientation_size = deskew_angle, gray.size
+    if initial_quality < 70 and _has_ink(gray):
         best_quality = initial_quality
         best_image = gray
         for angle, transpose in ((90, Image.Transpose.ROTATE_90),
                                  (180, Image.Transpose.ROTATE_180),
                                  (270, Image.Transpose.ROTATE_270)):
             candidate_image = gray.transpose(transpose)
+            candidate_size = candidate_image.size
             candidate = _tesseract_lines(pytesseract, candidate_image, 6, scale)
             quality = _quality(candidate)
+            fine_angle = 0.0
+            # A sideways AND tilted photo can fail every orthogonal pass. Fine
+            # deskew belongs inside each plausible orientation hypothesis.
+            if 25 <= quality < 85:
+                candidate_image, candidate, fine_angle = _deskew(candidate_image, candidate, pytesseract, scale)
+                quality = _quality(candidate)
             if quality >= 55 and quality >= initial_quality + 15 and quality > best_quality:
                 primary, best_image, orientation, best_quality = candidate, candidate_image, angle, quality
+                deskew_angle, oriented_size = fine_angle, candidate_size
         gray = best_image
     # Correct the small tilt left after orientation recovery. Projection uses
     # pixels, not document keywords; accept a retry only if OCR improves.
-    if orientation:
+    if orientation and not deskew_angle:
         oriented_size = gray.size
         if _quality(primary) < 85:
             gray, primary, deskew_angle = _deskew(gray, primary, pytesseract, scale)
@@ -147,8 +172,12 @@ def _tesseract(image: Image.Image) -> list[TextBlock]:
             line.box, deskew_angle, tuple(v / scale for v in oriented_size), tuple(v / scale for v in gray.size)
         )}) for line in lines]
     if orientation:
-        lines = [line.model_copy(update={"box": _original_box(line.box, orientation, image.width, image.height)})
+        lines = [line.model_copy(update={"box": _original_box(line.box, orientation,
+                 round(before_orientation_size[0]/scale), round(before_orientation_size[1]/scale))})
                  for line in lines]
+        if before_orientation_angle:
+            lines = [line.model_copy(update={"box": _unrotate_box(line.box, before_orientation_angle,
+                     image.size, tuple(v/scale for v in before_orientation_size))}) for line in lines]
     return lines
 
 
@@ -478,15 +507,200 @@ def _google(image: Image.Image) -> list[TextBlock]:
     return lines
 
 
-def _needs_review(lines: list[TextBlock]) -> bool:
+def _needs_review(lines: list[TextBlock], group_lines=True) -> bool:
     """Flag weak/partial readings; OCR confidence is not a calibrated probability."""
     if not lines:
         return True
     measured = [b for b in lines if b.confidence is not None and _letters(b.text)]
-    if not measured:  # Old stored results and third-party adapters have no score.
-        return False
+    if not measured:  # Symbols alone are not text; legacy adapters have no score.
+        return any(b.confidence is not None for b in lines)
     trusted = [b for b in measured if b.confidence >= 65]
     total = sum(_letters(b.text) for b in measured)
     reliable = sum(_letters(b.text) for b in trusted)
     quality = sum(b.confidence * _letters(b.text) for b in measured) / total
-    return quality < 60 or reliable < total * 0.55 or reliable < 24 or len(trusted) < 2
+    bands = []
+    # Boxes are in the original photo, which may be sideways. Group centers on
+    # the short axis; enclosing boxes of tilted long lines overlap heavily.
+    vertical = bool(trusted) and median(b.box.height / max(1, b.box.width) for b in trusted) > 2
+    tolerance = max(6, median(min(b.box.height, b.box.width) for b in trusted) * 0.35) if trusted else 6
+    for block in trusted:
+        box = block.box
+        center = box.x + box.width/2 if vertical else box.y + box.height/2
+        if not any(abs(center - other) < tolerance for other in bands):
+            bands.append(center)
+    # The Google adapter currently repeats paragraph boxes for its text lines.
+    row_count = len(bands) if group_lines else len(trusted)
+    sparse_form = row_count >= 4 and reliable >= 12
+    # A long, mostly garbled body must not pass on a legible heading. Keep the
+    # sparse-form tolerance for short labels, but require stronger body quality.
+    minimum_quality = 65 if total >= 120 else 60
+    return quality < minimum_quality or reliable < total * 0.55 or (reliable < 24 and not sparse_form) or row_count < 2
+
+
+def _page_crop(image: Image.Image, distant_only=False):
+    """Bound a pale page on a dark desk; no perspective or size changes."""
+    import cv2
+    import numpy as np
+
+    small = image.convert("L")
+    small.thumbnail((600, 600))
+    array = np.asarray(small)
+    if max(array[0, 0], array[0, -1], array[-1, 0], array[-1, -1]) >= 160:
+        return image, (0, 0)
+    contours, _ = cv2.findContours((array > 190).astype("uint8") * 255, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    if not contours:
+        return image, (0, 0)
+    contour = max(contours, key=cv2.contourArea)
+    x, y, w, h = cv2.boundingRect(contour)
+    area = cv2.contourArea(contour)
+    if area <= array.size * 0.07 or area <= w * h * 0.6 or (distant_only and w*h > array.size * 0.5):
+        return image, (0, 0)
+    # A bright half of a shaded sheet is not the whole page. Require the area
+    # just outside its convex outline to look like the surrounding dark desk.
+    hull = cv2.approxPolyDP(cv2.convexHull(contour), 3, True).reshape(-1, 2)
+    center = hull.mean(axis=0)
+    outside = []
+    for start, end in zip(hull, np.roll(hull, -1, axis=0)):
+        for fraction in (0.2, 0.4, 0.6, 0.8):
+            point = start + (end-start)*fraction
+            direction = point-center
+            point += direction / max(1, np.linalg.norm(direction)) * 4
+            px, py = np.rint(point).astype(int)
+            if 0 <= px < small.width and 0 <= py < small.height:
+                outside.append(array[py, px] < 160)
+    if not outside or sum(outside) < len(outside)*0.9:
+        return image, (0, 0)
+    sx, sy = image.width / small.width, image.height / small.height
+    margin = max(8, round(min(w*sx, h*sy) * 0.02))
+    left, top = max(0, round(x*sx)-margin), max(0, round(y*sy)-margin)
+    right, bottom = min(image.width, round((x+w)*sx)+margin), min(image.height, round((y+h)*sy)+margin)
+    return image.crop((left, top, right, bottom)), (left, top)
+
+
+def _layout_recovery(image: Image.Image, adaptive=False) -> list[TextBlock]:
+    """Read separated text regions in difficult tables; keep photo coordinates.
+
+    Table borders and editor rulers can overwhelm whole-page segmentation.
+    Remove long rules, identify glyph-sized components, and pack their regions
+    with generous whitespace for one OCR call. No document names/labels enter
+    this process. Regions are mapped back before classification or form filling.
+    """
+    import cv2
+    import numpy as np
+    import pytesseract
+
+    gray, offset = _page_crop(image.convert("L"))
+    gray = _flatten_lighting(_clear_background(_light_background(gray)))
+    scale = max(1.0, 2000 / gray.width)
+    # Bound the working image for large phone uploads and low-memory servers.
+    scale = min(scale, 3600 / max(gray.size))
+    gray = gray.resize((round(gray.width * scale), round(gray.height * scale)), Image.Resampling.LANCZOS)
+    original_size = gray.size
+    angle = _skew_angle(gray)
+    if abs(angle) >= 1.5:
+        gray = gray.rotate(angle, Image.Resampling.BICUBIC, expand=True, fillcolor=255)
+    else:
+        angle = 0.0
+    array = np.asarray(gray)
+    if adaptive:
+        ink = cv2.adaptiveThreshold(array, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                                   cv2.THRESH_BINARY_INV, 51, 15)
+    else:
+        _, ink = cv2.threshold(array, 0, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
+    # Erase anti-aliased rule edges as well as their dark centers.
+    horizontal = cv2.morphologyEx(ink, cv2.MORPH_OPEN, np.ones((1, 80), "uint8"))
+    vertical = cv2.morphologyEx(ink, cv2.MORPH_OPEN, np.ones((80, 1), "uint8"))
+    rules = cv2.dilate(cv2.bitwise_or(horizontal, vertical), np.ones((3, 3), "uint8"))
+    ink[rules != 0] = 0
+    count, labels, stats, _ = cv2.connectedComponentsWithStats(ink)
+    keep = np.zeros(count, dtype="uint8")
+    heights = []
+    for i, (x, y, w, h, area) in enumerate(stats[1:], 1):
+        if h < 7 or w < 2 or area < 12 or h > 180 or (w > gray.width * 0.25 and w > h * 18):
+            continue
+        keep[i] = 255
+        heights.append(int(h))
+    if not heights:
+        return []
+    ink = keep[labels]
+    joined = cv2.dilate(ink, np.ones((3, max(6, round(median(heights)))), "uint8"))
+    count, _, regions, _ = cv2.connectedComponentsWithStats(joined)
+    boxes = []
+    for x, y, w, h, area in regions[1:]:
+        if w > h * 12:
+            # A ruler has many narrow ticks but very few glyph-shaped pieces.
+            # Full-width sentences have many such pieces and are kept.
+            parts = stats[1:]
+            glyphs = ((parts[:, 0] >= x) & (parts[:, 0] < x+w) &
+                      (parts[:, 1] >= y) & (parts[:, 1] < y+h) &
+                      (parts[:, 3] >= h*0.5) & (parts[:, 2] >= h*0.25))
+            if np.count_nonzero(glyphs) < max(3, w/h*0.15):
+                continue
+        if w >= h * 0.5 and 9 <= h <= 180 and np.count_nonzero(ink[y:y+h, x:x+w]) >= 30:
+            boxes.append((int(x), int(y), int(w), int(h)))
+    boxes.sort(key=lambda b: (b[1], b[0]))
+    # Join adjacent fragments on the same baseline before packing. In a heading
+    # each word can have a slightly different top; sorting by y alone scrambles
+    # "작품 요약서". Wide gaps between independent table cells remain separate.
+    joined_boxes = []
+    for box in boxes:
+        x, y, w, h = box
+        matches = []
+        for i, (px, py, pw, ph) in enumerate(joined_boxes):
+            overlap = min(y+h, py+ph) - max(y, py)
+            gap = max(x, px) - min(x+w, px+pw)
+            if overlap >= min(h, ph) * 0.6 and gap < max(h, ph) * 1.5:
+                matches.append(i)
+        if matches:
+            i = matches[0]
+            px, py, pw, ph = joined_boxes[i]
+            left, top = min(x, px), min(y, py)
+            joined_boxes[i] = (left, top, max(x+w, px+pw)-left, max(y+h, py+ph)-top)
+        else:
+            joined_boxes.append(box)
+    boxes = []
+    for x, y, w, h in joined_boxes:
+        parts = stats[1:]
+        glyphs = ((parts[:, 0] >= x) & (parts[:, 0] < x+w) &
+                  (parts[:, 1] >= y) & (parts[:, 1] < y+h) &
+                  (parts[:, 3] >= h*0.5) & (parts[:, 2] >= h*0.25))
+        if w > h * 12 and np.count_nonzero(glyphs) < max(3, w/h*0.15):
+            continue
+        boxes.append((x, y, w, h))
+    boxes.sort(key=lambda b: (b[1], b[0]))
+    if not 2 <= len(boxes) <= 80:
+        return []
+    tiles, placements = [], []
+    y_cursor = 24
+    for x, y, w, h in boxes:
+        factor = min(3.0, max(1.0, 42 / h))
+        tile = Image.fromarray(255 - ink[y:y+h, x:x+w]).resize((round(w * factor), round(h * factor)), Image.Resampling.LANCZOS)
+        tiles.append(tile)
+        placements.append((x, y, w, h, factor, y_cursor))
+        y_cursor += tile.height + 32
+    packed = Image.new("L", (max(tile.width for tile in tiles) + 48, y_cursor), 255)
+    for tile, placement in zip(tiles, placements):
+        packed.paste(tile, (24, placement[5]))
+    recognized = _tesseract_lines(pytesseract, packed, 6, 1)
+    result = []
+    for line in recognized:
+        if not _letters(line.block.text) or (_letters(line.block.text) < 2 and line.conf < 65):
+            continue
+        letters = _LETTER.findall(line.block.text)
+        if line.conf < 60 and max(Counter(letters).values(), default=0) >= max(8, len(letters) * 0.4):
+            # Ruler ticks / dotted borders often become dozens of l/1/0 glyphs.
+            # Confident identifiers, including repeated digits, are retained.
+            continue
+        b = line.block.box
+        matches = [p for p in placements if p[5] <= b.y + b.height / 2 <= p[5] + round(p[3] * p[4])]
+        if len(matches) != 1:
+            continue
+        x, y, w, h, factor, row = matches[0]
+        box = Box(x=round((x + (b.x-24)/factor)/scale), y=round((y + (b.y-row)/factor)/scale),
+                  width=max(1, round(b.width/factor/scale)), height=max(1, round(b.height/factor/scale)))
+        if angle:
+            box = _unrotate_box(box, angle, tuple(v/scale for v in original_size), tuple(v/scale for v in gray.size))
+        left, top = max(0, min(image.width-1, box.x + offset[0])), max(0, min(image.height-1, box.y + offset[1]))
+        box = Box(x=left, y=top, width=max(1, min(box.width, image.width-left)), height=max(1, min(box.height, image.height-top)))
+        result.append(line.block.model_copy(update={"box": box}))
+    return _reading_order(result)

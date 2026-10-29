@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Undersign Assist · OCR 샘플</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f3f5f8;color:#1d2939;font:15px/1.6 system-ui,sans-serif}header,main{max-width:1440px;margin:auto;padding:24px}h1{margin:0;font-size:28px}p{margin:8px 0}header{padding-bottom:12px}nav{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0}input,select{padding:10px;border:1px solid #acb6c3;border-radius:6px;max-width:100%;font:inherit}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}.card{background:white;border:1px solid #d2dae3;border-radius:10px;overflow:hidden}.card img{width:100%;height:250px;object-fit:contain;background:#e3e8ee;padding:12px}.body{padding:16px}h2{font-size:16px;overflow-wrap:anywhere;margin:0}.meta{color:#546175;font-size:13px}.result{font-size:14px;padding:6px 8px;background:#edf4fa;margin:6px 0}.bad{background:#fff0df}pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:260px;overflow:auto;font-size:12px}a{color:#185bc2}#count{font-weight:600}summary{cursor:pointer}label{display:flex;gap:6px;align-items:center}
+</style>
+<header><h1>OCR 재현 샘플 __FIXTURE_COUNT__장</h1>
+<p>기존 원본 9개는 이 폴더에 그대로 있습니다. 아래는 가상 문서와 저장소 예시를 변형한 시험 이미지이며, 실제 현장에서 수집한 사진이 아닙니다.</p>
+<p>분류와 재촬영 여부를 함께 비교합니다. 정답 종류를 맞혀도 재촬영을 요구하면 자동 처리 성공으로 세지 않습니다. <a href="README.md">구성·실행 안내</a> · <a href="regression/manifest.json">정답·조건·해시</a></p>
+<nav><input id="search" style="min-width:260px" aria-label="문서 검색" placeholder="문서명 또는 원본 파일 검색"><select id="suite" aria-label="시험 묶음"><option value="">전체 묶음</option></select><select id="profile" aria-label="촬영 조건"><option value="">전체 촬영 조건</option></select><label><input type="checkbox" id="fail">개선 후 실패만</label></nav><p id="count" aria-live="polite"></p></header><main class="grid" id="cards"></main>
+<script type="application/json" id="data">__FIXTURE_DATA__</script>
+<script>
+const data=JSON.parse(document.getElementById('data').textContent), $=id=>document.getElementById(id);
+for(const key of ['suite','profile'])for(const value of [...new Set(data.map(r=>r[key]))].sort()){const option=document.createElement('option');option.value=option.textContent=value;$(key).append(option)}
+const success=r=>r.after&&(r.expected_review?r.after.needs_review:r.after.actual===r.expected&&!r.after.needs_review);
+function node(tag,text,cls){const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e}
+function render(){const query=$('search').value.toLowerCase(),rows=data.filter(r=>(!$('suite').value||r.suite===$('suite').value)&&(!$('profile').value||r.profile===$('profile').value)&&(!query||(r.case+' '+r.source).toLowerCase().includes(query))&&(!$('fail').checked||r.after&&!success(r)));
+$('count').textContent=`${rows.length}장 / 전체 ${data.length}장`;$('cards').replaceChildren();
+for(const r of rows){const card=node('article',undefined,'card'),link=node('a');link.href='regression/'+r.image;link.target='_blank';link.rel='noopener';const img=node('img');img.src=link.href;img.loading='lazy';img.alt=r.case+' · '+r.profile;link.append(img);card.append(link);const body=node('div',undefined,'body');body.append(node('h2',r.case),node('p',r.suite+' / '+r.profile,'meta'),node('p','정답: '+r.expected+' · 재촬영 '+(r.expected_review?'필요':'불필요')));
+for(const [key,title] of [['before','개선 전'],['after','개선 후']]){const result=r[key];body.append(node('div',title+': '+(result?result.actual+' · '+(result.needs_review?'재촬영 요청':'계속 진행')+' · '+result.seconds+'초':'미측정'),'result'+(key==='after'&&result&&!success(r)?' bad':'')));if(result){const details=node('details');details.append(node('summary',title+' 인식 본문'),node('pre',result.text));body.append(details)}}
+body.append(node('p','원본: '+r.source,'meta'));card.append(body);$('cards').append(card)}}
+for(const id of ['search','suite','profile','fail'])$(id).addEventListener('input',render);render();
+</script></html>

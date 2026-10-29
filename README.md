@@ -54,6 +54,8 @@ backend/                FastAPI 서버
   app/rules/            문서 종류 규칙, 판단 하위 유형, laws/ 법령 DB
   tests/smoke_judge.py  판단 엔진 시험
 samples/                시험·시연용 가짜 문서 사진 (실제 개인정보 없음)
+  index.html            저장된 시험 사진·정답·개선 전후 OCR 비교 목록
+  regression/           조건별 재현 이미지 656장, manifest, 측정 결과
 scripts/                패드 모드 서버, 인증서, 웹 아이콘 만들기
 ```
 
@@ -94,7 +96,7 @@ cd app
 flutter test
 ```
 
-문서 분류 시험은 처음 작성한 85개 사례, 추가 일반 서식 48개, 기존 사진 OCR 9개, 배포 OCR 3개를 사용합니다. 공백·유니코드·중복 페이지 변형까지 725건을 확인하며, AI 응답 오류·혼합 문서·여러 페이지 연결·회전 좌표도 시험합니다. 구성과 측정 결과는 `backend/tests/README.md`에 있습니다. GitHub Actions에서 회귀 시험과 실제 OCR 30건을 실행합니다.
+문서 분류 시험은 처음 작성한 85개 사례, 추가 일반 서식 48개, 기존 사진 OCR 9개, 배포 OCR 3개를 사용합니다. 공백·유니코드·중복 페이지 변형까지 725건을 확인하며, AI 응답 오류·혼합 문서·여러 페이지 연결·회전 좌표도 시험합니다. 구성과 측정 결과는 `backend/tests/README.md`에 있습니다. GitHub Actions에서 단위 시험과 실제 OCR 103건을 실행합니다. `samples/index.html`에는 재현 이미지 656장과 전후 결과를 정리했습니다.
 
 Tesseract와 한국어 데이터가 설치된 환경에서는 새 서식 18개를 두 가지 이미지 배치로 렌더링해 실제 OCR도 시험할 수 있습니다. 사진과 AI API를 외부로 보내지 않습니다.
 

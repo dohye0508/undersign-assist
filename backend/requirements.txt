@@ -4,5 +4,6 @@ python-multipart>=0.0.9
 python-dotenv>=1.0
 pillow>=10.0
 pytesseract>=0.3.10
+opencv-python-headless>=4.10,<6
 # OCR_PROVIDER=google 일 때만 필요
 google-cloud-vision>=3.7
