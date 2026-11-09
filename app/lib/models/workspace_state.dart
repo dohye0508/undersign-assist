@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 
 import '../services/api_client.dart';
@@ -28,6 +30,26 @@ enum WorkStep {
 ///   3. 쓰고 서명하기: 칸마다 패드에 쓴 글씨를 받는다 ([fills])
 ///   4. 출력: 페이지 사진에 글씨를 합성해 PDF로 (features/output)
 class WorkspaceState extends ChangeNotifier {
+  WorkspaceState({
+    Future<RecognizedDocument> Function(List<DocumentPhoto>)? readDocument,
+    Future<Judgement> Function(RecognizedDocument, Map<String, String>)?
+    judgeDocument,
+  }) : _readDocument = readDocument ?? ApiClient.read,
+       _judgeDocument =
+           judgeDocument ??
+           ((document, answers) => ApiClient.judge(document, answers: answers));
+
+  final Future<RecognizedDocument> Function(List<DocumentPhoto>) _readDocument;
+  final Future<Judgement> Function(RecognizedDocument, Map<String, String>)
+  _judgeDocument;
+
+  // A request may finish after photos or answers change. Only the matching
+  // revision may update state; duplicate calls share that revision's request.
+  int _readRevision = 0;
+  int _judgeRevision = 0;
+  Future<RecognizedDocument?>? _pendingRead;
+  Future<Judgement?>? _pendingJudge;
+  bool _disposed = false;
   final List<DocumentPhoto> _pages = [];
   List<DocumentPhoto> get pages => List.unmodifiable(_pages);
   bool get hasPages => _pages.isNotEmpty;
@@ -127,6 +149,12 @@ class WorkspaceState extends ChangeNotifier {
 
   /// 페이지가 바뀌면 이전 분석과 서명은 맞지 않으므로 지운다
   void _resetAnalysis() {
+    _readRevision++;
+    _judgeRevision++;
+    _pendingRead = null;
+    _pendingJudge = null;
+    _reading = false;
+    _judging = false;
     _recognized = null;
     _readError = null;
     _judgement = null;
@@ -140,20 +168,45 @@ class WorkspaceState extends ChangeNotifier {
   // --- 2. 분석 ---------------------------------------------------------------
 
   /// 모든 페이지를 한 문서로 읽는다. 이미 읽었으면 다시 부르지 않는다
-  Future<RecognizedDocument?> read() async {
-    if (_pages.isEmpty) return null;
-    if (_recognized != null) return _recognized;
+  Future<RecognizedDocument?> read() {
+    if (_disposed || _pages.isEmpty) return Future.value(null);
+    if (_recognized != null) return Future.value(_recognized);
+    if (_pendingRead != null) return _pendingRead!;
+    final revision = _readRevision;
+    final snapshot = List<DocumentPhoto>.unmodifiable(_pages);
+    final completion = Completer<RecognizedDocument?>();
+    _pendingRead = completion.future;
     _reading = true;
     _readError = null;
     notifyListeners();
+    unawaited(_performRead(snapshot, revision, completion));
+    return completion.future;
+  }
+
+  Future<void> _performRead(
+    List<DocumentPhoto> snapshot,
+    int revision,
+    Completer<RecognizedDocument?> completion,
+  ) async {
+    RecognizedDocument? result;
     try {
-      _recognized = await ApiClient.read(_pages);
+      final document = await _readDocument(snapshot);
+      if (!_disposed && revision == _readRevision) {
+        _recognized = document;
+        result = document;
+      }
     } catch (_) {
-      _readError = '문서를 읽지 못했어요. 서버가 켜져 있는지 확인하고 다시 시도해 주세요.';
+      if (!_disposed && revision == _readRevision) {
+        _readError = '문서를 읽지 못했어요. 서버가 켜져 있는지 확인하고 다시 시도해 주세요.';
+      }
+    } finally {
+      if (!_disposed && revision == _readRevision) {
+        _reading = false;
+        _pendingRead = null;
+        notifyListeners();
+      }
+      completion.complete(result);
     }
-    _reading = false;
-    notifyListeners();
-    return _recognized;
   }
 
   /// 판단 질문(예: 사업장 인원)에 사용자가 고른 답. 질문 id → 답 코드
@@ -162,31 +215,70 @@ class WorkspaceState extends ChangeNotifier {
 
   /// 질문에 답하고 그 답으로 다시 판단한다
   Future<Judgement?> answer(String questionId, String option) {
+    if (_disposed || _recognized == null) return Future.value(null);
+    if (_answers[questionId] == option) return judge();
     _answers[questionId] = option;
+    _judgeRevision++;
+    _pendingJudge = null;
+    _judging = false;
     _judgement = null;
+    _judgeError = null;
     return judge();
   }
 
   /// 읽기 결과를 규칙 엔진으로 판단한다. 같은 문서·같은 답이면 한 번만 판단한다
-  Future<Judgement?> judge() async {
+  Future<Judgement?> judge() {
     final document = _recognized;
-    if (document == null) return null;
+    if (_disposed || document == null) return Future.value(null);
     if (document.needsReview) {
       _judgeError = document.speech;
       notifyListeners();
-      return null;
+      return Future.value(null);
     }
-    if (_judgement != null) return _judgement;
+    if (_judgement != null) return Future.value(_judgement);
+    if (_pendingJudge != null) return _pendingJudge!;
+    final revision = _judgeRevision;
+    final snapshot = Map<String, String>.unmodifiable(_answers);
+    final completion = Completer<Judgement?>();
+    _pendingJudge = completion.future;
     _judging = true;
     _judgeError = null;
     notifyListeners();
+    unawaited(_performJudge(document, snapshot, revision, completion));
+    return completion.future;
+  }
+
+  Future<void> _performJudge(
+    RecognizedDocument document,
+    Map<String, String> answers,
+    int revision,
+    Completer<Judgement?> completion,
+  ) async {
+    Judgement? result;
     try {
-      _judgement = await ApiClient.judge(document, answers: _answers);
+      final judgement = await _judgeDocument(document, answers);
+      if (!_disposed && revision == _judgeRevision) {
+        _judgement = judgement;
+        result = judgement;
+      }
     } catch (_) {
-      _judgeError = '판단하지 못했어요. 서버가 켜져 있는지 확인하고 다시 시도해 주세요.';
+      if (!_disposed && revision == _judgeRevision) {
+        _judgeError = '판단하지 못했어요. 서버가 켜져 있는지 확인하고 다시 시도해 주세요.';
+      }
+    } finally {
+      if (!_disposed && revision == _judgeRevision) {
+        _judging = false;
+        _pendingJudge = null;
+        notifyListeners();
+      }
+      completion.complete(result);
     }
-    _judging = false;
-    notifyListeners();
-    return _judgement;
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
+    _resetAnalysis();
+    super.dispose();
   }
 }

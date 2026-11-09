@@ -44,7 +44,9 @@ def run(document, answers: dict[str, str] | None = None) -> dict:
 
     # 월급만 있고 시급이 없으면 환산해서 hourly_wage를 만든다 (근거에 환산 사실을 남김).
     if "hourly_wage" not in values and "monthly_wage" in values:
-        weekly_hours = values.get("daily_hours", {}).get("value", 8) * 5
+        weekly_hours = values.get("weekly_hours", {}).get("value")
+        if weekly_hours is None:
+            weekly_hours = values.get("daily_hours", {}).get("value", 8) * values.get("days_per_week", {}).get("value", 5)
         monthly = values["monthly_wage"]["value"]
         values["hourly_wage"] = {
             "value": round(F.hourly_from_monthly(monthly, weekly_hours)),

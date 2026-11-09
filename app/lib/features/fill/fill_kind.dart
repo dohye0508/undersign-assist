@@ -9,7 +9,7 @@ enum FillKind { text, signature, check }
 
 extension FillTargetKind on FillTarget {
   FillKind get kind {
-    if (label.endsWith('동의 여부')) return FillKind.check;
+    if (label.endsWith('동의 여부') || label.endsWith('응답 여부')) return FillKind.check;
     return isSignature ? FillKind.signature : FillKind.text;
   }
 
@@ -26,7 +26,7 @@ extension FillTargetKind on FillTarget {
       case FillKind.signature:
         return '서명';
       case FillKind.check:
-        return '동의';
+        return label.endsWith('응답 여부') ? '응답' : '동의';
       case FillKind.text:
         final words = label.trim().split(RegExp(r'\s+'));
         return words.isEmpty ? label : words.last;

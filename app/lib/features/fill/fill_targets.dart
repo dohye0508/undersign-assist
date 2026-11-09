@@ -78,7 +78,7 @@ List<FillTarget> findFillTargets(RecognizedDocument doc) {
   if (doc.needsReview) return [];
   final found = <_Found>[];
   for (final (i, block) in doc.blocks.indexed) {
-    found.addAll(_scanLine(block, i, _pageSize(doc, block.page), doc.blocks));
+    found.addAll(_scanLine(block, i, _pageSize(doc, block.page), doc.blocks, questionnaire: doc.docType == 'questionnaire'));
   }
   found.sort((a, b) {
     if (a.page != b.page) return a.page.compareTo(b.page);
@@ -111,16 +111,20 @@ List<FillTarget> findFillTargets(RecognizedDocument doc) {
 /// "써야 할 곳은 3곳이에요. 학생 성명, 보호자 성명, 보호자 서명."
 /// 고르는 칸이 있으면 "채울 곳은 …" 으로 말하고 예·아니요로 고른다고 덧붙인다
 String describeFillTargets(List<FillTarget> targets) {
-  if (targets.isEmpty) return '써야 할 칸을 찾지 못했어요. 이름이나 서명 칸이 사진에 들어오게 다시 찍어 주세요.';
+  if (targets.isEmpty) return '채울 빈칸을 찾지 못했어요. 이미 작성됐거나 읽기만 필요한 문서일 수 있어요. 문서 읽기에서 내용을 확인할 수 있어요.';
   final checks = targets.where((t) => t.kind == FillKind.check).length;
   final list = targets.map((t) => t.label).join(', ');
   if (checks == 0) return '써야 할 곳은 ${targets.length}곳이에요. $list.';
-  return '채울 곳은 ${targets.length}곳이에요. $list. 동의 여부는 예나 아니요 중에서 골라요.';
+  return '채울 곳은 ${targets.length}곳이에요. $list. 각 질문을 듣고 예나 아니요 중에서 골라요.';
 }
 
 /// 고르는 칸에서 물어볼 말. 칸 이름에서 무엇에 대한 동의인지 끌어낸다
 String checkQuestion(FillTarget target) {
   final label = target.label;
+  if (label.endsWith('응답 여부')) {
+    final question = label.substring(0, label.length - ' 응답 여부'.length);
+    return question == '설문' ? '원문의 설문 문항을 확인하고 예나 아니요를 골라 주세요.' : question;
+  }
   if (label.contains('수집·이용')) return '개인정보를 수집하고 이용하는 데 동의하십니까?';
   if (label.contains('제3자 제공')) return '개인정보를 제3자에게 제공하는 데 동의하십니까?';
   return '동의하십니까?';
@@ -135,7 +139,7 @@ TextBlock? findCheckBlock(FillTarget target, List<TextBlock> blocks) {
     final b = block.box;
     final overlap = rect.intersect(Rect.fromLTWH(b.x.toDouble(), b.y.toDouble(), b.width.toDouble(), b.height.toDouble()));
     if (overlap.width <= 0 || overlap.height <= 0) continue;
-    if (_isCheckLine(_Line(block).compact)) return block;
+    if (_isCheckLine(_Line(block).compact, questionnaire: target.label.endsWith('응답 여부'))) return block;
   }
   return null;
 }
@@ -321,10 +325,11 @@ bool _boxish(String c) => !_space.hasMatch(c) && !_notBox.contains(c) && (!_isHa
 }
 
 /// "동의하십니까? □예 □아니요" 줄인가. 물음 없이 "□예 □아니요"만 있는 줄도 포함한다
-bool _isCheckLine(String compact) {
+bool _isCheckLine(String compact, {bool questionnaire = false}) {
   final m = _matchYesNo(compact);
   if (m == null) return false;
   if (_consentQuestion.hasMatch(compact)) return true;
+  if (questionnaire && compact.contains('?') && _boxChars.split('').any(compact.contains)) return true;
   final rest = compact.replaceRange(m.start, m.end, '').replaceAll(RegExp('[^가-힣]'), '');
   return rest.length <= 2;
 }
@@ -375,7 +380,7 @@ String _checkLabel(String context, {String? owner}) {
   return (context: context, owner: owner);
 }
 
-List<_Found> _scanLine(TextBlock block, int lineNo, PageSize? page, List<TextBlock> blocks) {
+List<_Found> _scanLine(TextBlock block, int lineNo, PageSize? page, List<TextBlock> blocks, {bool questionnaire = false}) {
   final line = _Line(block);
   final compact = line.compact;
   if (compact.isEmpty) return const [];
@@ -397,16 +402,25 @@ List<_Found> _scanLine(TextBlock block, int lineNo, PageSize? page, List<TextBlo
   final found = <_Found>[];
 
   // --- 동의 여부: "□예 □아니요" 두 상자를 합친 자리 ---
-  if (_isCheckLine(compact)) {
+  if (_isCheckLine(compact, questionnaire: questionnaire)) {
     final boxes = _yesNoBoxes(line)!;
     // 예 상자 왼쪽 끝부터 아니요 상자 오른쪽 끝까지 ([checkBoxRects]와 같은 상자로 재서 표시가 칸 안에 들어간다)
     final left = math.min(boxes.yes.left, boxes.no.left);
     final right = math.max(boxes.yes.right, boxes.no.right);
     final height = h * 1.5;
     final ctx = _checkContext(blocks, lineNo);
+    var label = _checkLabel(ctx.context, owner: ctx.owner);
+    if (questionnaire && !ctx.context.contains('동의') && !ctx.context.contains('통의')) {
+      var question = block.text;
+      if (!question.contains('?') && lineNo > 0 && blocks[lineNo - 1].page == block.page) {
+        question = blocks[lineNo - 1].text;
+      }
+      final end = question.indexOf('?');
+      label = '${end >= 0 ? question.substring(0, end + 1).trim() : '설문'} 응답 여부';
+    }
     found.add(_Found(
       'p${block.page}-l$lineNo-c${boxes.start}-동의',
-      _checkLabel(ctx.context, owner: ctx.owner),
+      label,
       block.page,
       toBox(left, cy - height / 2, right - left, height),
       false,

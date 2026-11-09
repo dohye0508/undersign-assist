@@ -9,7 +9,7 @@
 
 import json
 import re
-from difflib import SequenceMatcher
+import unicodedata
 from pathlib import Path
 
 from app.models import DocType, Field, TextBlock
@@ -88,21 +88,44 @@ OCR 글자:
         value = values.get(spec["label"])
         if isinstance(value, str) and value.strip():
             value = value.strip()[:MAX_VALUE_LENGTH]
-            fields.append(Field(label=spec["label"], value=value, line=_line_of(value, lines)))
+            line = _line_of(value, lines)
+            if line < 0:
+                raise llm.LlmError("AI 항목값을 OCR 원문에서 확인하지 못했어요")
+            # Matching a number elsewhere (e.g. 식비 instead of 시급) is not
+            # evidence for this field. A preceding empty label may own the value.
+            labelled = any(value_after(lines[line].text, key) is not None for key in spec["keys"])
+            if not labelled and line > 0 and lines[line - 1].page == lines[line].page:
+                labelled = any(value_after(lines[line - 1].text, key) == "" for key in spec["keys"])
+            if not labelled:
+                raise llm.LlmError("AI 항목과 OCR 원문의 항목 이름이 맞지 않아요")
+            raw = _find_value(lines, spec["keys"], [compact(k) for f in RULES[doc_type.value]["fields"] for k in f["keys"]])
+            if raw and not _evidence_text(raw[0]).startswith(_evidence_text(value)):
+                # Also protect rows with several amounts: 시급 5000원 식비 15000원.
+                raise llm.LlmError("AI 값이 해당 항목의 원문 값과 달라요")
+            fields.append(Field(label=spec["label"], value=value, line=line))
     return fields
 
 
+def _evidence_text(text: str) -> str:
+    text = compact(unicodedata.normalize("NFKC", text)).casefold()
+    return re.sub(r"(?<=\d),(?=\d)", "", text)
+
+
 def _line_of(value: str, lines: list[TextBlock]) -> int:
-    """AI가 정리한 값이 사진의 어느 줄에서 왔는지 찾는다 (사진 위 표시용). 못 찾으면 -1."""
-    target = compact(value)
-    best, best_index = 0.0, -1
+    """Require copied source evidence, not fuzzy similarity (especially money)."""
+    target = _evidence_text(value)
+    if not target:
+        return -1
     for index, line in enumerate(lines):
-        text = compact(line.text)
-        match = SequenceMatcher(None, target, text).find_longest_match(0, len(target), 0, len(text))
-        score = match.size / max(len(target), 1)
-        if score > best:
-            best, best_index = score, index
-    return best_index if best >= 0.4 else -1
+        text = _evidence_text(line.text)
+        for match in re.finditer(re.escape(target), text):
+            # 5,000 must not be accepted from 15,000; keep decimal points/signs.
+            if target[0].isdigit() and match.start() and text[match.start()-1] in "0123456789.-":
+                continue
+            if target[-1].isdigit() and match.end() < len(text) and text[match.end()] in "0123456789.":
+                continue
+            return index
+    return -1
 
 
 # --- 규칙 -------------------------------------------------------------------
@@ -125,28 +148,32 @@ def _extract_by_rules(lines: list[TextBlock], doc_type: DocType) -> list[Field]:
 def _find_value(lines: list[TextBlock], keys: list[str], all_keys: list[str] = ()) -> tuple[str, int] | None:
     # 거래일시 must be tried before 거래일, 보호자성명 before 보호자.
     keys = sorted(keys, key=lambda key: len(compact(key)), reverse=True)
-    for index, line in enumerate(lines):
-        # "위임 업무 재직증명서" is a field, while "조사 결과 보고서"
-        # is a heading. A specific leading label can disambiguate a title suffix.
-        leading_label = any(
-            len(compact(key)) >= 3 and re.match(
-                r"^\s*" + r"\s*".join(map(re.escape, compact(key))) + r"(?=\s|[:：])", line.text
-            ) and compact(value_after(line.text, key) or "") not in {
-                "보고서", "요약서", "확인서", "증명서", "서약서", "신청서",
-                "동의서", "위임장", "영수증", "설문지", "청구서", "고지서",
-            } for key in keys
-        )
-        if CLASSIFIER._title_kinds(line.text) and not leading_label:
-            continue
-        for key in keys:
+    for key in keys:
+        for index, line in enumerate(lines):
+            # "위임 업무 재직증명서" is a field, while "조사 결과 보고서"
+            # is a heading. A specific leading label can disambiguate a title suffix.
+            leading_label = any(
+                len(compact(key)) >= 3 and re.match(
+                    r"^\s*" + r"\s*".join(map(re.escape, compact(key))) + r"(?=\s|[:：])", line.text
+                ) and compact(value_after(line.text, key) or "") not in {
+                    "보고서", "요약서", "확인서", "증명서", "서약서", "신청서",
+                    "동의서", "위임장", "영수증", "설문지", "청구서", "고지서",
+                } for key in keys
+            )
+            if CLASSIFIER._title_kinds(line.text) and not leading_label:
+                continue
             value = value_after(line.text, key)
             if value is None:
                 continue
+            if key == "금액":
+                prefix = re.split(r"금\s*액", line.text, maxsplit=1)[0]
+                if re.search(r"[가-힣A-Za-z]", prefix):
+                    continue  # 환불 금액/할인 금액 is not an unspecified payment amount.
             # 항목 이름만 있고 값이 다음 줄에 있는 서식이 많다.
             # 단, 다음 줄이 다른 항목 이름이면(표 머리글이 줄마다 따로 읽힌 경우: "수집 목적" 다음 줄 "보유 기간") 값이 아니다
             if not value and index + 1 < len(lines) and lines[index + 1].page == line.page:
                 next_text = lines[index + 1].text
-                if not CLASSIFIER._title_kinds(next_text) and not any(k in compact(next_text) for k in all_keys):
+                if not CLASSIFIER._title_kinds(next_text) and not re.search(r"[:：]", next_text) and not any(k in compact(next_text) for k in all_keys):
                     value = next_text
             if value:
                 return value[:MAX_VALUE_LENGTH], index

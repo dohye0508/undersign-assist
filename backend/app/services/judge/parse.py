@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import re
 import datetime
+from decimal import Decimal, InvalidOperation
 
 _HANGUL_DIGITS = {
     "영": 0, "일": 1, "이": 2, "삼": 3, "사": 4,
@@ -48,33 +49,67 @@ def _hangul_number_to_int(s: str) -> int | None:
     return total if total > 0 else None
 
 
+def _money_number(expression: str) -> int | None:
+    """Evaluate a complete amount, never just its last readable suffix.
+
+    Small units accumulate inside a section; 만/억/조 multiply that whole
+    section. Decimal keeps 1.5만원 exact without floating-point rounding.
+    Malformed punctuation or reversed/repeated units are not guessed.
+    """
+    expression = re.sub(r"\s+", "", expression)
+    tokens = re.findall(r"[\d.,]+|[영일이삼사오육륙칠팔구]|[십백천만억조]", expression)
+    if not tokens or "".join(tokens) != expression:
+        return None
+    total = Decimal(0)
+    section = Decimal(0)
+    number = None
+    last_small = 10_000
+    last_big = float("inf")
+    for token in tokens:
+        if token in _HANGUL_SMALL_UNITS:
+            unit = _HANGUL_SMALL_UNITS[token]
+            if unit >= last_small:
+                return None
+            section += (number if number is not None else 1) * unit
+            number = None
+            last_small = unit
+        elif token in _HANGUL_BIG_UNITS:
+            unit = _HANGUL_BIG_UNITS[token]
+            if unit >= last_big:
+                return None
+            value = section + (number if number is not None else 0)
+            # A bare '만' means one 만; an explicit zero stays zero.
+            if not section and number is None and last_small == 10_000:
+                value = Decimal(1)
+            total += value * unit
+            section, number = Decimal(0), None
+            last_small, last_big = 10_000, unit
+        else:
+            if number is not None:
+                return None
+            if token in _HANGUL_DIGITS:
+                number = Decimal(_HANGUL_DIGITS[token])
+            else:
+                if not re.fullmatch(r"(?:\d+|\d{1,3}(?:,\d{3})+)(?:\.\d+)?", token):
+                    return None
+                try:
+                    number = Decimal(token.replace(",", ""))
+                except InvalidOperation:
+                    return None
+    total += section + (number if number is not None else 0)
+    return int(total) if total == total.to_integral_value() else None
+
+
 def parse_money(text: str) -> int | None:
-    """'시급 10,000원' '금 오천만원정' '5천만원' 등에서 금액(원)을 뽑는다."""
+    """Read won amounts such as 10,000원, 오천만원, 1억5천만원, 1.5만원."""
     if not text:
         return None
     t = _fix_ocr_digits(text)
-
-    m = re.search(r"([\d,]+)\s*억\s*([\d,]+)?\s*만?\s*원", t)
-    if m:
-        eok = int(m.group(1).replace(",", "") or 0)
-        man = int((m.group(2) or "0").replace(",", "") or 0)
-        return eok * 100_000_000 + man * 10_000
-
-    m = re.search(r"([\d,]+)\s*만\s*원", t)
-    if m:
-        return int(m.group(1).replace(",", "")) * 10_000
-
-    m = re.search(r"([\d][\d,]*)\s*원", t)
-    if m:
-        v = m.group(1).replace(",", "")
-        if v.isdigit():
-            return int(v)
-
-    m = re.search(r"(?:금\s*)?([일이삼사오육륙칠팔구십백천만억]+)\s*원", t)
-    if m:
-        return _hangul_number_to_int(m.group(1))
-
-    return None
+    # Include malformed numeric punctuation/signs in the candidate so an
+    # invalid 1..5만원 or -500원 cannot silently become 5만원 or 500원.
+    chars = r"\d.,+\-영일이삼사오육륙칠팔구십백천만억조"
+    match = re.search(rf"(?<![{chars}])([{chars}]+(?:\s+[{chars}]+)*)\s*원", t)
+    return _money_number(match.group(1)) if match else None
 
 
 def parse_percent(text: str) -> float | None:

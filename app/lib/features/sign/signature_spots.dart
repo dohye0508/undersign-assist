@@ -45,7 +45,7 @@ List<SignatureSpot> findSignatureSpots(RecognizedDocument document) {
 
 /// "서명이 필요한 곳은 2곳이에요. 첫째, 사업주 줄. 둘째, 근로자 줄."
 String describeSignatureSpots(List<SignatureSpot> spots) {
-  if (spots.isEmpty) return '서명란을 찾지 못했어요. 서명할 곳이 사진에 들어오게 다시 찍어 주세요.';
+  if (spots.isEmpty) return '서명란을 찾지 못했어요. 서명이 필요 없는 문서일 수 있으니 문서 내용을 확인해 주세요.';
   const ordinals = ['첫째', '둘째', '셋째', '넷째', '다섯째'];
   final parts = [
     for (final (i, spot) in spots.indexed) '${i < ordinals.length ? ordinals[i] : '${i + 1}번째'}, ${spot.label}.',
