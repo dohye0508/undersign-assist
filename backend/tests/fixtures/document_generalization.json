@@ -13,7 +13,7 @@
     {"id":"g_application_class","expected":"application","text":"문화센터 수강신청서\n수강 과정: 도예\n성명: 가상 수강생\n생년월일: 2000년 1월 1일\n연락처: 010-0000-0000\n신청 내용: 주말반\n개인정보 이용에 동의합니다."},
     {"id":"g_summary","expected":"summary","text":"연구 작품요약서\n작품명: 음성 길잡이\n팀명: 가상 연구팀\n작품 요약: 길을 소리로 안내하는 서비스\n기획의도: 안전한 이동 지원\n사용 기술: 음성 인식과 지도\n개발환경: 웹 브라우저"},
     {"id":"g_summary_project","expected":"summary","text":"과제 요약서\n과제명: 점자 안내판\n연구 개요: 촉각으로 읽는 안내\n기획의도: 편리한 이동\n사용 기술: 삼차원 인쇄\n개발환경: 설계 소프트웨어"},
-    {"id":"g_receipt","expected":"unknown","text":"거래 영수증\n가상 문구점\n물품: 공책 5권\n금액: 10000원\n카드 승인 완료\n구매해 주셔서 감사합니다."},
+    {"id":"g_receipt","expected":"receipt","text":"거래 영수증\n가상 문구점\n물품: 공책 5권\n금액: 10000원\n카드 승인 완료\n구매해 주셔서 감사합니다."},
     {"id":"g_prescription","expected":"unknown","text":"처방전\n가상 의료기관\n환자 성명: 가상 환자\n처방 약품명: 시험용 예시\n복용 횟수: 하루 2회\n담당 의사 서명"},
     {"id":"g_invoice","expected":"unknown","text":"공사 견적서\n의뢰인: 예시회사\n공사 내역: 벽면 도색\n예상 금액: 300만원\n작업 기간: 7일\n견적 유효기간: 한 달"},
     {"id":"g_medical_consent","expected":"unknown","text":"검사 및 시술 동의서\n설명받은 검사 방법을 이해했습니다.\n검사에 동의합니다.\n환자 성명: 가상 환자\n보호자 성명: 가상 보호자\n서명:"},

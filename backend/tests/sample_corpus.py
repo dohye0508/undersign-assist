@@ -155,6 +155,10 @@ def catalog():
         for case in cases:
             row = lookup.get(case["id"])
             case[name] = {k: row[k] for k in ("actual", "needs_review", "text", "seconds")} if row else None
+            if name == "after" and row:
+                # Render historical results against their original taxonomy.
+                # evaluate() still uses the current manifest (receipt supported).
+                case["expected"] = row["expected"]
     payload = json.dumps(cases, ensure_ascii=False).replace("<", "\\u003c")
     template = Path(__file__).with_name("sample_catalog.html").read_text("utf-8")
     rendered = template.replace("__FIXTURE_DATA__", payload).replace("__FIXTURE_COUNT__", str(len(cases)))

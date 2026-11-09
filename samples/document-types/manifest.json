@@ -1,0 +1,2887 @@
+{
+  "version": 1,
+  "provenance": "24 authored texts with synthetic transformations; NOT independent field photographs.",
+  "pillow": "13.0.0",
+  "cases": [
+    {
+      "id": "authorization_1/clean",
+      "case": "authorization_1",
+      "expected": "authorization",
+      "profile": "clean",
+      "expected_review": false,
+      "seed": 20261109,
+      "image": "images/authorization_1/clean.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "cca6beeb8c1e6fc4e87735f4a461b2072c01644598e897eb1186270cc3d94ae1",
+      "reference": "서류 수령 위임장\n위임인: 김하늘\n수임인: 이다온\n위임 사항: 재학 증명서 수령\n위임 범위: 서류 한 부 수령\n위임 기간: 2026년 11월 9일\n작성일: 2026년 11월 8일\n위임인 서명: 김하늘"
+    },
+    {
+      "id": "authorization_1/skew",
+      "case": "authorization_1",
+      "expected": "authorization",
+      "profile": "skew",
+      "expected_review": false,
+      "seed": 20261109,
+      "image": "images/authorization_1/skew.jpg",
+      "dimensions": [
+        1874,
+        1066
+      ],
+      "sha256": "09a02bdf844b068bb089b1ff04a18446794cf2d94c75cbe2facb65ee8aa58327",
+      "reference": "서류 수령 위임장\n위임인: 김하늘\n수임인: 이다온\n위임 사항: 재학 증명서 수령\n위임 범위: 서류 한 부 수령\n위임 기간: 2026년 11월 9일\n작성일: 2026년 11월 8일\n위임인 서명: 김하늘"
+    },
+    {
+      "id": "authorization_1/desk",
+      "case": "authorization_1",
+      "expected": "authorization",
+      "profile": "desk",
+      "expected_review": false,
+      "seed": 20261109,
+      "image": "images/authorization_1/desk.jpg",
+      "dimensions": [
+        2324,
+        1548
+      ],
+      "sha256": "a3fd35071595bcda88c0e35f06e75bf7ce2f3766a2c2fa5621eccb1a3d04e214",
+      "reference": "서류 수령 위임장\n위임인: 김하늘\n수임인: 이다온\n위임 사항: 재학 증명서 수령\n위임 범위: 서류 한 부 수령\n위임 기간: 2026년 11월 9일\n작성일: 2026년 11월 8일\n위임인 서명: 김하늘"
+    },
+    {
+      "id": "authorization_1/shadow",
+      "case": "authorization_1",
+      "expected": "authorization",
+      "profile": "shadow",
+      "expected_review": false,
+      "seed": 20261109,
+      "image": "images/authorization_1/shadow.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "b2557fca7484fd67106bbbec2dfa47c1fae8dfd503f5eadb8654eff562123e51",
+      "reference": "서류 수령 위임장\n위임인: 김하늘\n수임인: 이다온\n위임 사항: 재학 증명서 수령\n위임 범위: 서류 한 부 수령\n위임 기간: 2026년 11월 9일\n작성일: 2026년 11월 8일\n위임인 서명: 김하늘"
+    },
+    {
+      "id": "authorization_1/blur",
+      "case": "authorization_1",
+      "expected": "authorization",
+      "profile": "blur",
+      "expected_review": false,
+      "seed": 20261109,
+      "image": "images/authorization_1/blur.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "65578611eb417ab4f238684cd689c3f51a4915dd48f03a35a92d0fc3c8613adb",
+      "reference": "서류 수령 위임장\n위임인: 김하늘\n수임인: 이다온\n위임 사항: 재학 증명서 수령\n위임 범위: 서류 한 부 수령\n위임 기간: 2026년 11월 9일\n작성일: 2026년 11월 8일\n위임인 서명: 김하늘"
+    },
+    {
+      "id": "authorization_1/cropped_title",
+      "case": "authorization_1",
+      "expected": "authorization",
+      "profile": "cropped_title",
+      "expected_review": false,
+      "seed": 20261109,
+      "image": "images/authorization_1/cropped_title.jpg",
+      "dimensions": [
+        1800,
+        777
+      ],
+      "sha256": "8d9907ab8b6ee3229d52303b6327891c2984dfc87296f6076f6cfdd9f2ad237b",
+      "reference": "서류 수령 위임장\n위임인: 김하늘\n수임인: 이다온\n위임 사항: 재학 증명서 수령\n위임 범위: 서류 한 부 수령\n위임 기간: 2026년 11월 9일\n작성일: 2026년 11월 8일\n위임인 서명: 김하늘"
+    },
+    {
+      "id": "authorization_1/sideways",
+      "case": "authorization_1",
+      "expected": "authorization",
+      "profile": "sideways",
+      "expected_review": false,
+      "seed": 20261109,
+      "image": "images/authorization_1/sideways.jpg",
+      "dimensions": [
+        912,
+        1800
+      ],
+      "sha256": "5b63d635063de473309d26dba55f041c629c410f8f615903abfd7dc0000f25c4",
+      "reference": "서류 수령 위임장\n위임인: 김하늘\n수임인: 이다온\n위임 사항: 재학 증명서 수령\n위임 범위: 서류 한 부 수령\n위임 기간: 2026년 11월 9일\n작성일: 2026년 11월 8일\n위임인 서명: 김하늘"
+    },
+    {
+      "id": "authorization_1/tiny_unreadable",
+      "case": "authorization_1",
+      "expected": "authorization",
+      "profile": "tiny_unreadable",
+      "expected_review": true,
+      "seed": 20261109,
+      "image": "images/authorization_1/tiny_unreadable.jpg",
+      "dimensions": [
+        180,
+        91
+      ],
+      "sha256": "45efbff4ed638d904fe9d4b2b639fa24133f6c1f2e83fe5d91cfb93228c9b004",
+      "reference": "서류 수령 위임장\n위임인: 김하늘\n수임인: 이다온\n위임 사항: 재학 증명서 수령\n위임 범위: 서류 한 부 수령\n위임 기간: 2026년 11월 9일\n작성일: 2026년 11월 8일\n위임인 서명: 김하늘"
+    },
+    {
+      "id": "authorization_2/clean",
+      "case": "authorization_2",
+      "expected": "authorization",
+      "profile": "clean",
+      "expected_review": false,
+      "seed": 20261110,
+      "image": "images/authorization_2/clean.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "b9c80bf88beb26c6e5fff96a436169a6c1aef35c2b4da36dccf91c322b0ee8f3",
+      "reference": "민원 업무 위임장\n위임자: 박가람\n대리인: 최나래\n위임 내용: 전입 관련 서류 제출\n위임 범위: 민원 서류 접수\n유효 기간: 2026년 11월 10일까지\n연락처: 010-0000-0000\n작성일: 2026년 11월 9일"
+    },
+    {
+      "id": "authorization_2/skew",
+      "case": "authorization_2",
+      "expected": "authorization",
+      "profile": "skew",
+      "expected_review": false,
+      "seed": 20261110,
+      "image": "images/authorization_2/skew.jpg",
+      "dimensions": [
+        1874,
+        1066
+      ],
+      "sha256": "1aebe65b32124c650561896ea119d7ecbc1caee229fd18666c4e0fe7da925c6d",
+      "reference": "민원 업무 위임장\n위임자: 박가람\n대리인: 최나래\n위임 내용: 전입 관련 서류 제출\n위임 범위: 민원 서류 접수\n유효 기간: 2026년 11월 10일까지\n연락처: 010-0000-0000\n작성일: 2026년 11월 9일"
+    },
+    {
+      "id": "authorization_2/desk",
+      "case": "authorization_2",
+      "expected": "authorization",
+      "profile": "desk",
+      "expected_review": false,
+      "seed": 20261110,
+      "image": "images/authorization_2/desk.jpg",
+      "dimensions": [
+        2320,
+        1534
+      ],
+      "sha256": "2e166ee241b514a6fd4c19f34e928221e71f98100ac54fb0bfde57c3660c6fd8",
+      "reference": "민원 업무 위임장\n위임자: 박가람\n대리인: 최나래\n위임 내용: 전입 관련 서류 제출\n위임 범위: 민원 서류 접수\n유효 기간: 2026년 11월 10일까지\n연락처: 010-0000-0000\n작성일: 2026년 11월 9일"
+    },
+    {
+      "id": "authorization_2/shadow",
+      "case": "authorization_2",
+      "expected": "authorization",
+      "profile": "shadow",
+      "expected_review": false,
+      "seed": 20261110,
+      "image": "images/authorization_2/shadow.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "320bb83fb74ffb2152b4056e91bac41bb3ccff129a16cd025799280be80f65e4",
+      "reference": "민원 업무 위임장\n위임자: 박가람\n대리인: 최나래\n위임 내용: 전입 관련 서류 제출\n위임 범위: 민원 서류 접수\n유효 기간: 2026년 11월 10일까지\n연락처: 010-0000-0000\n작성일: 2026년 11월 9일"
+    },
+    {
+      "id": "authorization_2/blur",
+      "case": "authorization_2",
+      "expected": "authorization",
+      "profile": "blur",
+      "expected_review": false,
+      "seed": 20261110,
+      "image": "images/authorization_2/blur.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "6adac561746082ff78e915b57af9177fc186b560eda3f4076bde52168b4b7a5d",
+      "reference": "민원 업무 위임장\n위임자: 박가람\n대리인: 최나래\n위임 내용: 전입 관련 서류 제출\n위임 범위: 민원 서류 접수\n유효 기간: 2026년 11월 10일까지\n연락처: 010-0000-0000\n작성일: 2026년 11월 9일"
+    },
+    {
+      "id": "authorization_2/cropped_title",
+      "case": "authorization_2",
+      "expected": "authorization",
+      "profile": "cropped_title",
+      "expected_review": false,
+      "seed": 20261110,
+      "image": "images/authorization_2/cropped_title.jpg",
+      "dimensions": [
+        1800,
+        777
+      ],
+      "sha256": "1ad15ac29205632b9f5f9ac4b1c5aed35bef7c7546711e04fe82348374ff0b84",
+      "reference": "민원 업무 위임장\n위임자: 박가람\n대리인: 최나래\n위임 내용: 전입 관련 서류 제출\n위임 범위: 민원 서류 접수\n유효 기간: 2026년 11월 10일까지\n연락처: 010-0000-0000\n작성일: 2026년 11월 9일"
+    },
+    {
+      "id": "authorization_2/sideways",
+      "case": "authorization_2",
+      "expected": "authorization",
+      "profile": "sideways",
+      "expected_review": false,
+      "seed": 20261110,
+      "image": "images/authorization_2/sideways.jpg",
+      "dimensions": [
+        912,
+        1800
+      ],
+      "sha256": "a8757fef9255c2ee11d3e7911b9960454cbca5be6c448253202228933f222fbe",
+      "reference": "민원 업무 위임장\n위임자: 박가람\n대리인: 최나래\n위임 내용: 전입 관련 서류 제출\n위임 범위: 민원 서류 접수\n유효 기간: 2026년 11월 10일까지\n연락처: 010-0000-0000\n작성일: 2026년 11월 9일"
+    },
+    {
+      "id": "authorization_2/tiny_unreadable",
+      "case": "authorization_2",
+      "expected": "authorization",
+      "profile": "tiny_unreadable",
+      "expected_review": true,
+      "seed": 20261110,
+      "image": "images/authorization_2/tiny_unreadable.jpg",
+      "dimensions": [
+        180,
+        91
+      ],
+      "sha256": "082a1ad102144ea4642b8e481e6a163e83abe76d2d12a329fa6b61423088f653",
+      "reference": "민원 업무 위임장\n위임자: 박가람\n대리인: 최나래\n위임 내용: 전입 관련 서류 제출\n위임 범위: 민원 서류 접수\n유효 기간: 2026년 11월 10일까지\n연락처: 010-0000-0000\n작성일: 2026년 11월 9일"
+    },
+    {
+      "id": "authorization_3/clean",
+      "case": "authorization_3",
+      "expected": "authorization",
+      "profile": "clean",
+      "expected_review": false,
+      "seed": 20261111,
+      "image": "images/authorization_3/clean.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "cfd607d0defd8f82606a41f2b23e931f8d0c31dfd029ee7dffbe6ee560ea90dd",
+      "reference": "물품 수령 위임장\n위임인: 윤초롱\n수임인: 정새봄\n위임 사항: 보관 물품 수령\n위임 범위: 접수번호 103 물품\n위임 기간: 2026년 11월 12일\n대리인 연락처: 010-0000-0000\n작성일: 2026년 11월 11일"
+    },
+    {
+      "id": "authorization_3/skew",
+      "case": "authorization_3",
+      "expected": "authorization",
+      "profile": "skew",
+      "expected_review": false,
+      "seed": 20261111,
+      "image": "images/authorization_3/skew.jpg",
+      "dimensions": [
+        1874,
+        1066
+      ],
+      "sha256": "317dbe1f45339860c70e3d057b6c6bad465919d8f829abf50ee4cdf95611fe02",
+      "reference": "물품 수령 위임장\n위임인: 윤초롱\n수임인: 정새봄\n위임 사항: 보관 물품 수령\n위임 범위: 접수번호 103 물품\n위임 기간: 2026년 11월 12일\n대리인 연락처: 010-0000-0000\n작성일: 2026년 11월 11일"
+    },
+    {
+      "id": "authorization_3/desk",
+      "case": "authorization_3",
+      "expected": "authorization",
+      "profile": "desk",
+      "expected_review": false,
+      "seed": 20261111,
+      "image": "images/authorization_3/desk.jpg",
+      "dimensions": [
+        2314,
+        1518
+      ],
+      "sha256": "14dc966db3d833849b713ca0831fc38a9d5a2a62066bedde9c749222ebfcbe32",
+      "reference": "물품 수령 위임장\n위임인: 윤초롱\n수임인: 정새봄\n위임 사항: 보관 물품 수령\n위임 범위: 접수번호 103 물품\n위임 기간: 2026년 11월 12일\n대리인 연락처: 010-0000-0000\n작성일: 2026년 11월 11일"
+    },
+    {
+      "id": "authorization_3/shadow",
+      "case": "authorization_3",
+      "expected": "authorization",
+      "profile": "shadow",
+      "expected_review": false,
+      "seed": 20261111,
+      "image": "images/authorization_3/shadow.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "bc5fd720d818e1474a50aa932e22713ca79c73c420104c63c2d4b04613b42421",
+      "reference": "물품 수령 위임장\n위임인: 윤초롱\n수임인: 정새봄\n위임 사항: 보관 물품 수령\n위임 범위: 접수번호 103 물품\n위임 기간: 2026년 11월 12일\n대리인 연락처: 010-0000-0000\n작성일: 2026년 11월 11일"
+    },
+    {
+      "id": "authorization_3/blur",
+      "case": "authorization_3",
+      "expected": "authorization",
+      "profile": "blur",
+      "expected_review": false,
+      "seed": 20261111,
+      "image": "images/authorization_3/blur.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "0638462d72d0fed46b0940a2f05ea123fc446784dc8ca33b7001e269c1250328",
+      "reference": "물품 수령 위임장\n위임인: 윤초롱\n수임인: 정새봄\n위임 사항: 보관 물품 수령\n위임 범위: 접수번호 103 물품\n위임 기간: 2026년 11월 12일\n대리인 연락처: 010-0000-0000\n작성일: 2026년 11월 11일"
+    },
+    {
+      "id": "authorization_3/cropped_title",
+      "case": "authorization_3",
+      "expected": "authorization",
+      "profile": "cropped_title",
+      "expected_review": false,
+      "seed": 20261111,
+      "image": "images/authorization_3/cropped_title.jpg",
+      "dimensions": [
+        1800,
+        777
+      ],
+      "sha256": "6451cb22b646432a2b437bbcb332ac1b3ea92197193d90e260fd36455a465d61",
+      "reference": "물품 수령 위임장\n위임인: 윤초롱\n수임인: 정새봄\n위임 사항: 보관 물품 수령\n위임 범위: 접수번호 103 물품\n위임 기간: 2026년 11월 12일\n대리인 연락처: 010-0000-0000\n작성일: 2026년 11월 11일"
+    },
+    {
+      "id": "authorization_3/sideways",
+      "case": "authorization_3",
+      "expected": "authorization",
+      "profile": "sideways",
+      "expected_review": false,
+      "seed": 20261111,
+      "image": "images/authorization_3/sideways.jpg",
+      "dimensions": [
+        912,
+        1800
+      ],
+      "sha256": "f36680562d0c891231472902706fec20eb0b0dd5f1d6367a2c8c507391e2fc77",
+      "reference": "물품 수령 위임장\n위임인: 윤초롱\n수임인: 정새봄\n위임 사항: 보관 물품 수령\n위임 범위: 접수번호 103 물품\n위임 기간: 2026년 11월 12일\n대리인 연락처: 010-0000-0000\n작성일: 2026년 11월 11일"
+    },
+    {
+      "id": "authorization_3/tiny_unreadable",
+      "case": "authorization_3",
+      "expected": "authorization",
+      "profile": "tiny_unreadable",
+      "expected_review": true,
+      "seed": 20261111,
+      "image": "images/authorization_3/tiny_unreadable.jpg",
+      "dimensions": [
+        180,
+        91
+      ],
+      "sha256": "15ab645acb390507d76b6febc5b9326f8ed9572867a5c52ea4915a38a4f31370",
+      "reference": "물품 수령 위임장\n위임인: 윤초롱\n수임인: 정새봄\n위임 사항: 보관 물품 수령\n위임 범위: 접수번호 103 물품\n위임 기간: 2026년 11월 12일\n대리인 연락처: 010-0000-0000\n작성일: 2026년 11월 11일"
+    },
+    {
+      "id": "certificate_1/clean",
+      "case": "certificate_1",
+      "expected": "certificate",
+      "profile": "clean",
+      "expected_review": false,
+      "seed": 20261112,
+      "image": "images/certificate_1/clean.jpg",
+      "dimensions": [
+        1800,
+        988
+      ],
+      "sha256": "e56c55120692d18d59a56523a6dd23d636068c1eab9c9fe06669976619fce554",
+      "reference": "재직 증명서\n성명: 김하늘\n소속: 운영지원팀\n직위: 사원\n재직 기간: 2024년 3월부터 현재\n증명 내용: 위 사람의 재직을 증명합니다\n발급 기관: 가상문화센터\n발급일: 2026년 11월 9일\n용도: 본인 확인"
+    },
+    {
+      "id": "certificate_1/skew",
+      "case": "certificate_1",
+      "expected": "certificate",
+      "profile": "skew",
+      "expected_review": false,
+      "seed": 20261112,
+      "image": "images/certificate_1/skew.jpg",
+      "dimensions": [
+        1880,
+        1142
+      ],
+      "sha256": "50f530bb39766ead06d59416f4a869c24017d604cd94d5063ce1ea5d4a70e405",
+      "reference": "재직 증명서\n성명: 김하늘\n소속: 운영지원팀\n직위: 사원\n재직 기간: 2024년 3월부터 현재\n증명 내용: 위 사람의 재직을 증명합니다\n발급 기관: 가상문화센터\n발급일: 2026년 11월 9일\n용도: 본인 확인"
+    },
+    {
+      "id": "certificate_1/desk",
+      "case": "certificate_1",
+      "expected": "certificate",
+      "profile": "desk",
+      "expected_review": false,
+      "seed": 20261112,
+      "image": "images/certificate_1/desk.jpg",
+      "dimensions": [
+        2338,
+        1618
+      ],
+      "sha256": "762fa27695e53598beeec229195298dae500135e98513fa6eabc1104c410d686",
+      "reference": "재직 증명서\n성명: 김하늘\n소속: 운영지원팀\n직위: 사원\n재직 기간: 2024년 3월부터 현재\n증명 내용: 위 사람의 재직을 증명합니다\n발급 기관: 가상문화센터\n발급일: 2026년 11월 9일\n용도: 본인 확인"
+    },
+    {
+      "id": "certificate_1/shadow",
+      "case": "certificate_1",
+      "expected": "certificate",
+      "profile": "shadow",
+      "expected_review": false,
+      "seed": 20261112,
+      "image": "images/certificate_1/shadow.jpg",
+      "dimensions": [
+        1800,
+        988
+      ],
+      "sha256": "928f4b4590c76f60e61b1f26b18d5176e3fc2c004954ac553ddca3f966ce953a",
+      "reference": "재직 증명서\n성명: 김하늘\n소속: 운영지원팀\n직위: 사원\n재직 기간: 2024년 3월부터 현재\n증명 내용: 위 사람의 재직을 증명합니다\n발급 기관: 가상문화센터\n발급일: 2026년 11월 9일\n용도: 본인 확인"
+    },
+    {
+      "id": "certificate_1/blur",
+      "case": "certificate_1",
+      "expected": "certificate",
+      "profile": "blur",
+      "expected_review": false,
+      "seed": 20261112,
+      "image": "images/certificate_1/blur.jpg",
+      "dimensions": [
+        1800,
+        988
+      ],
+      "sha256": "22d20348844512965ba25b363e224fb28b5099a92eb2d23ab1b9fbaf35953bb4",
+      "reference": "재직 증명서\n성명: 김하늘\n소속: 운영지원팀\n직위: 사원\n재직 기간: 2024년 3월부터 현재\n증명 내용: 위 사람의 재직을 증명합니다\n발급 기관: 가상문화센터\n발급일: 2026년 11월 9일\n용도: 본인 확인"
+    },
+    {
+      "id": "certificate_1/cropped_title",
+      "case": "certificate_1",
+      "expected": "certificate",
+      "profile": "cropped_title",
+      "expected_review": false,
+      "seed": 20261112,
+      "image": "images/certificate_1/cropped_title.jpg",
+      "dimensions": [
+        1800,
+        853
+      ],
+      "sha256": "79a305d565c68953eae741950d487bb75b7d3caf9300af7fb18136e8e4d4690a",
+      "reference": "재직 증명서\n성명: 김하늘\n소속: 운영지원팀\n직위: 사원\n재직 기간: 2024년 3월부터 현재\n증명 내용: 위 사람의 재직을 증명합니다\n발급 기관: 가상문화센터\n발급일: 2026년 11월 9일\n용도: 본인 확인"
+    },
+    {
+      "id": "certificate_1/sideways",
+      "case": "certificate_1",
+      "expected": "certificate",
+      "profile": "sideways",
+      "expected_review": false,
+      "seed": 20261112,
+      "image": "images/certificate_1/sideways.jpg",
+      "dimensions": [
+        988,
+        1800
+      ],
+      "sha256": "5875946f0ea5575593630844550a527f2538b956468f859c5eb3e00acd4985b8",
+      "reference": "재직 증명서\n성명: 김하늘\n소속: 운영지원팀\n직위: 사원\n재직 기간: 2024년 3월부터 현재\n증명 내용: 위 사람의 재직을 증명합니다\n발급 기관: 가상문화센터\n발급일: 2026년 11월 9일\n용도: 본인 확인"
+    },
+    {
+      "id": "certificate_1/tiny_unreadable",
+      "case": "certificate_1",
+      "expected": "certificate",
+      "profile": "tiny_unreadable",
+      "expected_review": true,
+      "seed": 20261112,
+      "image": "images/certificate_1/tiny_unreadable.jpg",
+      "dimensions": [
+        180,
+        99
+      ],
+      "sha256": "8fbfd7b93a6e890d8dee15c1922116561b387ecd2ef925757ff8090548106dd7",
+      "reference": "재직 증명서\n성명: 김하늘\n소속: 운영지원팀\n직위: 사원\n재직 기간: 2024년 3월부터 현재\n증명 내용: 위 사람의 재직을 증명합니다\n발급 기관: 가상문화센터\n발급일: 2026년 11월 9일\n용도: 본인 확인"
+    },
+    {
+      "id": "certificate_2/clean",
+      "case": "certificate_2",
+      "expected": "certificate",
+      "profile": "clean",
+      "expected_review": false,
+      "seed": 20261113,
+      "image": "images/certificate_2/clean.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "728eda23b43d225253b3a63106755e005e8277eb5627e4bf1a3ff682a0392673",
+      "reference": "재학 증명서\n성명: 박가람\n학교명: 가상중학교\n학년: 2학년\n증명 내용: 현재 재학 중임을 증명합니다\n발급 기관: 가상중학교\n발급일: 2026년 11월 9일\n용도: 교육 프로그램 제출"
+    },
+    {
+      "id": "certificate_2/skew",
+      "case": "certificate_2",
+      "expected": "certificate",
+      "profile": "skew",
+      "expected_review": false,
+      "seed": 20261113,
+      "image": "images/certificate_2/skew.jpg",
+      "dimensions": [
+        1874,
+        1066
+      ],
+      "sha256": "22f83a79f3b99666376e6c5922c9d914568bb7465ace43c582a17c03a2f826ad",
+      "reference": "재학 증명서\n성명: 박가람\n학교명: 가상중학교\n학년: 2학년\n증명 내용: 현재 재학 중임을 증명합니다\n발급 기관: 가상중학교\n발급일: 2026년 11월 9일\n용도: 교육 프로그램 제출"
+    },
+    {
+      "id": "certificate_2/desk",
+      "case": "certificate_2",
+      "expected": "certificate",
+      "profile": "desk",
+      "expected_review": false,
+      "seed": 20261113,
+      "image": "images/certificate_2/desk.jpg",
+      "dimensions": [
+        2324,
+        1548
+      ],
+      "sha256": "0f1079c04e8b8566664066137effd7554a3c19e3a282b59864e616cca958335f",
+      "reference": "재학 증명서\n성명: 박가람\n학교명: 가상중학교\n학년: 2학년\n증명 내용: 현재 재학 중임을 증명합니다\n발급 기관: 가상중학교\n발급일: 2026년 11월 9일\n용도: 교육 프로그램 제출"
+    },
+    {
+      "id": "certificate_2/shadow",
+      "case": "certificate_2",
+      "expected": "certificate",
+      "profile": "shadow",
+      "expected_review": false,
+      "seed": 20261113,
+      "image": "images/certificate_2/shadow.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "fdafd1a9a985f339631c2d7ef12f4176042a54d245b8bca15d39a24231a9200d",
+      "reference": "재학 증명서\n성명: 박가람\n학교명: 가상중학교\n학년: 2학년\n증명 내용: 현재 재학 중임을 증명합니다\n발급 기관: 가상중학교\n발급일: 2026년 11월 9일\n용도: 교육 프로그램 제출"
+    },
+    {
+      "id": "certificate_2/blur",
+      "case": "certificate_2",
+      "expected": "certificate",
+      "profile": "blur",
+      "expected_review": false,
+      "seed": 20261113,
+      "image": "images/certificate_2/blur.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "ae772081b753b47868e94d11ded2c172b7c2a833517d3c0fb6eccc4f6b8cc172",
+      "reference": "재학 증명서\n성명: 박가람\n학교명: 가상중학교\n학년: 2학년\n증명 내용: 현재 재학 중임을 증명합니다\n발급 기관: 가상중학교\n발급일: 2026년 11월 9일\n용도: 교육 프로그램 제출"
+    },
+    {
+      "id": "certificate_2/cropped_title",
+      "case": "certificate_2",
+      "expected": "certificate",
+      "profile": "cropped_title",
+      "expected_review": false,
+      "seed": 20261113,
+      "image": "images/certificate_2/cropped_title.jpg",
+      "dimensions": [
+        1800,
+        777
+      ],
+      "sha256": "0c63bff45910b36994f36c506e35986fbf7dda431d0588d8c08bedb41c403f99",
+      "reference": "재학 증명서\n성명: 박가람\n학교명: 가상중학교\n학년: 2학년\n증명 내용: 현재 재학 중임을 증명합니다\n발급 기관: 가상중학교\n발급일: 2026년 11월 9일\n용도: 교육 프로그램 제출"
+    },
+    {
+      "id": "certificate_2/sideways",
+      "case": "certificate_2",
+      "expected": "certificate",
+      "profile": "sideways",
+      "expected_review": false,
+      "seed": 20261113,
+      "image": "images/certificate_2/sideways.jpg",
+      "dimensions": [
+        912,
+        1800
+      ],
+      "sha256": "2dcd61b17c137d803233110d3f2bc2311344f05de732ce4c89afddee02fccb6d",
+      "reference": "재학 증명서\n성명: 박가람\n학교명: 가상중학교\n학년: 2학년\n증명 내용: 현재 재학 중임을 증명합니다\n발급 기관: 가상중학교\n발급일: 2026년 11월 9일\n용도: 교육 프로그램 제출"
+    },
+    {
+      "id": "certificate_2/tiny_unreadable",
+      "case": "certificate_2",
+      "expected": "certificate",
+      "profile": "tiny_unreadable",
+      "expected_review": true,
+      "seed": 20261113,
+      "image": "images/certificate_2/tiny_unreadable.jpg",
+      "dimensions": [
+        180,
+        91
+      ],
+      "sha256": "67ea37ebe6202e16f6dab9a0e6870a2076cf7cbee082c1c1a7ce5bfda3546c34",
+      "reference": "재학 증명서\n성명: 박가람\n학교명: 가상중학교\n학년: 2학년\n증명 내용: 현재 재학 중임을 증명합니다\n발급 기관: 가상중학교\n발급일: 2026년 11월 9일\n용도: 교육 프로그램 제출"
+    },
+    {
+      "id": "certificate_3/clean",
+      "case": "certificate_3",
+      "expected": "certificate",
+      "profile": "clean",
+      "expected_review": false,
+      "seed": 20261114,
+      "image": "images/certificate_3/clean.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "88ac4c3b7244ee5529bfdae95766abd023221534b61900e17648af43f93acfaa",
+      "reference": "교육 이수 확인서\n성명: 윤초롱\n교육 과정: 시민 문화 교육\n교육 기간: 2026년 10월 1일부터 30일\n이수 시간: 20시간\n확인 내용: 해당 과정을 이수하였음을 확인합니다\n발급 기관: 가상교육원\n발급일: 2026년 11월 9일"
+    },
+    {
+      "id": "certificate_3/skew",
+      "case": "certificate_3",
+      "expected": "certificate",
+      "profile": "skew",
+      "expected_review": false,
+      "seed": 20261114,
+      "image": "images/certificate_3/skew.jpg",
+      "dimensions": [
+        1874,
+        1066
+      ],
+      "sha256": "c4ce580f400674b5cf14b51618a8e3d00d982127191796c2d4ec2f6d506110d4",
+      "reference": "교육 이수 확인서\n성명: 윤초롱\n교육 과정: 시민 문화 교육\n교육 기간: 2026년 10월 1일부터 30일\n이수 시간: 20시간\n확인 내용: 해당 과정을 이수하였음을 확인합니다\n발급 기관: 가상교육원\n발급일: 2026년 11월 9일"
+    },
+    {
+      "id": "certificate_3/desk",
+      "case": "certificate_3",
+      "expected": "certificate",
+      "profile": "desk",
+      "expected_review": false,
+      "seed": 20261114,
+      "image": "images/certificate_3/desk.jpg",
+      "dimensions": [
+        2328,
+        1560
+      ],
+      "sha256": "cee06c88d17c29392f6d1a701c6ef49ce1d1337c36497387c0cd103286b26ed3",
+      "reference": "교육 이수 확인서\n성명: 윤초롱\n교육 과정: 시민 문화 교육\n교육 기간: 2026년 10월 1일부터 30일\n이수 시간: 20시간\n확인 내용: 해당 과정을 이수하였음을 확인합니다\n발급 기관: 가상교육원\n발급일: 2026년 11월 9일"
+    },
+    {
+      "id": "certificate_3/shadow",
+      "case": "certificate_3",
+      "expected": "certificate",
+      "profile": "shadow",
+      "expected_review": false,
+      "seed": 20261114,
+      "image": "images/certificate_3/shadow.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "d54067c05b15ec767332af5f8defdb340bbde0aa336ed66a723a0159a4362dfb",
+      "reference": "교육 이수 확인서\n성명: 윤초롱\n교육 과정: 시민 문화 교육\n교육 기간: 2026년 10월 1일부터 30일\n이수 시간: 20시간\n확인 내용: 해당 과정을 이수하였음을 확인합니다\n발급 기관: 가상교육원\n발급일: 2026년 11월 9일"
+    },
+    {
+      "id": "certificate_3/blur",
+      "case": "certificate_3",
+      "expected": "certificate",
+      "profile": "blur",
+      "expected_review": false,
+      "seed": 20261114,
+      "image": "images/certificate_3/blur.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "3201202c579653482e2c1f74120b1dbdb862f0cba64e91d9011b60d63c41349a",
+      "reference": "교육 이수 확인서\n성명: 윤초롱\n교육 과정: 시민 문화 교육\n교육 기간: 2026년 10월 1일부터 30일\n이수 시간: 20시간\n확인 내용: 해당 과정을 이수하였음을 확인합니다\n발급 기관: 가상교육원\n발급일: 2026년 11월 9일"
+    },
+    {
+      "id": "certificate_3/cropped_title",
+      "case": "certificate_3",
+      "expected": "certificate",
+      "profile": "cropped_title",
+      "expected_review": false,
+      "seed": 20261114,
+      "image": "images/certificate_3/cropped_title.jpg",
+      "dimensions": [
+        1800,
+        777
+      ],
+      "sha256": "e181d31d9b71c824bb971619437200adf4b5a8cfac4b6e49c478b2124af04f76",
+      "reference": "교육 이수 확인서\n성명: 윤초롱\n교육 과정: 시민 문화 교육\n교육 기간: 2026년 10월 1일부터 30일\n이수 시간: 20시간\n확인 내용: 해당 과정을 이수하였음을 확인합니다\n발급 기관: 가상교육원\n발급일: 2026년 11월 9일"
+    },
+    {
+      "id": "certificate_3/sideways",
+      "case": "certificate_3",
+      "expected": "certificate",
+      "profile": "sideways",
+      "expected_review": false,
+      "seed": 20261114,
+      "image": "images/certificate_3/sideways.jpg",
+      "dimensions": [
+        912,
+        1800
+      ],
+      "sha256": "b7e3f63770fb494bbbd1e43015454cd9b254fc4e56a6020b46e9ceee333595e5",
+      "reference": "교육 이수 확인서\n성명: 윤초롱\n교육 과정: 시민 문화 교육\n교육 기간: 2026년 10월 1일부터 30일\n이수 시간: 20시간\n확인 내용: 해당 과정을 이수하였음을 확인합니다\n발급 기관: 가상교육원\n발급일: 2026년 11월 9일"
+    },
+    {
+      "id": "certificate_3/tiny_unreadable",
+      "case": "certificate_3",
+      "expected": "certificate",
+      "profile": "tiny_unreadable",
+      "expected_review": true,
+      "seed": 20261114,
+      "image": "images/certificate_3/tiny_unreadable.jpg",
+      "dimensions": [
+        180,
+        91
+      ],
+      "sha256": "234e0aa8237a69834a94f253d2483cbc2b4239b1c590fe2a816c1a582f367eff",
+      "reference": "교육 이수 확인서\n성명: 윤초롱\n교육 과정: 시민 문화 교육\n교육 기간: 2026년 10월 1일부터 30일\n이수 시간: 20시간\n확인 내용: 해당 과정을 이수하였음을 확인합니다\n발급 기관: 가상교육원\n발급일: 2026년 11월 9일"
+    },
+    {
+      "id": "invoice_1/clean",
+      "case": "invoice_1",
+      "expected": "invoice",
+      "profile": "clean",
+      "expected_review": false,
+      "seed": 20261115,
+      "image": "images/invoice_1/clean.jpg",
+      "dimensions": [
+        1800,
+        988
+      ],
+      "sha256": "9fd221274318e9b38c3d5e43df4ff471b4928d2fa595f6e3aa522edf76354898",
+      "reference": "물품 대금 청구서\n청구인: 가상문구\n청구 대상: 가상문화센터\n청구 내역: 문구 세트 10개\n청구 금액: 50000원\n납부 기한: 2026년 11월 20일\n납부 방법: 계좌 이체\n납부 계좌: 테스트은행 000-000-000\n발행일: 2026년 11월 9일"
+    },
+    {
+      "id": "invoice_1/skew",
+      "case": "invoice_1",
+      "expected": "invoice",
+      "profile": "skew",
+      "expected_review": false,
+      "seed": 20261115,
+      "image": "images/invoice_1/skew.jpg",
+      "dimensions": [
+        1880,
+        1142
+      ],
+      "sha256": "8776d49e2ca77b492a32a44f27649291a8d2486fd5bce2328ce267de823c9745",
+      "reference": "물품 대금 청구서\n청구인: 가상문구\n청구 대상: 가상문화센터\n청구 내역: 문구 세트 10개\n청구 금액: 50000원\n납부 기한: 2026년 11월 20일\n납부 방법: 계좌 이체\n납부 계좌: 테스트은행 000-000-000\n발행일: 2026년 11월 9일"
+    },
+    {
+      "id": "invoice_1/desk",
+      "case": "invoice_1",
+      "expected": "invoice",
+      "profile": "desk",
+      "expected_review": false,
+      "seed": 20261115,
+      "image": "images/invoice_1/desk.jpg",
+      "dimensions": [
+        2334,
+        1608
+      ],
+      "sha256": "229510157f4b3087392c632662a29c9dba585d638eb5d43e14f88dfc70ec4fca",
+      "reference": "물품 대금 청구서\n청구인: 가상문구\n청구 대상: 가상문화센터\n청구 내역: 문구 세트 10개\n청구 금액: 50000원\n납부 기한: 2026년 11월 20일\n납부 방법: 계좌 이체\n납부 계좌: 테스트은행 000-000-000\n발행일: 2026년 11월 9일"
+    },
+    {
+      "id": "invoice_1/shadow",
+      "case": "invoice_1",
+      "expected": "invoice",
+      "profile": "shadow",
+      "expected_review": false,
+      "seed": 20261115,
+      "image": "images/invoice_1/shadow.jpg",
+      "dimensions": [
+        1800,
+        988
+      ],
+      "sha256": "d89745517149e1206dd2bcea2bf12e426a02c972f523d127eadab9c6e18552b5",
+      "reference": "물품 대금 청구서\n청구인: 가상문구\n청구 대상: 가상문화센터\n청구 내역: 문구 세트 10개\n청구 금액: 50000원\n납부 기한: 2026년 11월 20일\n납부 방법: 계좌 이체\n납부 계좌: 테스트은행 000-000-000\n발행일: 2026년 11월 9일"
+    },
+    {
+      "id": "invoice_1/blur",
+      "case": "invoice_1",
+      "expected": "invoice",
+      "profile": "blur",
+      "expected_review": false,
+      "seed": 20261115,
+      "image": "images/invoice_1/blur.jpg",
+      "dimensions": [
+        1800,
+        988
+      ],
+      "sha256": "b4ba37d595ca91a597e30a7a647d492dd6340a967ab2c57298eb0a7a69b91b2c",
+      "reference": "물품 대금 청구서\n청구인: 가상문구\n청구 대상: 가상문화센터\n청구 내역: 문구 세트 10개\n청구 금액: 50000원\n납부 기한: 2026년 11월 20일\n납부 방법: 계좌 이체\n납부 계좌: 테스트은행 000-000-000\n발행일: 2026년 11월 9일"
+    },
+    {
+      "id": "invoice_1/cropped_title",
+      "case": "invoice_1",
+      "expected": "invoice",
+      "profile": "cropped_title",
+      "expected_review": false,
+      "seed": 20261115,
+      "image": "images/invoice_1/cropped_title.jpg",
+      "dimensions": [
+        1800,
+        853
+      ],
+      "sha256": "f0cba818c89723f498e2011feda2febeab0a769bab5a039f3286f6f60c8ab426",
+      "reference": "물품 대금 청구서\n청구인: 가상문구\n청구 대상: 가상문화센터\n청구 내역: 문구 세트 10개\n청구 금액: 50000원\n납부 기한: 2026년 11월 20일\n납부 방법: 계좌 이체\n납부 계좌: 테스트은행 000-000-000\n발행일: 2026년 11월 9일"
+    },
+    {
+      "id": "invoice_1/sideways",
+      "case": "invoice_1",
+      "expected": "invoice",
+      "profile": "sideways",
+      "expected_review": false,
+      "seed": 20261115,
+      "image": "images/invoice_1/sideways.jpg",
+      "dimensions": [
+        988,
+        1800
+      ],
+      "sha256": "b6b0481a6ae59fc5bfc5925956bdd729467683fe52eba3b7bfd96ed5b8c8dc7d",
+      "reference": "물품 대금 청구서\n청구인: 가상문구\n청구 대상: 가상문화센터\n청구 내역: 문구 세트 10개\n청구 금액: 50000원\n납부 기한: 2026년 11월 20일\n납부 방법: 계좌 이체\n납부 계좌: 테스트은행 000-000-000\n발행일: 2026년 11월 9일"
+    },
+    {
+      "id": "invoice_1/tiny_unreadable",
+      "case": "invoice_1",
+      "expected": "invoice",
+      "profile": "tiny_unreadable",
+      "expected_review": true,
+      "seed": 20261115,
+      "image": "images/invoice_1/tiny_unreadable.jpg",
+      "dimensions": [
+        180,
+        99
+      ],
+      "sha256": "b44a4278d31cb84af8b2ba1f42d9862e75742c79475753011817b4d208e64015",
+      "reference": "물품 대금 청구서\n청구인: 가상문구\n청구 대상: 가상문화센터\n청구 내역: 문구 세트 10개\n청구 금액: 50000원\n납부 기한: 2026년 11월 20일\n납부 방법: 계좌 이체\n납부 계좌: 테스트은행 000-000-000\n발행일: 2026년 11월 9일"
+    },
+    {
+      "id": "invoice_2/clean",
+      "case": "invoice_2",
+      "expected": "invoice",
+      "profile": "clean",
+      "expected_review": false,
+      "seed": 20261116,
+      "image": "images/invoice_2/clean.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "06add601d8f75c48bfd6bf41d448456b8d2e8963ccaae7ce464a126cdeb981f9",
+      "reference": "관리비 납부 고지서\n납부자: 김하늘\n고지 내역: 2026년 10월 관리비\n고지 금액: 120000원\n납부 기한: 2026년 11월 25일\n납부 방법: 자동 이체\n발행 기관: 가상관리소\n문의처: 02-000-0000"
+    },
+    {
+      "id": "invoice_2/skew",
+      "case": "invoice_2",
+      "expected": "invoice",
+      "profile": "skew",
+      "expected_review": false,
+      "seed": 20261116,
+      "image": "images/invoice_2/skew.jpg",
+      "dimensions": [
+        1874,
+        1066
+      ],
+      "sha256": "b9c5650bc5271d4f3bf38c50195bffe2f62faf92a164ca3e09ca8a08e6f0853e",
+      "reference": "관리비 납부 고지서\n납부자: 김하늘\n고지 내역: 2026년 10월 관리비\n고지 금액: 120000원\n납부 기한: 2026년 11월 25일\n납부 방법: 자동 이체\n발행 기관: 가상관리소\n문의처: 02-000-0000"
+    },
+    {
+      "id": "invoice_2/desk",
+      "case": "invoice_2",
+      "expected": "invoice",
+      "profile": "desk",
+      "expected_review": false,
+      "seed": 20261116,
+      "image": "images/invoice_2/desk.jpg",
+      "dimensions": [
+        2324,
+        1544
+      ],
+      "sha256": "50ab46f36aa2ebfa3216e962368eacc21553bfa8762f4933046599fb9955a1eb",
+      "reference": "관리비 납부 고지서\n납부자: 김하늘\n고지 내역: 2026년 10월 관리비\n고지 금액: 120000원\n납부 기한: 2026년 11월 25일\n납부 방법: 자동 이체\n발행 기관: 가상관리소\n문의처: 02-000-0000"
+    },
+    {
+      "id": "invoice_2/shadow",
+      "case": "invoice_2",
+      "expected": "invoice",
+      "profile": "shadow",
+      "expected_review": false,
+      "seed": 20261116,
+      "image": "images/invoice_2/shadow.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "c94c1b2905f21ce0f4e810f87951bfb055e96889cfda7b6617bdb893381419b5",
+      "reference": "관리비 납부 고지서\n납부자: 김하늘\n고지 내역: 2026년 10월 관리비\n고지 금액: 120000원\n납부 기한: 2026년 11월 25일\n납부 방법: 자동 이체\n발행 기관: 가상관리소\n문의처: 02-000-0000"
+    },
+    {
+      "id": "invoice_2/blur",
+      "case": "invoice_2",
+      "expected": "invoice",
+      "profile": "blur",
+      "expected_review": false,
+      "seed": 20261116,
+      "image": "images/invoice_2/blur.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "e299de9d8dd88408aab42657c3369a8b372d1086a1f0616a3ad956ddc5da8fa5",
+      "reference": "관리비 납부 고지서\n납부자: 김하늘\n고지 내역: 2026년 10월 관리비\n고지 금액: 120000원\n납부 기한: 2026년 11월 25일\n납부 방법: 자동 이체\n발행 기관: 가상관리소\n문의처: 02-000-0000"
+    },
+    {
+      "id": "invoice_2/cropped_title",
+      "case": "invoice_2",
+      "expected": "invoice",
+      "profile": "cropped_title",
+      "expected_review": false,
+      "seed": 20261116,
+      "image": "images/invoice_2/cropped_title.jpg",
+      "dimensions": [
+        1800,
+        777
+      ],
+      "sha256": "2defaa98836ab3c47bed9dce05309c7a18622a9082f70a3f04eae6bbe50e24da",
+      "reference": "관리비 납부 고지서\n납부자: 김하늘\n고지 내역: 2026년 10월 관리비\n고지 금액: 120000원\n납부 기한: 2026년 11월 25일\n납부 방법: 자동 이체\n발행 기관: 가상관리소\n문의처: 02-000-0000"
+    },
+    {
+      "id": "invoice_2/sideways",
+      "case": "invoice_2",
+      "expected": "invoice",
+      "profile": "sideways",
+      "expected_review": false,
+      "seed": 20261116,
+      "image": "images/invoice_2/sideways.jpg",
+      "dimensions": [
+        912,
+        1800
+      ],
+      "sha256": "6395861948408d5d0f2916dd6644659bc4ed8efa5c0ad493ee9501425bcac732",
+      "reference": "관리비 납부 고지서\n납부자: 김하늘\n고지 내역: 2026년 10월 관리비\n고지 금액: 120000원\n납부 기한: 2026년 11월 25일\n납부 방법: 자동 이체\n발행 기관: 가상관리소\n문의처: 02-000-0000"
+    },
+    {
+      "id": "invoice_2/tiny_unreadable",
+      "case": "invoice_2",
+      "expected": "invoice",
+      "profile": "tiny_unreadable",
+      "expected_review": true,
+      "seed": 20261116,
+      "image": "images/invoice_2/tiny_unreadable.jpg",
+      "dimensions": [
+        180,
+        91
+      ],
+      "sha256": "8394af95f5944583b53e78e1e7ace038cc6c8b7fe9703322d8e65a32e6fe8011",
+      "reference": "관리비 납부 고지서\n납부자: 김하늘\n고지 내역: 2026년 10월 관리비\n고지 금액: 120000원\n납부 기한: 2026년 11월 25일\n납부 방법: 자동 이체\n발행 기관: 가상관리소\n문의처: 02-000-0000"
+    },
+    {
+      "id": "invoice_3/clean",
+      "case": "invoice_3",
+      "expected": "invoice",
+      "profile": "clean",
+      "expected_review": false,
+      "seed": 20261117,
+      "image": "images/invoice_3/clean.jpg",
+      "dimensions": [
+        1800,
+        988
+      ],
+      "sha256": "641649d656f5f7bde1c51bdf2b2ddf0a2f2d144a8aabfea5bf3d84b70c8b1faf",
+      "reference": "수강료 청구서\n청구인: 가상교육원\n납부자: 박가람\n청구 내역: 11월 미술 수강료\n청구 금액: 80000원\n납부 기한: 2026년 11월 15일\n납부 방법: 방문 결제\n문의처: 02-000-0000\n발행일: 2026년 11월 9일"
+    },
+    {
+      "id": "invoice_3/skew",
+      "case": "invoice_3",
+      "expected": "invoice",
+      "profile": "skew",
+      "expected_review": false,
+      "seed": 20261117,
+      "image": "images/invoice_3/skew.jpg",
+      "dimensions": [
+        1880,
+        1142
+      ],
+      "sha256": "906df820b92e0b0c87aa5dc068863265fd514f24d9702b085303be536799a8c7",
+      "reference": "수강료 청구서\n청구인: 가상교육원\n납부자: 박가람\n청구 내역: 11월 미술 수강료\n청구 금액: 80000원\n납부 기한: 2026년 11월 15일\n납부 방법: 방문 결제\n문의처: 02-000-0000\n발행일: 2026년 11월 9일"
+    },
+    {
+      "id": "invoice_3/desk",
+      "case": "invoice_3",
+      "expected": "invoice",
+      "profile": "desk",
+      "expected_review": false,
+      "seed": 20261117,
+      "image": "images/invoice_3/desk.jpg",
+      "dimensions": [
+        2308,
+        1546
+      ],
+      "sha256": "28c5897c53c86ba3cdf8aec2d327a97e7b85a48443e7a1bafc3c28a03ed4f102",
+      "reference": "수강료 청구서\n청구인: 가상교육원\n납부자: 박가람\n청구 내역: 11월 미술 수강료\n청구 금액: 80000원\n납부 기한: 2026년 11월 15일\n납부 방법: 방문 결제\n문의처: 02-000-0000\n발행일: 2026년 11월 9일"
+    },
+    {
+      "id": "invoice_3/shadow",
+      "case": "invoice_3",
+      "expected": "invoice",
+      "profile": "shadow",
+      "expected_review": false,
+      "seed": 20261117,
+      "image": "images/invoice_3/shadow.jpg",
+      "dimensions": [
+        1800,
+        988
+      ],
+      "sha256": "2a2298e56810565c5cf67dd0f14e3191242877ee49da831a595d46ae7fbcf2ab",
+      "reference": "수강료 청구서\n청구인: 가상교육원\n납부자: 박가람\n청구 내역: 11월 미술 수강료\n청구 금액: 80000원\n납부 기한: 2026년 11월 15일\n납부 방법: 방문 결제\n문의처: 02-000-0000\n발행일: 2026년 11월 9일"
+    },
+    {
+      "id": "invoice_3/blur",
+      "case": "invoice_3",
+      "expected": "invoice",
+      "profile": "blur",
+      "expected_review": false,
+      "seed": 20261117,
+      "image": "images/invoice_3/blur.jpg",
+      "dimensions": [
+        1800,
+        988
+      ],
+      "sha256": "ada05fede566a195f133df154437f8579748d37dbf1f12ef3ea57f37a39cd1e8",
+      "reference": "수강료 청구서\n청구인: 가상교육원\n납부자: 박가람\n청구 내역: 11월 미술 수강료\n청구 금액: 80000원\n납부 기한: 2026년 11월 15일\n납부 방법: 방문 결제\n문의처: 02-000-0000\n발행일: 2026년 11월 9일"
+    },
+    {
+      "id": "invoice_3/cropped_title",
+      "case": "invoice_3",
+      "expected": "invoice",
+      "profile": "cropped_title",
+      "expected_review": false,
+      "seed": 20261117,
+      "image": "images/invoice_3/cropped_title.jpg",
+      "dimensions": [
+        1800,
+        853
+      ],
+      "sha256": "ec782a2d0085ec6348ab6014740928c65beb8fd89a2868365b217d0e4bf1b345",
+      "reference": "수강료 청구서\n청구인: 가상교육원\n납부자: 박가람\n청구 내역: 11월 미술 수강료\n청구 금액: 80000원\n납부 기한: 2026년 11월 15일\n납부 방법: 방문 결제\n문의처: 02-000-0000\n발행일: 2026년 11월 9일"
+    },
+    {
+      "id": "invoice_3/sideways",
+      "case": "invoice_3",
+      "expected": "invoice",
+      "profile": "sideways",
+      "expected_review": false,
+      "seed": 20261117,
+      "image": "images/invoice_3/sideways.jpg",
+      "dimensions": [
+        988,
+        1800
+      ],
+      "sha256": "06ef7bf82d7ea46dd9207624262c54487341652f54c6ab249259ce6e49375748",
+      "reference": "수강료 청구서\n청구인: 가상교육원\n납부자: 박가람\n청구 내역: 11월 미술 수강료\n청구 금액: 80000원\n납부 기한: 2026년 11월 15일\n납부 방법: 방문 결제\n문의처: 02-000-0000\n발행일: 2026년 11월 9일"
+    },
+    {
+      "id": "invoice_3/tiny_unreadable",
+      "case": "invoice_3",
+      "expected": "invoice",
+      "profile": "tiny_unreadable",
+      "expected_review": true,
+      "seed": 20261117,
+      "image": "images/invoice_3/tiny_unreadable.jpg",
+      "dimensions": [
+        180,
+        99
+      ],
+      "sha256": "9a2eeec894ce8fd600c2d6632f485082e83c91683d9c1c117b8b5d172825cdc1",
+      "reference": "수강료 청구서\n청구인: 가상교육원\n납부자: 박가람\n청구 내역: 11월 미술 수강료\n청구 금액: 80000원\n납부 기한: 2026년 11월 15일\n납부 방법: 방문 결제\n문의처: 02-000-0000\n발행일: 2026년 11월 9일"
+    },
+    {
+      "id": "receipt_1/clean",
+      "case": "receipt_1",
+      "expected": "receipt",
+      "profile": "clean",
+      "expected_review": false,
+      "seed": 20261118,
+      "image": "images/receipt_1/clean.jpg",
+      "dimensions": [
+        1800,
+        988
+      ],
+      "sha256": "12fe30b641cf500a22900b24bf9f9a39f5516177cdb650b8d0ec78b07c5aaae0",
+      "reference": "물품 구매 영수증\n상호: 가상문구\n거래일: 2026년 11월 9일\n구매 내역: 공책 5권\n결제 금액: 10000원\n결제 방법: 신용카드\n승인 번호: 12345678\n공급가액: 9091원\n부가세: 909원"
+    },
+    {
+      "id": "receipt_1/skew",
+      "case": "receipt_1",
+      "expected": "receipt",
+      "profile": "skew",
+      "expected_review": false,
+      "seed": 20261118,
+      "image": "images/receipt_1/skew.jpg",
+      "dimensions": [
+        1880,
+        1142
+      ],
+      "sha256": "6647e2512c0e4e97419bdcbc34e46ead92c170aa2119221da7574ed48e5362d6",
+      "reference": "물품 구매 영수증\n상호: 가상문구\n거래일: 2026년 11월 9일\n구매 내역: 공책 5권\n결제 금액: 10000원\n결제 방법: 신용카드\n승인 번호: 12345678\n공급가액: 9091원\n부가세: 909원"
+    },
+    {
+      "id": "receipt_1/desk",
+      "case": "receipt_1",
+      "expected": "receipt",
+      "profile": "desk",
+      "expected_review": false,
+      "seed": 20261118,
+      "image": "images/receipt_1/desk.jpg",
+      "dimensions": [
+        2306,
+        1542
+      ],
+      "sha256": "520bf4c72e57d1120050f44626bc9525704a26654f636f6aabdc7dd7a48ea451",
+      "reference": "물품 구매 영수증\n상호: 가상문구\n거래일: 2026년 11월 9일\n구매 내역: 공책 5권\n결제 금액: 10000원\n결제 방법: 신용카드\n승인 번호: 12345678\n공급가액: 9091원\n부가세: 909원"
+    },
+    {
+      "id": "receipt_1/shadow",
+      "case": "receipt_1",
+      "expected": "receipt",
+      "profile": "shadow",
+      "expected_review": false,
+      "seed": 20261118,
+      "image": "images/receipt_1/shadow.jpg",
+      "dimensions": [
+        1800,
+        988
+      ],
+      "sha256": "83b532dbc6d88c2df3f2c3a701d912591c203090333b298bfabbbff00b55cce3",
+      "reference": "물품 구매 영수증\n상호: 가상문구\n거래일: 2026년 11월 9일\n구매 내역: 공책 5권\n결제 금액: 10000원\n결제 방법: 신용카드\n승인 번호: 12345678\n공급가액: 9091원\n부가세: 909원"
+    },
+    {
+      "id": "receipt_1/blur",
+      "case": "receipt_1",
+      "expected": "receipt",
+      "profile": "blur",
+      "expected_review": false,
+      "seed": 20261118,
+      "image": "images/receipt_1/blur.jpg",
+      "dimensions": [
+        1800,
+        988
+      ],
+      "sha256": "444a56ea828af237441bd565a4ab882c7a873cee64985d3a791d598a7f82d590",
+      "reference": "물품 구매 영수증\n상호: 가상문구\n거래일: 2026년 11월 9일\n구매 내역: 공책 5권\n결제 금액: 10000원\n결제 방법: 신용카드\n승인 번호: 12345678\n공급가액: 9091원\n부가세: 909원"
+    },
+    {
+      "id": "receipt_1/cropped_title",
+      "case": "receipt_1",
+      "expected": "receipt",
+      "profile": "cropped_title",
+      "expected_review": false,
+      "seed": 20261118,
+      "image": "images/receipt_1/cropped_title.jpg",
+      "dimensions": [
+        1800,
+        853
+      ],
+      "sha256": "ed7461d017202cb350237d95d72dab6c043bb162daf9fea2d1381074b93a2776",
+      "reference": "물품 구매 영수증\n상호: 가상문구\n거래일: 2026년 11월 9일\n구매 내역: 공책 5권\n결제 금액: 10000원\n결제 방법: 신용카드\n승인 번호: 12345678\n공급가액: 9091원\n부가세: 909원"
+    },
+    {
+      "id": "receipt_1/sideways",
+      "case": "receipt_1",
+      "expected": "receipt",
+      "profile": "sideways",
+      "expected_review": false,
+      "seed": 20261118,
+      "image": "images/receipt_1/sideways.jpg",
+      "dimensions": [
+        988,
+        1800
+      ],
+      "sha256": "f9cf23484c866cabffc3b3e7cb986cf71164f0ca59fa7ffdbc09fe19d9e9984d",
+      "reference": "물품 구매 영수증\n상호: 가상문구\n거래일: 2026년 11월 9일\n구매 내역: 공책 5권\n결제 금액: 10000원\n결제 방법: 신용카드\n승인 번호: 12345678\n공급가액: 9091원\n부가세: 909원"
+    },
+    {
+      "id": "receipt_1/tiny_unreadable",
+      "case": "receipt_1",
+      "expected": "receipt",
+      "profile": "tiny_unreadable",
+      "expected_review": true,
+      "seed": 20261118,
+      "image": "images/receipt_1/tiny_unreadable.jpg",
+      "dimensions": [
+        180,
+        99
+      ],
+      "sha256": "1dd58831d73b32b773ce2144931ff7cddddb60f73797dd7219b3671b73709baf",
+      "reference": "물품 구매 영수증\n상호: 가상문구\n거래일: 2026년 11월 9일\n구매 내역: 공책 5권\n결제 금액: 10000원\n결제 방법: 신용카드\n승인 번호: 12345678\n공급가액: 9091원\n부가세: 909원"
+    },
+    {
+      "id": "receipt_2/clean",
+      "case": "receipt_2",
+      "expected": "receipt",
+      "profile": "clean",
+      "expected_review": false,
+      "seed": 20261119,
+      "image": "images/receipt_2/clean.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "034b6a24e71a11919be8d3445dcb3fc8b9888f978b880d7fdee8c203366e8e6d",
+      "reference": "수강료 납부 영수증\n납부자: 박가람\n수납 기관: 가상교육원\n납부 내역: 11월 미술 수강료\n납부 금액: 80000원\n납부일: 2026년 11월 9일\n결제 방법: 계좌 이체\n영수 번호: 2026110901"
+    },
+    {
+      "id": "receipt_2/skew",
+      "case": "receipt_2",
+      "expected": "receipt",
+      "profile": "skew",
+      "expected_review": false,
+      "seed": 20261119,
+      "image": "images/receipt_2/skew.jpg",
+      "dimensions": [
+        1874,
+        1066
+      ],
+      "sha256": "b8abcd3b9b53c95f7a109cbf356aadc6259949e4a205babd1f24b1917d5781bc",
+      "reference": "수강료 납부 영수증\n납부자: 박가람\n수납 기관: 가상교육원\n납부 내역: 11월 미술 수강료\n납부 금액: 80000원\n납부일: 2026년 11월 9일\n결제 방법: 계좌 이체\n영수 번호: 2026110901"
+    },
+    {
+      "id": "receipt_2/desk",
+      "case": "receipt_2",
+      "expected": "receipt",
+      "profile": "desk",
+      "expected_review": false,
+      "seed": 20261119,
+      "image": "images/receipt_2/desk.jpg",
+      "dimensions": [
+        2300,
+        1478
+      ],
+      "sha256": "1dabc561401f389aed8cd324e7a5c7c0644c02a3b79a551f47033e7b2b6dca26",
+      "reference": "수강료 납부 영수증\n납부자: 박가람\n수납 기관: 가상교육원\n납부 내역: 11월 미술 수강료\n납부 금액: 80000원\n납부일: 2026년 11월 9일\n결제 방법: 계좌 이체\n영수 번호: 2026110901"
+    },
+    {
+      "id": "receipt_2/shadow",
+      "case": "receipt_2",
+      "expected": "receipt",
+      "profile": "shadow",
+      "expected_review": false,
+      "seed": 20261119,
+      "image": "images/receipt_2/shadow.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "f63b12b6312c4eefecd38e36286a878a911d31716fb3f63729c21d6dfeff3390",
+      "reference": "수강료 납부 영수증\n납부자: 박가람\n수납 기관: 가상교육원\n납부 내역: 11월 미술 수강료\n납부 금액: 80000원\n납부일: 2026년 11월 9일\n결제 방법: 계좌 이체\n영수 번호: 2026110901"
+    },
+    {
+      "id": "receipt_2/blur",
+      "case": "receipt_2",
+      "expected": "receipt",
+      "profile": "blur",
+      "expected_review": false,
+      "seed": 20261119,
+      "image": "images/receipt_2/blur.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "e045e250bd32f35c7a0e52af226ecac0423d83fa61a9e8a1302a60b99f3cee15",
+      "reference": "수강료 납부 영수증\n납부자: 박가람\n수납 기관: 가상교육원\n납부 내역: 11월 미술 수강료\n납부 금액: 80000원\n납부일: 2026년 11월 9일\n결제 방법: 계좌 이체\n영수 번호: 2026110901"
+    },
+    {
+      "id": "receipt_2/cropped_title",
+      "case": "receipt_2",
+      "expected": "receipt",
+      "profile": "cropped_title",
+      "expected_review": false,
+      "seed": 20261119,
+      "image": "images/receipt_2/cropped_title.jpg",
+      "dimensions": [
+        1800,
+        777
+      ],
+      "sha256": "3017210de0d715fe2fab9a697b1b6d3ca96bcae502a9af51f26905d47ec093af",
+      "reference": "수강료 납부 영수증\n납부자: 박가람\n수납 기관: 가상교육원\n납부 내역: 11월 미술 수강료\n납부 금액: 80000원\n납부일: 2026년 11월 9일\n결제 방법: 계좌 이체\n영수 번호: 2026110901"
+    },
+    {
+      "id": "receipt_2/sideways",
+      "case": "receipt_2",
+      "expected": "receipt",
+      "profile": "sideways",
+      "expected_review": false,
+      "seed": 20261119,
+      "image": "images/receipt_2/sideways.jpg",
+      "dimensions": [
+        912,
+        1800
+      ],
+      "sha256": "21a874c29a584dd5bbf27de15d4bd0baf5ba8feeafa7ca142a099c90a4df3a3a",
+      "reference": "수강료 납부 영수증\n납부자: 박가람\n수납 기관: 가상교육원\n납부 내역: 11월 미술 수강료\n납부 금액: 80000원\n납부일: 2026년 11월 9일\n결제 방법: 계좌 이체\n영수 번호: 2026110901"
+    },
+    {
+      "id": "receipt_2/tiny_unreadable",
+      "case": "receipt_2",
+      "expected": "receipt",
+      "profile": "tiny_unreadable",
+      "expected_review": true,
+      "seed": 20261119,
+      "image": "images/receipt_2/tiny_unreadable.jpg",
+      "dimensions": [
+        180,
+        91
+      ],
+      "sha256": "eba93df2d5475ba26bcbc54cadb9b4e9a9e7b0f5d863814c0d3c282b7a254f81",
+      "reference": "수강료 납부 영수증\n납부자: 박가람\n수납 기관: 가상교육원\n납부 내역: 11월 미술 수강료\n납부 금액: 80000원\n납부일: 2026년 11월 9일\n결제 방법: 계좌 이체\n영수 번호: 2026110901"
+    },
+    {
+      "id": "receipt_3/clean",
+      "case": "receipt_3",
+      "expected": "receipt",
+      "profile": "clean",
+      "expected_review": false,
+      "seed": 20261120,
+      "image": "images/receipt_3/clean.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "329e6272c5f9a0997525da0955d158c0b7f836ca72ee3c61a852f12143e2c911",
+      "reference": "현금 영수증\n상호: 가상식당\n거래일: 2026년 11월 9일\n거래 내역: 점심 식사\n결제 금액: 9000원\n결제 방법: 현금\n승인 번호: 87654321\n발행일: 2026년 11월 9일"
+    },
+    {
+      "id": "receipt_3/skew",
+      "case": "receipt_3",
+      "expected": "receipt",
+      "profile": "skew",
+      "expected_review": false,
+      "seed": 20261120,
+      "image": "images/receipt_3/skew.jpg",
+      "dimensions": [
+        1874,
+        1066
+      ],
+      "sha256": "737b2c4520b22a7af4ee1b687085009a0c8252f4f1f02175d8007b33be1d02c0",
+      "reference": "현금 영수증\n상호: 가상식당\n거래일: 2026년 11월 9일\n거래 내역: 점심 식사\n결제 금액: 9000원\n결제 방법: 현금\n승인 번호: 87654321\n발행일: 2026년 11월 9일"
+    },
+    {
+      "id": "receipt_3/desk",
+      "case": "receipt_3",
+      "expected": "receipt",
+      "profile": "desk",
+      "expected_review": false,
+      "seed": 20261120,
+      "image": "images/receipt_3/desk.jpg",
+      "dimensions": [
+        2314,
+        1518
+      ],
+      "sha256": "d766bcd521a146a9f6503856c62d037425ec40e7ed3343bafcca4766a81e7486",
+      "reference": "현금 영수증\n상호: 가상식당\n거래일: 2026년 11월 9일\n거래 내역: 점심 식사\n결제 금액: 9000원\n결제 방법: 현금\n승인 번호: 87654321\n발행일: 2026년 11월 9일"
+    },
+    {
+      "id": "receipt_3/shadow",
+      "case": "receipt_3",
+      "expected": "receipt",
+      "profile": "shadow",
+      "expected_review": false,
+      "seed": 20261120,
+      "image": "images/receipt_3/shadow.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "9c265a7da1eeff1465e31e2abfafd6b657d56db8ae31db022707c7048b530590",
+      "reference": "현금 영수증\n상호: 가상식당\n거래일: 2026년 11월 9일\n거래 내역: 점심 식사\n결제 금액: 9000원\n결제 방법: 현금\n승인 번호: 87654321\n발행일: 2026년 11월 9일"
+    },
+    {
+      "id": "receipt_3/blur",
+      "case": "receipt_3",
+      "expected": "receipt",
+      "profile": "blur",
+      "expected_review": false,
+      "seed": 20261120,
+      "image": "images/receipt_3/blur.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "88c9cacd93a6cba04ecfc8297be0f6f81079ac016103e580f42ce81c68117260",
+      "reference": "현금 영수증\n상호: 가상식당\n거래일: 2026년 11월 9일\n거래 내역: 점심 식사\n결제 금액: 9000원\n결제 방법: 현금\n승인 번호: 87654321\n발행일: 2026년 11월 9일"
+    },
+    {
+      "id": "receipt_3/cropped_title",
+      "case": "receipt_3",
+      "expected": "receipt",
+      "profile": "cropped_title",
+      "expected_review": false,
+      "seed": 20261120,
+      "image": "images/receipt_3/cropped_title.jpg",
+      "dimensions": [
+        1800,
+        777
+      ],
+      "sha256": "73621d7f82d106673c884a7c1593fd75e4d4ccea52a5fb30cd48993a5c66058b",
+      "reference": "현금 영수증\n상호: 가상식당\n거래일: 2026년 11월 9일\n거래 내역: 점심 식사\n결제 금액: 9000원\n결제 방법: 현금\n승인 번호: 87654321\n발행일: 2026년 11월 9일"
+    },
+    {
+      "id": "receipt_3/sideways",
+      "case": "receipt_3",
+      "expected": "receipt",
+      "profile": "sideways",
+      "expected_review": false,
+      "seed": 20261120,
+      "image": "images/receipt_3/sideways.jpg",
+      "dimensions": [
+        912,
+        1800
+      ],
+      "sha256": "02df5a96891225b759c7dc7c569e943c9b6a7b43d3cebc44ebdf1bfcb0edb4f9",
+      "reference": "현금 영수증\n상호: 가상식당\n거래일: 2026년 11월 9일\n거래 내역: 점심 식사\n결제 금액: 9000원\n결제 방법: 현금\n승인 번호: 87654321\n발행일: 2026년 11월 9일"
+    },
+    {
+      "id": "receipt_3/tiny_unreadable",
+      "case": "receipt_3",
+      "expected": "receipt",
+      "profile": "tiny_unreadable",
+      "expected_review": true,
+      "seed": 20261120,
+      "image": "images/receipt_3/tiny_unreadable.jpg",
+      "dimensions": [
+        180,
+        91
+      ],
+      "sha256": "6dfa7f9ca16a5d0b3a7f88f6f45d5a8007592adc3efd2dcb885d7e6271ce20d8",
+      "reference": "현금 영수증\n상호: 가상식당\n거래일: 2026년 11월 9일\n거래 내역: 점심 식사\n결제 금액: 9000원\n결제 방법: 현금\n승인 번호: 87654321\n발행일: 2026년 11월 9일"
+    },
+    {
+      "id": "pledge_1/clean",
+      "case": "pledge_1",
+      "expected": "pledge",
+      "profile": "clean",
+      "expected_review": false,
+      "seed": 20261121,
+      "image": "images/pledge_1/clean.jpg",
+      "dimensions": [
+        1800,
+        988
+      ],
+      "sha256": "36ab1009bcd9f2403031f51cd10aade59fed4774b121e5578ffd3aaf92851733",
+      "reference": "보안 서약서\n서약자: 김하늘\n소속: 가상문화센터\n서약 내용: 업무 자료를 외부에 공개하지 않겠습니다\n준수 사항: 자료를 허락 없이 복사하지 않습니다\n비밀 유지: 업무상 알게 된 정보를 보호합니다\n서약 기간: 활동 기간 동안\n작성일: 2026년 11월 9일\n서약자 서명: 김하늘"
+    },
+    {
+      "id": "pledge_1/skew",
+      "case": "pledge_1",
+      "expected": "pledge",
+      "profile": "skew",
+      "expected_review": false,
+      "seed": 20261121,
+      "image": "images/pledge_1/skew.jpg",
+      "dimensions": [
+        1880,
+        1142
+      ],
+      "sha256": "42bafd04a2e8380591c2484b495819a72bf6e042a5ff5d60207586359b63bb38",
+      "reference": "보안 서약서\n서약자: 김하늘\n소속: 가상문화센터\n서약 내용: 업무 자료를 외부에 공개하지 않겠습니다\n준수 사항: 자료를 허락 없이 복사하지 않습니다\n비밀 유지: 업무상 알게 된 정보를 보호합니다\n서약 기간: 활동 기간 동안\n작성일: 2026년 11월 9일\n서약자 서명: 김하늘"
+    },
+    {
+      "id": "pledge_1/desk",
+      "case": "pledge_1",
+      "expected": "pledge",
+      "profile": "desk",
+      "expected_review": false,
+      "seed": 20261121,
+      "image": "images/pledge_1/desk.jpg",
+      "dimensions": [
+        2304,
+        1536
+      ],
+      "sha256": "858ef4d33b285e25012c75d3c99d6307bcc11ed2ec9a610a93f5aafd160f597b",
+      "reference": "보안 서약서\n서약자: 김하늘\n소속: 가상문화센터\n서약 내용: 업무 자료를 외부에 공개하지 않겠습니다\n준수 사항: 자료를 허락 없이 복사하지 않습니다\n비밀 유지: 업무상 알게 된 정보를 보호합니다\n서약 기간: 활동 기간 동안\n작성일: 2026년 11월 9일\n서약자 서명: 김하늘"
+    },
+    {
+      "id": "pledge_1/shadow",
+      "case": "pledge_1",
+      "expected": "pledge",
+      "profile": "shadow",
+      "expected_review": false,
+      "seed": 20261121,
+      "image": "images/pledge_1/shadow.jpg",
+      "dimensions": [
+        1800,
+        988
+      ],
+      "sha256": "82045cdcb908d9abd311f538ec76572eb2ee84b50013a3fc392366f7d9d45d7c",
+      "reference": "보안 서약서\n서약자: 김하늘\n소속: 가상문화센터\n서약 내용: 업무 자료를 외부에 공개하지 않겠습니다\n준수 사항: 자료를 허락 없이 복사하지 않습니다\n비밀 유지: 업무상 알게 된 정보를 보호합니다\n서약 기간: 활동 기간 동안\n작성일: 2026년 11월 9일\n서약자 서명: 김하늘"
+    },
+    {
+      "id": "pledge_1/blur",
+      "case": "pledge_1",
+      "expected": "pledge",
+      "profile": "blur",
+      "expected_review": false,
+      "seed": 20261121,
+      "image": "images/pledge_1/blur.jpg",
+      "dimensions": [
+        1800,
+        988
+      ],
+      "sha256": "20d15a1d77c2d8fbc7eb444365354aeb6b08bc4114e0142925b0a516e7eefd10",
+      "reference": "보안 서약서\n서약자: 김하늘\n소속: 가상문화센터\n서약 내용: 업무 자료를 외부에 공개하지 않겠습니다\n준수 사항: 자료를 허락 없이 복사하지 않습니다\n비밀 유지: 업무상 알게 된 정보를 보호합니다\n서약 기간: 활동 기간 동안\n작성일: 2026년 11월 9일\n서약자 서명: 김하늘"
+    },
+    {
+      "id": "pledge_1/cropped_title",
+      "case": "pledge_1",
+      "expected": "pledge",
+      "profile": "cropped_title",
+      "expected_review": false,
+      "seed": 20261121,
+      "image": "images/pledge_1/cropped_title.jpg",
+      "dimensions": [
+        1800,
+        853
+      ],
+      "sha256": "8a23bf342ba6af8d9393563be6fe2b823617afffcfb6182f163961495dd164be",
+      "reference": "보안 서약서\n서약자: 김하늘\n소속: 가상문화센터\n서약 내용: 업무 자료를 외부에 공개하지 않겠습니다\n준수 사항: 자료를 허락 없이 복사하지 않습니다\n비밀 유지: 업무상 알게 된 정보를 보호합니다\n서약 기간: 활동 기간 동안\n작성일: 2026년 11월 9일\n서약자 서명: 김하늘"
+    },
+    {
+      "id": "pledge_1/sideways",
+      "case": "pledge_1",
+      "expected": "pledge",
+      "profile": "sideways",
+      "expected_review": false,
+      "seed": 20261121,
+      "image": "images/pledge_1/sideways.jpg",
+      "dimensions": [
+        988,
+        1800
+      ],
+      "sha256": "f1b586e8e2fdb1f36f1fde071a2d115fa6299f7734358d46f8be158050d2f0f9",
+      "reference": "보안 서약서\n서약자: 김하늘\n소속: 가상문화센터\n서약 내용: 업무 자료를 외부에 공개하지 않겠습니다\n준수 사항: 자료를 허락 없이 복사하지 않습니다\n비밀 유지: 업무상 알게 된 정보를 보호합니다\n서약 기간: 활동 기간 동안\n작성일: 2026년 11월 9일\n서약자 서명: 김하늘"
+    },
+    {
+      "id": "pledge_1/tiny_unreadable",
+      "case": "pledge_1",
+      "expected": "pledge",
+      "profile": "tiny_unreadable",
+      "expected_review": true,
+      "seed": 20261121,
+      "image": "images/pledge_1/tiny_unreadable.jpg",
+      "dimensions": [
+        180,
+        99
+      ],
+      "sha256": "66f872825bcb2f3a6eb4c340f7a86d4915030eb98892a09f2ca968fa4f58765b",
+      "reference": "보안 서약서\n서약자: 김하늘\n소속: 가상문화센터\n서약 내용: 업무 자료를 외부에 공개하지 않겠습니다\n준수 사항: 자료를 허락 없이 복사하지 않습니다\n비밀 유지: 업무상 알게 된 정보를 보호합니다\n서약 기간: 활동 기간 동안\n작성일: 2026년 11월 9일\n서약자 서명: 김하늘"
+    },
+    {
+      "id": "pledge_2/clean",
+      "case": "pledge_2",
+      "expected": "pledge",
+      "profile": "clean",
+      "expected_review": false,
+      "seed": 20261122,
+      "image": "images/pledge_2/clean.jpg",
+      "dimensions": [
+        1800,
+        988
+      ],
+      "sha256": "f277addd388f61656c470074609aaffb49d52ac2b68894ed4e2c6d832a646220",
+      "reference": "안전 수칙 준수 서약서\n서약자: 박가람\n활동명: 생활 체육 교실\n서약 내용: 활동 중 안전 수칙을 준수합니다\n준수 사항: 보호 장비를 착용합니다\n의무 사항: 위험 상황은 담당자에게 알립니다\n서약 기간: 2026년 11월\n작성일: 2026년 11월 9일\n서약자 서명: 박가람"
+    },
+    {
+      "id": "pledge_2/skew",
+      "case": "pledge_2",
+      "expected": "pledge",
+      "profile": "skew",
+      "expected_review": false,
+      "seed": 20261122,
+      "image": "images/pledge_2/skew.jpg",
+      "dimensions": [
+        1880,
+        1142
+      ],
+      "sha256": "a91f6ed80746874b2cb10ee8e2a648d22f6a4a0c3a1713031386ac38907919b3",
+      "reference": "안전 수칙 준수 서약서\n서약자: 박가람\n활동명: 생활 체육 교실\n서약 내용: 활동 중 안전 수칙을 준수합니다\n준수 사항: 보호 장비를 착용합니다\n의무 사항: 위험 상황은 담당자에게 알립니다\n서약 기간: 2026년 11월\n작성일: 2026년 11월 9일\n서약자 서명: 박가람"
+    },
+    {
+      "id": "pledge_2/desk",
+      "case": "pledge_2",
+      "expected": "pledge",
+      "profile": "desk",
+      "expected_review": false,
+      "seed": 20261122,
+      "image": "images/pledge_2/desk.jpg",
+      "dimensions": [
+        2302,
+        1532
+      ],
+      "sha256": "bdfc3881ce8200530cbbf2ff2dce289a4671176351f4ec249443cb2d8543a57b",
+      "reference": "안전 수칙 준수 서약서\n서약자: 박가람\n활동명: 생활 체육 교실\n서약 내용: 활동 중 안전 수칙을 준수합니다\n준수 사항: 보호 장비를 착용합니다\n의무 사항: 위험 상황은 담당자에게 알립니다\n서약 기간: 2026년 11월\n작성일: 2026년 11월 9일\n서약자 서명: 박가람"
+    },
+    {
+      "id": "pledge_2/shadow",
+      "case": "pledge_2",
+      "expected": "pledge",
+      "profile": "shadow",
+      "expected_review": false,
+      "seed": 20261122,
+      "image": "images/pledge_2/shadow.jpg",
+      "dimensions": [
+        1800,
+        988
+      ],
+      "sha256": "7fa039afd4b40f08df730ce294766ad0c9153b525947f4c1a4df35decf7a7cf0",
+      "reference": "안전 수칙 준수 서약서\n서약자: 박가람\n활동명: 생활 체육 교실\n서약 내용: 활동 중 안전 수칙을 준수합니다\n준수 사항: 보호 장비를 착용합니다\n의무 사항: 위험 상황은 담당자에게 알립니다\n서약 기간: 2026년 11월\n작성일: 2026년 11월 9일\n서약자 서명: 박가람"
+    },
+    {
+      "id": "pledge_2/blur",
+      "case": "pledge_2",
+      "expected": "pledge",
+      "profile": "blur",
+      "expected_review": false,
+      "seed": 20261122,
+      "image": "images/pledge_2/blur.jpg",
+      "dimensions": [
+        1800,
+        988
+      ],
+      "sha256": "8231acb1ab9a16ea03320ab3456e0694f08843f16b71046276946a92b3e62bee",
+      "reference": "안전 수칙 준수 서약서\n서약자: 박가람\n활동명: 생활 체육 교실\n서약 내용: 활동 중 안전 수칙을 준수합니다\n준수 사항: 보호 장비를 착용합니다\n의무 사항: 위험 상황은 담당자에게 알립니다\n서약 기간: 2026년 11월\n작성일: 2026년 11월 9일\n서약자 서명: 박가람"
+    },
+    {
+      "id": "pledge_2/cropped_title",
+      "case": "pledge_2",
+      "expected": "pledge",
+      "profile": "cropped_title",
+      "expected_review": false,
+      "seed": 20261122,
+      "image": "images/pledge_2/cropped_title.jpg",
+      "dimensions": [
+        1800,
+        853
+      ],
+      "sha256": "8164f3d21205743d7711ad862fcadfdd7bf4d48266b8e20e7b0a10389bce8aa2",
+      "reference": "안전 수칙 준수 서약서\n서약자: 박가람\n활동명: 생활 체육 교실\n서약 내용: 활동 중 안전 수칙을 준수합니다\n준수 사항: 보호 장비를 착용합니다\n의무 사항: 위험 상황은 담당자에게 알립니다\n서약 기간: 2026년 11월\n작성일: 2026년 11월 9일\n서약자 서명: 박가람"
+    },
+    {
+      "id": "pledge_2/sideways",
+      "case": "pledge_2",
+      "expected": "pledge",
+      "profile": "sideways",
+      "expected_review": false,
+      "seed": 20261122,
+      "image": "images/pledge_2/sideways.jpg",
+      "dimensions": [
+        988,
+        1800
+      ],
+      "sha256": "75a0e9c5264b1412267b77c2f952c831e24c1aab36eeee2017c9ba5eea8b1cec",
+      "reference": "안전 수칙 준수 서약서\n서약자: 박가람\n활동명: 생활 체육 교실\n서약 내용: 활동 중 안전 수칙을 준수합니다\n준수 사항: 보호 장비를 착용합니다\n의무 사항: 위험 상황은 담당자에게 알립니다\n서약 기간: 2026년 11월\n작성일: 2026년 11월 9일\n서약자 서명: 박가람"
+    },
+    {
+      "id": "pledge_2/tiny_unreadable",
+      "case": "pledge_2",
+      "expected": "pledge",
+      "profile": "tiny_unreadable",
+      "expected_review": true,
+      "seed": 20261122,
+      "image": "images/pledge_2/tiny_unreadable.jpg",
+      "dimensions": [
+        180,
+        99
+      ],
+      "sha256": "da82bf019da91507778b798ce341205d50fe7242ed0c979d2e27fb634cf0a8de",
+      "reference": "안전 수칙 준수 서약서\n서약자: 박가람\n활동명: 생활 체육 교실\n서약 내용: 활동 중 안전 수칙을 준수합니다\n준수 사항: 보호 장비를 착용합니다\n의무 사항: 위험 상황은 담당자에게 알립니다\n서약 기간: 2026년 11월\n작성일: 2026년 11월 9일\n서약자 서명: 박가람"
+    },
+    {
+      "id": "pledge_3/clean",
+      "case": "pledge_3",
+      "expected": "pledge",
+      "profile": "clean",
+      "expected_review": false,
+      "seed": 20261123,
+      "image": "images/pledge_3/clean.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "a3089e9bbb8c2066243b2a8ea374d354623d71cac63734b016ef90f46af5d368",
+      "reference": "청렴 서약서\n서약자: 윤초롱\n소속: 가상봉사단\n서약 내용: 업무를 공정하게 수행하겠습니다\n준수 사항: 부당한 청탁을 받지 않습니다\n의무 사항: 이해 관계가 생기면 알립니다\n작성일: 2026년 11월 9일\n서약자 서명: 윤초롱"
+    },
+    {
+      "id": "pledge_3/skew",
+      "case": "pledge_3",
+      "expected": "pledge",
+      "profile": "skew",
+      "expected_review": false,
+      "seed": 20261123,
+      "image": "images/pledge_3/skew.jpg",
+      "dimensions": [
+        1874,
+        1066
+      ],
+      "sha256": "4f9e5a28ffe2c1cc4162c21f004b7351912b99f472193defa480bc0ce58111b7",
+      "reference": "청렴 서약서\n서약자: 윤초롱\n소속: 가상봉사단\n서약 내용: 업무를 공정하게 수행하겠습니다\n준수 사항: 부당한 청탁을 받지 않습니다\n의무 사항: 이해 관계가 생기면 알립니다\n작성일: 2026년 11월 9일\n서약자 서명: 윤초롱"
+    },
+    {
+      "id": "pledge_3/desk",
+      "case": "pledge_3",
+      "expected": "pledge",
+      "profile": "desk",
+      "expected_review": false,
+      "seed": 20261123,
+      "image": "images/pledge_3/desk.jpg",
+      "dimensions": [
+        2302,
+        1482
+      ],
+      "sha256": "e91ae66efc0f3c928171c90c179a0068a0cd3438293cda0427a19e7b7a1f0348",
+      "reference": "청렴 서약서\n서약자: 윤초롱\n소속: 가상봉사단\n서약 내용: 업무를 공정하게 수행하겠습니다\n준수 사항: 부당한 청탁을 받지 않습니다\n의무 사항: 이해 관계가 생기면 알립니다\n작성일: 2026년 11월 9일\n서약자 서명: 윤초롱"
+    },
+    {
+      "id": "pledge_3/shadow",
+      "case": "pledge_3",
+      "expected": "pledge",
+      "profile": "shadow",
+      "expected_review": false,
+      "seed": 20261123,
+      "image": "images/pledge_3/shadow.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "b0a950949e833eb986b008320b37e7b070cf5a33ca67e9f0642bbbe0f475d4bc",
+      "reference": "청렴 서약서\n서약자: 윤초롱\n소속: 가상봉사단\n서약 내용: 업무를 공정하게 수행하겠습니다\n준수 사항: 부당한 청탁을 받지 않습니다\n의무 사항: 이해 관계가 생기면 알립니다\n작성일: 2026년 11월 9일\n서약자 서명: 윤초롱"
+    },
+    {
+      "id": "pledge_3/blur",
+      "case": "pledge_3",
+      "expected": "pledge",
+      "profile": "blur",
+      "expected_review": false,
+      "seed": 20261123,
+      "image": "images/pledge_3/blur.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "9a83427d65c039c12860b16a6799f88e5d091cb540629746983876bd846457a9",
+      "reference": "청렴 서약서\n서약자: 윤초롱\n소속: 가상봉사단\n서약 내용: 업무를 공정하게 수행하겠습니다\n준수 사항: 부당한 청탁을 받지 않습니다\n의무 사항: 이해 관계가 생기면 알립니다\n작성일: 2026년 11월 9일\n서약자 서명: 윤초롱"
+    },
+    {
+      "id": "pledge_3/cropped_title",
+      "case": "pledge_3",
+      "expected": "pledge",
+      "profile": "cropped_title",
+      "expected_review": false,
+      "seed": 20261123,
+      "image": "images/pledge_3/cropped_title.jpg",
+      "dimensions": [
+        1800,
+        777
+      ],
+      "sha256": "b56a5df258bd3aed6de66761168d2c9f2b4399e6e530446fa4808fc9d33ce197",
+      "reference": "청렴 서약서\n서약자: 윤초롱\n소속: 가상봉사단\n서약 내용: 업무를 공정하게 수행하겠습니다\n준수 사항: 부당한 청탁을 받지 않습니다\n의무 사항: 이해 관계가 생기면 알립니다\n작성일: 2026년 11월 9일\n서약자 서명: 윤초롱"
+    },
+    {
+      "id": "pledge_3/sideways",
+      "case": "pledge_3",
+      "expected": "pledge",
+      "profile": "sideways",
+      "expected_review": false,
+      "seed": 20261123,
+      "image": "images/pledge_3/sideways.jpg",
+      "dimensions": [
+        912,
+        1800
+      ],
+      "sha256": "e24b8f18469d09aeb6ed7fa67e648d45b73fe3c5cc55553777df33a1c56f2ab4",
+      "reference": "청렴 서약서\n서약자: 윤초롱\n소속: 가상봉사단\n서약 내용: 업무를 공정하게 수행하겠습니다\n준수 사항: 부당한 청탁을 받지 않습니다\n의무 사항: 이해 관계가 생기면 알립니다\n작성일: 2026년 11월 9일\n서약자 서명: 윤초롱"
+    },
+    {
+      "id": "pledge_3/tiny_unreadable",
+      "case": "pledge_3",
+      "expected": "pledge",
+      "profile": "tiny_unreadable",
+      "expected_review": true,
+      "seed": 20261123,
+      "image": "images/pledge_3/tiny_unreadable.jpg",
+      "dimensions": [
+        180,
+        91
+      ],
+      "sha256": "0951c4a75d430db7b6dd65c3e04ed8b999d8def1dbe7097f0986490dc47bab49",
+      "reference": "청렴 서약서\n서약자: 윤초롱\n소속: 가상봉사단\n서약 내용: 업무를 공정하게 수행하겠습니다\n준수 사항: 부당한 청탁을 받지 않습니다\n의무 사항: 이해 관계가 생기면 알립니다\n작성일: 2026년 11월 9일\n서약자 서명: 윤초롱"
+    },
+    {
+      "id": "report_1/clean",
+      "case": "report_1",
+      "expected": "report",
+      "profile": "clean",
+      "expected_review": false,
+      "seed": 20261124,
+      "image": "images/report_1/clean.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "38b8bb1878974cdcecf7520c740f1908249dec75c1052c65b68ca03dc1240e03",
+      "reference": "현장 방문 결과 보고서\n보고자: 김하늘\n보고일: 2026년 11월 9일\n활동 기간: 2026년 11월 8일\n활동 내용: 전시 시설을 방문했습니다\n활동 결과: 안내 표지를 확인했습니다\n개선 사항: 입구 안내문을 추가합니다\n향후 계획: 다음 달 재방문합니다"
+    },
+    {
+      "id": "report_1/skew",
+      "case": "report_1",
+      "expected": "report",
+      "profile": "skew",
+      "expected_review": false,
+      "seed": 20261124,
+      "image": "images/report_1/skew.jpg",
+      "dimensions": [
+        1874,
+        1066
+      ],
+      "sha256": "979ee5904e0e1583d9e0dab7afded0423937f83502b4463deb561fc8cbc94ab8",
+      "reference": "현장 방문 결과 보고서\n보고자: 김하늘\n보고일: 2026년 11월 9일\n활동 기간: 2026년 11월 8일\n활동 내용: 전시 시설을 방문했습니다\n활동 결과: 안내 표지를 확인했습니다\n개선 사항: 입구 안내문을 추가합니다\n향후 계획: 다음 달 재방문합니다"
+    },
+    {
+      "id": "report_1/desk",
+      "case": "report_1",
+      "expected": "report",
+      "profile": "desk",
+      "expected_review": false,
+      "seed": 20261124,
+      "image": "images/report_1/desk.jpg",
+      "dimensions": [
+        2298,
+        1474
+      ],
+      "sha256": "4d649d4d3c52a57ab3a4cadaa3989418093ab5bc8b47ccad6d8b809339221159",
+      "reference": "현장 방문 결과 보고서\n보고자: 김하늘\n보고일: 2026년 11월 9일\n활동 기간: 2026년 11월 8일\n활동 내용: 전시 시설을 방문했습니다\n활동 결과: 안내 표지를 확인했습니다\n개선 사항: 입구 안내문을 추가합니다\n향후 계획: 다음 달 재방문합니다"
+    },
+    {
+      "id": "report_1/shadow",
+      "case": "report_1",
+      "expected": "report",
+      "profile": "shadow",
+      "expected_review": false,
+      "seed": 20261124,
+      "image": "images/report_1/shadow.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "f929766c18a897bfc71c883e9108ded7ba68a7152b4f1e402773d180dcf08b0c",
+      "reference": "현장 방문 결과 보고서\n보고자: 김하늘\n보고일: 2026년 11월 9일\n활동 기간: 2026년 11월 8일\n활동 내용: 전시 시설을 방문했습니다\n활동 결과: 안내 표지를 확인했습니다\n개선 사항: 입구 안내문을 추가합니다\n향후 계획: 다음 달 재방문합니다"
+    },
+    {
+      "id": "report_1/blur",
+      "case": "report_1",
+      "expected": "report",
+      "profile": "blur",
+      "expected_review": false,
+      "seed": 20261124,
+      "image": "images/report_1/blur.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "f979e1d3345a4a8e8c51f3cd0eab48400c5ebfda0954a2c3fccffc8b4fec0ab9",
+      "reference": "현장 방문 결과 보고서\n보고자: 김하늘\n보고일: 2026년 11월 9일\n활동 기간: 2026년 11월 8일\n활동 내용: 전시 시설을 방문했습니다\n활동 결과: 안내 표지를 확인했습니다\n개선 사항: 입구 안내문을 추가합니다\n향후 계획: 다음 달 재방문합니다"
+    },
+    {
+      "id": "report_1/cropped_title",
+      "case": "report_1",
+      "expected": "report",
+      "profile": "cropped_title",
+      "expected_review": false,
+      "seed": 20261124,
+      "image": "images/report_1/cropped_title.jpg",
+      "dimensions": [
+        1800,
+        777
+      ],
+      "sha256": "804fe7e9ce360558c9944861beeef4237ee9433b0155e7b3fb8055c51e8c8b32",
+      "reference": "현장 방문 결과 보고서\n보고자: 김하늘\n보고일: 2026년 11월 9일\n활동 기간: 2026년 11월 8일\n활동 내용: 전시 시설을 방문했습니다\n활동 결과: 안내 표지를 확인했습니다\n개선 사항: 입구 안내문을 추가합니다\n향후 계획: 다음 달 재방문합니다"
+    },
+    {
+      "id": "report_1/sideways",
+      "case": "report_1",
+      "expected": "report",
+      "profile": "sideways",
+      "expected_review": false,
+      "seed": 20261124,
+      "image": "images/report_1/sideways.jpg",
+      "dimensions": [
+        912,
+        1800
+      ],
+      "sha256": "e3dfc0b42f7e77f70a5ecb2ee7fee5fa4fc88d964e253c2ce6002635ffc20ed2",
+      "reference": "현장 방문 결과 보고서\n보고자: 김하늘\n보고일: 2026년 11월 9일\n활동 기간: 2026년 11월 8일\n활동 내용: 전시 시설을 방문했습니다\n활동 결과: 안내 표지를 확인했습니다\n개선 사항: 입구 안내문을 추가합니다\n향후 계획: 다음 달 재방문합니다"
+    },
+    {
+      "id": "report_1/tiny_unreadable",
+      "case": "report_1",
+      "expected": "report",
+      "profile": "tiny_unreadable",
+      "expected_review": true,
+      "seed": 20261124,
+      "image": "images/report_1/tiny_unreadable.jpg",
+      "dimensions": [
+        180,
+        91
+      ],
+      "sha256": "919ae5e9cab9d37e10005e06d14a3075185620d603880085a95ae26c3e0c007c",
+      "reference": "현장 방문 결과 보고서\n보고자: 김하늘\n보고일: 2026년 11월 9일\n활동 기간: 2026년 11월 8일\n활동 내용: 전시 시설을 방문했습니다\n활동 결과: 안내 표지를 확인했습니다\n개선 사항: 입구 안내문을 추가합니다\n향후 계획: 다음 달 재방문합니다"
+    },
+    {
+      "id": "report_2/clean",
+      "case": "report_2",
+      "expected": "report",
+      "profile": "clean",
+      "expected_review": false,
+      "seed": 20261125,
+      "image": "images/report_2/clean.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "303980861ce17049fa1749092ad998407c4091878d8e421dcda5066d04fbc302",
+      "reference": "봉사 활동 보고서\n작성자: 박가람\n보고일: 2026년 11월 9일\n활동 기간: 2026년 11월 7일\n활동 내용: 마을 공원 청소\n활동 결과: 쓰레기 세 봉지를 수거했습니다\n참여 인원: 8명\n향후 계획: 매월 정기 활동을 진행합니다"
+    },
+    {
+      "id": "report_2/skew",
+      "case": "report_2",
+      "expected": "report",
+      "profile": "skew",
+      "expected_review": false,
+      "seed": 20261125,
+      "image": "images/report_2/skew.jpg",
+      "dimensions": [
+        1874,
+        1066
+      ],
+      "sha256": "ab2e8fb7cb7b9039eb5a1fbed1562185c473f320ff9e37660555e4101df04d40",
+      "reference": "봉사 활동 보고서\n작성자: 박가람\n보고일: 2026년 11월 9일\n활동 기간: 2026년 11월 7일\n활동 내용: 마을 공원 청소\n활동 결과: 쓰레기 세 봉지를 수거했습니다\n참여 인원: 8명\n향후 계획: 매월 정기 활동을 진행합니다"
+    },
+    {
+      "id": "report_2/desk",
+      "case": "report_2",
+      "expected": "report",
+      "profile": "desk",
+      "expected_review": false,
+      "seed": 20261125,
+      "image": "images/report_2/desk.jpg",
+      "dimensions": [
+        2298,
+        1472
+      ],
+      "sha256": "3c87c2cc44a28bc35bda47c342ae3f08977d23dde512285e51b74ef1c3ec8134",
+      "reference": "봉사 활동 보고서\n작성자: 박가람\n보고일: 2026년 11월 9일\n활동 기간: 2026년 11월 7일\n활동 내용: 마을 공원 청소\n활동 결과: 쓰레기 세 봉지를 수거했습니다\n참여 인원: 8명\n향후 계획: 매월 정기 활동을 진행합니다"
+    },
+    {
+      "id": "report_2/shadow",
+      "case": "report_2",
+      "expected": "report",
+      "profile": "shadow",
+      "expected_review": false,
+      "seed": 20261125,
+      "image": "images/report_2/shadow.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "579c62d308abf196481cead295489dc91133e6756505570573924fbe91df760e",
+      "reference": "봉사 활동 보고서\n작성자: 박가람\n보고일: 2026년 11월 9일\n활동 기간: 2026년 11월 7일\n활동 내용: 마을 공원 청소\n활동 결과: 쓰레기 세 봉지를 수거했습니다\n참여 인원: 8명\n향후 계획: 매월 정기 활동을 진행합니다"
+    },
+    {
+      "id": "report_2/blur",
+      "case": "report_2",
+      "expected": "report",
+      "profile": "blur",
+      "expected_review": false,
+      "seed": 20261125,
+      "image": "images/report_2/blur.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "29d8127049c6edd4e9d78e325bb36067acc1d89e4138bf0d5fbaf9523cd56504",
+      "reference": "봉사 활동 보고서\n작성자: 박가람\n보고일: 2026년 11월 9일\n활동 기간: 2026년 11월 7일\n활동 내용: 마을 공원 청소\n활동 결과: 쓰레기 세 봉지를 수거했습니다\n참여 인원: 8명\n향후 계획: 매월 정기 활동을 진행합니다"
+    },
+    {
+      "id": "report_2/cropped_title",
+      "case": "report_2",
+      "expected": "report",
+      "profile": "cropped_title",
+      "expected_review": false,
+      "seed": 20261125,
+      "image": "images/report_2/cropped_title.jpg",
+      "dimensions": [
+        1800,
+        777
+      ],
+      "sha256": "a554a639fc0a5e696b15aa37956579b7b2c72cd823acdcb72d8fa0911bce214a",
+      "reference": "봉사 활동 보고서\n작성자: 박가람\n보고일: 2026년 11월 9일\n활동 기간: 2026년 11월 7일\n활동 내용: 마을 공원 청소\n활동 결과: 쓰레기 세 봉지를 수거했습니다\n참여 인원: 8명\n향후 계획: 매월 정기 활동을 진행합니다"
+    },
+    {
+      "id": "report_2/sideways",
+      "case": "report_2",
+      "expected": "report",
+      "profile": "sideways",
+      "expected_review": false,
+      "seed": 20261125,
+      "image": "images/report_2/sideways.jpg",
+      "dimensions": [
+        912,
+        1800
+      ],
+      "sha256": "dd58f40ae7e5db60d9abeed755763808083e884a25d8115ecfdcff7de6085ecf",
+      "reference": "봉사 활동 보고서\n작성자: 박가람\n보고일: 2026년 11월 9일\n활동 기간: 2026년 11월 7일\n활동 내용: 마을 공원 청소\n활동 결과: 쓰레기 세 봉지를 수거했습니다\n참여 인원: 8명\n향후 계획: 매월 정기 활동을 진행합니다"
+    },
+    {
+      "id": "report_2/tiny_unreadable",
+      "case": "report_2",
+      "expected": "report",
+      "profile": "tiny_unreadable",
+      "expected_review": true,
+      "seed": 20261125,
+      "image": "images/report_2/tiny_unreadable.jpg",
+      "dimensions": [
+        180,
+        91
+      ],
+      "sha256": "132ba509d07f3f07ee29bb9857b7eee8de167c265f82fb665801b863a62be699",
+      "reference": "봉사 활동 보고서\n작성자: 박가람\n보고일: 2026년 11월 9일\n활동 기간: 2026년 11월 7일\n활동 내용: 마을 공원 청소\n활동 결과: 쓰레기 세 봉지를 수거했습니다\n참여 인원: 8명\n향후 계획: 매월 정기 활동을 진행합니다"
+    },
+    {
+      "id": "report_3/clean",
+      "case": "report_3",
+      "expected": "report",
+      "profile": "clean",
+      "expected_review": false,
+      "seed": 20261126,
+      "image": "images/report_3/clean.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "2e404d4b93a205bf6a9cd7eee7866cba0af3848f9bdd6694a3b759d727d98244",
+      "reference": "업무 결과 보고서\n보고자: 윤초롱\n보고일: 2026년 11월 9일\n업무 내용: 행사 준비물 점검\n추진 실적: 물품 20종을 확인했습니다\n문제점: 안내 책자가 부족합니다\n개선 사항: 안내 책자를 추가 인쇄합니다\n향후 계획: 행사 전 다시 점검합니다"
+    },
+    {
+      "id": "report_3/skew",
+      "case": "report_3",
+      "expected": "report",
+      "profile": "skew",
+      "expected_review": false,
+      "seed": 20261126,
+      "image": "images/report_3/skew.jpg",
+      "dimensions": [
+        1874,
+        1066
+      ],
+      "sha256": "8f61ddb8224b469e738e382bfe6ed39461645ed4456b5cebc1be35590d8e75b7",
+      "reference": "업무 결과 보고서\n보고자: 윤초롱\n보고일: 2026년 11월 9일\n업무 내용: 행사 준비물 점검\n추진 실적: 물품 20종을 확인했습니다\n문제점: 안내 책자가 부족합니다\n개선 사항: 안내 책자를 추가 인쇄합니다\n향후 계획: 행사 전 다시 점검합니다"
+    },
+    {
+      "id": "report_3/desk",
+      "case": "report_3",
+      "expected": "report",
+      "profile": "desk",
+      "expected_review": false,
+      "seed": 20261126,
+      "image": "images/report_3/desk.jpg",
+      "dimensions": [
+        2314,
+        1514
+      ],
+      "sha256": "d3342ba3b02c9faaab052a86f545d4c6e601464be61a1d68d59dcef4afe66d01",
+      "reference": "업무 결과 보고서\n보고자: 윤초롱\n보고일: 2026년 11월 9일\n업무 내용: 행사 준비물 점검\n추진 실적: 물품 20종을 확인했습니다\n문제점: 안내 책자가 부족합니다\n개선 사항: 안내 책자를 추가 인쇄합니다\n향후 계획: 행사 전 다시 점검합니다"
+    },
+    {
+      "id": "report_3/shadow",
+      "case": "report_3",
+      "expected": "report",
+      "profile": "shadow",
+      "expected_review": false,
+      "seed": 20261126,
+      "image": "images/report_3/shadow.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "9d1d409ae8bead9c6656fb9c7e30cc28cbac435a731902edec8b2745d952f794",
+      "reference": "업무 결과 보고서\n보고자: 윤초롱\n보고일: 2026년 11월 9일\n업무 내용: 행사 준비물 점검\n추진 실적: 물품 20종을 확인했습니다\n문제점: 안내 책자가 부족합니다\n개선 사항: 안내 책자를 추가 인쇄합니다\n향후 계획: 행사 전 다시 점검합니다"
+    },
+    {
+      "id": "report_3/blur",
+      "case": "report_3",
+      "expected": "report",
+      "profile": "blur",
+      "expected_review": false,
+      "seed": 20261126,
+      "image": "images/report_3/blur.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "bb3f1fdf8cdf8610f1453f98b0e7ccbfbfb0c537ea201137bbda51913efd611e",
+      "reference": "업무 결과 보고서\n보고자: 윤초롱\n보고일: 2026년 11월 9일\n업무 내용: 행사 준비물 점검\n추진 실적: 물품 20종을 확인했습니다\n문제점: 안내 책자가 부족합니다\n개선 사항: 안내 책자를 추가 인쇄합니다\n향후 계획: 행사 전 다시 점검합니다"
+    },
+    {
+      "id": "report_3/cropped_title",
+      "case": "report_3",
+      "expected": "report",
+      "profile": "cropped_title",
+      "expected_review": false,
+      "seed": 20261126,
+      "image": "images/report_3/cropped_title.jpg",
+      "dimensions": [
+        1800,
+        777
+      ],
+      "sha256": "5637f682af2b6ba1f8abe07c4aa9e259a5648ea9b5437085a0e23cd1d9f9b3d0",
+      "reference": "업무 결과 보고서\n보고자: 윤초롱\n보고일: 2026년 11월 9일\n업무 내용: 행사 준비물 점검\n추진 실적: 물품 20종을 확인했습니다\n문제점: 안내 책자가 부족합니다\n개선 사항: 안내 책자를 추가 인쇄합니다\n향후 계획: 행사 전 다시 점검합니다"
+    },
+    {
+      "id": "report_3/sideways",
+      "case": "report_3",
+      "expected": "report",
+      "profile": "sideways",
+      "expected_review": false,
+      "seed": 20261126,
+      "image": "images/report_3/sideways.jpg",
+      "dimensions": [
+        912,
+        1800
+      ],
+      "sha256": "ce7e7d9bb4b2f842cedc41666581b6533b57404355aeb781a2fa757cd22b4dcb",
+      "reference": "업무 결과 보고서\n보고자: 윤초롱\n보고일: 2026년 11월 9일\n업무 내용: 행사 준비물 점검\n추진 실적: 물품 20종을 확인했습니다\n문제점: 안내 책자가 부족합니다\n개선 사항: 안내 책자를 추가 인쇄합니다\n향후 계획: 행사 전 다시 점검합니다"
+    },
+    {
+      "id": "report_3/tiny_unreadable",
+      "case": "report_3",
+      "expected": "report",
+      "profile": "tiny_unreadable",
+      "expected_review": true,
+      "seed": 20261126,
+      "image": "images/report_3/tiny_unreadable.jpg",
+      "dimensions": [
+        180,
+        91
+      ],
+      "sha256": "ee034f1b938e25e9b9ef8178fa111beb31d21d5ad604a091f11a1d03af012e1b",
+      "reference": "업무 결과 보고서\n보고자: 윤초롱\n보고일: 2026년 11월 9일\n업무 내용: 행사 준비물 점검\n추진 실적: 물품 20종을 확인했습니다\n문제점: 안내 책자가 부족합니다\n개선 사항: 안내 책자를 추가 인쇄합니다\n향후 계획: 행사 전 다시 점검합니다"
+    },
+    {
+      "id": "questionnaire_1/clean",
+      "case": "questionnaire_1",
+      "expected": "questionnaire",
+      "profile": "clean",
+      "expected_review": false,
+      "seed": 20261127,
+      "image": "images/questionnaire_1/clean.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "ffd12b8f1c5b9f348719fd8eabb9f11dc6d432634bacf8c327ac52d8af942ac5",
+      "reference": "교육 만족도 설문지\n조사 목적: 다음 교육의 운영 개선\n응답자: 익명\n질문 1: 교육 내용에 만족하십니까\n응답 항목: 매우 만족, 만족, 보통, 불만족\n질문 2: 교육 시간이 적절했습니까\n선택 항목: 그렇다, 보통이다, 아니다\n기타 의견: 자유롭게 적어 주세요"
+    },
+    {
+      "id": "questionnaire_1/skew",
+      "case": "questionnaire_1",
+      "expected": "questionnaire",
+      "profile": "skew",
+      "expected_review": false,
+      "seed": 20261127,
+      "image": "images/questionnaire_1/skew.jpg",
+      "dimensions": [
+        1874,
+        1066
+      ],
+      "sha256": "f33d38e459e7470264e06126bf689003c358309151cf315004974e1d3c30b463",
+      "reference": "교육 만족도 설문지\n조사 목적: 다음 교육의 운영 개선\n응답자: 익명\n질문 1: 교육 내용에 만족하십니까\n응답 항목: 매우 만족, 만족, 보통, 불만족\n질문 2: 교육 시간이 적절했습니까\n선택 항목: 그렇다, 보통이다, 아니다\n기타 의견: 자유롭게 적어 주세요"
+    },
+    {
+      "id": "questionnaire_1/desk",
+      "case": "questionnaire_1",
+      "expected": "questionnaire",
+      "profile": "desk",
+      "expected_review": false,
+      "seed": 20261127,
+      "image": "images/questionnaire_1/desk.jpg",
+      "dimensions": [
+        2330,
+        1564
+      ],
+      "sha256": "116c8aa422370565557aa049c032604da1be012be3293a4fe0c2328a363e775b",
+      "reference": "교육 만족도 설문지\n조사 목적: 다음 교육의 운영 개선\n응답자: 익명\n질문 1: 교육 내용에 만족하십니까\n응답 항목: 매우 만족, 만족, 보통, 불만족\n질문 2: 교육 시간이 적절했습니까\n선택 항목: 그렇다, 보통이다, 아니다\n기타 의견: 자유롭게 적어 주세요"
+    },
+    {
+      "id": "questionnaire_1/shadow",
+      "case": "questionnaire_1",
+      "expected": "questionnaire",
+      "profile": "shadow",
+      "expected_review": false,
+      "seed": 20261127,
+      "image": "images/questionnaire_1/shadow.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "dd09937d4b3ad175e95f04cac163feb911339cef3f68e2001434acb5ee7242b1",
+      "reference": "교육 만족도 설문지\n조사 목적: 다음 교육의 운영 개선\n응답자: 익명\n질문 1: 교육 내용에 만족하십니까\n응답 항목: 매우 만족, 만족, 보통, 불만족\n질문 2: 교육 시간이 적절했습니까\n선택 항목: 그렇다, 보통이다, 아니다\n기타 의견: 자유롭게 적어 주세요"
+    },
+    {
+      "id": "questionnaire_1/blur",
+      "case": "questionnaire_1",
+      "expected": "questionnaire",
+      "profile": "blur",
+      "expected_review": false,
+      "seed": 20261127,
+      "image": "images/questionnaire_1/blur.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "ec4f011b0a0fecb0c7a704a4f9157bacf3eab7c94ac98fcb1a132f45e49b7861",
+      "reference": "교육 만족도 설문지\n조사 목적: 다음 교육의 운영 개선\n응답자: 익명\n질문 1: 교육 내용에 만족하십니까\n응답 항목: 매우 만족, 만족, 보통, 불만족\n질문 2: 교육 시간이 적절했습니까\n선택 항목: 그렇다, 보통이다, 아니다\n기타 의견: 자유롭게 적어 주세요"
+    },
+    {
+      "id": "questionnaire_1/cropped_title",
+      "case": "questionnaire_1",
+      "expected": "questionnaire",
+      "profile": "cropped_title",
+      "expected_review": false,
+      "seed": 20261127,
+      "image": "images/questionnaire_1/cropped_title.jpg",
+      "dimensions": [
+        1800,
+        777
+      ],
+      "sha256": "1f741d31e1296a756e632ff46c94a0cbc9d9346d22d8a15d8519102074769229",
+      "reference": "교육 만족도 설문지\n조사 목적: 다음 교육의 운영 개선\n응답자: 익명\n질문 1: 교육 내용에 만족하십니까\n응답 항목: 매우 만족, 만족, 보통, 불만족\n질문 2: 교육 시간이 적절했습니까\n선택 항목: 그렇다, 보통이다, 아니다\n기타 의견: 자유롭게 적어 주세요"
+    },
+    {
+      "id": "questionnaire_1/sideways",
+      "case": "questionnaire_1",
+      "expected": "questionnaire",
+      "profile": "sideways",
+      "expected_review": false,
+      "seed": 20261127,
+      "image": "images/questionnaire_1/sideways.jpg",
+      "dimensions": [
+        912,
+        1800
+      ],
+      "sha256": "10cbe7fd4e136a69cf90c333a848c85a851350ee5eb1dae915bf87fadde893cd",
+      "reference": "교육 만족도 설문지\n조사 목적: 다음 교육의 운영 개선\n응답자: 익명\n질문 1: 교육 내용에 만족하십니까\n응답 항목: 매우 만족, 만족, 보통, 불만족\n질문 2: 교육 시간이 적절했습니까\n선택 항목: 그렇다, 보통이다, 아니다\n기타 의견: 자유롭게 적어 주세요"
+    },
+    {
+      "id": "questionnaire_1/tiny_unreadable",
+      "case": "questionnaire_1",
+      "expected": "questionnaire",
+      "profile": "tiny_unreadable",
+      "expected_review": true,
+      "seed": 20261127,
+      "image": "images/questionnaire_1/tiny_unreadable.jpg",
+      "dimensions": [
+        180,
+        91
+      ],
+      "sha256": "4dd156c58d9a8649fbdcabe959029a690d1a73e6f0a8dd8b4abb2280709ff8af",
+      "reference": "교육 만족도 설문지\n조사 목적: 다음 교육의 운영 개선\n응답자: 익명\n질문 1: 교육 내용에 만족하십니까\n응답 항목: 매우 만족, 만족, 보통, 불만족\n질문 2: 교육 시간이 적절했습니까\n선택 항목: 그렇다, 보통이다, 아니다\n기타 의견: 자유롭게 적어 주세요"
+    },
+    {
+      "id": "questionnaire_2/clean",
+      "case": "questionnaire_2",
+      "expected": "questionnaire",
+      "profile": "clean",
+      "expected_review": false,
+      "seed": 20261128,
+      "image": "images/questionnaire_2/clean.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "21e3ad7047f85935e4c63e6025c5639bedbf6435a86ada619908911723e5b64d",
+      "reference": "시설 이용 설문지\n조사 목적: 시설 이용 환경 개선\n응답자: 이용자\n질문 1: 한 달에 몇 번 방문하십니까\n응답 항목: 한 번, 두 번, 세 번 이상\n질문 2: 안내 표지가 이해하기 쉽습니까\n선택 항목: 그렇다, 보통이다, 아니다\n기타 의견: 개선할 점을 적어 주세요"
+    },
+    {
+      "id": "questionnaire_2/skew",
+      "case": "questionnaire_2",
+      "expected": "questionnaire",
+      "profile": "skew",
+      "expected_review": false,
+      "seed": 20261128,
+      "image": "images/questionnaire_2/skew.jpg",
+      "dimensions": [
+        1874,
+        1066
+      ],
+      "sha256": "b66f96ed5b9e951b3dc03af320f4384d0fc1b6add5267ff06dc10e6f8375558c",
+      "reference": "시설 이용 설문지\n조사 목적: 시설 이용 환경 개선\n응답자: 이용자\n질문 1: 한 달에 몇 번 방문하십니까\n응답 항목: 한 번, 두 번, 세 번 이상\n질문 2: 안내 표지가 이해하기 쉽습니까\n선택 항목: 그렇다, 보통이다, 아니다\n기타 의견: 개선할 점을 적어 주세요"
+    },
+    {
+      "id": "questionnaire_2/desk",
+      "case": "questionnaire_2",
+      "expected": "questionnaire",
+      "profile": "desk",
+      "expected_review": false,
+      "seed": 20261128,
+      "image": "images/questionnaire_2/desk.jpg",
+      "dimensions": [
+        2314,
+        1516
+      ],
+      "sha256": "1643610380f0f31c0ae2f34fc4250dda73465aedd12b72d3ef8b9c39b2f764d0",
+      "reference": "시설 이용 설문지\n조사 목적: 시설 이용 환경 개선\n응답자: 이용자\n질문 1: 한 달에 몇 번 방문하십니까\n응답 항목: 한 번, 두 번, 세 번 이상\n질문 2: 안내 표지가 이해하기 쉽습니까\n선택 항목: 그렇다, 보통이다, 아니다\n기타 의견: 개선할 점을 적어 주세요"
+    },
+    {
+      "id": "questionnaire_2/shadow",
+      "case": "questionnaire_2",
+      "expected": "questionnaire",
+      "profile": "shadow",
+      "expected_review": false,
+      "seed": 20261128,
+      "image": "images/questionnaire_2/shadow.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "fc6b0b5b26fcea437813b669d4c2726f878168c140d96401f7962e37e6cdc1a5",
+      "reference": "시설 이용 설문지\n조사 목적: 시설 이용 환경 개선\n응답자: 이용자\n질문 1: 한 달에 몇 번 방문하십니까\n응답 항목: 한 번, 두 번, 세 번 이상\n질문 2: 안내 표지가 이해하기 쉽습니까\n선택 항목: 그렇다, 보통이다, 아니다\n기타 의견: 개선할 점을 적어 주세요"
+    },
+    {
+      "id": "questionnaire_2/blur",
+      "case": "questionnaire_2",
+      "expected": "questionnaire",
+      "profile": "blur",
+      "expected_review": false,
+      "seed": 20261128,
+      "image": "images/questionnaire_2/blur.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "6cd3ce1a82fcb7fa7d308c545318e0a87d23832cab7280eddae891e3e94ab4e5",
+      "reference": "시설 이용 설문지\n조사 목적: 시설 이용 환경 개선\n응답자: 이용자\n질문 1: 한 달에 몇 번 방문하십니까\n응답 항목: 한 번, 두 번, 세 번 이상\n질문 2: 안내 표지가 이해하기 쉽습니까\n선택 항목: 그렇다, 보통이다, 아니다\n기타 의견: 개선할 점을 적어 주세요"
+    },
+    {
+      "id": "questionnaire_2/cropped_title",
+      "case": "questionnaire_2",
+      "expected": "questionnaire",
+      "profile": "cropped_title",
+      "expected_review": false,
+      "seed": 20261128,
+      "image": "images/questionnaire_2/cropped_title.jpg",
+      "dimensions": [
+        1800,
+        777
+      ],
+      "sha256": "c016e8dd486262f6a4c4db46d9bf064f9f24df58296e39b6aafd61632adc3559",
+      "reference": "시설 이용 설문지\n조사 목적: 시설 이용 환경 개선\n응답자: 이용자\n질문 1: 한 달에 몇 번 방문하십니까\n응답 항목: 한 번, 두 번, 세 번 이상\n질문 2: 안내 표지가 이해하기 쉽습니까\n선택 항목: 그렇다, 보통이다, 아니다\n기타 의견: 개선할 점을 적어 주세요"
+    },
+    {
+      "id": "questionnaire_2/sideways",
+      "case": "questionnaire_2",
+      "expected": "questionnaire",
+      "profile": "sideways",
+      "expected_review": false,
+      "seed": 20261128,
+      "image": "images/questionnaire_2/sideways.jpg",
+      "dimensions": [
+        912,
+        1800
+      ],
+      "sha256": "0497600834b6f98f4fd3f115448436e17bc224af3db1003e5c6446dd7675ffe3",
+      "reference": "시설 이용 설문지\n조사 목적: 시설 이용 환경 개선\n응답자: 이용자\n질문 1: 한 달에 몇 번 방문하십니까\n응답 항목: 한 번, 두 번, 세 번 이상\n질문 2: 안내 표지가 이해하기 쉽습니까\n선택 항목: 그렇다, 보통이다, 아니다\n기타 의견: 개선할 점을 적어 주세요"
+    },
+    {
+      "id": "questionnaire_2/tiny_unreadable",
+      "case": "questionnaire_2",
+      "expected": "questionnaire",
+      "profile": "tiny_unreadable",
+      "expected_review": true,
+      "seed": 20261128,
+      "image": "images/questionnaire_2/tiny_unreadable.jpg",
+      "dimensions": [
+        180,
+        91
+      ],
+      "sha256": "8c9cba1e611082e25da7c427f06ff03f311a94ea8480100d7ab7c3f208671a02",
+      "reference": "시설 이용 설문지\n조사 목적: 시설 이용 환경 개선\n응답자: 이용자\n질문 1: 한 달에 몇 번 방문하십니까\n응답 항목: 한 번, 두 번, 세 번 이상\n질문 2: 안내 표지가 이해하기 쉽습니까\n선택 항목: 그렇다, 보통이다, 아니다\n기타 의견: 개선할 점을 적어 주세요"
+    },
+    {
+      "id": "questionnaire_3/clean",
+      "case": "questionnaire_3",
+      "expected": "questionnaire",
+      "profile": "clean",
+      "expected_review": false,
+      "seed": 20261129,
+      "image": "images/questionnaire_3/clean.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "6ab37fa107a4320044afc1b4486eb9acc69a71dae1411ff7f45be8f451bab14d",
+      "reference": "행사 수요 조사서\n조사 목적: 다음 행사 주제 선정\n응답자: 주민\n질문 1: 참여하고 싶은 활동은 무엇입니까\n응답 항목: 미술, 음악, 운동\n질문 2: 참여 가능한 요일은 언제입니까\n선택 항목: 평일, 토요일, 일요일\n기타 의견: 희망 활동을 적어 주세요"
+    },
+    {
+      "id": "questionnaire_3/skew",
+      "case": "questionnaire_3",
+      "expected": "questionnaire",
+      "profile": "skew",
+      "expected_review": false,
+      "seed": 20261129,
+      "image": "images/questionnaire_3/skew.jpg",
+      "dimensions": [
+        1874,
+        1066
+      ],
+      "sha256": "a1d4baded5c15c8581c8cd7ea00d810da88c7f55b4ce1412a45aa6455a76276c",
+      "reference": "행사 수요 조사서\n조사 목적: 다음 행사 주제 선정\n응답자: 주민\n질문 1: 참여하고 싶은 활동은 무엇입니까\n응답 항목: 미술, 음악, 운동\n질문 2: 참여 가능한 요일은 언제입니까\n선택 항목: 평일, 토요일, 일요일\n기타 의견: 희망 활동을 적어 주세요"
+    },
+    {
+      "id": "questionnaire_3/desk",
+      "case": "questionnaire_3",
+      "expected": "questionnaire",
+      "profile": "desk",
+      "expected_review": false,
+      "seed": 20261129,
+      "image": "images/questionnaire_3/desk.jpg",
+      "dimensions": [
+        2330,
+        1564
+      ],
+      "sha256": "3c9f4d2e13e2f957ee9bf8eadadf0c605a0c9e8b0438a27db114b50a15077054",
+      "reference": "행사 수요 조사서\n조사 목적: 다음 행사 주제 선정\n응답자: 주민\n질문 1: 참여하고 싶은 활동은 무엇입니까\n응답 항목: 미술, 음악, 운동\n질문 2: 참여 가능한 요일은 언제입니까\n선택 항목: 평일, 토요일, 일요일\n기타 의견: 희망 활동을 적어 주세요"
+    },
+    {
+      "id": "questionnaire_3/shadow",
+      "case": "questionnaire_3",
+      "expected": "questionnaire",
+      "profile": "shadow",
+      "expected_review": false,
+      "seed": 20261129,
+      "image": "images/questionnaire_3/shadow.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "637b80e033cf5be0a705ffe76c15d7579cbe46da27495132373d0adf7935e225",
+      "reference": "행사 수요 조사서\n조사 목적: 다음 행사 주제 선정\n응답자: 주민\n질문 1: 참여하고 싶은 활동은 무엇입니까\n응답 항목: 미술, 음악, 운동\n질문 2: 참여 가능한 요일은 언제입니까\n선택 항목: 평일, 토요일, 일요일\n기타 의견: 희망 활동을 적어 주세요"
+    },
+    {
+      "id": "questionnaire_3/blur",
+      "case": "questionnaire_3",
+      "expected": "questionnaire",
+      "profile": "blur",
+      "expected_review": false,
+      "seed": 20261129,
+      "image": "images/questionnaire_3/blur.jpg",
+      "dimensions": [
+        1800,
+        912
+      ],
+      "sha256": "b9c7ed57d46e61d2482c9f64cafd7fac7326125ae1c9abe28d284ec9c97ddb7d",
+      "reference": "행사 수요 조사서\n조사 목적: 다음 행사 주제 선정\n응답자: 주민\n질문 1: 참여하고 싶은 활동은 무엇입니까\n응답 항목: 미술, 음악, 운동\n질문 2: 참여 가능한 요일은 언제입니까\n선택 항목: 평일, 토요일, 일요일\n기타 의견: 희망 활동을 적어 주세요"
+    },
+    {
+      "id": "questionnaire_3/cropped_title",
+      "case": "questionnaire_3",
+      "expected": "questionnaire",
+      "profile": "cropped_title",
+      "expected_review": false,
+      "seed": 20261129,
+      "image": "images/questionnaire_3/cropped_title.jpg",
+      "dimensions": [
+        1800,
+        777
+      ],
+      "sha256": "ee592e4096b4af9fdd6346c87e540afe876bb8624bb307bcc4d6cc25d5754ea6",
+      "reference": "행사 수요 조사서\n조사 목적: 다음 행사 주제 선정\n응답자: 주민\n질문 1: 참여하고 싶은 활동은 무엇입니까\n응답 항목: 미술, 음악, 운동\n질문 2: 참여 가능한 요일은 언제입니까\n선택 항목: 평일, 토요일, 일요일\n기타 의견: 희망 활동을 적어 주세요"
+    },
+    {
+      "id": "questionnaire_3/sideways",
+      "case": "questionnaire_3",
+      "expected": "questionnaire",
+      "profile": "sideways",
+      "expected_review": false,
+      "seed": 20261129,
+      "image": "images/questionnaire_3/sideways.jpg",
+      "dimensions": [
+        912,
+        1800
+      ],
+      "sha256": "946efa96d4702c1e30875b3270f080b92a1f4830d0171782a84c68a4d502e0a6",
+      "reference": "행사 수요 조사서\n조사 목적: 다음 행사 주제 선정\n응답자: 주민\n질문 1: 참여하고 싶은 활동은 무엇입니까\n응답 항목: 미술, 음악, 운동\n질문 2: 참여 가능한 요일은 언제입니까\n선택 항목: 평일, 토요일, 일요일\n기타 의견: 희망 활동을 적어 주세요"
+    },
+    {
+      "id": "questionnaire_3/tiny_unreadable",
+      "case": "questionnaire_3",
+      "expected": "questionnaire",
+      "profile": "tiny_unreadable",
+      "expected_review": true,
+      "seed": 20261129,
+      "image": "images/questionnaire_3/tiny_unreadable.jpg",
+      "dimensions": [
+        180,
+        91
+      ],
+      "sha256": "c62bffca53c7e4553e82e584b6b9caddc73b15c8a6f40e34407867955d1440ca",
+      "reference": "행사 수요 조사서\n조사 목적: 다음 행사 주제 선정\n응답자: 주민\n질문 1: 참여하고 싶은 활동은 무엇입니까\n응답 항목: 미술, 음악, 운동\n질문 2: 참여 가능한 요일은 언제입니까\n선택 항목: 평일, 토요일, 일요일\n기타 의견: 희망 활동을 적어 주세요"
+    },
+    {
+      "id": "activity_consent_1/clean",
+      "case": "activity_consent_1",
+      "expected": "activity_consent",
+      "profile": "clean",
+      "expected_review": false,
+      "seed": 20261130,
+      "image": "images/activity_consent_1/clean.jpg",
+      "dimensions": [
+        1800,
+        988
+      ],
+      "sha256": "e440c41d1976b6eacb99a502b2e9559dde431ceda019bf0ba8e16c840469a9f8",
+      "reference": "체험 활동 참가 동의서\n활동명: 과학관 체험\n참가자: 김하늘\n보호자: 김새봄\n활동 일시: 2026년 11월 15일\n활동 장소: 가상과학관\n동의 내용: 위 활동 참가에 동의합니다\n동의 여부: 동의함, 동의하지 않음\n보호자 서명: 김새봄"
+    },
+    {
+      "id": "activity_consent_1/skew",
+      "case": "activity_consent_1",
+      "expected": "activity_consent",
+      "profile": "skew",
+      "expected_review": false,
+      "seed": 20261130,
+      "image": "images/activity_consent_1/skew.jpg",
+      "dimensions": [
+        1880,
+        1142
+      ],
+      "sha256": "8f2d2f101b6ae4b73b1ce4518ff6c99315afdd2983b87816bec6eb15ccad324a",
+      "reference": "체험 활동 참가 동의서\n활동명: 과학관 체험\n참가자: 김하늘\n보호자: 김새봄\n활동 일시: 2026년 11월 15일\n활동 장소: 가상과학관\n동의 내용: 위 활동 참가에 동의합니다\n동의 여부: 동의함, 동의하지 않음\n보호자 서명: 김새봄"
+    },
+    {
+      "id": "activity_consent_1/desk",
+      "case": "activity_consent_1",
+      "expected": "activity_consent",
+      "profile": "desk",
+      "expected_review": false,
+      "seed": 20261130,
+      "image": "images/activity_consent_1/desk.jpg",
+      "dimensions": [
+        2312,
+        1558
+      ],
+      "sha256": "b7c396038cfecceae096781354cc1cd4b5dea59c681e89e0b22cbcc88f00a8f5",
+      "reference": "체험 활동 참가 동의서\n활동명: 과학관 체험\n참가자: 김하늘\n보호자: 김새봄\n활동 일시: 2026년 11월 15일\n활동 장소: 가상과학관\n동의 내용: 위 활동 참가에 동의합니다\n동의 여부: 동의함, 동의하지 않음\n보호자 서명: 김새봄"
+    },
+    {
+      "id": "activity_consent_1/shadow",
+      "case": "activity_consent_1",
+      "expected": "activity_consent",
+      "profile": "shadow",
+      "expected_review": false,
+      "seed": 20261130,
+      "image": "images/activity_consent_1/shadow.jpg",
+      "dimensions": [
+        1800,
+        988
+      ],
+      "sha256": "1a6d6ef7346c9d196613df56f7ca4cea4f90a44d478a3c39356ba7b50cd9eba2",
+      "reference": "체험 활동 참가 동의서\n활동명: 과학관 체험\n참가자: 김하늘\n보호자: 김새봄\n활동 일시: 2026년 11월 15일\n활동 장소: 가상과학관\n동의 내용: 위 활동 참가에 동의합니다\n동의 여부: 동의함, 동의하지 않음\n보호자 서명: 김새봄"
+    },
+    {
+      "id": "activity_consent_1/blur",
+      "case": "activity_consent_1",
+      "expected": "activity_consent",
+      "profile": "blur",
+      "expected_review": false,
+      "seed": 20261130,
+      "image": "images/activity_consent_1/blur.jpg",
+      "dimensions": [
+        1800,
+        988
+      ],
+      "sha256": "525a615daaa408b40b4394ee71ca0f11d4dad81b0ffe5f6d76e1fe61e366711b",
+      "reference": "체험 활동 참가 동의서\n활동명: 과학관 체험\n참가자: 김하늘\n보호자: 김새봄\n활동 일시: 2026년 11월 15일\n활동 장소: 가상과학관\n동의 내용: 위 활동 참가에 동의합니다\n동의 여부: 동의함, 동의하지 않음\n보호자 서명: 김새봄"
+    },
+    {
+      "id": "activity_consent_1/cropped_title",
+      "case": "activity_consent_1",
+      "expected": "activity_consent",
+      "profile": "cropped_title",
+      "expected_review": false,
+      "seed": 20261130,
+      "image": "images/activity_consent_1/cropped_title.jpg",
+      "dimensions": [
+        1800,
+        853
+      ],
+      "sha256": "85087dbe33937414dff50da83b66526a31255ce099cf92b72a9f6869cd68e615",
+      "reference": "체험 활동 참가 동의서\n활동명: 과학관 체험\n참가자: 김하늘\n보호자: 김새봄\n활동 일시: 2026년 11월 15일\n활동 장소: 가상과학관\n동의 내용: 위 활동 참가에 동의합니다\n동의 여부: 동의함, 동의하지 않음\n보호자 서명: 김새봄"
+    },
+    {
+      "id": "activity_consent_1/sideways",
+      "case": "activity_consent_1",
+      "expected": "activity_consent",
+      "profile": "sideways",
+      "expected_review": false,
+      "seed": 20261130,
+      "image": "images/activity_consent_1/sideways.jpg",
+      "dimensions": [
+        988,
+        1800
+      ],
+      "sha256": "d5e02559f505b778f9d1d61fc71536968226d7a908d9debab7bf5a08d33efd2e",
+      "reference": "체험 활동 참가 동의서\n활동명: 과학관 체험\n참가자: 김하늘\n보호자: 김새봄\n활동 일시: 2026년 11월 15일\n활동 장소: 가상과학관\n동의 내용: 위 활동 참가에 동의합니다\n동의 여부: 동의함, 동의하지 않음\n보호자 서명: 김새봄"
+    },
+    {
+      "id": "activity_consent_1/tiny_unreadable",
+      "case": "activity_consent_1",
+      "expected": "activity_consent",
+      "profile": "tiny_unreadable",
+      "expected_review": true,
+      "seed": 20261130,
+      "image": "images/activity_consent_1/tiny_unreadable.jpg",
+      "dimensions": [
+        180,
+        99
+      ],
+      "sha256": "6d832f48456d0fdfe1051f8cdb953b468ad06cfc89975ba515c42374257b2cde",
+      "reference": "체험 활동 참가 동의서\n활동명: 과학관 체험\n참가자: 김하늘\n보호자: 김새봄\n활동 일시: 2026년 11월 15일\n활동 장소: 가상과학관\n동의 내용: 위 활동 참가에 동의합니다\n동의 여부: 동의함, 동의하지 않음\n보호자 서명: 김새봄"
+    },
+    {
+      "id": "activity_consent_2/clean",
+      "case": "activity_consent_2",
+      "expected": "activity_consent",
+      "profile": "clean",
+      "expected_review": false,
+      "seed": 20261131,
+      "image": "images/activity_consent_2/clean.jpg",
+      "dimensions": [
+        1800,
+        988
+      ],
+      "sha256": "3a9fa5eeb2876a0d77d73d463eacb4943445b4c2ae9c9bd3737b7df87aa10c2e",
+      "reference": "현장 체험학습 동의서\n활동명: 생태 공원 관찰\n참가 학생: 박가람\n보호자 성명: 박다온\n활동 일시: 2026년 11월 20일\n활동 장소: 가상생태공원\n참가 동의: 체험학습 참가에 동의합니다\n동의 여부: 동의함, 동의하지 않음\n보호자 서명: 박다온"
+    },
+    {
+      "id": "activity_consent_2/skew",
+      "case": "activity_consent_2",
+      "expected": "activity_consent",
+      "profile": "skew",
+      "expected_review": false,
+      "seed": 20261131,
+      "image": "images/activity_consent_2/skew.jpg",
+      "dimensions": [
+        1880,
+        1142
+      ],
+      "sha256": "12cd68f9aba3ac52300c41bddc4b01483176de8f9273c444323c0033d8aa19d8",
+      "reference": "현장 체험학습 동의서\n활동명: 생태 공원 관찰\n참가 학생: 박가람\n보호자 성명: 박다온\n활동 일시: 2026년 11월 20일\n활동 장소: 가상생태공원\n참가 동의: 체험학습 참가에 동의합니다\n동의 여부: 동의함, 동의하지 않음\n보호자 서명: 박다온"
+    },
+    {
+      "id": "activity_consent_2/desk",
+      "case": "activity_consent_2",
+      "expected": "activity_consent",
+      "profile": "desk",
+      "expected_review": false,
+      "seed": 20261131,
+      "image": "images/activity_consent_2/desk.jpg",
+      "dimensions": [
+        2312,
+        1554
+      ],
+      "sha256": "16474c6216aab18498a61adffe0d69d2dbfa69094cce95eb614f7378be97c96c",
+      "reference": "현장 체험학습 동의서\n활동명: 생태 공원 관찰\n참가 학생: 박가람\n보호자 성명: 박다온\n활동 일시: 2026년 11월 20일\n활동 장소: 가상생태공원\n참가 동의: 체험학습 참가에 동의합니다\n동의 여부: 동의함, 동의하지 않음\n보호자 서명: 박다온"
+    },
+    {
+      "id": "activity_consent_2/shadow",
+      "case": "activity_consent_2",
+      "expected": "activity_consent",
+      "profile": "shadow",
+      "expected_review": false,
+      "seed": 20261131,
+      "image": "images/activity_consent_2/shadow.jpg",
+      "dimensions": [
+        1800,
+        988
+      ],
+      "sha256": "ea16e5b2fb73afb414769c79b484a83591c7e89a6bc9547287ccf4a40c953001",
+      "reference": "현장 체험학습 동의서\n활동명: 생태 공원 관찰\n참가 학생: 박가람\n보호자 성명: 박다온\n활동 일시: 2026년 11월 20일\n활동 장소: 가상생태공원\n참가 동의: 체험학습 참가에 동의합니다\n동의 여부: 동의함, 동의하지 않음\n보호자 서명: 박다온"
+    },
+    {
+      "id": "activity_consent_2/blur",
+      "case": "activity_consent_2",
+      "expected": "activity_consent",
+      "profile": "blur",
+      "expected_review": false,
+      "seed": 20261131,
+      "image": "images/activity_consent_2/blur.jpg",
+      "dimensions": [
+        1800,
+        988
+      ],
+      "sha256": "ac5d96b26b0235806737c53cb68c9d473ce4a162d69361b888556b27384dc74e",
+      "reference": "현장 체험학습 동의서\n활동명: 생태 공원 관찰\n참가 학생: 박가람\n보호자 성명: 박다온\n활동 일시: 2026년 11월 20일\n활동 장소: 가상생태공원\n참가 동의: 체험학습 참가에 동의합니다\n동의 여부: 동의함, 동의하지 않음\n보호자 서명: 박다온"
+    },
+    {
+      "id": "activity_consent_2/cropped_title",
+      "case": "activity_consent_2",
+      "expected": "activity_consent",
+      "profile": "cropped_title",
+      "expected_review": false,
+      "seed": 20261131,
+      "image": "images/activity_consent_2/cropped_title.jpg",
+      "dimensions": [
+        1800,
+        853
+      ],
+      "sha256": "58fa03ef7be3fd005b8a2b4694d3ac897d60b2d067ab2c0519cb3c3d25a3e947",
+      "reference": "현장 체험학습 동의서\n활동명: 생태 공원 관찰\n참가 학생: 박가람\n보호자 성명: 박다온\n활동 일시: 2026년 11월 20일\n활동 장소: 가상생태공원\n참가 동의: 체험학습 참가에 동의합니다\n동의 여부: 동의함, 동의하지 않음\n보호자 서명: 박다온"
+    },
+    {
+      "id": "activity_consent_2/sideways",
+      "case": "activity_consent_2",
+      "expected": "activity_consent",
+      "profile": "sideways",
+      "expected_review": false,
+      "seed": 20261131,
+      "image": "images/activity_consent_2/sideways.jpg",
+      "dimensions": [
+        988,
+        1800
+      ],
+      "sha256": "a0a844ab54fe35964a6da9d2a2e38d0bfa152817427ea95fe35a79816da23aae",
+      "reference": "현장 체험학습 동의서\n활동명: 생태 공원 관찰\n참가 학생: 박가람\n보호자 성명: 박다온\n활동 일시: 2026년 11월 20일\n활동 장소: 가상생태공원\n참가 동의: 체험학습 참가에 동의합니다\n동의 여부: 동의함, 동의하지 않음\n보호자 서명: 박다온"
+    },
+    {
+      "id": "activity_consent_2/tiny_unreadable",
+      "case": "activity_consent_2",
+      "expected": "activity_consent",
+      "profile": "tiny_unreadable",
+      "expected_review": true,
+      "seed": 20261131,
+      "image": "images/activity_consent_2/tiny_unreadable.jpg",
+      "dimensions": [
+        180,
+        99
+      ],
+      "sha256": "0fd3775444e26eb9714018fd652365bc8abc46c990f44d4cb098519bfdd1298b",
+      "reference": "현장 체험학습 동의서\n활동명: 생태 공원 관찰\n참가 학생: 박가람\n보호자 성명: 박다온\n활동 일시: 2026년 11월 20일\n활동 장소: 가상생태공원\n참가 동의: 체험학습 참가에 동의합니다\n동의 여부: 동의함, 동의하지 않음\n보호자 서명: 박다온"
+    },
+    {
+      "id": "activity_consent_3/clean",
+      "case": "activity_consent_3",
+      "expected": "activity_consent",
+      "profile": "clean",
+      "expected_review": false,
+      "seed": 20261132,
+      "image": "images/activity_consent_3/clean.jpg",
+      "dimensions": [
+        1800,
+        988
+      ],
+      "sha256": "32391b130140c6bd7e9da4c3124af30ce6425f9aa259808919144f352d5491d9",
+      "reference": "캠프 참가 동의서\n활동명: 주말 독서 캠프\n참가자: 윤초롱\n보호자: 윤나래\n활동 기간: 2026년 11월 21일부터 22일\n활동 장소: 가상수련원\n동의 내용: 캠프 참가에 동의합니다\n동의 여부: 동의함, 동의하지 않음\n보호자 서명: 윤나래"
+    },
+    {
+      "id": "activity_consent_3/skew",
+      "case": "activity_consent_3",
+      "expected": "activity_consent",
+      "profile": "skew",
+      "expected_review": false,
+      "seed": 20261132,
+      "image": "images/activity_consent_3/skew.jpg",
+      "dimensions": [
+        1880,
+        1142
+      ],
+      "sha256": "4708d64a83954b1bac7765ec9255eaeb2b8e229e07dd215219600c984acdb8ee",
+      "reference": "캠프 참가 동의서\n활동명: 주말 독서 캠프\n참가자: 윤초롱\n보호자: 윤나래\n활동 기간: 2026년 11월 21일부터 22일\n활동 장소: 가상수련원\n동의 내용: 캠프 참가에 동의합니다\n동의 여부: 동의함, 동의하지 않음\n보호자 서명: 윤나래"
+    },
+    {
+      "id": "activity_consent_3/desk",
+      "case": "activity_consent_3",
+      "expected": "activity_consent",
+      "profile": "desk",
+      "expected_review": false,
+      "seed": 20261132,
+      "image": "images/activity_consent_3/desk.jpg",
+      "dimensions": [
+        2332,
+        1604
+      ],
+      "sha256": "7fe951324c737dd61dff1fe1d25dc57e0302b2c14bd4092fa63d957943a29567",
+      "reference": "캠프 참가 동의서\n활동명: 주말 독서 캠프\n참가자: 윤초롱\n보호자: 윤나래\n활동 기간: 2026년 11월 21일부터 22일\n활동 장소: 가상수련원\n동의 내용: 캠프 참가에 동의합니다\n동의 여부: 동의함, 동의하지 않음\n보호자 서명: 윤나래"
+    },
+    {
+      "id": "activity_consent_3/shadow",
+      "case": "activity_consent_3",
+      "expected": "activity_consent",
+      "profile": "shadow",
+      "expected_review": false,
+      "seed": 20261132,
+      "image": "images/activity_consent_3/shadow.jpg",
+      "dimensions": [
+        1800,
+        988
+      ],
+      "sha256": "164f21e6b6c9cc773fdf1233795deed8899914b956e8eae01ab42cb489442eb7",
+      "reference": "캠프 참가 동의서\n활동명: 주말 독서 캠프\n참가자: 윤초롱\n보호자: 윤나래\n활동 기간: 2026년 11월 21일부터 22일\n활동 장소: 가상수련원\n동의 내용: 캠프 참가에 동의합니다\n동의 여부: 동의함, 동의하지 않음\n보호자 서명: 윤나래"
+    },
+    {
+      "id": "activity_consent_3/blur",
+      "case": "activity_consent_3",
+      "expected": "activity_consent",
+      "profile": "blur",
+      "expected_review": false,
+      "seed": 20261132,
+      "image": "images/activity_consent_3/blur.jpg",
+      "dimensions": [
+        1800,
+        988
+      ],
+      "sha256": "95b9bbcdc7983381e3627c848d75d5823de8b3b7b7b1629841aa2e5ec83bbb3d",
+      "reference": "캠프 참가 동의서\n활동명: 주말 독서 캠프\n참가자: 윤초롱\n보호자: 윤나래\n활동 기간: 2026년 11월 21일부터 22일\n활동 장소: 가상수련원\n동의 내용: 캠프 참가에 동의합니다\n동의 여부: 동의함, 동의하지 않음\n보호자 서명: 윤나래"
+    },
+    {
+      "id": "activity_consent_3/cropped_title",
+      "case": "activity_consent_3",
+      "expected": "activity_consent",
+      "profile": "cropped_title",
+      "expected_review": false,
+      "seed": 20261132,
+      "image": "images/activity_consent_3/cropped_title.jpg",
+      "dimensions": [
+        1800,
+        853
+      ],
+      "sha256": "95bab4df69df4b00fde4e327c03b899f77f8315b710fdf9429fb567be3bc449f",
+      "reference": "캠프 참가 동의서\n활동명: 주말 독서 캠프\n참가자: 윤초롱\n보호자: 윤나래\n활동 기간: 2026년 11월 21일부터 22일\n활동 장소: 가상수련원\n동의 내용: 캠프 참가에 동의합니다\n동의 여부: 동의함, 동의하지 않음\n보호자 서명: 윤나래"
+    },
+    {
+      "id": "activity_consent_3/sideways",
+      "case": "activity_consent_3",
+      "expected": "activity_consent",
+      "profile": "sideways",
+      "expected_review": false,
+      "seed": 20261132,
+      "image": "images/activity_consent_3/sideways.jpg",
+      "dimensions": [
+        988,
+        1800
+      ],
+      "sha256": "53fbf6206be210033cb9b1770f93d375bca3250c4a7ab26e72629b817b9e5af5",
+      "reference": "캠프 참가 동의서\n활동명: 주말 독서 캠프\n참가자: 윤초롱\n보호자: 윤나래\n활동 기간: 2026년 11월 21일부터 22일\n활동 장소: 가상수련원\n동의 내용: 캠프 참가에 동의합니다\n동의 여부: 동의함, 동의하지 않음\n보호자 서명: 윤나래"
+    },
+    {
+      "id": "activity_consent_3/tiny_unreadable",
+      "case": "activity_consent_3",
+      "expected": "activity_consent",
+      "profile": "tiny_unreadable",
+      "expected_review": true,
+      "seed": 20261132,
+      "image": "images/activity_consent_3/tiny_unreadable.jpg",
+      "dimensions": [
+        180,
+        99
+      ],
+      "sha256": "97451c1da07c072f1ce72efb96e48501b648c72407b3d610d4e5652ebea247ab",
+      "reference": "캠프 참가 동의서\n활동명: 주말 독서 캠프\n참가자: 윤초롱\n보호자: 윤나래\n활동 기간: 2026년 11월 21일부터 22일\n활동 장소: 가상수련원\n동의 내용: 캠프 참가에 동의합니다\n동의 여부: 동의함, 동의하지 않음\n보호자 서명: 윤나래"
+    }
+  ]
+}

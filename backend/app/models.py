@@ -15,6 +15,14 @@ class DocType(str, Enum):
     CONSENT = "consent"  # 개인정보 동의서
     APPLICATION = "application"  # 신청서 (참가신청서 등)
     SUMMARY = "summary"  # 요약서·제출 서류 (작품 요약서 등)
+    AUTHORIZATION = "authorization"  # 위임장
+    CERTIFICATE = "certificate"  # 확인서·증명서
+    INVOICE = "invoice"  # 청구서·고지서
+    RECEIPT = "receipt"  # 영수증
+    PLEDGE = "pledge"  # 서약서
+    REPORT = "report"  # 활동·결과 보고서
+    QUESTIONNAIRE = "questionnaire"  # 설문지
+    ACTIVITY_CONSENT = "activity_consent"  # 활동 참가 동의서
     UNKNOWN = "unknown"
 
 

@@ -123,16 +123,30 @@ def _extract_by_rules(lines: list[TextBlock], doc_type: DocType) -> list[Field]:
 
 
 def _find_value(lines: list[TextBlock], keys: list[str], all_keys: list[str] = ()) -> tuple[str, int] | None:
+    # 거래일시 must be tried before 거래일, 보호자성명 before 보호자.
+    keys = sorted(keys, key=lambda key: len(compact(key)), reverse=True)
     for index, line in enumerate(lines):
+        # "위임 업무 재직증명서" is a field, while "조사 결과 보고서"
+        # is a heading. A specific leading label can disambiguate a title suffix.
+        leading_label = any(
+            len(compact(key)) >= 3 and re.match(
+                r"^\s*" + r"\s*".join(map(re.escape, compact(key))) + r"(?=\s|[:：])", line.text
+            ) and compact(value_after(line.text, key) or "") not in {
+                "보고서", "요약서", "확인서", "증명서", "서약서", "신청서",
+                "동의서", "위임장", "영수증", "설문지", "청구서", "고지서",
+            } for key in keys
+        )
+        if CLASSIFIER._title_kinds(line.text) and not leading_label:
+            continue
         for key in keys:
             value = value_after(line.text, key)
             if value is None:
                 continue
             # 항목 이름만 있고 값이 다음 줄에 있는 서식이 많다.
             # 단, 다음 줄이 다른 항목 이름이면(표 머리글이 줄마다 따로 읽힌 경우: "수집 목적" 다음 줄 "보유 기간") 값이 아니다
-            if not value and index + 1 < len(lines):
+            if not value and index + 1 < len(lines) and lines[index + 1].page == line.page:
                 next_text = lines[index + 1].text
-                if not any(k in compact(next_text) for k in all_keys):
+                if not CLASSIFIER._title_kinds(next_text) and not any(k in compact(next_text) for k in all_keys):
                     value = next_text
             if value:
                 return value[:MAX_VALUE_LENGTH], index

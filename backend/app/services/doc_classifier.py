@@ -20,11 +20,16 @@ HEADER_LINES = 8
 # These describe documents rather than being a document to complete/sign.
 _REFERENCE_HEADINGS = (
     "서류목록", "처리방침", "교육자료", "교육안내", "작성방법", "작성방법안내",
-    "작성안내", "작성요령", "작성가이드",
+    "작성안내", "작성요령", "작성가이드", "발급안내", "제출안내", "양식목록", "방법안내",
 )
-_FIELD_PREFIXES = ("제출서류", "구비서류", "준비물", "교육내용", "작품명", "작품요약", "예시문서")
-_APPENDICES = {"contract": {"consent"}, "notice": {"consent", "application"},
-               "application": {"consent", "summary"}, "summary": {"consent"}, "consent": set()}
+_FIELD_PREFIXES = ("제출서류", "구비서류", "첨부서류", "준비서류", "준비물", "교육내용", "작품명", "작품요약", "예시문서")
+_APPENDICES = {
+    "contract": {"consent"}, "notice": {"consent", "application", "activity_consent"},
+    "application": {"consent", "summary", "activity_consent"}, "summary": {"consent"},
+    "consent": set(), "authorization": {"consent"}, "certificate": set(),
+    "invoice": set(), "receipt": set(), "pledge": {"consent"}, "report": set(),
+    "questionnaire": {"consent"}, "activity_consent": {"consent"},
+}
 
 
 def _unicode_text(text: str) -> str:
@@ -60,7 +65,7 @@ class DocumentClassifier:
         return {kind: {name for name, terms in groups.items() if any(t in text for t in terms)}
                 for kind, groups in self.groups.items()}
 
-    def _title_kinds(self, text: str) -> set[str]:
+    def _title_kinds(self, text: str, *, include_excluded: bool = False) -> set[str]:
         text = _unicode_text(text)
         # Form labels, page counts and school correspondence numbers are metadata.
         text = re.sub(r"(?:\([^()]*\)|\[[^\[\]]*\])\s*$", "", text)
@@ -70,19 +75,23 @@ class DocumentClassifier:
             return set()
         if any(heading.startswith(p) and heading != p + "서" for p in _FIELD_PREFIXES):
             return set()
-        found = {kind for kind, titles in self.titles.items() if any(heading.endswith(t) for t in titles)}
+        found = {
+            kind for kind, titles in self.titles.items()
+            if any(heading.endswith(t) for t in titles)
+            and (include_excluded or not any(normalize(term) in heading for term in self.rules[kind].get("excluded_title_terms", ())))
+        }
         if re.search(r"(?:개인정보|민감정보|고유식별정보)(?:수집|이용|활용|제공|처리|제3자|및|에대한)*동의서$", heading):
             found.add("consent")
         return found
 
-    def _titles(self, page: list[TextBlock]) -> set[str]:
+    def _titles(self, page: list[TextBlock], *, include_excluded: bool = False) -> set[str]:
         found = set()
         header = page[:HEADER_LINES]
         for index, block in enumerate(header):
-            found.update(self._title_kinds(block.text))
-            if index and not self._title_kinds(header[index - 1].text):
+            found.update(self._title_kinds(block.text, include_excluded=include_excluded))
+            if index and not self._title_kinds(header[index - 1].text, include_excluded=include_excluded):
                 # A photographed heading may be emitted as two OCR lines.
-                found.update(self._title_kinds(header[index - 1].text + block.text))
+                found.update(self._title_kinds(header[index - 1].text + block.text, include_excluded=include_excluded))
         return found
 
     def _reference_page(self, page: list[TextBlock]) -> bool:
@@ -130,9 +139,15 @@ class DocumentClassifier:
             and (not rule.get("required_any") or bool(groups.intersection(rule["required_any"])))
         )
 
-    @staticmethod
-    def _substantive(kind: str, groups: set[str]) -> bool:
+    def _substantive(self, kind: str, groups: set[str]) -> bool:
         """Does the main page contain the fields of this form, beyond its title?"""
+        rule = self.rules[kind].get("substantive")
+        if rule:
+            return (
+                len(groups) >= rule["min_groups"]
+                and set(rule.get("required_all", ())) <= groups
+                and (not rule.get("required_sets") or any(set(required) <= groups for required in rule["required_sets"]))
+            )
         if kind == "contract":
             return len(groups - {"agreement", "term"}) >= 2
         if kind == "notice":
@@ -151,12 +166,17 @@ class DocumentClassifier:
         pages = [by_page[p] for p in sorted(by_page)] or [[]]
         first_page = pages[0]
         titles = self._titles(first_page)
+        excluded_titles = self._titles(first_page, include_excluded=True) - titles
         evidence = self._evidence(lines)
         primary = self._evidence(first_page)
         scores = {kind: GROUP_WEIGHT * len(groups) + (TITLE_WEIGHT if kind in titles else 0)
                   for kind, groups in evidence.items()}
 
         def result(kind: str, reason: str) -> Classification:
+            # An explicitly excluded heading cannot re-enter via generic body
+            # fields (e.g. a clinical trial also has participants and a schedule).
+            if kind in excluded_titles:
+                return Classification(DocType.UNKNOWN, scores, "unsupported_document")
             if kind != "unknown" and self._conflicting_pages(kind, pages):
                 return Classification(DocType.UNKNOWN, scores, "conflicting_documents")
             return Classification(DocType(kind), scores, reason)
@@ -173,7 +193,7 @@ class DocumentClassifier:
         )
         form_evidence = self._form_evidence(first_page)
         supported_titles = {kind for kind in titles if self._substantive(kind, form_evidence[kind])}
-        if privacy_form and titles and titles <= {"application", "summary", "notice", "consent"} and not supported_titles:
+        if privacy_form and titles and titles <= {"application", "summary", "notice", "consent", "activity_consent"} and not supported_titles:
             return result("consent", "privacy_form_under_generic_heading")
 
         if len(titles) == 1:

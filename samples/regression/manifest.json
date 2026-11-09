@@ -6954,7 +6954,7 @@
         1800,
         760
       ],
-      "expected": "unknown",
+      "expected": "receipt",
       "expected_review": false,
       "reference": "거래 영수증\n가상 문구점\n물품: 공책 5권\n금액: 10000원\n카드 승인 완료\n구매해 주셔서 감사합니다."
     },
@@ -6971,7 +6971,7 @@
         1860,
         914
       ],
-      "expected": "unknown",
+      "expected": "receipt",
       "expected_review": false,
       "reference": "거래 영수증\n가상 문구점\n물품: 공책 5권\n금액: 10000원\n카드 승인 완료\n구매해 주셔서 감사합니다."
     },
@@ -6988,7 +6988,7 @@
         600,
         253
       ],
-      "expected": "unknown",
+      "expected": "receipt",
       "expected_review": false,
       "reference": "거래 영수증\n가상 문구점\n물품: 공책 5권\n금액: 10000원\n카드 승인 완료\n구매해 주셔서 감사합니다."
     },
@@ -7005,7 +7005,7 @@
         1800,
         760
       ],
-      "expected": "unknown",
+      "expected": "receipt",
       "expected_review": false,
       "reference": "거래 영수증\n가상 문구점\n물품: 공책 5권\n금액: 10000원\n카드 승인 완료\n구매해 주셔서 감사합니다."
     },
@@ -7022,7 +7022,7 @@
         1800,
         760
       ],
-      "expected": "unknown",
+      "expected": "receipt",
       "expected_review": false,
       "reference": "거래 영수증\n가상 문구점\n물품: 공책 5권\n금액: 10000원\n카드 승인 완료\n구매해 주셔서 감사합니다."
     },
@@ -7039,7 +7039,7 @@
         1800,
         760
       ],
-      "expected": "unknown",
+      "expected": "receipt",
       "expected_review": false,
       "reference": "거래 영수증\n가상 문구점\n물품: 공책 5권\n금액: 10000원\n카드 승인 완료\n구매해 주셔서 감사합니다."
     },
@@ -7056,7 +7056,7 @@
         1800,
         760
       ],
-      "expected": "unknown",
+      "expected": "receipt",
       "expected_review": false,
       "reference": "거래 영수증\n가상 문구점\n물품: 공책 5권\n금액: 10000원\n카드 승인 완료\n구매해 주셔서 감사합니다."
     },
@@ -7073,7 +7073,7 @@
         1800,
         760
       ],
-      "expected": "unknown",
+      "expected": "receipt",
       "expected_review": false,
       "reference": "거래 영수증\n가상 문구점\n물품: 공책 5권\n금액: 10000원\n카드 승인 완료\n구매해 주셔서 감사합니다."
     },
@@ -7090,7 +7090,7 @@
         760,
         1800
       ],
-      "expected": "unknown",
+      "expected": "receipt",
       "expected_review": false,
       "reference": "거래 영수증\n가상 문구점\n물품: 공책 5권\n금액: 10000원\n카드 승인 완료\n구매해 주셔서 감사합니다."
     },
@@ -7107,7 +7107,7 @@
         760,
         1800
       ],
-      "expected": "unknown",
+      "expected": "receipt",
       "expected_review": false,
       "reference": "거래 영수증\n가상 문구점\n물품: 공책 5권\n금액: 10000원\n카드 승인 완료\n구매해 주셔서 감사합니다."
     },
@@ -7124,7 +7124,7 @@
         1800,
         760
       ],
-      "expected": "unknown",
+      "expected": "receipt",
       "expected_review": false,
       "reference": "거래 영수증\n가상 문구점\n물품: 공책 5권\n금액: 10000원\n카드 승인 완료\n구매해 주셔서 감사합니다."
     },
@@ -7141,7 +7141,7 @@
         760,
         1800
       ],
-      "expected": "unknown",
+      "expected": "receipt",
       "expected_review": false,
       "reference": "거래 영수증\n가상 문구점\n물품: 공책 5권\n금액: 10000원\n카드 승인 완료\n구매해 주셔서 감사합니다."
     },
@@ -7158,7 +7158,7 @@
         1800,
         625
       ],
-      "expected": "unknown",
+      "expected": "receipt",
       "expected_review": false,
       "reference": null
     },
@@ -7175,7 +7175,7 @@
         1800,
         760
       ],
-      "expected": "unknown",
+      "expected": "receipt",
       "expected_review": false,
       "reference": "거래 영수증\n가상 문구점\n물품: 공책 5권\n금액: 10000원\n카드 승인 완료\n구매해 주셔서 감사합니다."
     },
@@ -7192,7 +7192,7 @@
         1800,
         760
       ],
-      "expected": "unknown",
+      "expected": "receipt",
       "expected_review": false,
       "reference": "거래 영수증\n가상 문구점\n물품: 공책 5권\n금액: 10000원\n카드 승인 완료\n구매해 주셔서 감사합니다."
     },
@@ -7209,7 +7209,7 @@
         1800,
         760
       ],
-      "expected": "unknown",
+      "expected": "receipt",
       "expected_review": false,
       "reference": "거래 영수증\n가상 문구점\n물품: 공책 5권\n금액: 10000원\n카드 승인 완료\n구매해 주셔서 감사합니다."
     },
@@ -7226,7 +7226,7 @@
         1914,
         1098
       ],
-      "expected": "unknown",
+      "expected": "receipt",
       "expected_review": false,
       "reference": "거래 영수증\n가상 문구점\n물품: 공책 5권\n금액: 10000원\n카드 승인 완료\n구매해 주셔서 감사합니다."
     },
@@ -7243,7 +7243,7 @@
         1150,
         657
       ],
-      "expected": "unknown",
+      "expected": "receipt",
       "expected_review": false,
       "reference": "거래 영수증\n가상 문구점\n물품: 공책 5권\n금액: 10000원\n카드 승인 완료\n구매해 주셔서 감사합니다."
     },
@@ -7260,7 +7260,7 @@
         2276,
         1330
       ],
-      "expected": "unknown",
+      "expected": "receipt",
       "expected_review": false,
       "reference": "거래 영수증\n가상 문구점\n물품: 공책 5권\n금액: 10000원\n카드 승인 완료\n구매해 주셔서 감사합니다."
     },
@@ -7277,7 +7277,7 @@
         1800,
         800
       ],
-      "expected": "unknown",
+      "expected": "receipt",
       "expected_review": false,
       "reference": "거래 영수증\n가상 문구점\n물품: 공책 5권\n금액: 10000원\n카드 승인 완료\n구매해 주셔서 감사합니다."
     },
@@ -7294,7 +7294,7 @@
         1800,
         800
       ],
-      "expected": "unknown",
+      "expected": "receipt",
       "expected_review": false,
       "reference": "거래 영수증\n가상 문구점\n물품: 공책 5권\n금액: 10000원\n카드 승인 완료\n구매해 주셔서 감사합니다."
     },
@@ -7311,7 +7311,7 @@
         1800,
         760
       ],
-      "expected": "unknown",
+      "expected": "receipt",
       "expected_review": false,
       "reference": "거래 영수증\n가상 문구점\n물품: 공책 5권\n금액: 10000원\n카드 승인 완료\n구매해 주셔서 감사합니다."
     },
@@ -7328,7 +7328,7 @@
         1838,
         854
       ],
-      "expected": "unknown",
+      "expected": "receipt",
       "expected_review": false,
       "reference": "거래 영수증\n가상 문구점\n물품: 공책 5권\n금액: 10000원\n카드 승인 완료\n구매해 주셔서 감사합니다."
     },
@@ -7345,7 +7345,7 @@
         1800,
         760
       ],
-      "expected": "unknown",
+      "expected": "receipt",
       "expected_review": false,
       "reference": "거래 영수증\n가상 문구점\n물품: 공책 5권\n금액: 10000원\n카드 승인 완료\n구매해 주셔서 감사합니다."
     },
@@ -7362,7 +7362,7 @@
         1800,
         760
       ],
-      "expected": "unknown",
+      "expected": "receipt",
       "expected_review": false,
       "reference": "거래 영수증\n가상 문구점\n물품: 공책 5권\n금액: 10000원\n카드 승인 완료\n구매해 주셔서 감사합니다."
     },
@@ -7379,7 +7379,7 @@
         1800,
         760
       ],
-      "expected": "unknown",
+      "expected": "receipt",
       "expected_review": true,
       "reference": null
     },
@@ -7396,7 +7396,7 @@
         4600,
         2832
       ],
-      "expected": "unknown",
+      "expected": "receipt",
       "expected_review": false,
       "reference": "거래 영수증\n가상 문구점\n물품: 공책 5권\n금액: 10000원\n카드 승인 완료\n구매해 주셔서 감사합니다."
     },
@@ -7413,7 +7413,7 @@
         1800,
         760
       ],
-      "expected": "unknown",
+      "expected": "receipt",
       "expected_review": false,
       "reference": "거래 영수증\n가상 문구점\n물품: 공책 5권\n금액: 10000원\n카드 승인 완료\n구매해 주셔서 감사합니다."
     },
@@ -7430,7 +7430,7 @@
         1800,
         760
       ],
-      "expected": "unknown",
+      "expected": "receipt",
       "expected_review": false,
       "reference": "거래 영수증\n가상 문구점\n물품: 공책 5권\n금액: 10000원\n카드 승인 완료\n구매해 주셔서 감사합니다."
     },
@@ -7447,7 +7447,7 @@
         1800,
         760
       ],
-      "expected": "unknown",
+      "expected": "receipt",
       "expected_review": false,
       "reference": "거래 영수증\n가상 문구점\n물품: 공책 5권\n금액: 10000원\n카드 승인 완료\n구매해 주셔서 감사합니다."
     },
@@ -7464,7 +7464,7 @@
         2832,
         4600
       ],
-      "expected": "unknown",
+      "expected": "receipt",
       "expected_review": false,
       "reference": "거래 영수증\n가상 문구점\n물품: 공책 5권\n금액: 10000원\n카드 승인 완료\n구매해 주셔서 감사합니다."
     },
@@ -7481,7 +7481,7 @@
         1800,
         760
       ],
-      "expected": "unknown",
+      "expected": "receipt",
       "expected_review": false,
       "reference": "거래 영수증\n가상 문구점\n물품: 공책 5권\n금액: 10000원\n카드 승인 완료\n구매해 주셔서 감사합니다."
     },
@@ -7498,7 +7498,7 @@
         1800,
         760
       ],
-      "expected": "unknown",
+      "expected": "receipt",
       "expected_review": true,
       "reference": null
     },
@@ -7515,7 +7515,7 @@
         180,
         76
       ],
-      "expected": "unknown",
+      "expected": "receipt",
       "expected_review": true,
       "reference": null
     },
@@ -11157,5 +11157,6 @@
       "expected_review": false,
       "reference": null
     }
-  ]
+  ],
+  "taxonomy_updated": "2026-11-09: g_receipt is now supported as receipt; images and historical results are unchanged."
 }

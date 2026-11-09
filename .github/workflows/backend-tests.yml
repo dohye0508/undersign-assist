@@ -21,6 +21,8 @@ jobs:
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # frozen pre-expansion classifier for identical-OCR comparison
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -73,6 +75,12 @@ jobs:
           --output work/camera-saved-scenes.json
       - name: Original photo coordinates after crop and rotation
         run: python backend/tests/check_sample_geometry.py work/camera-saved-scenes.json
+      - name: Saved expanded document types with real OCR
+        env:
+          OMP_THREAD_LIMIT: "1"
+        run: |
+          python backend/tests/expanded_document_samples.py ocr --profiles clean cropped_title tiny_unreadable --cache work/camera-expanded-ocr.json
+          python backend/tests/expanded_document_samples.py evaluate --profiles clean cropped_title tiny_unreadable --cache work/camera-expanded-ocr.json --output work/camera-expanded-result.json --require-correct
       - name: Save OCR diagnostics
         if: always()
         uses: actions/upload-artifact@v4

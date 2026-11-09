@@ -81,7 +81,7 @@
     {"id":"contract_second_page","expected":"contract","pages":["근로계약서\n근로자와 사용자\n임금: 250만원","개인정보 수집 이용 동의\n보유 기간: 퇴직 후 3년\n수집 항목: 성명 주소\n수집 목적: 임금 지급\n동의 거부 권리"]},
     {"id":"consent_zero_width","expected":"consent","text":"개인\u200b정보 수집・이용 동의서\n수집 목적: 행사\n수집 항목: 성명\n보유 기간: 1년"},
     {"id":"application_full_width","expected":"application","text":"참가신청서\n참가 부문: 중등부\n신청인: 예시\nＥｍａｉｌ: example@example.test\n연락처: ０１０－００００－００００"},
-    {"id":"unknown_receipt","expected":"unknown","text":"영수증\n상품명: 도시락\n금액: 10000원\n감사합니다."},
+    {"id":"unknown_receipt","expected":"receipt","text":"영수증\n상품명: 도시락\n금액: 10000원\n감사합니다."},
     {"id":"unknown_lecture_summary","expected":"unknown","text":"오늘 읽은 작품의 요약\n가정과 학교를 배경으로 한 소설입니다.\n개요를 정리해 봅시다."},
     {"id":"contract_short_lease","expected":"contract","text":"임대인: 예시\n임차인: 예시\n보증금: 100만원\n임대차기간: 1년"},
     {"id":"consent_purpose_only","expected":"unknown","text":"개인정보\n수집 목적: 회원 관리"},

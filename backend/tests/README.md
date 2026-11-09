@@ -1,5 +1,18 @@
 # 문서 분류 회귀 시험
 
+## 2026-11-09 추가 문서 8종
+
+`test_expanded_documents.py`는 새 종류의 제목, 제목이 잘린 본문, 공백·유니코드 변형, 개인정보 부록, 서로 다른 문서 묶음, 작성 안내·단순 언급과 실제 서식 구별, 종류별 값 추출 및 읽기→판단 연결을 검사합니다. `expanded_document_samples.py`는 `samples/document-types/`에 저장된 사진에 실제 로컬 Tesseract를 실행합니다. 원문·이미지 해시와 OCR 기록을 남기며, 같은 OCR 결과를 이전(7263d75)·현재 분류기에 입력합니다. OCR 엔진 자체는 이번 변경에서 수정하지 않았습니다.
+
+```sh
+python backend/tests/expanded_document_samples.py generate
+python backend/tests/expanded_document_samples.py ocr
+python backend/tests/expanded_document_samples.py evaluate
+python backend/tests/expanded_document_samples.py report
+```
+
+측정 결과는 [samples/document-types/README.md](../../samples/document-types/README.md)에 있습니다. 아래 10월 29일 표는 당시 분류 체계의 역사적 결과입니다. 이제 영수증을 지원하므로 기존 `unknown_receipt`, `g_receipt`의 현재 정답은 `receipt`이며, 견적서·의료 동의서는 계속 `unknown`입니다. 종류별 확인 안내는 법령 검사와 분리되어 있고 새 문서의 법적 적합성·진위를 판단하지 않습니다.
+
 분류는 OCR **이후**에 실행된다. 이 시험은 문서 종류와 뒤따르는 항목 추출·판단의 연결을 검증한다. 법률 기준이나 법령 데이터는 변경하지 않는다.
 
 ## 표본

@@ -16,7 +16,9 @@ class RecognizedDocument {
     this.reviewPages = const [],
   });
 
-  /// contract(계약서) / notice(가정통신문) / consent(개인정보 동의서) / application(신청서) / summary(요약서) / unknown
+  /// contract / notice / consent / application / summary / authorization /
+  /// certificate / invoice / receipt / pledge / report / questionnaire /
+  /// activity_consent / unknown. 표시 이름은 서버 docTypeLabel을 사용한다.
   final String docType;
   final String docTypeLabel;
   final List<TextBlock> blocks;
