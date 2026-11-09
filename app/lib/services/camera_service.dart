@@ -40,7 +40,8 @@ class CameraService extends ChangeNotifier {
   /// 재생을 이어 가려고 기다리는 중인 미리보기
   final Set<int> _waiting = {};
 
-  late final JSFunction _onVisibilityChange = ((web.Event _) => _resumeAll()).toJS;
+  late final JSFunction _onVisibilityChange =
+      ((web.Event _) => _resumeAll()).toJS;
 
   web.MediaStream? _stream;
 
@@ -50,7 +51,18 @@ class CameraService extends ChangeNotifier {
   bool _ready = false;
   bool get ready => _ready;
 
-  CameraService() {
+  bool _disposed = false;
+  int _startRevision = 0;
+  final Future<web.MediaStream> Function(web.MediaStreamConstraints)
+  _requestStream;
+
+  CameraService({
+    Future<web.MediaStream> Function(web.MediaStreamConstraints)? requestStream,
+  }) : _requestStream =
+           requestStream ??
+           ((constraints) => web.window.navigator.mediaDevices
+               .getUserMedia(constraints)
+               .toDart) {
     if (!_registered) {
       ui_web.platformViewRegistry.registerViewFactory(_viewType, (int viewId) {
         return _instance?._createView(viewId) ?? _newVideo();
@@ -61,13 +73,14 @@ class CameraService extends ChangeNotifier {
     web.document.addEventListener('visibilitychange', _onVisibilityChange);
   }
 
-  static web.HTMLVideoElement _newVideo({bool autoplay = true}) => web.HTMLVideoElement()
-    ..autoplay = autoplay
-    ..muted = true
-    ..setAttribute('playsinline', 'true')
-    ..style.width = '100%'
-    ..style.height = '100%'
-    ..style.objectFit = 'cover';
+  static web.HTMLVideoElement _newVideo({bool autoplay = true}) =>
+      web.HTMLVideoElement()
+        ..autoplay = autoplay
+        ..muted = true
+        ..setAttribute('playsinline', 'true')
+        ..style.width = '100%'
+        ..style.height = '100%'
+        ..style.objectFit = 'cover';
 
   /// 카메라 미리보기. 부를 때마다 새 화면 요소가 생기고, 같은 카메라 스트림을 보여준다.
   Widget preview() => _CameraPreview(camera: this);
@@ -80,9 +93,12 @@ class CameraService extends ChangeNotifier {
     _views[viewId] = video;
     // 페이지에서 잠깐 빠졌다 붙으면(틀이 옮겨지면) 브라우저가 재생을 멈춘다. 그때마다 다시 튼다
     // JS 콜백은 Future를 돌려줄 수 없어서 결과를 기다리지 않는 함수로 감싼다
-    video.addEventListener('pause', ((web.Event _) {
-      _keepPlaying(viewId);
-    }).toJS);
+    video.addEventListener(
+      'pause',
+      ((web.Event _) {
+        _keepPlaying(viewId);
+      }).toJS,
+    );
     _keepPlaying(viewId);
     return video;
   }
@@ -141,28 +157,46 @@ class CameraService extends ChangeNotifier {
 
   /// 카메라를 연다. 실패하면 [error]에 이유를 남긴다. 다시 부르면 다시 시도한다.
   Future<void> start() async {
+    if (_disposed) return;
+    final revision = ++_startRevision;
     _stop();
     _error = null;
     notifyListeners();
 
     // 뒷면 카메라를 먼저 바라고, 안 되면 아무 카메라나 연다
     final attempts = [
-      {'facingMode': 'environment', 'width': {'ideal': 1920}, 'height': {'ideal': 1080}},
-      {'width': {'ideal': 1280}},
+      {
+        'facingMode': 'environment',
+        'width': {'ideal': 1920},
+        'height': {'ideal': 1080},
+      },
+      {
+        'width': {'ideal': 1280},
+      },
       true,
     ];
     Object? lastError;
     for (final video in attempts) {
       try {
-        final constraints = {'video': video, 'audio': false}.jsify() as web.MediaStreamConstraints;
-        final stream = await web.window.navigator.mediaDevices.getUserMedia(constraints).toDart;
+        final constraints =
+            {'video': video, 'audio': false}.jsify()
+                as web.MediaStreamConstraints;
+        final stream = await _requestStream(constraints);
+        if (_disposed || revision != _startRevision) {
+          _stopStream(stream);
+          return;
+        }
         _stream = stream;
         _capture.srcObject = stream;
         try {
           await _capture.play().toDart;
         } catch (_) {
-          _stop();
+          if (!_disposed && revision == _startRevision) _stop();
           rethrow;
+        }
+        if (_disposed || revision != _startRevision) {
+          _stopStream(stream);
+          return;
         }
         for (final entry in _views.entries) {
           entry.value.srcObject = stream;
@@ -172,6 +206,7 @@ class CameraService extends ChangeNotifier {
         notifyListeners();
         return;
       } catch (e) {
+        if (_disposed || revision != _startRevision) return;
         lastError = e;
         debugPrint('카메라 열기 실패 ($video): $e');
       }
@@ -181,11 +216,13 @@ class CameraService extends ChangeNotifier {
 
   void _fail(Object? cause) {
     // 브라우저 오류는 "NotReadableError: ..." 같은 글로 온다. 앞의 이름만 쓴다
-    final name = RegExp(r'\b(\w+Error)\b').firstMatch('$cause')?.group(1) ?? '$cause';
+    final name =
+        RegExp(r'\b(\w+Error)\b').firstMatch('$cause')?.group(1) ?? '$cause';
     final hint = switch (name) {
       'NotAllowedError' => '브라우저 주소창 왼쪽의 카메라 권한을 허용해 주세요.',
       'NotFoundError' => '연결된 카메라를 찾지 못했어요.',
-      'NotReadableError' => '카메라를 읽을 수 없어요. 다른 프로그램이나 다른 탭이 카메라를 쓰고 있지 않은지 확인해 주세요.',
+      'NotReadableError' =>
+        '카메라를 읽을 수 없어요. 다른 프로그램이나 다른 탭이 카메라를 쓰고 있지 않은지 확인해 주세요.',
       _ => '다시 켜 보세요.',
     };
     _error = '카메라를 켤 수 없어요. $hint ($name)';
@@ -195,13 +232,17 @@ class CameraService extends ChangeNotifier {
 
   /// 지금 화면을 JPEG 사진으로 찍는다
   Future<DocumentPhoto?> snapshot() async {
-    if (!_ready) return null;
+    if (_disposed || !_ready) return null;
     final video = await _frameSource();
-    if (video == null) return null;
+    if (_disposed || !_ready || video == null) return null;
     final canvas = web.HTMLCanvasElement()
       ..width = video.videoWidth
       ..height = video.videoHeight;
-    (canvas.getContext('2d') as web.CanvasRenderingContext2D).drawImage(video, 0, 0);
+    (canvas.getContext('2d') as web.CanvasRenderingContext2D).drawImage(
+      video,
+      0,
+      0,
+    );
     final dataUrl = canvas.toDataURL('image/jpeg', 0.92.toJS);
     final bytes = base64Decode(dataUrl.substring(dataUrl.indexOf(',') + 1));
     return DocumentPhoto(bytes: bytes, name: 'document.jpg');
@@ -218,11 +259,15 @@ class CameraService extends ChangeNotifier {
     return _capture.videoWidth > 0 ? _capture : null;
   }
 
-  void _stop() {
-    final tracks = _stream?.getTracks().toDart ?? [];
-    for (final track in tracks) {
+  static void _stopStream(web.MediaStream stream) {
+    for (final track in stream.getTracks().toDart) {
       track.stop();
     }
+  }
+
+  void _stop() {
+    final stream = _stream;
+    if (stream != null) _stopStream(stream);
     _stream = null;
     _ready = false;
     _capture.srcObject = null;
@@ -233,6 +278,9 @@ class CameraService extends ChangeNotifier {
 
   @override
   void dispose() {
+    if (_disposed) return;
+    _disposed = true;
+    _startRevision++;
     _stop();
     for (final viewId in _views.keys.toList()) {
       _release(viewId);

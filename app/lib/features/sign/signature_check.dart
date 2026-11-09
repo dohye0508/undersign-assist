@@ -12,7 +12,7 @@ class PenPoint {
   final double pressure;
 }
 
-/// 서명 한 번을 숫자로 요약한 것. 같은 세션에서 처음 통과한 서명을 기준값으로 쓴다
+/// 서명 한 번을 숫자로 요약한 것. 작성자의 신원이나 서명의 진위를 판정하지 않는다.
 class SignatureMetrics {
   const SignatureMetrics({
     required this.strokeCount,
@@ -89,10 +89,9 @@ class SignatureCheck {
   // 기준값과 비교할 때
   static const minSizeVsBaseline = 0.5;
 
-  /// 이 세션에서 처음 통과한 서명. 다음 서명은 이것과 비교한다
-  static SignatureMetrics? baseline;
-
-  static SignatureVerdict judge(List<List<PenPoint>> strokes, Rect guide) {
+  /// [baseline]은 같은 작성자임을 별도로 확인했을 때만 명시적으로 전달한다.
+  /// 기본 검사는 이전 문서·다른 사람의 서명을 기억하거나 비교하지 않는다.
+  static SignatureVerdict judge(List<List<PenPoint>> strokes, Rect guide, {SignatureMetrics? baseline}) {
     final m = SignatureMetrics.measure(strokes, guide);
     final base = baseline;
 

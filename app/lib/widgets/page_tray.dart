@@ -98,6 +98,7 @@ class PageTrayTab extends StatelessWidget {
       button: true,
       label: semanticsLabel,
       excludeSemantics: true,
+      onTap: TapFeedback.wrap(onTap),
       child: Material(
         color: AppColors.grey100,
         borderRadius: radius,
@@ -198,6 +199,7 @@ class _Panel extends StatelessWidget {
                   button: true,
                   label: '찍은 페이지 모두 지우기',
                   excludeSemantics: true,
+                  onTap: TapFeedback.wrap(onClearAll),
                   child: TextButton(
                     onPressed: TapFeedback.wrap(onClearAll),
                     style: TextButton.styleFrom(
@@ -251,6 +253,7 @@ class _PageThumb extends StatelessWidget {
       button: true,
       label: '${index + 1}페이지 사진. 누르면 지워요',
       excludeSemantics: true,
+      onTap: TapFeedback.wrap(onRemove),
       child: Material(
         borderRadius: radius,
         clipBehavior: Clip.antiAlias,

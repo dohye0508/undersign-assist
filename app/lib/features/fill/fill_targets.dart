@@ -78,6 +78,7 @@ List<FillTarget> findFillTargets(RecognizedDocument doc) {
   if (doc.needsReview) return [];
   final found = <_Found>[];
   for (final (i, block) in doc.blocks.indexed) {
+    if (doc.referencePages.contains(block.page)) continue;
     // 잘못된 OCR 페이지/상자 하나가 정상 칸까지 막거나 사진 밖 칸을 만들지 않게 한다.
     if (block.page < 0 || (doc.pages.isNotEmpty && block.page >= doc.pages.length)) continue;
     final box = block.box;

@@ -67,6 +67,7 @@ class PracticeFrame extends StatelessWidget {
                                 // "카메라로 돌아가기"처럼 어디로 가는지 읽어 준다
                                 label: backLabel == '뒤로' ? '뒤로 가기' : '$backLabel 돌아가기',
                                 excludeSemantics: true,
+                                onTap: TapFeedback.wrap(onBack),
                                 child: TextButton.icon(
                                   onPressed: TapFeedback.wrap(onBack),
                                   style: TextButton.styleFrom(

@@ -92,6 +92,8 @@ flutter run -d chrome
 
 시험:
 
+프론트·백엔드·접근성·문서 근거·배포를 다시 검토한 내용과 남은 운영 과제는 [독립 종합 검토](backend/tests/FULL_REVIEW.md)에 정리했습니다. CI는 앱 네이티브 테스트 전체와 브라우저 전용 테스트를 자동 검색해 실행합니다.
+
 ```
 python backend/tests/smoke_judge.py
 python -m unittest discover -s backend/tests -p "test_*.py" -v

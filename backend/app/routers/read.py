@@ -50,4 +50,5 @@ async def read_document(photo: list[UploadFile] = File(...)) -> RecognizedDocume
         speech=(doc_reader.review_speech(review_pages) if review_pages else doc_reader.build_speech(doc_type, fields, lines)),
         needs_review=bool(review_pages),
         review_pages=review_pages,
+        reference_pages=sorted(doc_reader.CLASSIFIER.reference_pages(lines)),
     )

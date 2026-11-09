@@ -14,6 +14,7 @@ class RecognizedDocument {
     required this.speech,
     this.needsReview = false,
     this.reviewPages = const [],
+    this.referencePages = const [],
   });
 
   /// contract / notice / consent / application / summary / authorization /
@@ -38,6 +39,9 @@ class RecognizedDocument {
   final bool needsReview;
   final List<int> reviewPages;
 
+  /// 작성 가이드·예시 페이지. 원문은 유지하되 자동 채우기/서명 대상으로 삼지 않는다.
+  final List<int> referencePages;
+
   bool get isUnknown => docType == 'unknown';
 
   factory RecognizedDocument.fromJson(Map<String, dynamic> json) => RecognizedDocument(
@@ -53,6 +57,7 @@ class RecognizedDocument {
         speech: json['speech'] as String? ?? '',
         needsReview: json['needs_review'] as bool? ?? false,
         reviewPages: [for (final p in json['review_pages'] as List? ?? []) p as int],
+        referencePages: [for (final p in json['reference_pages'] as List? ?? []) p as int],
       );
 
   Map<String, dynamic> toJson() => {
@@ -68,6 +73,7 @@ class RecognizedDocument {
         'speech': speech,
         'needs_review': needsReview,
         'review_pages': reviewPages,
+        'reference_pages': referencePages,
       };
 }
 

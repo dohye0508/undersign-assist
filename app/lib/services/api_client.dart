@@ -59,13 +59,18 @@ class ApiClient {
             (b) =>
                 b.page < 0 ||
                 b.page >= sizes.length ||
+                b.box.x < 0 ||
+                b.box.y < 0 ||
                 b.box.width <= 0 ||
-                b.box.height <= 0,
+                b.box.height <= 0 ||
+                b.box.x + b.box.width > sizes[b.page].width ||
+                b.box.y + b.box.height > sizes[b.page].height,
           ) ||
           document.fields.any(
             (f) => f.line < -1 || f.line >= document.blocks.length,
           ) ||
           document.reviewPages.any((p) => p < 0 || p >= sizes.length) ||
+          document.referencePages.any((p) => p < 0 || p >= sizes.length) ||
           (!document.needsReview && document.reviewPages.isNotEmpty)) {
         throw _invalidResponse;
       }
@@ -87,7 +92,7 @@ class ApiClient {
       photo,
       fields: {'field': field},
     );
-    if (body['field'] is! String ||
+    if (body['field'] != field.trim() ||
         body['found'] is! bool ||
         body['written'] is! String ||
         body['speech'] is! String) {
@@ -113,7 +118,44 @@ class ApiClient {
       throw _invalidResponse;
     }
     try {
-      return Judgement.fromJson(body);
+      final result = Judgement.fromJson(body);
+      const levels = {'ok', 'caution', 'missing', 'info'};
+      final actualCounts = <String, int>{};
+      for (final finding in result.findings) {
+        if (!levels.contains(finding.level) ||
+            finding.line < -1 ||
+            finding.line >= document.blocks.length) {
+          throw _invalidResponse;
+        }
+        actualCounts.update(
+          finding.level,
+          (count) => count + 1,
+          ifAbsent: () => 1,
+        );
+      }
+      if (result.counts.entries.any(
+            (entry) => !levels.contains(entry.key) || entry.value < 0,
+          ) ||
+          levels.any(
+            (level) =>
+                (result.counts[level] ?? 0) != (actualCounts[level] ?? 0),
+          )) {
+        throw _invalidResponse;
+      }
+      final questionIds = <String>{};
+      for (final question in result.questions) {
+        if (question.id.trim().isEmpty ||
+            !questionIds.add(question.id) ||
+            question.text.trim().isEmpty ||
+            question.options.isEmpty ||
+            question.options.entries.any(
+              (option) =>
+                  option.key.trim().isEmpty || option.value.trim().isEmpty,
+            )) {
+          throw _invalidResponse;
+        }
+      }
+      return result;
     } on TypeError {
       throw _invalidResponse;
     } on FormatException {

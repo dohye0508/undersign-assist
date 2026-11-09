@@ -385,6 +385,7 @@ class _Tile extends StatelessWidget {
       button: true,
       label: '${c.label}. ${c.hint}',
       excludeSemantics: true,
+      onTap: TapFeedback.wrap(c.onTap),
       child: Material(
         color: c.primary ? AppColors.primary : AppColors.grey100,
         borderRadius: radius,
@@ -444,6 +445,7 @@ class _RowButton extends StatelessWidget {
       button: true,
       label: '${c.label}. ${c.hint}',
       excludeSemantics: true,
+      onTap: TapFeedback.wrap(c.onTap),
       child: Material(
         color: c.primary ? AppColors.primary : AppColors.grey100,
         borderRadius: radius,
@@ -559,6 +561,7 @@ class _ProfileFormState extends State<_ProfileForm> {
           button: true,
           label: '내 정보 저장',
           excludeSemantics: true,
+          onTap: TapFeedback.wrap(_save),
           child: FilledButton.icon(
             onPressed: TapFeedback.wrap(_save),
             style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(68)),
@@ -589,11 +592,9 @@ class _ProfileFormState extends State<_ProfileForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.textStrong)),
-          const SizedBox(height: 2),
           Text(hint, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.muted)),
           const SizedBox(height: 8),
-          // Semantics로 감싸면 입력칸 노드가 둘로 읽혀서, 이름은 TextField 자체의 semanticsLabel에 준다
+          // 입력칸 자체에 이름을 연결해 스크린리더가 예시와 입력 목적을 구분한다.
           TextField(
             controller: controller,
             autofocus: autofocus,
@@ -602,7 +603,13 @@ class _ProfileFormState extends State<_ProfileForm> {
             inputFormatters: formatters,
             textInputAction: last ? TextInputAction.done : TextInputAction.next,
             style: const TextStyle(fontSize: 24),
-            decoration: InputDecoration(hintText: example, counterText: '', semanticCounterText: ''),
+            decoration: InputDecoration(
+              labelText: label,
+              labelStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.textStrong),
+              hintText: example,
+              counterText: '',
+              semanticCounterText: '',
+            ),
             onSubmitted: last ? (_) => _save() : null,
           ),
         ],

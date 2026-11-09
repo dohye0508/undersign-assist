@@ -118,6 +118,13 @@ class DocumentClassifier:
             previous = heading
         return False
 
+    def reference_pages(self, lines: list[TextBlock]) -> set[int]:
+        """Pages of instructions/examples must not supply actual form values."""
+        by_page: dict[int, list[TextBlock]] = {}
+        for block in lines:
+            by_page.setdefault(getattr(block, "page", 0), []).append(block)
+        return {page for page, blocks in by_page.items() if self._reference_page(blocks)}
+
     @staticmethod
     def _page_counter_only(page: list[TextBlock]) -> bool:
         # A scanned blank back page can contain only its printed page counter.

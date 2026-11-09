@@ -28,6 +28,7 @@ List<SignatureSpot> findSignatureSpots(RecognizedDocument document) {
   final multiPage = document.pages.length > 1;
   final spots = <SignatureSpot>[];
   for (final (i, block) in document.blocks.indexed) {
+    if (document.referencePages.contains(block.page)) continue;
     final text = block.text.trim();
     if (!keyword.hasMatch(text) || sentence.hasMatch(text)) continue;
     // 줄 맨 앞의 주체(예: 근로자, 사업주, 보호자)로 어느 칸인지 말한다.

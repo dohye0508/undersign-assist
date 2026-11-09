@@ -2,8 +2,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.routers import judge, read, sign, write
+from app.request_limits import RequestSizeLimitMiddleware
 
 app = FastAPI(title="undersign-assist")
+app.add_middleware(RequestSizeLimitMiddleware)
 
 # Flutter 웹 개발 서버는 실행할 때마다 포트가 달라서 개발 중에는 모든 출처를 허용한다.
 app.add_middleware(

@@ -29,8 +29,23 @@ jobs:
           cache: pip
           cache-dependency-path: backend/requirements.txt
       - run: python -m pip install -r backend/requirements.txt
+      - run: python -m pip check
       - run: python -m unittest discover -s backend/tests -p "test_*.py" -v
       - run: python backend/tests/smoke_judge.py
+      - name: Build and smoke test the deployment container
+        run: |
+          docker build --tag undersign-assist-ci backend
+          trap 'docker rm -f undersign-assist-ci >/dev/null' EXIT
+          docker run --detach --name undersign-assist-ci \
+            --publish 127.0.0.1:18000:7860 --env GROQ_API_KEY= undersign-assist-ci
+          curl --fail --silent --show-error --retry 10 --retry-connrefused \
+            --retry-delay 1 --max-time 10 http://127.0.0.1:18000/api/health
+          docker exec undersign-assist-ci python -c "import pytesseract; assert 'kor' in pytesseract.get_languages(config='')"
+          mkdir -p work
+          curl --fail --silent --show-error --max-time 120 \
+            --form photo=@samples/boundaries/images/inline_certificate/clean-1.jpg \
+            http://127.0.0.1:18000/api/read > work/container-read.json
+          python -c "import json; d=json.load(open('work/container-read.json')); assert d['doc_type']=='certificate'; assert d['blocks']; assert len(d['pages'])==1; assert d['reference_pages']==[]"
       - name: Install local Korean OCR
         run: sudo apt-get update && sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
       - name: Camera regression smoke test

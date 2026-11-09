@@ -154,6 +154,7 @@ class NextStepButton extends StatelessWidget {
       button: true,
       label: '$title. $subtitle',
       excludeSemantics: true,
+      onTap: TapFeedback.wrap(onPressed),
       child: Material(
         color: primary ? AppColors.primary : AppColors.grey100,
         borderRadius: radius,

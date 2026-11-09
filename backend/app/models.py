@@ -71,3 +71,4 @@ class RecognizedDocument(BaseModel):
     speech: str = ""  # 사용자에게 읽어줄 요약
     needs_review: bool = False
     review_pages: list[int] = []  # 다시 확인할 페이지, 0부터
+    reference_pages: list[int] = []  # 작성 안내·예시 페이지. 읽기는 유지하고 채우기·서명 대상에서 제외

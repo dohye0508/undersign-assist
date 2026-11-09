@@ -235,6 +235,7 @@ class _NavRow extends StatelessWidget {
       button: true,
       label: '$title. $subtitle',
       excludeSemantics: true,
+      onTap: TapFeedback.wrap(onTap),
       child: InkWell(
         onTap: TapFeedback.wrap(onTap),
         borderRadius: BorderRadius.circular(AppRadius.button),
@@ -271,6 +272,7 @@ class _ValueRow extends StatelessWidget {
       button: true,
       label: '$title. 지금은 $value. 누르면 고를 수 있어요',
       excludeSemantics: true,
+      onTap: TapFeedback.wrap(onTap),
       child: InkWell(
         onTap: TapFeedback.wrap(onTap),
         borderRadius: BorderRadius.circular(AppRadius.button),
@@ -354,6 +356,7 @@ class _LevelOption extends StatelessWidget {
       inMutuallyExclusiveGroup: true,
       label: semanticsLabel,
       excludeSemantics: true,
+      onTap: onTap,
       child: Material(
         color: selected ? AppColors.primary : AppColors.grey100,
         borderRadius: radius,

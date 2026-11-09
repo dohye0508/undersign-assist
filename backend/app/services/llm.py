@@ -4,6 +4,7 @@ Groq는 OpenAI와 같은 형식의 API라서 별도 패키지 없이 표준 라�
 """
 
 import base64
+import http.client
 import json
 import urllib.error
 import urllib.request
@@ -11,6 +12,7 @@ import urllib.request
 from app import config
 
 URL = "https://api.groq.com/openai/v1/chat/completions"
+MAX_RESPONSE_BYTES = 1024 * 1024
 
 
 class LlmError(RuntimeError):
@@ -29,9 +31,12 @@ def ask_json(prompt: str, model: str | None = None) -> dict:
         response_format={"type": "json_object"},
     )
     try:
-        return json.loads(content)
+        answer = json.loads(content)
     except json.JSONDecodeError as error:
-        raise LlmError(f"JSON이 아닌 답: {content[:200]}") from error
+        raise LlmError("AI가 올바른 JSON을 반환하지 않았어요") from error
+    if not isinstance(answer, dict):
+        raise LlmError("AI의 JSON 응답이 객체가 아니에요")
+    return answer
 
 
 def ask_about_image(prompt: str, image_jpeg: bytes, model: str | None = None) -> str:
@@ -66,8 +71,18 @@ def _chat(model: str, messages: list[dict], **extra) -> str:
     )
     try:
         with urllib.request.urlopen(request, timeout=30) as response:
-            return json.load(response)["choices"][0]["message"]["content"]
+            payload = response.read(MAX_RESPONSE_BYTES + 1)
+        if len(payload) > MAX_RESPONSE_BYTES:
+            raise LlmError("AI 응답의 크기가 너무 커요")
+        content = json.loads(payload)["choices"][0]["message"]["content"]
+        if not isinstance(content, str) or not content.strip():
+            raise LlmError("AI가 읽을 수 있는 답을 반환하지 않았어요")
+        return content
     except urllib.error.HTTPError as error:
-        raise LlmError(f"Groq {error.code}: {error.read().decode()[:200]}") from error
-    except (urllib.error.URLError, TimeoutError, KeyError) as error:
-        raise LlmError(f"Groq 호출 실패: {error}") from error
+        # Error bodies can contain the source document. Do not copy or log them.
+        error.close()
+        raise LlmError(f"AI 서비스를 이용할 수 없어요 (HTTP {error.code})") from error
+    except (OSError, http.client.HTTPException) as error:
+        raise LlmError("AI 서비스 연결이 끝나지 않았어요") from error
+    except (ValueError, KeyError, IndexError, TypeError) as error:
+        raise LlmError("AI 응답 형식이 올바르지 않아요") from error

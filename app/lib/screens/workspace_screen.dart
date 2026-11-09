@@ -52,6 +52,8 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
   WorkStep? _step;
   bool _trayOpen = false;
   bool _importing = false;
+  bool _capturing = false;
+  int _analysisRevision = 0;
 
   bool get _analyzing => _step != null;
 
@@ -78,27 +80,31 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
   // --- 촬영 ------------------------------------------------------------------
 
   Future<void> _capture() async {
-    if (_analyzing || _importing) return;
-    final photo = await _camera.snapshot();
-    if (photo == null) {
-      if (mounted) {
+    if (_analyzing || _importing || _capturing) return;
+    setState(() => _capturing = true);
+    try {
+      final photo = await _camera.snapshot();
+      if (!mounted) return;
+      if (photo == null) {
         Speech.announce(context, '카메라가 준비되지 않았어요. 왼쪽 아래 사진 불러오기를 써 주세요.');
+        return;
       }
-      return;
-    }
-    _state.addPage(photo);
-    Haptics.ok();
-    if (mounted) {
+      _state.addPage(photo);
+      Haptics.ok();
       final n = _state.pages.length;
       Speech.announce(
         context,
         '$n페이지를 찍었어요. 다음 장을 올리고 찍거나, 다 찍었으면 분석하기를 누르세요.',
       );
+    } catch (_) {
+      if (mounted) Speech.announce(context, '사진을 찍지 못했어요. 다시 찍거나 사진 불러오기를 써 주세요.');
+    } finally {
+      if (mounted) setState(() => _capturing = false);
     }
   }
 
   Future<void> _pickFromFolder() async {
-    if (_analyzing || _importing) return;
+    if (_analyzing || _importing || _capturing) return;
     setState(() => _importing = true);
     try {
       final files = await (widget.pickImages?.call() ?? ImagePicker().pickMultiImage());
@@ -145,11 +151,12 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
   // --- 분석 ------------------------------------------------------------------
 
   Future<void> _analyze() async {
-    if (_analyzing || _importing) return;
+    if (_analyzing || _importing || _capturing) return;
     if (!_state.hasPages) {
       Speech.announce(context, '먼저 문서를 한 장 이상 찍어 주세요.');
       return;
     }
+    final revision = ++_analysisRevision;
     setState(() {
       _step = WorkStep.read;
       _trayOpen = false;
@@ -157,7 +164,7 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
     final pages = _state.pages.length;
     Speech.announce(context, '$pages페이지를 분석하고 있어요.');
     final document = await _state.read();
-    if (!mounted) return;
+    if (!mounted || revision != _analysisRevision) return;
     if (document == null) {
       Speech.announce(context, _state.readError ?? '');
       return;
@@ -197,6 +204,7 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
       _openStep(WorkStep.read);
       return;
     }
+    _analysisRevision++;
     setState(() => _step = null);
     Speech.announce(context, '카메라로 돌아왔어요. 찍은 페이지와 분석 결과는 그대로 있어요.');
   }
@@ -327,6 +335,7 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
                             button: true,
                             label: '들리는 받아쓰기, 글씨 연습하기',
                             excludeSemantics: true,
+                            onTap: TapFeedback.wrap(_openPractice),
                             child: Material(
                               color: AppColors.primary,
                               borderRadius: BorderRadius.circular(999),
@@ -374,12 +383,12 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
           ),
         ),
         _BottomBar(
-          canCapture: _camera.ready && !_importing,
+          canCapture: _camera.ready && !_importing && !_capturing,
           pageCount: _state.pages.length,
           importing: _importing,
-          onPick: _importing ? null : _pickFromFolder,
+          onPick: _importing || _capturing ? null : _pickFromFolder,
           onCapture: _capture,
-          onAnalyze: _importing ? null : _analyze,
+          onAnalyze: _importing || _capturing ? null : _analyze,
         ),
       ],
     );
@@ -488,6 +497,7 @@ class _BackHeader extends StatelessWidget {
             button: true,
             label: tooltip,
             excludeSemantics: true,
+            onTap: TapFeedback.wrap(onBack),
             child: TextButton.icon(
               onPressed: TapFeedback.wrap(onBack),
               style: TextButton.styleFrom(
@@ -546,6 +556,8 @@ class _BottomBar extends StatelessWidget {
             button: true,
             label: '찍기',
             excludeSemantics: true,
+            enabled: canCapture,
+            onTap: TapFeedback.wrap(canCapture ? onCapture : null),
             child: InkWell(
               onTap: TapFeedback.wrap(canCapture ? onCapture : null),
               customBorder: const CircleBorder(),
@@ -600,6 +612,7 @@ class _SideButton extends StatelessWidget {
       enabled: enabled,
       label: label,
       excludeSemantics: true,
+      onTap: TapFeedback.wrap(onTap),
       child: InkWell(
         onTap: TapFeedback.wrap(onTap),
         borderRadius: BorderRadius.circular(AppRadius.card),

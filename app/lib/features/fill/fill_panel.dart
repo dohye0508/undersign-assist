@@ -183,6 +183,7 @@ class _TargetRow extends StatelessWidget {
       button: true,
       label: done ? '${target.label}, 채웠어요. 누르면 다시 써요.' : '${target.label}, 아직 비었어요. 누르면 써요.',
       excludeSemantics: true,
+      onTap: TapFeedback.wrap(onTap),
       child: InkWell(
         onTap: TapFeedback.wrap(onTap),
         child: Container(

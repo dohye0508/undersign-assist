@@ -12,6 +12,7 @@ from . import facts as F
 from . import speech as Sp
 from . import subtype as S
 from . import form_review
+from app.services.doc_reader import without_reference_pages
 
 
 def _findings(rules: list[dict], document, values: dict, answers: dict[str, str]) -> list[dict]:
@@ -28,6 +29,7 @@ def _findings(rules: list[dict], document, values: dict, answers: dict[str, str]
 
 
 def run(document, answers: dict[str, str] | None = None) -> dict:
+    document = without_reference_pages(document)
     form_result = form_review.run(document)
     if form_result is not None:
         return form_result

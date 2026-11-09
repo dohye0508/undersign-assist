@@ -52,6 +52,7 @@ class ApiContractTest(unittest.TestCase):
         self.assertEqual(800, document.pages[0].width)
         self.assertEqual(document.image_width, document.pages[0].width)
         self.assertEqual([0, 0, 0], [line.page for line in document.blocks])
+        self.assertEqual([], document.reference_pages)
         self.ask_json.assert_not_called()
 
     def test_read_multipart_preserves_page_order_and_dimensions(self):
@@ -62,6 +63,29 @@ class ApiContractTest(unittest.TestCase):
         body = response.json()
         self.assertEqual([800, 900], [page["width"] for page in body["pages"]])
         self.assertEqual([0, 0, 0, 1], [line["page"] for line in body["blocks"]])
+
+    def test_read_marks_guide_pages_without_removing_original_text_or_positions(self):
+        main = blocks(["근로계약서\n근로자: 김가상\n시급:"])
+        guide = blocks(["근로계약서 작성 가이드\n시급: 5000원\n성명: 예시 (서명)"])
+        continuation = blocks(["시급: 12000원"])
+        self.recognize.side_effect = [ocr.OcrResult(lines, 800, 1000) for lines in (main, guide, continuation)]
+        response = self.client.post("/api/read", files=[("photo", self.photo()) for _ in range(3)])
+        self.assertEqual(200, response.status_code, response.text)
+        body = response.json()
+        self.assertEqual([1], body["reference_pages"])
+        self.assertIn("시급: 5000원", body["full_text"])
+        self.assertEqual([0] * 3 + [1] * 3 + [2], [line["page"] for line in body["blocks"]])
+        self.assertFalse(any("5000" in field["value"] for field in body["fields"]))
+        self.assertEqual(len(body["blocks"]) - 1, next(field["line"] for field in body["fields"] if "12000" in field["value"]))
+
+    def test_read_reference_metadata_is_preserved_when_another_page_needs_review(self):
+        guide = blocks(["근로계약서 작성 가이드\n성명: 예시 (서명)"])
+        self.recognize.side_effect = [ocr.OcrResult(self.lines, 800, 1000, needs_review=True),
+                                     ocr.OcrResult(guide, 800, 1000)]
+        response = self.client.post("/api/read", files=[("photo", self.photo()), ("photo", self.photo())])
+        self.assertEqual(200, response.status_code, response.text)
+        self.assertEqual([0], response.json()["review_pages"])
+        self.assertEqual([1], response.json()["reference_pages"])
 
     def test_missing_photo_is_request_validation_error(self):
         for path in ("/api/read", "/api/write/check", "/api/sign/locate"):
@@ -199,6 +223,20 @@ class ApiContractTest(unittest.TestCase):
                                      "fields": [{"label": "성명", "value": "김가상", "line": -1}]}
         response = self.client.post("/api/judge", json=payload)
         self.assertEqual(200, response.status_code, response.text)
+
+    def test_judge_rejects_reference_metadata_outside_the_document(self):
+        for page in (-1, 1):
+            with self.subTest(page=page), patch.object(judge, "run_judge") as engine:
+                self.assert_detail(self.client.post("/api/judge", json=self.document() | {"reference_pages": [page]}), 422)
+                engine.assert_not_called()
+
+    def test_judge_recomputes_reference_pages_instead_of_trusting_client_exclusions(self):
+        lines = blocks(["근로계약서\n근로자: 김가상\n시급: 5000원"])
+        payload = self.document() | {"doc_type": "contract", "blocks": [line.model_dump() for line in lines],
+                                     "full_text": "\n".join(line.text for line in lines), "reference_pages": [0]}
+        response = self.client.post("/api/judge", json=payload)
+        self.assertEqual(200, response.status_code, response.text)
+        self.assertIn("LAB-003", {finding["rule_id"] for finding in response.json()["findings"]})
 
     def test_malformed_json_and_unknown_type_are_request_errors(self):
         self.assertEqual(422, self.client.post("/api/judge", content=b"{", headers={"Content-Type": "application/json"}).status_code)

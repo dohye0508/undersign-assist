@@ -7,6 +7,7 @@
 시험해 보니 AI에게 요약 문장을 맡기면 문서에 없는 내용(예: "매일 근무")을 지어냈다.
 """
 
+import copy
 import json
 import re
 import unicodedata
@@ -86,6 +87,8 @@ def label_of(doc_type: DocType) -> str:
 
 
 def _read_with_ai(full_text: str, lines: list[TextBlock], doc_type: DocType) -> list[Field]:
+    references = CLASSIFIER.reference_pages(lines)
+    full_text = "\n".join(line.text for line in lines if getattr(line, "page", 0) not in references)
     labels = json.dumps([f["label"] for f in RULES[doc_type.value]["fields"]], ensure_ascii=False)
     prompt = f"""다음은 종이 문서 사진을 OCR로 읽은 글자다. 여러 페이지를 이어 붙인 **한 문서**이니 페이지마다 따로 나누지 말고 하나로 정리한다. 글자 일부가 깨지거나 띄어쓰기가 틀렸을 수 있다.
 
@@ -188,7 +191,10 @@ def _find_value(lines: list[TextBlock], keys: list[str], all_keys: list[str] = (
     preferred_declared = False
     fallback = None
     candidates = []
+    references = CLASSIFIER.reference_pages(lines)
     for index, line in enumerate(lines):
+        if getattr(line, "page", 0) in references:
+            continue
         cells = _row_cells(line.text)
         for cell_index, (text, row_owner) in enumerate(cells):
             if row_owner in preferred_subjects:
@@ -233,6 +239,7 @@ def _find_value(lines: list[TextBlock], keys: list[str], all_keys: list[str] = (
                 next_text = lines[index + 1].text
                 if (not CLASSIFIER._title_kinds(next_text) and not re.search(r"[:：]", next_text)
                         and compact(next_text).strip("[]() ") not in PARTY_ROLES
+                        and not any(compact(next_text).startswith(compact(k)) for k in ROW_LABELS)
                         and not any(k in compact(next_text) for k in all_keys)):
                     value = _clean_field_value(next_text)
             if value and not _is_placeholder(value):
@@ -242,6 +249,24 @@ def _find_value(lines: list[TextBlock], keys: list[str], all_keys: list[str] = (
                     continue
                 return value[:MAX_VALUE_LENGTH], index
     return fallback
+
+
+def without_reference_pages(document):
+    """Keep original block indexes/geometry while excluding guide text from judgement."""
+    references = CLASSIFIER.reference_pages(document.blocks)
+    if not references:
+        return document
+    scoped = copy.copy(document)
+    scoped.blocks = []
+    for block in document.blocks:
+        if getattr(block, "page", 0) in references:
+            block = copy.copy(block)
+            block.text = ""
+        scoped.blocks.append(block)
+    scoped.full_text = "\n".join(block.text for block in scoped.blocks)
+    scoped.fields = [field for field in document.fields
+                     if 0 <= field.line < len(scoped.blocks) and scoped.blocks[field.line].text]
+    return scoped
 
 
 def _row_cells(text: str) -> list[tuple[str, str | None]]:

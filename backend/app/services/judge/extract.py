@@ -12,6 +12,7 @@ from __future__ import annotations
 import re
 
 from . import parse as P
+from app.services import doc_reader
 
 # 읽기 단계 field.label -> 여기서 쓰는 원시 키
 _FIELD_ALIASES = {
@@ -59,27 +60,50 @@ def _segment(line: str, key: str, stops: list[str]) -> str | None:
     cut = len(rest)
     for s in stops:
         m = re.search(r"\s*".join(map(re.escape, s)), rest)
-        if m and m.start() > 0:
+        if m:
             cut = min(cut, m.start())
     return rest[:cut]
 
 
-def find_line(lines: list[str], keys: list[str], need=None, stops: list[str] = ()) -> tuple[str, int] | None:
+def find_line(lines: list[str], keys: list[str], need=None, stops: list[str] = (),
+              pages: list[int] | None = None) -> tuple[str, int] | None:
     """keys 중 하나가 있는 첫 줄. need(text→값)가 값을 못 만들면 다음 줄을 이어서 본다."""
+    other_keys = set(doc_reader.ROW_LABELS) | {key for values in _LINE_KEYS.values() for key in values}
     for i, line in enumerate(lines):
-        for key in keys:
-            seg = _segment(line, key, list(stops)) if stops else _after_key(line, key)
-            if seg is None:
-                continue
-            if need is None or need(seg) is not None:
-                return seg, i
-            if i + 1 < len(lines) and need(lines[i + 1]) is not None:
-                return lines[i + 1], i + 1
+        cells = doc_reader._row_cells(line)
+        for cell_index, (cell, _) in enumerate(cells):
+            for key in keys:
+                # A payday is not the wage, even if it contains digits.
+                match = re.search(r"\s*".join(map(re.escape, key)), cell)
+                if not match:
+                    continue
+                rest = compact(cell[match.start():])
+                if any(other.startswith(key) and other != key and rest.startswith(other) for other in other_keys):
+                    continue
+                seg = _segment(cell, key, list(stops)) if stops else _after_key(cell, key)
+                if seg is None:
+                    continue
+                if need is None or need(seg) is not None:
+                    return seg, i
+                # Only an unlabeled continuation on the same page can supply a
+                # wrapped value. Another cell/field must stay independent.
+                if cell_index != len(cells) - 1 or i + 1 >= len(lines):
+                    continue
+                following = lines[i + 1]
+                if pages is not None and pages[i + 1] != pages[i]:
+                    continue
+                if (re.search(r"[가-힣A-Za-z]\s*[:：]", following)
+                        or any(key in compact(following) for key in other_keys)
+                        or doc_reader.CLASSIFIER._title_kinds(following)):
+                    continue
+                if need(following) is not None:
+                    return following, i + 1
     return None
 
 
 def extract(doc) -> dict[str, dict]:
     lines = _blocks(doc)
+    pages = [getattr(block, "page", 0) for block in doc.blocks]
     full = getattr(doc, "full_text", "") or "\n".join(lines)
 
     raw: dict[str, tuple[str, int]] = {}
@@ -97,7 +121,7 @@ def extract(doc) -> dict[str, dict]:
     def source(key, need=None, stops=()):
         if key in raw and (need is None or need(raw[key][0]) is not None):
             return raw[key]
-        return find_line(lines, _LINE_KEYS[key], need, stops)
+        return find_line(lines, _LINE_KEYS[key], need, stops, pages)
 
     # ── 임금 ──
     found = source("wage", P.parse_money)
@@ -137,7 +161,7 @@ def extract(doc) -> dict[str, dict]:
             put("break_minutes", P.parse_minutes(whole[whole.index("휴게"):]), line)
 
     if "break_minutes" not in values:
-        found = find_line(lines, _LINE_KEYS["break"], P.parse_minutes)
+        found = find_line(lines, _LINE_KEYS["break"], P.parse_minutes, pages=pages)
         if found:
             put("break_minutes", P.parse_minutes(found[0]), found[1])
 
@@ -208,7 +232,7 @@ def extract(doc) -> dict[str, dict]:
         put("annual_interest_rate", best[0], best[1])
 
     # ── 주소 (소액임차인 지역 구분용) ──
-    found = find_line(lines, _LINE_KEYS["address"])
+    found = find_line(lines, _LINE_KEYS["address"], pages=pages)
     if found:
         put("address", (lines[found[1]] or "").strip(), found[1])
 

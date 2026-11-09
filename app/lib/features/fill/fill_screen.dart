@@ -105,9 +105,6 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
   Rect _flyingBounds = Rect.zero;
   Rect _from = Rect.zero, _to = Rect.zero, _targetOnScreen = Rect.zero, _pageOnScreen = Rect.zero;
 
-  /// 이 화면에서 처음 통과한 서명. 다음 서명은 이것과 비교한다 (글씨 칸과는 비교하지 않는다)
-  static SignatureMetrics? _signatureBaseline;
-
   List<FillTarget> get _targets => widget.targets;
   FillTarget get _target => _targets[_index];
   bool get _filled => widget.state.fills.containsKey(_target.id);
@@ -289,13 +286,9 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
   /// 숫자 검사. 칸 = 쓰기 칸 전체라 "칸 벗어남"은 일어나지 않는다
   SignatureVerdict _check() {
     final guide = Offset.zero & _area;
-    final saved = SignatureCheck.baseline;
-    SignatureCheck.baseline = _target.isSignature ? _signatureBaseline : null;
-    try {
-      return SignatureCheck.judge(_strokes, guide);
-    } finally {
-      SignatureCheck.baseline = saved;
-    }
+    // A document can contain signatures by different people. Without an
+    // explicit signer identity, compare only against absolute ink quality.
+    return SignatureCheck.judge(_strokes, guide);
   }
 
   /// 검사기 문구는 서명용이라 글씨 칸이면 말을 바꾼다
@@ -356,7 +349,6 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
       return;
     }
     if (!bySlide) Haptics.ok();
-    if (target.isSignature) _signatureBaseline ??= verdict.metrics;
     await _commit(target, List.of(_strokes), _FillInk.bounds(_strokes));
   }
 

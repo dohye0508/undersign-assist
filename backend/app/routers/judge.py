@@ -86,6 +86,8 @@ def _validate_document(request: JudgeRequest) -> None:
     ):
         raise HTTPException(422, "페이지 사진 크기가 올바르지 않아요. 문서를 다시 읽어 주세요.")
     page_count = len(request.pages) or 1  # Legacy single-page documents omit pages.
+    if any(page < 0 or page >= page_count for page in request.reference_pages):
+        raise HTTPException(422, "참고 페이지 번호가 올바르지 않아요. 문서를 다시 읽어 주세요.")
     for block in request.blocks:
         if block.page < 0 or block.page >= page_count:
             raise HTTPException(422, "문서의 페이지 번호가 올바르지 않아요. 문서를 다시 읽어 주세요.")
