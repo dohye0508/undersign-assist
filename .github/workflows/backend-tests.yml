@@ -35,10 +35,10 @@ jobs:
       - name: Build and smoke test the deployment container
         run: |
           docker build --tag undersign-assist-ci backend
-          trap 'docker rm -f undersign-assist-ci >/dev/null' EXIT
+          trap 'status=$?; if [ "$status" -ne 0 ]; then docker logs undersign-assist-ci; fi; docker rm -f undersign-assist-ci >/dev/null; exit "$status"' EXIT
           docker run --detach --name undersign-assist-ci \
             --publish 127.0.0.1:18000:7860 --env GROQ_API_KEY= undersign-assist-ci
-          curl --fail --silent --show-error --retry 10 --retry-connrefused \
+          curl --fail --silent --show-error --retry 10 --retry-all-errors \
             --retry-delay 1 --max-time 10 http://127.0.0.1:18000/api/health
           docker exec undersign-assist-ci python -c "import pytesseract; assert 'kor' in pytesseract.get_languages(config='')"
           mkdir -p work
