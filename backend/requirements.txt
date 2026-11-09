@@ -1,4 +1,6 @@
 fastapi>=0.110
+# FastAPI/Starlette TestClient used by offline HTTP contract regressions.
+httpx>=0.27,<0.29
 uvicorn[standard]>=0.29
 python-multipart>=0.0.9
 python-dotenv>=1.0

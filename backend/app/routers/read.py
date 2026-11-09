@@ -9,6 +9,7 @@ import asyncio
 from fastapi import APIRouter, File, HTTPException, UploadFile
 
 from app.models import PageInfo, RecognizedDocument
+from app.routers.uploads import read_images
 from app.services import doc_reader, ocr
 
 router = APIRouter(prefix="/api/read", tags=["읽기"])
@@ -17,15 +18,13 @@ router = APIRouter(prefix="/api/read", tags=["읽기"])
 @router.post("", response_model=RecognizedDocument)
 async def read_document(photo: list[UploadFile] = File(...)) -> RecognizedDocument:
     """`photo` 필드를 페이지 순서대로 여러 번 보낸다. 한 장만 보내도 된다."""
-    if not photo:
-        raise HTTPException(status_code=400, detail="문서 사진을 한 장 이상 보내 주세요.")
+    images = await read_images(photo)
     lines, pages, review_pages = [], [], []
-    for index, upload in enumerate(photo):
-        image = await upload.read()
+    for index, image in enumerate(images):
         try:
             result = await asyncio.to_thread(ocr.recognize, image)
         except Exception as error:
-            raise HTTPException(status_code=502, detail=f"{index + 1}페이지 글자 인식 실패: {error}") from error
+            raise HTTPException(status_code=502, detail=f"{index + 1}페이지 글자 인식 서비스를 이용할 수 없어요. 잠시 후 다시 시도해 주세요.") from error
         lines += [line.model_copy(update={"page": index}) for line in result.lines]
         pages.append(PageInfo(width=result.width, height=result.height))
         if result.needs_review:

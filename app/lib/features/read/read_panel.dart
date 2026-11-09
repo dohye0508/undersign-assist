@@ -17,6 +17,13 @@ class ReadPanel extends StatelessWidget {
 
   final WorkspaceState state;
 
+  Future<void> _read(BuildContext context) async {
+    final document = await state.read();
+    if (!context.mounted) return;
+    final message = document?.speech ?? state.readError;
+    if (message != null) Speech.announce(context, message);
+  }
+
   @override
   Widget build(BuildContext context) {
     final document = state.recognized;
@@ -34,14 +41,14 @@ class ReadPanel extends StatelessWidget {
         children: [
           Text(state.readError!),
           const SizedBox(height: 8),
-          OutlinedButton(onPressed: TapFeedback.wrap(state.read), child: const Text('다시 읽기')),
+          OutlinedButton(onPressed: TapFeedback.wrap(() => _read(context)), child: const Text('다시 읽기')),
         ],
       );
     }
     if (document == null) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [OutlinedButton(onPressed: TapFeedback.wrap(state.read), child: const Text('문서 읽기'))],
+        children: [OutlinedButton(onPressed: TapFeedback.wrap(() => _read(context)), child: const Text('문서 읽기'))],
       );
     }
 

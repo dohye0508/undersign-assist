@@ -7,6 +7,7 @@ from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from pydantic import BaseModel
 
 from app.models import Box, TextBlock
+from app.routers.uploads import read_images
 from app.services import llm, ocr
 from app.services.doc_reader import value_after
 
@@ -28,11 +29,17 @@ class WriteCheck(BaseModel):
 
 @router.post("/check", response_model=WriteCheck)
 async def check_writing(field: str = Form(...), photo: UploadFile = File(...)) -> WriteCheck:
-    image = await photo.read()
+    field = field.strip()
+    if not field or len(field) > 80:
+        await photo.close()
+        raise HTTPException(422, "확인할 칸 이름을 1~80자로 보내 주세요.")
+    image = (await read_images([photo]))[0]
     try:
         result = await asyncio.to_thread(ocr.recognize, image)
     except Exception as error:
-        raise HTTPException(status_code=502, detail=f"글자 인식 실패: {error}") from error
+        raise HTTPException(status_code=502, detail="글자 인식 서비스를 이용할 수 없어요. 잠시 후 다시 시도해 주세요.") from error
+    if result.needs_review:
+        raise HTTPException(422, "사진의 글자를 충분히 읽지 못했어요. 문서가 선명하게 보이도록 다시 찍어 주세요.")
 
     # 인쇄된 칸 이름은 OCR이 잘 찾는다. 위치를 알려주는 데 쓴다
     label_line = next((line for line in result.lines if value_after(line.text, field) is not None), None)

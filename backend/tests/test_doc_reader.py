@@ -12,6 +12,7 @@ from app.routers.read import read_document
 from app.services import doc_reader, judge, llm, ocr
 from document_corpus import blocks, cases, variants
 from fastapi import HTTPException, UploadFile
+from api_fixtures import image_bytes
 from app.routers.judge import JudgeRequest, judge_document
 
 
@@ -127,7 +128,7 @@ class ReaderFallbackTest(unittest.TestCase):
 class ReadRouteTest(unittest.IsolatedAsyncioTestCase):
     async def test_partial_page_warns_and_skips_field_ai_and_judgement(self):
         first = blocks(["근로계약서\n임금: 300만원"])
-        uploads = [UploadFile(file=io.BytesIO(b"image")) for _ in range(2)]
+        uploads = [UploadFile(file=io.BytesIO(image_bytes())) for _ in range(2)]
         with patch.object(llm, "ask_json") as ask, patch.object(ocr, "recognize", side_effect=[
             ocr.OcrResult(first, 800, 1000), ocr.OcrResult(first[:1], 800, 1000, needs_review=True)
         ]):
@@ -152,7 +153,7 @@ class ReadRouteTest(unittest.IsolatedAsyncioTestCase):
     async def test_multipage_route_keeps_boxes_and_classifies_main_form(self):
         first = blocks(["가정통신문\n일시: 내일\n장소: 박물관\n준비물: 물"])
         appendix = blocks(["개인정보 수집 이용 동의서\n수집 목적: 행사\n수집 항목: 성명\n보유 기간: 1년"])
-        uploads = [UploadFile(file=io.BytesIO(b"fake image"), filename=f"{i}.png") for i in range(2)]
+        uploads = [UploadFile(file=io.BytesIO(image_bytes()), filename=f"{i}.png") for i in range(2)]
         with patch.object(llm, "available", return_value=False), patch.object(
             ocr, "recognize", side_effect=[ocr.OcrResult(first, 800, 1000), ocr.OcrResult(appendix, 900, 1100)]
         ):

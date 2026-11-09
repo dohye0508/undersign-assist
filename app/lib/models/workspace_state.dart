@@ -195,9 +195,11 @@ class WorkspaceState extends ChangeNotifier {
         _recognized = document;
         result = document;
       }
-    } catch (_) {
+    } catch (error) {
       if (!_disposed && revision == _readRevision) {
-        _readError = '문서를 읽지 못했어요. 서버가 켜져 있는지 확인하고 다시 시도해 주세요.';
+        _readError = error is ApiException
+            ? error.message
+            : '문서를 읽지 못했어요. 잠시 후 다시 시도해 주세요.';
       }
     } finally {
       if (!_disposed && revision == _readRevision) {
@@ -261,9 +263,11 @@ class WorkspaceState extends ChangeNotifier {
         _judgement = judgement;
         result = judgement;
       }
-    } catch (_) {
+    } catch (error) {
       if (!_disposed && revision == _judgeRevision) {
-        _judgeError = '판단하지 못했어요. 서버가 켜져 있는지 확인하고 다시 시도해 주세요.';
+        _judgeError = error is ApiException
+            ? error.message
+            : '판단하지 못했어요. 잠시 후 다시 시도해 주세요.';
       }
     } finally {
       if (!_disposed && revision == _judgeRevision) {

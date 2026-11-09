@@ -33,19 +33,25 @@ import '../widgets/tap_feedback.dart';
 /// 키보드 (분석): Esc 카메라로, 1~4 단계
 /// 키보드 (공통): R 다시 듣기
 class WorkspaceScreen extends StatefulWidget {
-  const WorkspaceScreen({super.key});
+  const WorkspaceScreen({super.key, this.state, this.camera, this.pickImages});
+
+  /// 주입한 상태와 카메라는 호출자가 관리하고, 생략하면 화면이 만들고 정리한다.
+  final WorkspaceState? state;
+  final CameraService? camera;
+  final Future<List<XFile>> Function()? pickImages;
 
   @override
   State<WorkspaceScreen> createState() => _WorkspaceScreenState();
 }
 
 class _WorkspaceScreenState extends State<WorkspaceScreen> {
-  final _state = WorkspaceState();
-  final _camera = CameraService();
+  late final _state = widget.state ?? WorkspaceState();
+  late final _camera = widget.camera ?? CameraService();
 
   /// 분석 화면이면 지금 보이는 단계, 촬영 화면이면 null
   WorkStep? _step;
   bool _trayOpen = false;
+  bool _importing = false;
 
   bool get _analyzing => _step != null;
 
@@ -64,15 +70,15 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
 
   @override
   void dispose() {
-    _camera.dispose();
-    _state.dispose();
+    if (widget.camera == null) _camera.dispose();
+    if (widget.state == null) _state.dispose();
     super.dispose();
   }
 
   // --- 촬영 ------------------------------------------------------------------
 
   Future<void> _capture() async {
-    if (_analyzing) return;
+    if (_analyzing || _importing) return;
     final photo = await _camera.snapshot();
     if (photo == null) {
       if (mounted) {
@@ -92,19 +98,27 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
   }
 
   Future<void> _pickFromFolder() async {
-    if (_analyzing) return;
-    final files = await ImagePicker().pickMultiImage();
-    if (files.isEmpty) return;
-    for (final file in files) {
-      _state.addPage(
-        DocumentPhoto(bytes: await file.readAsBytes(), name: file.name),
-      );
-    }
-    if (mounted) {
-      Speech.announce(
-        context,
-        '${files.length}장을 불러왔어요. 지금까지 모두 ${_state.pages.length}페이지예요.',
-      );
+    if (_analyzing || _importing) return;
+    setState(() => _importing = true);
+    try {
+      final files = await (widget.pickImages?.call() ?? ImagePicker().pickMultiImage());
+      if (!mounted || files.isEmpty) return;
+      final photos = <DocumentPhoto>[];
+      for (final file in files) {
+        final bytes = await file.readAsBytes();
+        if (!mounted) return;
+        photos.add(DocumentPhoto(bytes: bytes, name: file.name));
+      }
+      for (final photo in photos) {
+        _state.addPage(photo);
+      }
+      Speech.announce(context, '${photos.length}장을 불러왔어요. 지금까지 모두 ${_state.pages.length}페이지예요.');
+    } catch (_) {
+      if (!mounted) return;
+      Haptics.warn();
+      Speech.announce(context, '사진을 불러오지 못했어요. 사진 불러오기를 눌러 다시 선택해 주세요.');
+    } finally {
+      if (mounted) setState(() => _importing = false);
     }
   }
 
@@ -131,7 +145,7 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
   // --- 분석 ------------------------------------------------------------------
 
   Future<void> _analyze() async {
-    if (_analyzing) return;
+    if (_analyzing || _importing) return;
     if (!_state.hasPages) {
       Speech.announce(context, '먼저 문서를 한 장 이상 찍어 주세요.');
       return;
@@ -360,11 +374,12 @@ class _WorkspaceScreenState extends State<WorkspaceScreen> {
           ),
         ),
         _BottomBar(
-          canCapture: _camera.ready,
+          canCapture: _camera.ready && !_importing,
           pageCount: _state.pages.length,
-          onPick: _pickFromFolder,
+          importing: _importing,
+          onPick: _importing ? null : _pickFromFolder,
           onCapture: _capture,
-          onAnalyze: _analyze,
+          onAnalyze: _importing ? null : _analyze,
         ),
       ],
     );
@@ -500,6 +515,7 @@ class _BottomBar extends StatelessWidget {
   const _BottomBar({
     required this.canCapture,
     required this.pageCount,
+    required this.importing,
     required this.onPick,
     required this.onCapture,
     required this.onAnalyze,
@@ -507,9 +523,10 @@ class _BottomBar extends StatelessWidget {
 
   final bool canCapture;
   final int pageCount;
-  final VoidCallback onPick;
+  final bool importing;
+  final VoidCallback? onPick;
   final VoidCallback onCapture;
-  final VoidCallback onAnalyze;
+  final VoidCallback? onAnalyze;
 
   @override
   Widget build(BuildContext context) {
@@ -520,7 +537,7 @@ class _BottomBar extends StatelessWidget {
           Expanded(
             child: _SideButton(
               icon: Icons.photo_library_outlined,
-              label: '사진 불러오기',
+              label: importing ? '불러오는 중…' : '사진 불러오기',
               onTap: onPick,
             ),
           ),

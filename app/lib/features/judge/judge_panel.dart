@@ -6,6 +6,7 @@ import '../../services/speech.dart';
 import '../../theme/app_theme.dart';
 import '../read/read_panel.dart' show ListenButton;
 import '../../widgets/tap_feedback.dart';
+import 'judgement_summary.dart';
 
 /// 판단("검토하세요!").
 ///
@@ -41,16 +42,20 @@ class _JudgePanelState extends State<JudgePanel> {
   void initState() {
     super.initState();
     // 창이 열리면 바로 판단한다. 물어볼 것이 있으면 질문만 읽고, 결과는 답한 뒤에 읽는다
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final judgement = await widget.state.judge();
-      if (!mounted) return;
-      if (judgement == null) {
-        Speech.announce(context, widget.state.judgeError ?? '');
-        return;
-      }
-      final pending = _unanswered(judgement);
-      Speech.announce(context, pending == null ? judgement.speech : _questionSpeech(pending));
-    });
+    WidgetsBinding.instance.addPostFrameCallback((_) => _review());
+  }
+
+  Future<void> _review() async {
+    if (!mounted) return;
+    final judgement = await widget.state.judge();
+    if (!mounted) return;
+    if (judgement == null) {
+      final error = widget.state.judgeError;
+      if (error != null) Speech.announce(context, error);
+      return;
+    }
+    final pending = _unanswered(judgement);
+    Speech.announce(context, pending == null ? judgement.speech : _questionSpeech(pending));
   }
 
   /// 아직 답하지 않은 첫 질문. 없으면 null
@@ -65,10 +70,7 @@ class _JudgePanelState extends State<JudgePanel> {
   static int _missing(Judgement? j) => j?.counts['missing'] ?? 0;
 
   /// 한 줄 결론 (음성용)
-  static String _conclusion(Judgement j) {
-    final c = _caution(j), m = _missing(j);
-    return c + m == 0 ? '특별히 확인할 것이 없어요.' : '확인할 곳 $c개, 빠진 것 $m개예요.';
-  }
+  static String _conclusion(Judgement j) => judgementConclusion(j);
 
   /// "일하는 곳의 직원이 5명 이상인가요? 이에 따라 …"에서 물음 부분만
   static String _ask(Question q) {
@@ -107,7 +109,7 @@ class _JudgePanelState extends State<JudgePanel> {
         children: [
           Text(state.judgeError!, style: text.bodyLarge),
           const SizedBox(height: 8),
-          OutlinedButton(onPressed: TapFeedback.wrap(state.judge), child: const Text('다시 검토하기')),
+          OutlinedButton(onPressed: TapFeedback.wrap(_review), child: const Text('다시 검토하기')),
         ],
       );
     }
@@ -240,7 +242,7 @@ class _JudgePanelState extends State<JudgePanel> {
   /// "확인할 곳 1개,\n빠진 것 2개예요." 각 부분은 그 상태 색
   static TextSpan _conclusionSpan(Judgement j) {
     final c = _caution(j), m = _missing(j);
-    if (c + m == 0) return const TextSpan(text: '특별히 확인할 것이 없어요.');
+    if (c + m == 0) return TextSpan(text: _conclusion(j));
     const red = TextStyle(color: AppColors.caution);
     const yellow = TextStyle(color: AppColors.missing);
     if (c == 0) {
@@ -344,25 +346,26 @@ class _JudgePanelState extends State<JudgePanel> {
   Future<void> _answer(Question question, String code) async {
     final label = question.options[code] ?? code;
     // 답을 바꾸려다 같은 답을 다시 고르면 다시 판단하지 않고 그대로 닫는다
-    if (widget.state.answers[question.id] == code && _answered != null) {
+    if (widget.state.answers[question.id] == code && _answered != null && widget.state.judgement != null) {
       setState(() => _editing = false);
       Speech.announce(context, '$label${_ro(label)} 그대로 두었어요. ${_conclusion(widget.state.judgement!)}');
       return;
     }
     Speech.announce(context, '$label${_ro(label)} 답했어요. 검토할게요.');
     final before = widget.state.judgement;
-    final judgement = await widget.state.answer(question.id, code);
-    if (!mounted) return;
-    if (judgement == null) {
-      Speech.announce(context, widget.state.judgeError ?? '');
-      return;
-    }
+    // 답은 요청 실패 뒤에도 state에 남는다. 재시도 후에도 바꿀 수 있게 함께 기억한다.
     setState(() {
       _before = before;
       _answered = question;
       _answeredLabel = label;
       _editing = false;
     });
+    final judgement = await widget.state.answer(question.id, code);
+    if (!mounted) return;
+    if (judgement == null) {
+      Speech.announce(context, widget.state.judgeError ?? '');
+      return;
+    }
     Speech.announce(context, '${_conclusion(judgement)} 요약: ${judgement.speech}');
   }
 

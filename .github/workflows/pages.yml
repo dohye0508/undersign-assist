@@ -39,7 +39,10 @@ jobs:
           cp ../samples/*.png build/web/ || true
       - name: Check read quality guidance in browser
         working-directory: app
-        run: flutter test --platform chrome test/read_quality_test.dart test/document_type_workflow_test.dart test/workspace_state_test.dart
+        run: flutter test --platform chrome test/read_quality_test.dart test/document_type_workflow_test.dart test/workspace_state_test.dart test/frontend_recovery_test.dart
+      - name: Check API failures and judgement summaries
+        working-directory: app
+        run: flutter test test/api_client_test.dart test/judgement_summary_test.dart
       - name: Check PDF placement and completed previews
         working-directory: app
         run: flutter test test/output_review_test.dart test/filled_ink_preview_test.dart test/fill_boundaries_test.dart

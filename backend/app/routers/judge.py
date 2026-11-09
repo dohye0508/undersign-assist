@@ -68,7 +68,33 @@ class JudgeRequest(RecognizedDocument):
 
 @router.post("", response_model=Judgement)
 async def judge_document(request: JudgeRequest) -> Judgement:
-    if request.needs_review:
+    if request.needs_review or request.review_pages:
         raise HTTPException(status_code=422, detail="문서 글자를 충분히 읽지 못했어요. 안내된 페이지를 다시 찍어 주세요.")
+    _validate_document(request)
     result = run_judge(request, request.answers)
     return Judgement(**result)
+
+
+def _validate_document(request: JudgeRequest) -> None:
+    """Reject broken photo/line references before they reach judgement or UI overlays."""
+    if not request.blocks or not any(block.text.strip() for block in request.blocks):
+        raise HTTPException(422, "읽은 문서가 없어요. 사진을 먼저 읽어 주세요.")
+    if any(page.width <= 0 or page.height <= 0 for page in request.pages):
+        raise HTTPException(422, "페이지 사진 크기가 올바르지 않아요. 문서를 다시 읽어 주세요.")
+    if not request.pages and (request.image_width or request.image_height) and (
+        request.image_width <= 0 or request.image_height <= 0
+    ):
+        raise HTTPException(422, "페이지 사진 크기가 올바르지 않아요. 문서를 다시 읽어 주세요.")
+    page_count = len(request.pages) or 1  # Legacy single-page documents omit pages.
+    for block in request.blocks:
+        if block.page < 0 or block.page >= page_count:
+            raise HTTPException(422, "문서의 페이지 번호가 올바르지 않아요. 문서를 다시 읽어 주세요.")
+        box = block.box
+        if box.x < 0 or box.y < 0 or box.width <= 0 or box.height <= 0:
+            raise HTTPException(422, "글자 위치 정보가 올바르지 않아요. 문서를 다시 읽어 주세요.")
+        if request.pages:
+            page = request.pages[block.page]
+            if box.x + box.width > page.width or box.y + box.height > page.height:
+                raise HTTPException(422, "글자 위치가 사진 범위를 벗어났어요. 문서를 다시 읽어 주세요.")
+    if any(field.line < -1 or field.line >= len(request.blocks) for field in request.fields):
+        raise HTTPException(422, "항목의 원문 위치가 올바르지 않아요. 문서를 다시 읽어 주세요.")

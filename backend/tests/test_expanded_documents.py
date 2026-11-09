@@ -7,6 +7,7 @@ from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from fastapi import HTTPException, UploadFile
+from api_fixtures import image_bytes
 from app.models import DocType, Field, RecognizedDocument
 from app.routers.read import read_document
 from app.routers.judge import JudgeRequest, judge_document
@@ -114,7 +115,7 @@ class ExpandedReaderTest(unittest.IsolatedAsyncioTestCase):
         for kind, text in EXAMPLES.items():
             with self.subTest(kind=kind):
                 lines = blocks([text])
-                upload = UploadFile(file=io.BytesIO(b"fake-image"), filename="form.jpg")
+                upload = UploadFile(file=io.BytesIO(image_bytes()), filename="form.jpg")
                 with patch.object(llm, "available", return_value=False), patch.object(
                     ocr, "recognize", return_value=ocr.OcrResult(lines, 1000, 1000)
                 ):
@@ -130,7 +131,7 @@ class ExpandedReaderTest(unittest.IsolatedAsyncioTestCase):
 
     async def test_unreadable_new_form_cannot_reach_judgement(self):
         lines = blocks([EXAMPLES["authorization"]])
-        upload = UploadFile(file=io.BytesIO(b"bad-photo"))
+        upload = UploadFile(file=io.BytesIO(image_bytes()))
         with patch.object(llm, "ask_json") as ask, patch.object(
             ocr, "recognize", return_value=ocr.OcrResult(lines, 1000, 1000, needs_review=True)
         ):

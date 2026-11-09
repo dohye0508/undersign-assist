@@ -4,6 +4,7 @@ from fastapi import APIRouter, File, UploadFile
 from pydantic import BaseModel
 
 from app.models import Box
+from app.routers.uploads import read_images
 
 router = APIRouter(prefix="/api/sign", tags=["서명"])
 
@@ -18,5 +19,5 @@ class SignatureSpot(BaseModel):
 async def locate_signature(photo: UploadFile = File(...)) -> SignatureSpot:
     # TODO: "서명", "(인)", "성명" 글자 위치로 서명란 찾기
     # TODO: 펜 위치 기준 방향 안내 ("조금 더 오른쪽 아래예요")
-    await photo.read()
+    await read_images([photo])
     return SignatureSpot(found=False, speech="서명란 찾기 기능은 아직 준비 중이에요.")
