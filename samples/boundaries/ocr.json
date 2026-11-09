@@ -1,0 +1,6193 @@
+{
+  "engine": "tesseract v5.5.0.20241111",
+  "ocr_source_hash": "7a4f33e65c02006b122b7148cb670bb3cc420a2b98f86a414a30066fef7df736",
+  "results": [
+    {
+      "id": "cover_lists_titles/clean",
+      "image_hashes": [
+        "8e9ba879c0e662212d5a1bb0b55d3034e4aee6f7eb1890599c1c40b528ab13c3",
+        "5a6c59e2a1bf1229e2e45e554f4d979e8d41f2cbc4d0543af44287ccbc3d9a17",
+        "9c2cdba104fc3cd4629dd1053b2a9971ea514020b87045dd3c549b286fba5d5e"
+      ],
+      "page_reviews": [
+        true,
+        false,
+        false
+      ],
+      "needs_review": true,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "제출 서류표지",
+          "box": {
+            "x": 76,
+            "y": 74,
+            "width": 281,
+            "height": 66
+          },
+          "page": 0,
+          "confidence": 93.5
+        },
+        {
+          "text": "위임장",
+          "box": {
+            "x": 77,
+            "y": 131,
+            "width": 109,
+            "height": 78
+          },
+          "page": 0,
+          "confidence": 94.33333333333333
+        },
+        {
+          "text": "개인정보 수집 이용 동의서",
+          "box": {
+            "x": 77,
+            "y": 207,
+            "width": 425,
+            "height": 78
+          },
+          "page": 0,
+          "confidence": 93.36363636363636
+        },
+        {
+          "text": "위임장",
+          "box": {
+            "x": 77,
+            "y": 74,
+            "width": 128,
+            "height": 68
+          },
+          "page": 1,
+          "confidence": 89.66666666666667
+        },
+        {
+          "text": "으",
+          "box": {
+            "x": 79,
+            "y": 80,
+            "width": 24,
+            "height": 19
+          },
+          "page": 1,
+          "confidence": 96.0
+        },
+        {
+          "text": "위임인:김한빛",
+          "box": {
+            "x": 76,
+            "y": 148,
+            "width": 237,
+            "height": 55
+          },
+          "page": 1,
+          "confidence": 89.57142857142857
+        },
+        {
+          "text": "대리인:이새봄",
+          "box": {
+            "x": 78,
+            "y": 224,
+            "width": 237,
+            "height": 55
+          },
+          "page": 1,
+          "confidence": 91.42857142857143
+        },
+        {
+          "text": "위임 업무: 도서관 회원증수령",
+          "box": {
+            "x": 76,
+            "y": 301,
+            "width": 486,
+            "height": 56
+          },
+          "page": 1,
+          "confidence": 92.38461538461539
+        },
+        {
+          "text": "위임기간:11월10일",
+          "box": {
+            "x": 76,
+            "y": 376,
+            "width": 337,
+            "height": 55
+          },
+          "page": 1,
+          "confidence": 91.77777777777777
+        },
+        {
+          "text": "개인정보수집이용동의서",
+          "box": {
+            "x": 76,
+            "y": 74,
+            "width": 506,
+            "height": 68
+          },
+          "page": 2,
+          "confidence": 92.9090909090909
+        },
+        {
+          "text": "수집 목적:서류접수",
+          "box": {
+            "x": 76,
+            "y": 148,
+            "width": 332,
+            "height": 56
+          },
+          "page": 2,
+          "confidence": 90.33333333333333
+        },
+        {
+          "text": "수집 항목:성명 연락처",
+          "box": {
+            "x": 76,
+            "y": 225,
+            "width": 367,
+            "height": 56
+          },
+          "page": 2,
+          "confidence": 93.4
+        },
+        {
+          "text": "보유 기간: 접수 후 한 달",
+          "box": {
+            "x": 76,
+            "y": 301,
+            "width": 389,
+            "height": 56
+          },
+          "page": 2,
+          "confidence": 94.2
+        },
+        {
+          "text": "동의를 거부할 수 있습니다.",
+          "box": {
+            "x": 76,
+            "y": 376,
+            "width": 436,
+            "height": 57
+          },
+          "page": 2,
+          "confidence": 93.0
+        }
+      ]
+    },
+    {
+      "id": "cover_lists_titles/desk",
+      "image_hashes": [
+        "154d8630ce327f82c8a83bdff4ad0bc48eb21a94147b0b548e2bda6de71fd03f",
+        "d18b786097c29bb4d2ca439cc673ed06a9b98be2276afa32116f043c405566bc",
+        "67fd6c11b86b53731ea6fe859745495b649b96a991a025831a627d9cc3ca5a74"
+      ],
+      "page_reviews": [
+        true,
+        false,
+        false
+      ],
+      "needs_review": true,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "제출 서류표지",
+          "box": {
+            "x": 369,
+            "y": 236,
+            "width": 289,
+            "height": 120
+          },
+          "page": 0,
+          "confidence": 93.5
+        },
+        {
+          "text": "위임장",
+          "box": {
+            "x": 357,
+            "y": 293,
+            "width": 122,
+            "height": 98
+          },
+          "page": 0,
+          "confidence": 94.0
+        },
+        {
+          "text": "개인정보 수집 이용 동이서",
+          "box": {
+            "x": 343,
+            "y": 366,
+            "width": 431,
+            "height": 160
+          },
+          "page": 0,
+          "confidence": 93.27272727272727
+        },
+        {
+          "text": "위임장",
+          "box": {
+            "x": 363,
+            "y": 215,
+            "width": 148,
+            "height": 118
+          },
+          "page": 1,
+          "confidence": 94.33333333333333
+        },
+        {
+          "text": "위임인:김한빛",
+          "box": {
+            "x": 352,
+            "y": 292,
+            "width": 249,
+            "height": 120
+          },
+          "page": 1,
+          "confidence": 93.0
+        },
+        {
+          "text": "대리인:이새봄",
+          "box": {
+            "x": 340,
+            "y": 366,
+            "width": 249,
+            "height": 120
+          },
+          "page": 1,
+          "confidence": 93.42857142857143
+        },
+        {
+          "text": "위임 업무: 도서관 회원증 수령",
+          "box": {
+            "x": 325,
+            "y": 443,
+            "width": 493,
+            "height": 163
+          },
+          "page": 1,
+          "confidence": 92.6923076923077
+        },
+        {
+          "text": "위임기간:11월10일",
+          "box": {
+            "x": 312,
+            "y": 515,
+            "width": 346,
+            "height": 138
+          },
+          "page": 1,
+          "confidence": 90.66666666666667
+        },
+        {
+          "text": "개인정보 수집 이용 동의서",
+          "box": {
+            "x": 372,
+            "y": 238,
+            "width": 509,
+            "height": 164
+          },
+          "page": 2,
+          "confidence": 93.0909090909091
+        },
+        {
+          "text": "수집 목적: 서류접수",
+          "box": {
+            "x": 361,
+            "y": 309,
+            "width": 337,
+            "height": 120
+          },
+          "page": 2,
+          "confidence": 91.55555555555556
+        },
+        {
+          "text": "수집 항목:성명 연락처",
+          "box": {
+            "x": 345,
+            "y": 385,
+            "width": 372,
+            "height": 127
+          },
+          "page": 2,
+          "confidence": 92.4
+        },
+        {
+          "text": "보유 기간: 접수 후 한 달",
+          "box": {
+            "x": 330,
+            "y": 460,
+            "width": 394,
+            "height": 131
+          },
+          "page": 2,
+          "confidence": 90.5
+        },
+        {
+          "text": "동의를 거부할 수 있습니다.",
+          "box": {
+            "x": 316,
+            "y": 535,
+            "width": 440,
+            "height": 140
+          },
+          "page": 2,
+          "confidence": 93.58333333333333
+        }
+      ]
+    },
+    {
+      "id": "cover_lists_titles/handheld",
+      "image_hashes": [
+        "12ce3e271538411b98fbc482babc7353c37968d5b7896e683b1b11ee729ac4cf",
+        "a6a4fdbccd961ccc2aecbb7159328ed2d3654821be54171f0488fa1e58526801",
+        "caa4b8cb010df4c647fe825acc9ceb52ba5e906dd68d31a091955b443fd850c4"
+      ],
+      "page_reviews": [
+        true,
+        false,
+        false
+      ],
+      "needs_review": true,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "1…ㅡ로",
+          "box": {
+            "x": 1087,
+            "y": 0,
+            "width": 58,
+            "height": 14
+          },
+          "page": 0,
+          "confidence": 27.666666666666668
+        },
+        {
+          "text": "' 제출 서류 표지",
+          "box": {
+            "x": 11,
+            "y": 189,
+            "width": 227,
+            "height": 67
+          },
+          "page": 0,
+          "confidence": 81.14285714285714
+        },
+        {
+          "text": "위임장",
+          "box": {
+            "x": 63,
+            "y": 250,
+            "width": 76,
+            "height": 46
+          },
+          "page": 0,
+          "confidence": 94.33333333333333
+        },
+        {
+          "text": "; 。 개인정보수집이용 동의서",
+          "box": {
+            "x": 26,
+            "y": 265,
+            "width": 315,
+            "height": 87
+          },
+          "page": 0,
+          "confidence": 88.38461538461539
+        },
+        {
+          "text": "개매계-ㅡ블기여개계변띠",
+          "box": {
+            "x": 655,
+            "y": 487,
+            "width": 67,
+            "height": 21
+          },
+          "page": 0,
+          "confidence": 4.25
+        },
+        {
+          "text": "2260",
+          "box": {
+            "x": 69,
+            "y": 563,
+            "width": 113,
+            "height": 33
+          },
+          "page": 0,
+          "confidence": 35.0
+        },
+        {
+          "text": "위임장 ′",
+          "box": {
+            "x": 52,
+            "y": 0,
+            "width": 1098,
+            "height": 269
+          },
+          "page": 1,
+          "confidence": 81.5
+        },
+        {
+          "text": "브룸움김한빛",
+          "box": {
+            "x": 60,
+            "y": 244,
+            "width": 158,
+            "height": 70
+          },
+          "page": 1,
+          "confidence": 82.75
+        },
+        {
+          "text": "대리인: 이새봄",
+          "box": {
+            "x": 61,
+            "y": 281,
+            "width": 161,
+            "height": 77
+          },
+          "page": 1,
+          "confidence": 91.57142857142857
+        },
+        {
+          "text": "__ 위임 업무:도서관 회원증수령 `",
+          "box": {
+            "x": 34,
+            "y": 185,
+            "width": 1084,
+            "height": 224
+          },
+          "page": 1,
+          "confidence": 77.66666666666667
+        },
+        {
+          "text": "위임 기간:11월10일 튤",
+          "box": {
+            "x": 74,
+            "y": 216,
+            "width": 1052,
+            "height": 236
+          },
+          "page": 1,
+          "confidence": 88.5
+        },
+        {
+          "text": "`",
+          "box": {
+            "x": 1123,
+            "y": 268,
+            "width": 12,
+            "height": 61
+          },
+          "page": 1,
+          "confidence": 49.0
+        },
+        {
+          "text": "、 개인정보 수집 이용동의서",
+          "box": {
+            "x": 7,
+            "y": 143,
+            "width": 382,
+            "height": 115
+          },
+          "page": 2,
+          "confidence": 88.16666666666667
+        },
+        {
+          "text": "、 수집 목적: 서류접수",
+          "box": {
+            "x": 15,
+            "y": 209,
+            "width": 262,
+            "height": 93
+          },
+          "page": 2,
+          "confidence": 90.2
+        },
+        {
+          "text": "、 수집항목:성명 연락처",
+          "box": {
+            "x": 21,
+            "y": 249,
+            "width": 281,
+            "height": 99
+          },
+          "page": 2,
+          "confidence": 75.9090909090909
+        },
+        {
+          "text": "、 보유 기간: 접수 후 한 달",
+          "box": {
+            "x": 30,
+            "y": 297,
+            "width": 292,
+            "height": 100
+          },
+          "page": 2,
+          "confidence": 71.36363636363636
+        },
+        {
+          "text": "、 동의를 거부할수 있습니다.",
+          "box": {
+            "x": 38,
+            "y": 342,
+            "width": 320,
+            "height": 102
+          },
+          "page": 2,
+          "confidence": 88.53846153846153
+        }
+      ]
+    },
+    {
+      "id": "cover_lists_titles/dark_screen",
+      "image_hashes": [
+        "feba061f8b327551fd035db90eb1c90fa86e44e306cbbaa83c6a515b2cdc320d",
+        "b496e7943358e60bbe88676a1b26940c8b2ecff28a2b4d69ddaa33071566b948",
+        "29ef2737ec67c6e9781ea3e3091ba852b5d999cb8824da0011de000d23828d01"
+      ],
+      "page_reviews": [
+        true,
+        false,
+        false
+      ],
+      "needs_review": true,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "제출 서류표지",
+          "box": {
+            "x": 76,
+            "y": 74,
+            "width": 281,
+            "height": 66
+          },
+          "page": 0,
+          "confidence": 93.33333333333333
+        },
+        {
+          "text": "위임장",
+          "box": {
+            "x": 76,
+            "y": 131,
+            "width": 109,
+            "height": 78
+          },
+          "page": 0,
+          "confidence": 94.33333333333333
+        },
+        {
+          "text": "개인정보 수집 이용 동의서",
+          "box": {
+            "x": 77,
+            "y": 207,
+            "width": 425,
+            "height": 78
+          },
+          "page": 0,
+          "confidence": 93.27272727272727
+        },
+        {
+          "text": "위임장",
+          "box": {
+            "x": 77,
+            "y": 74,
+            "width": 128,
+            "height": 68
+          },
+          "page": 1,
+          "confidence": 89.33333333333333
+        },
+        {
+          "text": "으",
+          "box": {
+            "x": 79,
+            "y": 80,
+            "width": 24,
+            "height": 19
+          },
+          "page": 1,
+          "confidence": 96.0
+        },
+        {
+          "text": "위임인:김한빛",
+          "box": {
+            "x": 76,
+            "y": 148,
+            "width": 237,
+            "height": 55
+          },
+          "page": 1,
+          "confidence": 89.42857142857143
+        },
+        {
+          "text": "대리인:이새봄",
+          "box": {
+            "x": 78,
+            "y": 224,
+            "width": 237,
+            "height": 55
+          },
+          "page": 1,
+          "confidence": 91.57142857142857
+        },
+        {
+          "text": "위임 업무: 도서관 회원증수령",
+          "box": {
+            "x": 76,
+            "y": 301,
+            "width": 486,
+            "height": 56
+          },
+          "page": 1,
+          "confidence": 92.53846153846153
+        },
+        {
+          "text": "위임기간:11월10일",
+          "box": {
+            "x": 76,
+            "y": 376,
+            "width": 337,
+            "height": 55
+          },
+          "page": 1,
+          "confidence": 91.44444444444444
+        },
+        {
+          "text": "개인정보수집이용동의서",
+          "box": {
+            "x": 76,
+            "y": 74,
+            "width": 506,
+            "height": 68
+          },
+          "page": 2,
+          "confidence": 93.36363636363636
+        },
+        {
+          "text": "수집 목적:서류접수",
+          "box": {
+            "x": 76,
+            "y": 148,
+            "width": 332,
+            "height": 56
+          },
+          "page": 2,
+          "confidence": 90.66666666666667
+        },
+        {
+          "text": "수집 항목:성명 연락처",
+          "box": {
+            "x": 76,
+            "y": 225,
+            "width": 367,
+            "height": 56
+          },
+          "page": 2,
+          "confidence": 93.4
+        },
+        {
+          "text": "보유 기간: 접수 후 한 달",
+          "box": {
+            "x": 76,
+            "y": 301,
+            "width": 389,
+            "height": 56
+          },
+          "page": 2,
+          "confidence": 94.2
+        },
+        {
+          "text": "동의를 거부할 수 있습니다.",
+          "box": {
+            "x": 76,
+            "y": 376,
+            "width": 436,
+            "height": 57
+          },
+          "page": 2,
+          "confidence": 92.66666666666667
+        }
+      ]
+    },
+    {
+      "id": "split_reference_appendix/clean",
+      "image_hashes": [
+        "5a6c59e2a1bf1229e2e45e554f4d979e8d41f2cbc4d0543af44287ccbc3d9a17",
+        "8e638b94d35ffba9496dad676c58bd30f8e317541ab4ac0a710732461fdece39"
+      ],
+      "page_reviews": [
+        false,
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "위임장",
+          "box": {
+            "x": 77,
+            "y": 74,
+            "width": 128,
+            "height": 68
+          },
+          "page": 0,
+          "confidence": 89.66666666666667
+        },
+        {
+          "text": "으",
+          "box": {
+            "x": 79,
+            "y": 80,
+            "width": 24,
+            "height": 19
+          },
+          "page": 0,
+          "confidence": 96.0
+        },
+        {
+          "text": "위임인:김한빛",
+          "box": {
+            "x": 76,
+            "y": 148,
+            "width": 237,
+            "height": 55
+          },
+          "page": 0,
+          "confidence": 89.57142857142857
+        },
+        {
+          "text": "대리인:이새봄",
+          "box": {
+            "x": 78,
+            "y": 224,
+            "width": 237,
+            "height": 55
+          },
+          "page": 0,
+          "confidence": 91.42857142857143
+        },
+        {
+          "text": "위임 업무: 도서관 회원증수령",
+          "box": {
+            "x": 76,
+            "y": 301,
+            "width": 486,
+            "height": 56
+          },
+          "page": 0,
+          "confidence": 92.38461538461539
+        },
+        {
+          "text": "위임기간:11월10일",
+          "box": {
+            "x": 76,
+            "y": 376,
+            "width": 337,
+            "height": 55
+          },
+          "page": 0,
+          "confidence": 91.77777777777777
+        },
+        {
+          "text": "청구서 작성",
+          "box": {
+            "x": 76,
+            "y": 51,
+            "width": 222,
+            "height": 96
+          },
+          "page": 1,
+          "confidence": 93.6
+        },
+        {
+          "text": "가이드",
+          "box": {
+            "x": 77,
+            "y": 149,
+            "width": 108,
+            "height": 47
+          },
+          "page": 1,
+          "confidence": 93.66666666666667
+        },
+        {
+          "text": "청구 금 액:50000원",
+          "box": {
+            "x": 77,
+            "y": 225,
+            "width": 334,
+            "height": 51
+          },
+          "page": 1,
+          "confidence": 92.0
+        },
+        {
+          "text": "납부기한:11월말",
+          "box": {
+            "x": 78,
+            "y": 301,
+            "width": 293,
+            "height": 53
+          },
+          "page": 1,
+          "confidence": 93.25
+        },
+        {
+          "text": "청구 기관: 예시관리소",
+          "box": {
+            "x": 77,
+            "y": 375,
+            "width": 354,
+            "height": 54
+          },
+          "page": 1,
+          "confidence": 90.9
+        }
+      ]
+    },
+    {
+      "id": "split_reference_appendix/desk",
+      "image_hashes": [
+        "41916e97f8b6a8a0cab5845de000b0b705dc8c700789b57983079b741b703281",
+        "9f7356669825199cf1470ee4bc8f6fc9292714f702391f88dff63bde5a390327"
+      ],
+      "page_reviews": [
+        false,
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "위임장",
+          "box": {
+            "x": 363,
+            "y": 215,
+            "width": 148,
+            "height": 118
+          },
+          "page": 0,
+          "confidence": 94.33333333333333
+        },
+        {
+          "text": "위임인:김한빛",
+          "box": {
+            "x": 352,
+            "y": 292,
+            "width": 249,
+            "height": 120
+          },
+          "page": 0,
+          "confidence": 92.85714285714286
+        },
+        {
+          "text": "대리인:이새봄",
+          "box": {
+            "x": 340,
+            "y": 366,
+            "width": 249,
+            "height": 120
+          },
+          "page": 0,
+          "confidence": 93.42857142857143
+        },
+        {
+          "text": "위임 업무: 도서관 회원증 수령",
+          "box": {
+            "x": 325,
+            "y": 443,
+            "width": 493,
+            "height": 163
+          },
+          "page": 0,
+          "confidence": 92.53846153846153
+        },
+        {
+          "text": "위임기간:11월10일",
+          "box": {
+            "x": 312,
+            "y": 515,
+            "width": 346,
+            "height": 138
+          },
+          "page": 0,
+          "confidence": 90.55555555555556
+        },
+        {
+          "text": "청구서작성",
+          "box": {
+            "x": 344,
+            "y": 211,
+            "width": 237,
+            "height": 129
+          },
+          "page": 1,
+          "confidence": 93.6
+        },
+        {
+          "text": "가이드",
+          "box": {
+            "x": 339,
+            "y": 312,
+            "width": 110,
+            "height": 53
+          },
+          "page": 1,
+          "confidence": 86.5
+        },
+        {
+          "text": "청구금액:50000원",
+          "box": {
+            "x": 327,
+            "y": 382,
+            "width": 339,
+            "height": 103
+          },
+          "page": 1,
+          "confidence": 90.85714285714286
+        },
+        {
+          "text": "납부기한:11월말",
+          "box": {
+            "x": 316,
+            "y": 458,
+            "width": 298,
+            "height": 97
+          },
+          "page": 1,
+          "confidence": 90.625
+        },
+        {
+          "text": "청구기관: 예시관리소",
+          "box": {
+            "x": 304,
+            "y": 530,
+            "width": 360,
+            "height": 108
+          },
+          "page": 1,
+          "confidence": 90.7
+        }
+      ]
+    },
+    {
+      "id": "split_reference_appendix/dark_screen",
+      "image_hashes": [
+        "b496e7943358e60bbe88676a1b26940c8b2ecff28a2b4d69ddaa33071566b948",
+        "bf6b2b08837ac7355b8c9004f2c287fe770c51fb02fb2047a8987b92fd978d2f"
+      ],
+      "page_reviews": [
+        false,
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "위임장",
+          "box": {
+            "x": 77,
+            "y": 74,
+            "width": 128,
+            "height": 68
+          },
+          "page": 0,
+          "confidence": 89.33333333333333
+        },
+        {
+          "text": "으",
+          "box": {
+            "x": 79,
+            "y": 80,
+            "width": 24,
+            "height": 19
+          },
+          "page": 0,
+          "confidence": 96.0
+        },
+        {
+          "text": "위임인:김한빛",
+          "box": {
+            "x": 76,
+            "y": 148,
+            "width": 237,
+            "height": 55
+          },
+          "page": 0,
+          "confidence": 89.42857142857143
+        },
+        {
+          "text": "대리인:이새봄",
+          "box": {
+            "x": 78,
+            "y": 224,
+            "width": 237,
+            "height": 55
+          },
+          "page": 0,
+          "confidence": 91.57142857142857
+        },
+        {
+          "text": "위임 업무: 도서관 회원증수령",
+          "box": {
+            "x": 76,
+            "y": 301,
+            "width": 486,
+            "height": 56
+          },
+          "page": 0,
+          "confidence": 92.53846153846153
+        },
+        {
+          "text": "위임기간:11월10일",
+          "box": {
+            "x": 76,
+            "y": 376,
+            "width": 337,
+            "height": 55
+          },
+          "page": 0,
+          "confidence": 91.44444444444444
+        },
+        {
+          "text": "청구서작성",
+          "box": {
+            "x": 76,
+            "y": 51,
+            "width": 224,
+            "height": 96
+          },
+          "page": 1,
+          "confidence": 93.6
+        },
+        {
+          "text": "가이드",
+          "box": {
+            "x": 77,
+            "y": 153,
+            "width": 105,
+            "height": 36
+          },
+          "page": 1,
+          "confidence": 93.66666666666667
+        },
+        {
+          "text": "청구 금 액:50000원",
+          "box": {
+            "x": 77,
+            "y": 225,
+            "width": 338,
+            "height": 51
+          },
+          "page": 1,
+          "confidence": 91.71428571428571
+        },
+        {
+          "text": "납부기한:11월말",
+          "box": {
+            "x": 78,
+            "y": 301,
+            "width": 293,
+            "height": 53
+          },
+          "page": 1,
+          "confidence": 93.0
+        },
+        {
+          "text": "청구 기관: 예시관리소",
+          "box": {
+            "x": 77,
+            "y": 375,
+            "width": 354,
+            "height": 54
+          },
+          "page": 1,
+          "confidence": 90.2
+        }
+      ]
+    },
+    {
+      "id": "split_reference_appendix/handheld",
+      "image_hashes": [
+        "b93aab51a07db012f1705450f69cb6330de73b5160c2b0992d02e0f83117f9bb",
+        "76277b90bb7972ceead5d4449c4e5269ffadfafc2467ea34ffbb6ecf56c59558"
+      ],
+      "page_reviews": [
+        false,
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "` 합쟝 래",
+          "box": {
+            "x": 14,
+            "y": 81,
+            "width": 574,
+            "height": 193
+          },
+          "page": 0,
+          "confidence": 60.333333333333336
+        },
+        {
+          "text": "ㅣ 위임인:김한빚",
+          "box": {
+            "x": 22,
+            "y": 249,
+            "width": 192,
+            "height": 73
+          },
+          "page": 0,
+          "confidence": 89.875
+        },
+        {
+          "text": "′\" 대리인:이새봄",
+          "box": {
+            "x": 28,
+            "y": 298,
+            "width": 190,
+            "height": 72
+          },
+          "page": 0,
+          "confidence": 88.0
+        },
+        {
+          "text": "ㅣ 엄업무:도서관회원증수령",
+          "box": {
+            "x": 37,
+            "y": 318,
+            "width": 342,
+            "height": 100
+          },
+          "page": 0,
+          "confidence": 83.0
+        },
+        {
+          "text": "'위임기간:11월10일",
+          "box": {
+            "x": 72,
+            "y": 382,
+            "width": 217,
+            "height": 59
+          },
+          "page": 0,
+          "confidence": 81.8
+        },
+        {
+          "text": "=레",
+          "box": {
+            "x": 120,
+            "y": 584,
+            "width": 61,
+            "height": 11
+          },
+          "page": 0,
+          "confidence": 39.0
+        },
+        {
+          "text": "、 청구서작성",
+          "box": {
+            "x": 12,
+            "y": 228,
+            "width": 196,
+            "height": 84
+          },
+          "page": 1,
+          "confidence": 78.83333333333333
+        },
+        {
+          "text": "、 가이드",
+          "box": {
+            "x": 23,
+            "y": 290,
+            "width": 116,
+            "height": 59
+          },
+          "page": 1,
+          "confidence": 76.33333333333333
+        },
+        {
+          "text": "、 청구금액:50000원",
+          "box": {
+            "x": 31,
+            "y": 301,
+            "width": 259,
+            "height": 96
+          },
+          "page": 1,
+          "confidence": 78.5
+        },
+        {
+          "text": "남부기한:11월 말",
+          "box": {
+            "x": 72,
+            "y": 347,
+            "width": 196,
+            "height": 89
+          },
+          "page": 1,
+          "confidence": 85.75
+        },
+        {
+          "text": "청구기관:예시관리소",
+          "box": {
+            "x": 76,
+            "y": 388,
+            "width": 236,
+            "height": 98
+          },
+          "page": 1,
+          "confidence": 93.0
+        }
+      ]
+    },
+    {
+      "id": "cover_lists_titles/tiny_unreadable",
+      "image_hashes": [
+        "c65b35d383ef5fba818194955d0d2019b3f63a0a6a9fd06056511d6b4d2111f2",
+        "6c7d2d19fe4cfb5c52c0bf49c2714c01ceef9b58ac90d837e4e50ed2af4d0bdd",
+        "b37f329ef65827ab90580af2732fb7c4ef7ad001a6d9fcd84a902923ab5246c7"
+      ],
+      "page_reviews": [
+        true,
+        true,
+        true
+      ],
+      "needs_review": true,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": ".70",
+          "box": {
+            "x": 6,
+            "y": 6,
+            "width": 45,
+            "height": 28
+          },
+          "page": 0,
+          "confidence": 47.0
+        },
+        {
+          "text": "---222ㅡㅡㅡ-_",
+          "box": {
+            "x": 8,
+            "y": 37,
+            "width": 7,
+            "height": 1
+          },
+          "page": 1,
+          "confidence": 47.8
+        },
+        {
+          "text": "000",
+          "box": {
+            "x": 9,
+            "y": 42,
+            "width": 6,
+            "height": 1
+          },
+          "page": 1,
+          "confidence": 56.0
+        },
+        {
+          "text": "20200",
+          "box": {
+            "x": 17,
+            "y": 42,
+            "width": 6,
+            "height": 1
+          },
+          "page": 1,
+          "confidence": 0.0
+        },
+        {
+          "text": "듭서",
+          "box": {
+            "x": 27,
+            "y": 42,
+            "width": 5,
+            "height": 1
+          },
+          "page": 1,
+          "confidence": 25.0
+        },
+        {
+          "text": "계",
+          "box": {
+            "x": 30,
+            "y": 13,
+            "width": 1,
+            "height": 1
+          },
+          "page": 2,
+          "confidence": 84.0
+        },
+        {
+          "text": "”발헤",
+          "box": {
+            "x": 10,
+            "y": 14,
+            "width": 5,
+            "height": 1
+          },
+          "page": 2,
+          "confidence": 29.666666666666668
+        },
+        {
+          "text": "노",
+          "box": {
+            "x": 21,
+            "y": 14,
+            "width": 1,
+            "height": 1
+          },
+          "page": 2,
+          "confidence": 83.0
+        },
+        {
+          "text": "00…ㅡ…",
+          "box": {
+            "x": 27,
+            "y": 14,
+            "width": 4,
+            "height": 2
+          },
+          "page": 2,
+          "confidence": 29.0
+        },
+        {
+          "text": "17~~~ 랙",
+          "box": {
+            "x": 8,
+            "y": 29,
+            "width": 7,
+            "height": 2
+          },
+          "page": 2,
+          "confidence": 40.0
+        },
+        {
+          "text": "거 ~ 000ㅋ 겨ㅡ",
+          "box": {
+            "x": 17,
+            "y": 33,
+            "width": 20,
+            "height": 2
+          },
+          "page": 2,
+          "confidence": 33.5
+        },
+        {
+          "text": "20",
+          "box": {
+            "x": 8,
+            "y": 34,
+            "width": 7,
+            "height": 1
+          },
+          "page": 2,
+          "confidence": 22.0
+        },
+        {
+          "text": "들어",
+          "box": {
+            "x": 14,
+            "y": 42,
+            "width": 4,
+            "height": 1
+          },
+          "page": 2,
+          "confidence": 37.5
+        }
+      ]
+    },
+    {
+      "id": "unsupported_primary_with_privacy/clean",
+      "image_hashes": [
+        "34b9057c6d467b8e23383f6b523f63cb0bb9bb94a7e449397116f1113ef30483",
+        "9c2cdba104fc3cd4629dd1053b2a9971ea514020b87045dd3c549b286fba5d5e"
+      ],
+      "page_reviews": [
+        false,
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "임상시험참가동의서",
+          "box": {
+            "x": 77,
+            "y": 74,
+            "width": 409,
+            "height": 66
+          },
+          "page": 0,
+          "confidence": 90.88888888888889
+        },
+        {
+          "text": "참가자:김한빚",
+          "box": {
+            "x": 77,
+            "y": 129,
+            "width": 235,
+            "height": 78
+          },
+          "page": 0,
+          "confidence": 90.57142857142857
+        },
+        {
+          "text": "시험 내용: 시험용 예시",
+          "box": {
+            "x": 77,
+            "y": 206,
+            "width": 367,
+            "height": 78
+          },
+          "page": 0,
+          "confidence": 89.6
+        },
+        {
+          "text": "시험 일:11월20일",
+          "box": {
+            "x": 77,
+            "y": 300,
+            "width": 296,
+            "height": 51
+          },
+          "page": 0,
+          "confidence": 92.625
+        },
+        {
+          "text": "담당 연구원: 이새봄",
+          "box": {
+            "x": 78,
+            "y": 358,
+            "width": 318,
+            "height": 78
+          },
+          "page": 0,
+          "confidence": 92.88888888888889
+        },
+        {
+          "text": "개인정보수집이용동의서",
+          "box": {
+            "x": 76,
+            "y": 74,
+            "width": 506,
+            "height": 68
+          },
+          "page": 1,
+          "confidence": 92.9090909090909
+        },
+        {
+          "text": "수집 목적:서류접수",
+          "box": {
+            "x": 76,
+            "y": 148,
+            "width": 332,
+            "height": 56
+          },
+          "page": 1,
+          "confidence": 90.33333333333333
+        },
+        {
+          "text": "수집 항목:성명 연락처",
+          "box": {
+            "x": 76,
+            "y": 225,
+            "width": 367,
+            "height": 56
+          },
+          "page": 1,
+          "confidence": 93.4
+        },
+        {
+          "text": "보유 기간: 접수 후 한 달",
+          "box": {
+            "x": 76,
+            "y": 301,
+            "width": 389,
+            "height": 56
+          },
+          "page": 1,
+          "confidence": 94.2
+        },
+        {
+          "text": "동의를 거부할 수 있습니다.",
+          "box": {
+            "x": 76,
+            "y": 376,
+            "width": 436,
+            "height": 57
+          },
+          "page": 1,
+          "confidence": 93.0
+        }
+      ]
+    },
+    {
+      "id": "split_reference_appendix/tiny_unreadable",
+      "image_hashes": [
+        "6c7d2d19fe4cfb5c52c0bf49c2714c01ceef9b58ac90d837e4e50ed2af4d0bdd",
+        "6e86765cd01ab4f9c1747758346c4df8c7ae371738c512bebef91856cd768361"
+      ],
+      "page_reviews": [
+        true,
+        true
+      ],
+      "needs_review": true,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "---222ㅡㅡㅡ-_",
+          "box": {
+            "x": 8,
+            "y": 37,
+            "width": 7,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 47.8
+        },
+        {
+          "text": "000",
+          "box": {
+            "x": 9,
+            "y": 42,
+            "width": 6,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 56.0
+        },
+        {
+          "text": "20200",
+          "box": {
+            "x": 17,
+            "y": 42,
+            "width": 6,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 0.0
+        },
+        {
+          "text": "듭서",
+          "box": {
+            "x": 27,
+            "y": 42,
+            "width": 5,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 25.0
+        },
+        {
+          "text": "채",
+          "box": {
+            "x": 6,
+            "y": 7,
+            "width": 36,
+            "height": 21
+          },
+          "page": 1,
+          "confidence": 21.0
+        }
+      ]
+    },
+    {
+      "id": "unsupported_primary_with_privacy/desk",
+      "image_hashes": [
+        "4b1907cc784818ad1dbca4f235d65bf4b76376c8c1d1dfa5ef23ca43e9856cce",
+        "2694efb29f4c9825b236d8408352caa288fa105bd958ea45264bd121a9dd1446"
+      ],
+      "page_reviews": [
+        false,
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "임상시험 참가 동의서",
+          "box": {
+            "x": 356,
+            "y": 238,
+            "width": 408,
+            "height": 109
+          },
+          "page": 0,
+          "confidence": 93.33333333333333
+        },
+        {
+          "text": "참가자: 김한빚",
+          "box": {
+            "x": 343,
+            "y": 288,
+            "width": 243,
+            "height": 117
+          },
+          "page": 0,
+          "confidence": 93.14285714285714
+        },
+        {
+          "text": "시험내용:시험용예시",
+          "box": {
+            "x": 332,
+            "y": 383,
+            "width": 369,
+            "height": 113
+          },
+          "page": 0,
+          "confidence": 93.3
+        },
+        {
+          "text": "시 험일:11월20일",
+          "box": {
+            "x": 320,
+            "y": 457,
+            "width": 303,
+            "height": 101
+          },
+          "page": 0,
+          "confidence": 92.5
+        },
+        {
+          "text": "담당연구원:이새봄",
+          "box": {
+            "x": 309,
+            "y": 534,
+            "width": 325,
+            "height": 105
+          },
+          "page": 0,
+          "confidence": 91.22222222222223
+        },
+        {
+          "text": "개인정보수집이용동의서",
+          "box": {
+            "x": 351,
+            "y": 234,
+            "width": 512,
+            "height": 143
+          },
+          "page": 1,
+          "confidence": 91.72727272727273
+        },
+        {
+          "text": "수집 목적: 서류 접수",
+          "box": {
+            "x": 341,
+            "y": 288,
+            "width": 342,
+            "height": 128
+          },
+          "page": 1,
+          "confidence": 93.44444444444444
+        },
+        {
+          "text": "수집 항목: 성명 연락처",
+          "box": {
+            "x": 330,
+            "y": 366,
+            "width": 375,
+            "height": 133
+          },
+          "page": 1,
+          "confidence": 91.6
+        },
+        {
+          "text": "보유기간: 접수 후 한 달",
+          "box": {
+            "x": 317,
+            "y": 441,
+            "width": 398,
+            "height": 137
+          },
+          "page": 1,
+          "confidence": 94.4
+        },
+        {
+          "text": "동의를 거부할 수 있습니다.",
+          "box": {
+            "x": 306,
+            "y": 518,
+            "width": 444,
+            "height": 142
+          },
+          "page": 1,
+          "confidence": 93.5
+        }
+      ]
+    },
+    {
+      "id": "unsupported_primary_with_privacy/dark_screen",
+      "image_hashes": [
+        "6228085c1faf140a28da5b922e9ca019e9bdcbf8053f96268e6877fce8e67bbc",
+        "29ef2737ec67c6e9781ea3e3091ba852b5d999cb8824da0011de000d23828d01"
+      ],
+      "page_reviews": [
+        false,
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "임상시험참가동의서",
+          "box": {
+            "x": 77,
+            "y": 74,
+            "width": 409,
+            "height": 66
+          },
+          "page": 0,
+          "confidence": 90.88888888888889
+        },
+        {
+          "text": "참가자:김한빚",
+          "box": {
+            "x": 77,
+            "y": 129,
+            "width": 235,
+            "height": 78
+          },
+          "page": 0,
+          "confidence": 91.42857142857143
+        },
+        {
+          "text": "시험 내용: 시험용 예시",
+          "box": {
+            "x": 77,
+            "y": 206,
+            "width": 367,
+            "height": 78
+          },
+          "page": 0,
+          "confidence": 93.2
+        },
+        {
+          "text": "시험 일:11월20일",
+          "box": {
+            "x": 77,
+            "y": 300,
+            "width": 296,
+            "height": 51
+          },
+          "page": 0,
+          "confidence": 92.5
+        },
+        {
+          "text": "담당 연구원: 이새봄",
+          "box": {
+            "x": 78,
+            "y": 358,
+            "width": 318,
+            "height": 78
+          },
+          "page": 0,
+          "confidence": 93.22222222222223
+        },
+        {
+          "text": "개인정보수집이용동의서",
+          "box": {
+            "x": 76,
+            "y": 74,
+            "width": 506,
+            "height": 68
+          },
+          "page": 1,
+          "confidence": 93.36363636363636
+        },
+        {
+          "text": "수집 목적:서류접수",
+          "box": {
+            "x": 76,
+            "y": 148,
+            "width": 332,
+            "height": 56
+          },
+          "page": 1,
+          "confidence": 90.66666666666667
+        },
+        {
+          "text": "수집 항목:성명 연락처",
+          "box": {
+            "x": 76,
+            "y": 225,
+            "width": 367,
+            "height": 56
+          },
+          "page": 1,
+          "confidence": 93.4
+        },
+        {
+          "text": "보유 기간: 접수 후 한 달",
+          "box": {
+            "x": 76,
+            "y": 301,
+            "width": 389,
+            "height": 56
+          },
+          "page": 1,
+          "confidence": 94.2
+        },
+        {
+          "text": "동의를 거부할 수 있습니다.",
+          "box": {
+            "x": 76,
+            "y": 376,
+            "width": 436,
+            "height": 57
+          },
+          "page": 1,
+          "confidence": 92.66666666666667
+        }
+      ]
+    },
+    {
+      "id": "unsupported_primary_with_privacy/handheld",
+      "image_hashes": [
+        "9f2331819d7745783d0f1c631e76badb904d6f8e82a971afbccaf53efe6b91ca",
+        "050fe0da4e2c173de10c86aca8bcfe37064147fd4ca8766ac48863e6a2726f48"
+      ],
+      "page_reviews": [
+        false,
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "_ 임상시험참가 통의서",
+          "box": {
+            "x": 8,
+            "y": 182,
+            "width": 315,
+            "height": 122
+          },
+          "page": 0,
+          "confidence": 79.1
+        },
+        {
+          "text": "、 참가자:김한빛",
+          "box": {
+            "x": 18,
+            "y": 249,
+            "width": 204,
+            "height": 92
+          },
+          "page": 0,
+          "confidence": 71.125
+        },
+        {
+          "text": "、 시험내용:시험용예시",
+          "box": {
+            "x": 27,
+            "y": 281,
+            "width": 280,
+            "height": 107
+          },
+          "page": 0,
+          "confidence": 76.0909090909091
+        },
+        {
+          "text": "、 시험일:11월20일",
+          "box": {
+            "x": 36,
+            "y": 336,
+            "width": 233,
+            "height": 97
+          },
+          "page": 0,
+          "confidence": 84.22222222222223
+        },
+        {
+          "text": "담당 연구원: 이새봄",
+          "box": {
+            "x": 77,
+            "y": 396,
+            "width": 207,
+            "height": 70
+          },
+          "page": 0,
+          "confidence": 91.66666666666667
+        },
+        {
+          "text": "개인정보 수집이용 동의서",
+          "box": {
+            "x": 55,
+            "y": 175,
+            "width": 330,
+            "height": 114
+          },
+          "page": 1,
+          "confidence": 93.0
+        },
+        {
+          "text": "_ 수집 목적:서류접수",
+          "box": {
+            "x": 19,
+            "y": 241,
+            "width": 261,
+            "height": 98
+          },
+          "page": 1,
+          "confidence": 86.2
+        },
+        {
+          "text": "、 수집항목;성명 연락저",
+          "box": {
+            "x": 27,
+            "y": 279,
+            "width": 279,
+            "height": 108
+          },
+          "page": 1,
+          "confidence": 81.36363636363636
+        },
+        {
+          "text": ". 보유 기간: 접수후한 달",
+          "box": {
+            "x": 54,
+            "y": 329,
+            "width": 271,
+            "height": 100
+          },
+          "page": 1,
+          "confidence": 92.45454545454545
+        },
+        {
+          "text": "동의를 거부할 수있습니다.",
+          "box": {
+            "x": 73,
+            "y": 371,
+            "width": 290,
+            "height": 104
+          },
+          "page": 1,
+          "confidence": 93.5
+        }
+      ]
+    },
+    {
+      "id": "clinical_form_is_not_school_reply_appendix/clean",
+      "image_hashes": [
+        "35ca4417c6da3116b864fcb2c025814315e7af07def8b9e03f5f5e53c9a6834e",
+        "91ff316914fbb1faf191b97a46a10e19123433783f49f6ec62bbe3317a03a2b5"
+      ],
+      "page_reviews": [
+        false,
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "가정통신문",
+          "box": {
+            "x": 76,
+            "y": 78,
+            "width": 213,
+            "height": 45
+          },
+          "page": 0,
+          "confidence": 92.6
+        },
+        {
+          "text": "학부모님께 역사 체험학습을 안내합니다.",
+          "box": {
+            "x": 76,
+            "y": 152,
+            "width": 652,
+            "height": 37
+          },
+          "page": 0,
+          "confidence": 92.88888888888889
+        },
+        {
+          "text": "일시:11월20일",
+          "box": {
+            "x": 77,
+            "y": 225,
+            "width": 263,
+            "height": 52
+          },
+          "page": 0,
+          "confidence": 92.71428571428571
+        },
+        {
+          "text": "장소:시립박물관",
+          "box": {
+            "x": 77,
+            "y": 283,
+            "width": 271,
+            "height": 79
+          },
+          "page": 0,
+          "confidence": 93.25
+        },
+        {
+          "text": "준비물: 필기구",
+          "box": {
+            "x": 76,
+            "y": 357,
+            "width": 236,
+            "height": 79
+          },
+          "page": 0,
+          "confidence": 93.57142857142857
+        },
+        {
+          "text": "임상시험참가동의서",
+          "box": {
+            "x": 77,
+            "y": 74,
+            "width": 409,
+            "height": 66
+          },
+          "page": 1,
+          "confidence": 90.88888888888889
+        },
+        {
+          "text": "활동명: 시험용 임상시험",
+          "box": {
+            "x": 76,
+            "y": 131,
+            "width": 391,
+            "height": 78
+          },
+          "page": 1,
+          "confidence": 92.9090909090909
+        },
+        {
+          "text": "참가자:김한빚",
+          "box": {
+            "x": 77,
+            "y": 205,
+            "width": 235,
+            "height": 78
+          },
+          "page": 1,
+          "confidence": 90.28571428571429
+        },
+        {
+          "text": "활동일시:11월20일",
+          "box": {
+            "x": 76,
+            "y": 290,
+            "width": 346,
+            "height": 69
+          },
+          "page": 1,
+          "confidence": 92.88888888888889
+        },
+        {
+          "text": "참가에 동의합니다.",
+          "box": {
+            "x": 77,
+            "y": 359,
+            "width": 305,
+            "height": 78
+          },
+          "page": 1,
+          "confidence": 93.11111111111111
+        }
+      ]
+    },
+    {
+      "id": "clinical_form_is_not_school_reply_appendix/desk",
+      "image_hashes": [
+        "143de9e9cae2709cb2c8751a9cfe4f8516aab10ac6574d3cd75006687d4a9b8e",
+        "aab4e8bd58012b696cb83d732a842ca283aabd237193062a55e0e34b313203f0"
+      ],
+      "page_reviews": [
+        false,
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "가정통신문",
+          "box": {
+            "x": 363,
+            "y": 239,
+            "width": 219,
+            "height": 83
+          },
+          "page": 0,
+          "confidence": 92.4
+        },
+        {
+          "text": "학부모님께 역사 체험학습을 안내합니다.",
+          "box": {
+            "x": 352,
+            "y": 311,
+            "width": 650,
+            "height": 153
+          },
+          "page": 0,
+          "confidence": 93.11111111111111
+        },
+        {
+          "text": "일시:11월20일",
+          "box": {
+            "x": 339,
+            "y": 384,
+            "width": 266,
+            "height": 97
+          },
+          "page": 0,
+          "confidence": 92.0
+        },
+        {
+          "text": "장소:시립박물관",
+          "box": {
+            "x": 324,
+            "y": 442,
+            "width": 281,
+            "height": 125
+          },
+          "page": 0,
+          "confidence": 93.25
+        },
+        {
+          "text": "준비물:필기구",
+          "box": {
+            "x": 310,
+            "y": 515,
+            "width": 251,
+            "height": 120
+          },
+          "page": 0,
+          "confidence": 92.57142857142857
+        },
+        {
+          "text": "임상시험 참가 동의서",
+          "box": {
+            "x": 374,
+            "y": 240,
+            "width": 408,
+            "height": 123
+          },
+          "page": 1,
+          "confidence": 93.11111111111111
+        },
+        {
+          "text": "활동명:시험용 임상시험",
+          "box": {
+            "x": 358,
+            "y": 294,
+            "width": 396,
+            "height": 149
+          },
+          "page": 1,
+          "confidence": 93.0
+        },
+        {
+          "text": "참가자: 김한빚",
+          "box": {
+            "x": 345,
+            "y": 385,
+            "width": 243,
+            "height": 99
+          },
+          "page": 1,
+          "confidence": 90.57142857142857
+        },
+        {
+          "text": "활동일시:11월20일",
+          "box": {
+            "x": 330,
+            "y": 458,
+            "width": 349,
+            "height": 119
+          },
+          "page": 1,
+          "confidence": 91.11111111111111
+        },
+        {
+          "text": "참가에 동의합니다.",
+          "box": {
+            "x": 316,
+            "y": 534,
+            "width": 311,
+            "height": 114
+          },
+          "page": 1,
+          "confidence": 92.44444444444444
+        }
+      ]
+    },
+    {
+      "id": "clinical_form_is_not_school_reply_appendix/handheld",
+      "image_hashes": [
+        "d894076994412206500e3a6f015f3ca6376929c88fe05c61cf90817b0f6b0147",
+        "914604155497f892202184415e814d77d65c88b1de4c5d73002fe82c4ecf9930"
+      ],
+      "page_reviews": [
+        false,
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "가정통신문",
+          "box": {
+            "x": 54,
+            "y": 202,
+            "width": 146,
+            "height": 71
+          },
+          "page": 0,
+          "confidence": 93.8
+        },
+        {
+          "text": "ㅣ 슐숀륵쏟°릎'_모님7게역사 제험학습을 안내합니다.",
+          "box": {
+            "x": 16,
+            "y": 191,
+            "width": 466,
+            "height": 132
+          },
+          "page": 0,
+          "confidence": 86.73333333333333
+        },
+        {
+          "text": ". _ 일시:11월20일",
+          "box": {
+            "x": 28,
+            "y": 294,
+            "width": 210,
+            "height": 74
+          },
+          "page": 0,
+          "confidence": 73.88888888888889
+        },
+        {
+          "text": "、 장소:시립박물관",
+          "box": {
+            "x": 33,
+            "y": 329,
+            "width": 218,
+            "height": 89
+          },
+          "page": 0,
+          "confidence": 86.44444444444444
+        },
+        {
+          "text": "준비물: 필기구",
+          "box": {
+            "x": 73,
+            "y": 384,
+            "width": 161,
+            "height": 77
+          },
+          "page": 0,
+          "confidence": 93.57142857142857
+        },
+        {
+          "text": "__ 임상시험 참가 동의서",
+          "box": {
+            "x": 9,
+            "y": 162,
+            "width": 313,
+            "height": 96
+          },
+          "page": 1,
+          "confidence": 86.9
+        },
+        {
+          "text": "、 활동명: 시험용 임상시험",
+          "box": {
+            "x": 16,
+            "y": 208,
+            "width": 298,
+            "height": 100
+          },
+          "page": 1,
+          "confidence": 86.66666666666667
+        },
+        {
+          "text": "、 참가자:김한빚",
+          "box": {
+            "x": 23,
+            "y": 271,
+            "width": 198,
+            "height": 84
+          },
+          "page": 1,
+          "confidence": 84.25
+        },
+        {
+          "text": "、 활동 일시:11월20일",
+          "box": {
+            "x": 31,
+            "y": 306,
+            "width": 263,
+            "height": 95
+          },
+          "page": 1,
+          "confidence": 87.0
+        },
+        {
+          "text": "、 참가에동의합니다.",
+          "box": {
+            "x": 41,
+            "y": 369,
+            "width": 231,
+            "height": 77
+          },
+          "page": 1,
+          "confidence": 88.8
+        }
+      ]
+    },
+    {
+      "id": "unsupported_primary_with_privacy/tiny_unreadable",
+      "image_hashes": [
+        "2377d025e35271684124173e6e8df67f4703e07a3e47aade5ff2fe44b975b649",
+        "b37f329ef65827ab90580af2732fb7c4ef7ad001a6d9fcd84a902923ab5246c7"
+      ],
+      "page_reviews": [
+        true,
+        true
+      ],
+      "needs_review": true,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "들.에",
+          "box": {
+            "x": 24,
+            "y": 34,
+            "width": 4,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 34.0
+        },
+        {
+          "text": ".ㅡ066622---",
+          "box": {
+            "x": 8,
+            "y": 37,
+            "width": 7,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 21.0
+        },
+        {
+          "text": "0202999ㅜ, 랙",
+          "box": {
+            "x": 33,
+            "y": 37,
+            "width": 6,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 10.5
+        },
+        {
+          "text": "22220",
+          "box": {
+            "x": 8,
+            "y": 42,
+            "width": 7,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 38.0
+        },
+        {
+          "text": "계",
+          "box": {
+            "x": 30,
+            "y": 13,
+            "width": 1,
+            "height": 1
+          },
+          "page": 1,
+          "confidence": 84.0
+        },
+        {
+          "text": "”발헤",
+          "box": {
+            "x": 10,
+            "y": 14,
+            "width": 5,
+            "height": 1
+          },
+          "page": 1,
+          "confidence": 29.666666666666668
+        },
+        {
+          "text": "노",
+          "box": {
+            "x": 21,
+            "y": 14,
+            "width": 1,
+            "height": 1
+          },
+          "page": 1,
+          "confidence": 83.0
+        },
+        {
+          "text": "00…ㅡ…",
+          "box": {
+            "x": 27,
+            "y": 14,
+            "width": 4,
+            "height": 2
+          },
+          "page": 1,
+          "confidence": 29.0
+        },
+        {
+          "text": "17~~~ 랙",
+          "box": {
+            "x": 8,
+            "y": 29,
+            "width": 7,
+            "height": 2
+          },
+          "page": 1,
+          "confidence": 40.0
+        },
+        {
+          "text": "거 ~ 000ㅋ 겨ㅡ",
+          "box": {
+            "x": 17,
+            "y": 33,
+            "width": 20,
+            "height": 2
+          },
+          "page": 1,
+          "confidence": 33.5
+        },
+        {
+          "text": "20",
+          "box": {
+            "x": 8,
+            "y": 34,
+            "width": 7,
+            "height": 1
+          },
+          "page": 1,
+          "confidence": 22.0
+        },
+        {
+          "text": "들어",
+          "box": {
+            "x": 14,
+            "y": 42,
+            "width": 4,
+            "height": 1
+          },
+          "page": 1,
+          "confidence": 37.5
+        }
+      ]
+    },
+    {
+      "id": "clinical_form_is_not_school_reply_appendix/dark_screen",
+      "image_hashes": [
+        "8335292084f178f77f9536a9c85ba355812301765a74ecd9079be36903655f3e",
+        "f0195286bea4bf572dd1ec98e86c78c77b4b0851e23dcac74173b85d5e37b2d5"
+      ],
+      "page_reviews": [
+        false,
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "가정통신문",
+          "box": {
+            "x": 76,
+            "y": 78,
+            "width": 213,
+            "height": 45
+          },
+          "page": 0,
+          "confidence": 92.4
+        },
+        {
+          "text": "학부모님께 역사 체험학습을 안내합니다.",
+          "box": {
+            "x": 76,
+            "y": 152,
+            "width": 652,
+            "height": 37
+          },
+          "page": 0,
+          "confidence": 93.05555555555556
+        },
+        {
+          "text": "일시:11월20일",
+          "box": {
+            "x": 77,
+            "y": 225,
+            "width": 263,
+            "height": 52
+          },
+          "page": 0,
+          "confidence": 92.71428571428571
+        },
+        {
+          "text": "장소:시립박물관",
+          "box": {
+            "x": 77,
+            "y": 283,
+            "width": 271,
+            "height": 79
+          },
+          "page": 0,
+          "confidence": 93.375
+        },
+        {
+          "text": "준비물: 필기구",
+          "box": {
+            "x": 76,
+            "y": 357,
+            "width": 236,
+            "height": 79
+          },
+          "page": 0,
+          "confidence": 93.57142857142857
+        },
+        {
+          "text": "임상시험 참가 동의서",
+          "box": {
+            "x": 77,
+            "y": 74,
+            "width": 405,
+            "height": 66
+          },
+          "page": 1,
+          "confidence": 90.88888888888889
+        },
+        {
+          "text": "활동명: 시험용 임상시험",
+          "box": {
+            "x": 76,
+            "y": 131,
+            "width": 391,
+            "height": 78
+          },
+          "page": 1,
+          "confidence": 92.18181818181819
+        },
+        {
+          "text": "참가자:김한빚",
+          "box": {
+            "x": 77,
+            "y": 205,
+            "width": 235,
+            "height": 78
+          },
+          "page": 1,
+          "confidence": 89.14285714285714
+        },
+        {
+          "text": "활동일시:11월20일",
+          "box": {
+            "x": 76,
+            "y": 290,
+            "width": 346,
+            "height": 69
+          },
+          "page": 1,
+          "confidence": 92.88888888888889
+        },
+        {
+          "text": "참가에 동의합니다.",
+          "box": {
+            "x": 77,
+            "y": 359,
+            "width": 305,
+            "height": 78
+          },
+          "page": 1,
+          "confidence": 93.22222222222223
+        }
+      ]
+    },
+    {
+      "id": "inline_contract/clean",
+      "image_hashes": [
+        "1723b58db1cd14c98caaa12f0197a0918c8e28df1818ecae06a317c2c3bbbd49"
+      ],
+      "page_reviews": [
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "근로계약서",
+          "box": {
+            "x": 76,
+            "y": 78,
+            "width": 210,
+            "height": 45
+          },
+          "page": 0,
+          "confidence": 91.6
+        },
+        {
+          "text": "시급:15000원_ 임금지급일:매월25일",
+          "box": {
+            "x": 77,
+            "y": 149,
+            "width": 672,
+            "height": 56
+          },
+          "page": 0,
+          "confidence": 82.5625
+        },
+        {
+          "text": "소정근로시 간: 주20시간 근무 장소: 예시도서관",
+          "box": {
+            "x": 76,
+            "y": 225,
+            "width": 795,
+            "height": 55
+          },
+          "page": 0,
+          "confidence": 89.61904761904762
+        },
+        {
+          "text": "계약기간:2026년 1월부터12월까지",
+          "box": {
+            "x": 77,
+            "y": 301,
+            "width": 607,
+            "height": 53
+          },
+          "page": 0,
+          "confidence": 92.8
+        },
+        {
+          "text": "근로자: 김가상",
+          "box": {
+            "x": 76,
+            "y": 381,
+            "width": 237,
+            "height": 36
+          },
+          "page": 0,
+          "confidence": 92.42857142857143
+        },
+        {
+          "text": "임금지급 방법: 계좌이체",
+          "box": {
+            "x": 77,
+            "y": 453,
+            "width": 402,
+            "height": 55
+          },
+          "page": 0,
+          "confidence": 91.45454545454545
+        }
+      ]
+    },
+    {
+      "id": "inline_contract/desk",
+      "image_hashes": [
+        "6cf9a7e06908bd5ccc5a0d5d582e10a8d6c28fa8fca40cb69e6d180e3a775a02"
+      ],
+      "page_reviews": [
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "근로계약서",
+          "box": {
+            "x": 391,
+            "y": 239,
+            "width": 223,
+            "height": 102
+          },
+          "page": 0,
+          "confidence": 93.8
+        },
+        {
+          "text": "시급:15000원、 임금 지급일:매월25일",
+          "box": {
+            "x": 378,
+            "y": 300,
+            "width": 673,
+            "height": 200
+          },
+          "page": 0,
+          "confidence": 88.8
+        },
+        {
+          "text": "소정근로시간: 주20시간 근무 장소: 예시도서관",
+          "box": {
+            "x": 363,
+            "y": 370,
+            "width": 794,
+            "height": 224
+          },
+          "page": 0,
+          "confidence": 89.76190476190476
+        },
+        {
+          "text": "계약기간:2026년 1월부터12월까지",
+          "box": {
+            "x": 347,
+            "y": 448,
+            "width": 609,
+            "height": 187
+          },
+          "page": 0,
+          "confidence": 92.53333333333333
+        },
+        {
+          "text": "근로자: 김가상",
+          "box": {
+            "x": 333,
+            "y": 535,
+            "width": 246,
+            "height": 94
+          },
+          "page": 0,
+          "confidence": 92.14285714285714
+        },
+        {
+          "text": "임금 지급 방법:계좌이체",
+          "box": {
+            "x": 317,
+            "y": 597,
+            "width": 405,
+            "height": 145
+          },
+          "page": 0,
+          "confidence": 93.0
+        }
+      ]
+    },
+    {
+      "id": "inline_contract/handheld",
+      "image_hashes": [
+        "4a35e837b2dd8606951c08d318efaa31284239fc68287c96cb51e85b8848a49b"
+      ],
+      "page_reviews": [
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "듣 근로계약서",
+          "box": {
+            "x": 0,
+            "y": 133,
+            "width": 199,
+            "height": 126
+          },
+          "page": 0,
+          "confidence": 89.0
+        },
+        {
+          "text": "、 시급:16000원 임금지급일:매월25일",
+          "box": {
+            "x": 13,
+            "y": 170,
+            "width": 485,
+            "height": 126
+          },
+          "page": 0,
+          "confidence": 74.13333333333334
+        },
+        {
+          "text": "、 소정근로시간: 주20시간 근무 장소: 예시도서관",
+          "box": {
+            "x": 19,
+            "y": 204,
+            "width": 565,
+            "height": 139
+          },
+          "page": 0,
+          "confidence": 88.63636363636364
+        },
+        {
+          "text": "、 계약기간:2026년1월부터12월까지",
+          "box": {
+            "x": 26,
+            "y": 265,
+            "width": 437,
+            "height": 125
+          },
+          "page": 0,
+          "confidence": 85.875
+        },
+        {
+          "text": "근로자:김가상",
+          "box": {
+            "x": 66,
+            "y": 353,
+            "width": 160,
+            "height": 79
+          },
+          "page": 0,
+          "confidence": 93.71428571428571
+        },
+        {
+          "text": "임금 지급 방법: 계좌이체",
+          "box": {
+            "x": 67,
+            "y": 388,
+            "width": 267,
+            "height": 95
+          },
+          "page": 0,
+          "confidence": 88.36363636363636
+        }
+      ]
+    },
+    {
+      "id": "inline_contract/dark_screen",
+      "image_hashes": [
+        "45e7ef6c06673173c7c491a4c4aae2af1a4b679d4f9493a3a97926238b2e827a"
+      ],
+      "page_reviews": [
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "근로계약서",
+          "box": {
+            "x": 76,
+            "y": 78,
+            "width": 210,
+            "height": 45
+          },
+          "page": 0,
+          "confidence": 91.8
+        },
+        {
+          "text": "시급:15000원_ 임금지급일:매월25일",
+          "box": {
+            "x": 77,
+            "y": 149,
+            "width": 672,
+            "height": 56
+          },
+          "page": 0,
+          "confidence": 81.4375
+        },
+        {
+          "text": "소정근로시 간: 주20시간 근무 장소: 예시도서관",
+          "box": {
+            "x": 76,
+            "y": 225,
+            "width": 795,
+            "height": 55
+          },
+          "page": 0,
+          "confidence": 90.38095238095238
+        },
+        {
+          "text": "계약기간:2026년 1월부터12월까지",
+          "box": {
+            "x": 77,
+            "y": 301,
+            "width": 607,
+            "height": 53
+          },
+          "page": 0,
+          "confidence": 92.66666666666667
+        },
+        {
+          "text": "근로자: 김가상",
+          "box": {
+            "x": 76,
+            "y": 381,
+            "width": 237,
+            "height": 36
+          },
+          "page": 0,
+          "confidence": 92.57142857142857
+        },
+        {
+          "text": "임금지급 방법: 계좌이제",
+          "box": {
+            "x": 77,
+            "y": 453,
+            "width": 399,
+            "height": 55
+          },
+          "page": 0,
+          "confidence": 86.9
+        }
+      ]
+    },
+    {
+      "id": "inline_application/clean",
+      "image_hashes": [
+        "5fd8c417b302565bed3851dda92aefbdc8f20080dd95e52cecda275249ca0c38"
+      ],
+      "page_reviews": [
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "참가 신청서",
+          "box": {
+            "x": 76,
+            "y": 74,
+            "width": 222,
+            "height": 64
+          },
+          "page": 0,
+          "confidence": 91.6
+        },
+        {
+          "text": "신청인성명: 김가상_ 연락처:",
+          "box": {
+            "x": 77,
+            "y": 149,
+            "width": 479,
+            "height": 53
+          },
+          "page": 0,
+          "confidence": 85.53846153846153
+        },
+        {
+          "text": "010-1111-2222",
+          "box": {
+            "x": 77,
+            "y": 232,
+            "width": 271,
+            "height": 30
+          },
+          "page": 0,
+          "confidence": 91.0
+        },
+        {
+          "text": "이메일:0라5000@6×30016.000ㅁ, 소속:",
+          "box": {
+            "x": 78,
+            "y": 299,
+            "width": 672,
+            "height": 52
+          },
+          "page": 0,
+          "confidence": 70.75
+        },
+        {
+          "text": "예시학교",
+          "box": {
+            "x": 77,
+            "y": 381,
+            "width": 141,
+            "height": 36
+          },
+          "page": 0,
+          "confidence": 94.0
+        },
+        {
+          "text": "참가부문:역사탐방",
+          "box": {
+            "x": 77,
+            "y": 452,
+            "width": 334,
+            "height": 52
+          },
+          "page": 0,
+          "confidence": 92.77777777777777
+        },
+        {
+          "text": "접수기간:2026년11월",
+          "box": {
+            "x": 77,
+            "y": 527,
+            "width": 394,
+            "height": 53
+          },
+          "page": 0,
+          "confidence": 92.0
+        },
+        {
+          "text": "신청합니다.",
+          "box": {
+            "x": 77,
+            "y": 608,
+            "width": 186,
+            "height": 37
+          },
+          "page": 0,
+          "confidence": 93.5
+        }
+      ]
+    },
+    {
+      "id": "clinical_form_is_not_school_reply_appendix/tiny_unreadable",
+      "image_hashes": [
+        "38882f19fcf0217dec11f4dd42372f02559c9012e15c7415745bc54a849667d8",
+        "5852988f7391196f719bbab40fd7d45730d6ac4cf02d1ecdc960b2c2042adacd"
+      ],
+      "page_reviews": [
+        true,
+        true
+      ],
+      "needs_review": true,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "~026",
+          "box": {
+            "x": 6,
+            "y": 6,
+            "width": 67,
+            "height": 29
+          },
+          "page": 0,
+          "confidence": 49.5
+        },
+        {
+          "text": "개 0",
+          "box": {
+            "x": 36,
+            "y": 13,
+            "width": 5,
+            "height": 1
+          },
+          "page": 1,
+          "confidence": 65.5
+        },
+        {
+          "text": ".00ㅡㅡㅡㅡ",
+          "box": {
+            "x": 8,
+            "y": 29,
+            "width": 7,
+            "height": 1
+          },
+          "page": 1,
+          "confidence": 36.2
+        },
+        {
+          "text": "026",
+          "box": {
+            "x": 26,
+            "y": 30,
+            "width": 6,
+            "height": 1
+          },
+          "page": 1,
+          "confidence": 45.0
+        },
+        {
+          "text": "200",
+          "box": {
+            "x": 28,
+            "y": 34,
+            "width": 5,
+            "height": 1
+          },
+          "page": 1,
+          "confidence": 39.0
+        }
+      ]
+    },
+    {
+      "id": "inline_contract/tiny_unreadable",
+      "image_hashes": [
+        "8f0b1c1620d1cefc7da46990ee5eb99b2b0d6101ceb45f2a3d4c7f3bb1b6996d"
+      ],
+      "page_reviews": [
+        true
+      ],
+      "needs_review": true,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "000=ㅡ=",
+          "box": {
+            "x": 8,
+            "y": 13,
+            "width": 7,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 33.333333333333336
+        },
+        {
+          "text": "~~ 70",
+          "box": {
+            "x": 9,
+            "y": 14,
+            "width": 7,
+            "height": 2
+          },
+          "page": 0,
+          "confidence": 22.5
+        },
+        {
+          "text": "120000.7벡",
+          "box": {
+            "x": 24,
+            "y": 22,
+            "width": 5,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 31.5
+        }
+      ]
+    },
+    {
+      "id": "inline_application/desk",
+      "image_hashes": [
+        "efbbaa83c0217205955a0708b09540ba43a668f9c7c83d3bc3b5845bbc4330eb"
+      ],
+      "page_reviews": [
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "참가 신청서",
+          "box": {
+            "x": 412,
+            "y": 241,
+            "width": 228,
+            "height": 87
+          },
+          "page": 0,
+          "confidence": 90.2
+        },
+        {
+          "text": "신청인 성명: 김가상_ 연락처:",
+          "box": {
+            "x": 398,
+            "y": 295,
+            "width": 486,
+            "height": 165
+          },
+          "page": 0,
+          "confidence": 88.53846153846153
+        },
+        {
+          "text": "010-1111-2222",
+          "box": {
+            "x": 387,
+            "y": 393,
+            "width": 273,
+            "height": 80
+          },
+          "page": 0,
+          "confidence": 90.0
+        },
+        {
+          "text": "이메일:66500@6×300166.000 소속:",
+          "box": {
+            "x": 371,
+            "y": 460,
+            "width": 671,
+            "height": 174
+          },
+          "page": 0,
+          "confidence": 76.125
+        },
+        {
+          "text": "예시학교",
+          "box": {
+            "x": 355,
+            "y": 535,
+            "width": 153,
+            "height": 81
+          },
+          "page": 0,
+          "confidence": 93.0
+        },
+        {
+          "text": "참가 부문:역사탐방",
+          "box": {
+            "x": 342,
+            "y": 610,
+            "width": 339,
+            "height": 115
+          },
+          "page": 0,
+          "confidence": 91.77777777777777
+        },
+        {
+          "text": "접수기간:2026년11월",
+          "box": {
+            "x": 328,
+            "y": 683,
+            "width": 399,
+            "height": 126
+          },
+          "page": 0,
+          "confidence": 87.33333333333333
+        },
+        {
+          "text": "신청합니다.",
+          "box": {
+            "x": 315,
+            "y": 763,
+            "width": 191,
+            "height": 71
+          },
+          "page": 0,
+          "confidence": 92.66666666666667
+        }
+      ]
+    },
+    {
+      "id": "inline_application/dark_screen",
+      "image_hashes": [
+        "6b46138df7a850b6cd553efb24646310d93229c63bc1be3f74d655d00fe53daa"
+      ],
+      "page_reviews": [
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "참가 신청서",
+          "box": {
+            "x": 76,
+            "y": 78,
+            "width": 222,
+            "height": 45
+          },
+          "page": 0,
+          "confidence": 93.8
+        },
+        {
+          "text": "신청인성명: 김가상_ 연락처:",
+          "box": {
+            "x": 77,
+            "y": 149,
+            "width": 479,
+            "height": 52
+          },
+          "page": 0,
+          "confidence": 83.15384615384616
+        },
+        {
+          "text": "010-1111-2222",
+          "box": {
+            "x": 77,
+            "y": 232,
+            "width": 271,
+            "height": 30
+          },
+          "page": 0,
+          "confidence": 91.0
+        },
+        {
+          "text": "이메일:0라5000@6×30016.000 소속:",
+          "box": {
+            "x": 78,
+            "y": 299,
+            "width": 672,
+            "height": 52
+          },
+          "page": 0,
+          "confidence": 75.7
+        },
+        {
+          "text": "예시학교",
+          "box": {
+            "x": 77,
+            "y": 381,
+            "width": 141,
+            "height": 36
+          },
+          "page": 0,
+          "confidence": 94.0
+        },
+        {
+          "text": "참가부문:역사탐방",
+          "box": {
+            "x": 77,
+            "y": 452,
+            "width": 334,
+            "height": 52
+          },
+          "page": 0,
+          "confidence": 92.88888888888889
+        },
+        {
+          "text": "접수 기간:2026년11월",
+          "box": {
+            "x": 77,
+            "y": 528,
+            "width": 396,
+            "height": 52
+          },
+          "page": 0,
+          "confidence": 92.0
+        },
+        {
+          "text": "신청합니다.",
+          "box": {
+            "x": 77,
+            "y": 608,
+            "width": 186,
+            "height": 37
+          },
+          "page": 0,
+          "confidence": 93.5
+        }
+      ]
+    },
+    {
+      "id": "inline_receipt/clean",
+      "image_hashes": [
+        "96f053b9ffadf80e9c6ab3c874b3637f1b5ae956c9500f0a96deb7818f0bc90b"
+      ],
+      "page_reviews": [
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "물품구매 영수증",
+          "box": {
+            "x": 76,
+            "y": 74,
+            "width": 326,
+            "height": 65
+          },
+          "page": 0,
+          "confidence": 89.57142857142857
+        },
+        {
+          "text": "결제금액:12000원_환불금액:2000원",
+          "box": {
+            "x": 77,
+            "y": 149,
+            "width": 685,
+            "height": 52
+          },
+          "page": 0,
+          "confidence": 87.66666666666667
+        },
+        {
+          "text": "상호: 예시문구점 거래일:2026년11월 9일",
+          "box": {
+            "x": 77,
+            "y": 206,
+            "width": 736,
+            "height": 79
+          },
+          "page": 0,
+          "confidence": 91.61111111111111
+        },
+        {
+          "text": "결제 방법: 카드",
+          "box": {
+            "x": 77,
+            "y": 282,
+            "width": 246,
+            "height": 78
+          },
+          "page": 0,
+          "confidence": 90.5
+        },
+        {
+          "text": "구매 내역:공책",
+          "box": {
+            "x": 76,
+            "y": 358,
+            "width": 248,
+            "height": 79
+          },
+          "page": 0,
+          "confidence": 92.71428571428571
+        },
+        {
+          "text": "결제 완료",
+          "box": {
+            "x": 77,
+            "y": 435,
+            "width": 152,
+            "height": 78
+          },
+          "page": 0,
+          "confidence": 93.75
+        }
+      ]
+    },
+    {
+      "id": "inline_application/tiny_unreadable",
+      "image_hashes": [
+        "5c36f1df649c40441e93e9742b288b75620af1a46d3170f8407a77dda706ad01"
+      ],
+      "page_reviews": [
+        true
+      ],
+      "needs_review": true,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "개",
+          "box": {
+            "x": 8,
+            "y": 13,
+            "width": 1,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 67.0
+        },
+        {
+          "text": "00",
+          "box": {
+            "x": 20,
+            "y": 14,
+            "width": 2,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 28.0
+        },
+        {
+          "text": "299664",
+          "box": {
+            "x": 68,
+            "y": 30,
+            "width": 7,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 22.0
+        },
+        {
+          "text": "222000",
+          "box": {
+            "x": 67,
+            "y": 34,
+            "width": 7,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 0.0
+        },
+        {
+          "text": "006",
+          "box": {
+            "x": 14,
+            "y": 37,
+            "width": 4,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 26.0
+        }
+      ]
+    },
+    {
+      "id": "inline_application/handheld",
+      "image_hashes": [
+        "cc98d7752df51df902c1964b74fea62b51b1044e2eb953500dd9992e18e2674e"
+      ],
+      "page_reviews": [
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "짐/_",
+          "box": {
+            "x": 634,
+            "y": 0,
+            "width": 144,
+            "height": 69
+          },
+          "page": 0,
+          "confidence": 27.0
+        },
+        {
+          "text": "가신청서",
+          "box": {
+            "x": 82,
+            "y": 191,
+            "width": 119,
+            "height": 48
+          },
+          "page": 0,
+          "confidence": 90.25
+        },
+        {
+          "text": "、 신청인성명: 김가상 연락저:",
+          "box": {
+            "x": 15,
+            "y": 196,
+            "width": 355,
+            "height": 107
+          },
+          "page": 0,
+          "confidence": 81.61538461538461
+        },
+        {
+          "text": "、 010-1111-2222",
+          "box": {
+            "x": 26,
+            "y": 282,
+            "width": 211,
+            "height": 55
+          },
+          "page": 0,
+          "confidence": 71.0
+        },
+        {
+          "text": "、 이메일:206『5000@6×31716.000) 소속:",
+          "box": {
+            "x": 32,
+            "y": 282,
+            "width": 467,
+            "height": 108
+          },
+          "page": 0,
+          "confidence": 67.0
+        },
+        {
+          "text": "시학교",
+          "box": {
+            "x": 93,
+            "y": 381,
+            "width": 75,
+            "height": 45
+          },
+          "page": 0,
+          "confidence": 92.66666666666667
+        },
+        {
+          "text": ".참가 부문: 역사탐방",
+          "box": {
+            "x": 69,
+            "y": 408,
+            "width": 221,
+            "height": 72
+          },
+          "page": 0,
+          "confidence": 82.3
+        },
+        {
+          "text": "접수기간:2026년11월",
+          "box": {
+            "x": 75,
+            "y": 442,
+            "width": 255,
+            "height": 91
+          },
+          "page": 0,
+          "confidence": 91.55555555555556
+        },
+        {
+          "text": "신청합니다.",
+          "box": {
+            "x": 77,
+            "y": 519,
+            "width": 126,
+            "height": 54
+          },
+          "page": 0,
+          "confidence": 91.83333333333333
+        },
+        {
+          "text": "、 0 래",
+          "box": {
+            "x": 130,
+            "y": 597,
+            "width": 543,
+            "height": 110
+          },
+          "page": 0,
+          "confidence": 21.666666666666668
+        },
+        {
+          "text": ".~~ㅡ。",
+          "box": {
+            "x": 674,
+            "y": 525,
+            "width": 476,
+            "height": 183
+          },
+          "page": 0,
+          "confidence": 58.8
+        }
+      ]
+    },
+    {
+      "id": "inline_receipt/dark_screen",
+      "image_hashes": [
+        "285e91c36c0f7bf366883ef95a495ba20406512e270bf0a6f786bc66a6f691e0"
+      ],
+      "page_reviews": [
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "물품구매 영수증",
+          "box": {
+            "x": 76,
+            "y": 74,
+            "width": 326,
+            "height": 65
+          },
+          "page": 0,
+          "confidence": 89.71428571428571
+        },
+        {
+          "text": "결제금액:12000원_환불금액:2000원",
+          "box": {
+            "x": 77,
+            "y": 149,
+            "width": 685,
+            "height": 52
+          },
+          "page": 0,
+          "confidence": 89.4
+        },
+        {
+          "text": "상호:예시문구점 거래일:2026년11월 9일",
+          "box": {
+            "x": 77,
+            "y": 206,
+            "width": 736,
+            "height": 79
+          },
+          "page": 0,
+          "confidence": 92.22222222222223
+        },
+        {
+          "text": "결제 방법: 카드",
+          "box": {
+            "x": 77,
+            "y": 282,
+            "width": 246,
+            "height": 78
+          },
+          "page": 0,
+          "confidence": 92.0
+        },
+        {
+          "text": "구매 내역:공책",
+          "box": {
+            "x": 76,
+            "y": 358,
+            "width": 248,
+            "height": 79
+          },
+          "page": 0,
+          "confidence": 89.85714285714286
+        },
+        {
+          "text": "결제 완료",
+          "box": {
+            "x": 77,
+            "y": 435,
+            "width": 152,
+            "height": 78
+          },
+          "page": 0,
+          "confidence": 93.75
+        }
+      ]
+    },
+    {
+      "id": "inline_receipt/desk",
+      "image_hashes": [
+        "d35345333132ffb57de58ce5df199bf3dcb58b5af127e36915b66505e05f0112"
+      ],
+      "page_reviews": [
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "물품 구매영수증",
+          "box": {
+            "x": 370,
+            "y": 236,
+            "width": 336,
+            "height": 125
+          },
+          "page": 0,
+          "confidence": 92.42857142857143
+        },
+        {
+          "text": "결제 금액:12000원_ 환불금액:2000원",
+          "box": {
+            "x": 362,
+            "y": 308,
+            "width": 682,
+            "height": 174
+          },
+          "page": 0,
+          "confidence": 84.46666666666667
+        },
+        {
+          "text": "상호: 예시 문구점_거래 일:2026년11월9일",
+          "box": {
+            "x": 347,
+            "y": 383,
+            "width": 737,
+            "height": 186
+          },
+          "page": 0,
+          "confidence": 91.10526315789474
+        },
+        {
+          "text": "결제 방법:카드",
+          "box": {
+            "x": 335,
+            "y": 460,
+            "width": 253,
+            "height": 99
+          },
+          "page": 0,
+          "confidence": 94.0
+        },
+        {
+          "text": "구매 내역:공책",
+          "box": {
+            "x": 320,
+            "y": 534,
+            "width": 255,
+            "height": 100
+          },
+          "page": 0,
+          "confidence": 92.14285714285714
+        },
+        {
+          "text": "결제완료",
+          "box": {
+            "x": 309,
+            "y": 610,
+            "width": 162,
+            "height": 83
+          },
+          "page": 0,
+          "confidence": 94.0
+        }
+      ]
+    },
+    {
+      "id": "inline_receipt/handheld",
+      "image_hashes": [
+        "7e09068f6d508ea79287e2ee3dbc0289df4365716bd245ee23a1988042eb4880"
+      ],
+      "page_reviews": [
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "__ 물품구매 영수증",
+          "box": {
+            "x": 10,
+            "y": 191,
+            "width": 260,
+            "height": 93
+          },
+          "page": 0,
+          "confidence": 84.375
+        },
+        {
+          "text": "、 결제금액:12000원 환불금액:2000원",
+          "box": {
+            "x": 17,
+            "y": 189,
+            "width": 489,
+            "height": 137
+          },
+          "page": 0,
+          "confidence": 85.71428571428571
+        },
+        {
+          "text": "、 상호:예시문구점 거래일:2026년11월 9일",
+          "box": {
+            "x": 26,
+            "y": 231,
+            "width": 517,
+            "height": 140
+          },
+          "page": 0,
+          "confidence": 87.73684210526316
+        },
+        {
+          "text": "、 결제방법:카드",
+          "box": {
+            "x": 33,
+            "y": 331,
+            "width": 199,
+            "height": 86
+          },
+          "page": 0,
+          "confidence": 82.57142857142857
+        },
+        {
+          "text": "、 구매내역: 공책",
+          "box": {
+            "x": 43,
+            "y": 382,
+            "width": 194,
+            "height": 81
+          },
+          "page": 0,
+          "confidence": 88.0
+        },
+        {
+          "text": ". 결제완료",
+          "box": {
+            "x": 50,
+            "y": 436,
+            "width": 136,
+            "height": 76
+          },
+          "page": 0,
+          "confidence": 76.8
+        }
+      ]
+    },
+    {
+      "id": "inline_certificate/clean",
+      "image_hashes": [
+        "2d3ccde38cc573bbf2ebc36d29167dedd760968115bd33024bef4081870f4a95"
+      ],
+      "page_reviews": [
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "재직증명서",
+          "box": {
+            "x": 76,
+            "y": 78,
+            "width": 210,
+            "height": 45
+          },
+          "page": 0,
+          "confidence": 93.4
+        },
+        {
+          "text": "대표자 성명: 박대표、 대상자 성명: 김대상",
+          "box": {
+            "x": 78,
+            "y": 149,
+            "width": 683,
+            "height": 56
+          },
+          "page": 0,
+          "confidence": 92.33333333333333
+        },
+        {
+          "text": "대상자 소속: 개 발팀 발급 기관: 예시회사",
+          "box": {
+            "x": 78,
+            "y": 225,
+            "width": 686,
+            "height": 56
+          },
+          "page": 0,
+          "confidence": 90.05555555555556
+        },
+        {
+          "text": "재직기간:2024년 3월부터현재",
+          "box": {
+            "x": 76,
+            "y": 300,
+            "width": 543,
+            "height": 55
+          },
+          "page": 0,
+          "confidence": 92.76923076923077
+        },
+        {
+          "text": "발급일:2026년11월9일",
+          "box": {
+            "x": 78,
+            "y": 376,
+            "width": 417,
+            "height": 55
+          },
+          "page": 0,
+          "confidence": 92.0
+        },
+        {
+          "text": "위 사실을 증명합니다.",
+          "box": {
+            "x": 76,
+            "y": 456,
+            "width": 353,
+            "height": 37
+          },
+          "page": 0,
+          "confidence": 92.5
+        }
+      ]
+    },
+    {
+      "id": "inline_certificate/desk",
+      "image_hashes": [
+        "62f9ceaac8dea38a21f8e259fc39f1e3e50ceeced2ebb418ba937561a7be8f86"
+      ],
+      "page_reviews": [
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "재직증명서",
+          "box": {
+            "x": 395,
+            "y": 242,
+            "width": 215,
+            "height": 88
+          },
+          "page": 0,
+          "confidence": 93.8
+        },
+        {
+          "text": "대표자 성명: 박대표、 대상자 성명: 김대상",
+          "box": {
+            "x": 379,
+            "y": 309,
+            "width": 682,
+            "height": 200
+          },
+          "page": 0,
+          "confidence": 90.66666666666667
+        },
+        {
+          "text": "대상자소속:개발팀 발급기관:예시회사",
+          "box": {
+            "x": 364,
+            "y": 384,
+            "width": 687,
+            "height": 201
+          },
+          "page": 0,
+          "confidence": 88.0
+        },
+        {
+          "text": "재직기간:2024년3월부터현재",
+          "box": {
+            "x": 347,
+            "y": 458,
+            "width": 543,
+            "height": 168
+          },
+          "page": 0,
+          "confidence": 92.3076923076923
+        },
+        {
+          "text": "발급 일:2026년11월9일",
+          "box": {
+            "x": 334,
+            "y": 534,
+            "width": 420,
+            "height": 139
+          },
+          "page": 0,
+          "confidence": 92.4
+        },
+        {
+          "text": "위 사실을 증명합니다.",
+          "box": {
+            "x": 319,
+            "y": 612,
+            "width": 354,
+            "height": 111
+          },
+          "page": 0,
+          "confidence": 91.8
+        }
+      ]
+    },
+    {
+      "id": "inline_receipt/tiny_unreadable",
+      "image_hashes": [
+        "a8ae71a63f0ef7382f18431f2b5c0f70178629d16249d38414b42b8c243de165"
+      ],
+      "page_reviews": [
+        true
+      ],
+      "needs_review": true,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "0227",
+          "box": {
+            "x": 8,
+            "y": 26,
+            "width": 7,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 19.0
+        },
+        {
+          "text": "겨ㅡ0",
+          "box": {
+            "x": 70,
+            "y": 26,
+            "width": 5,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 20.333333333333332
+        },
+        {
+          "text": "_.0…ㅡ0062ㅣ0ㅅ9ㅣ55525",
+          "box": {
+            "x": 8,
+            "y": 29,
+            "width": 6,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 32.5
+        },
+        {
+          "text": "200",
+          "box": {
+            "x": 25,
+            "y": 33,
+            "width": 7,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 24.0
+        },
+        {
+          "text": "돌 오 에",
+          "box": {
+            "x": 16,
+            "y": 34,
+            "width": 7,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 43.666666666666664
+        },
+        {
+          "text": "0 ..~98000ㄴ. ...2999226.",
+          "box": {
+            "x": 11,
+            "y": 37,
+            "width": 21,
+            "height": 2
+          },
+          "page": 0,
+          "confidence": 15.2
+        }
+      ]
+    },
+    {
+      "id": "inline_certificate/dark_screen",
+      "image_hashes": [
+        "81328338e0f30bbace3c5229c29c6c2c9fc2fb3bd32a92b817e1cea27b5195cd"
+      ],
+      "page_reviews": [
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "재직증명서",
+          "box": {
+            "x": 76,
+            "y": 78,
+            "width": 210,
+            "height": 45
+          },
+          "page": 0,
+          "confidence": 93.6
+        },
+        {
+          "text": "대표자 성명: 박대표、 대상자 성명: 김대상",
+          "box": {
+            "x": 78,
+            "y": 149,
+            "width": 683,
+            "height": 56
+          },
+          "page": 0,
+          "confidence": 92.11111111111111
+        },
+        {
+          "text": "대상자 소속: 개 발팀 발급 기관: 예시회사",
+          "box": {
+            "x": 78,
+            "y": 225,
+            "width": 686,
+            "height": 56
+          },
+          "page": 0,
+          "confidence": 90.5
+        },
+        {
+          "text": "재직기간:2024년 3월부터현재",
+          "box": {
+            "x": 76,
+            "y": 300,
+            "width": 543,
+            "height": 55
+          },
+          "page": 0,
+          "confidence": 92.6923076923077
+        },
+        {
+          "text": "발급일:2026년11월9일",
+          "box": {
+            "x": 78,
+            "y": 376,
+            "width": 417,
+            "height": 55
+          },
+          "page": 0,
+          "confidence": 92.4
+        },
+        {
+          "text": "위 사실을 증명합니다.",
+          "box": {
+            "x": 76,
+            "y": 456,
+            "width": 353,
+            "height": 37
+          },
+          "page": 0,
+          "confidence": 92.2
+        }
+      ]
+    },
+    {
+      "id": "inline_certificate/handheld",
+      "image_hashes": [
+        "e9a7899188e52a8e1d6c2876b814cbac6c0107ff7c58c48d06a4049e7d883c4d"
+      ],
+      "page_reviews": [
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "춥..재직증명서",
+          "box": {
+            "x": 0,
+            "y": 128,
+            "width": 199,
+            "height": 129
+          },
+          "page": 0,
+          "confidence": 78.42857142857143
+        },
+        {
+          "text": "、 대표자성명:박대표 대상자 성명: 김대상",
+          "box": {
+            "x": 13,
+            "y": 165,
+            "width": 492,
+            "height": 126
+          },
+          "page": 0,
+          "confidence": 82.05555555555556
+        },
+        {
+          "text": "ㅣ",
+          "box": {
+            "x": 19,
+            "y": 279,
+            "width": 7,
+            "height": 13
+          },
+          "page": 0,
+          "confidence": 71.0
+        },
+        {
+          "text": "、 대상자소속: 개발팀 발급 기관: 예시회사",
+          "box": {
+            "x": 19,
+            "y": 213,
+            "width": 493,
+            "height": 128
+          },
+          "page": 0,
+          "confidence": 85.6842105263158
+        },
+        {
+          "text": "、 재직기간:2024년3월부터현재",
+          "box": {
+            "x": 26,
+            "y": 274,
+            "width": 392,
+            "height": 114
+          },
+          "page": 0,
+          "confidence": 87.92857142857143
+        },
+        {
+          "text": "_ 발급일:2026년11월9일",
+          "box": {
+            "x": 33,
+            "y": 334,
+            "width": 306,
+            "height": 92
+          },
+          "page": 0,
+          "confidence": 85.45454545454545
+        },
+        {
+          "text": "、 위사실을 증명합니다.",
+          "box": {
+            "x": 41,
+            "y": 389,
+            "width": 259,
+            "height": 93
+          },
+          "page": 0,
+          "confidence": 85.9090909090909
+        },
+        {
+          "text": "회",
+          "box": {
+            "x": 78,
+            "y": 492,
+            "width": 13,
+            "height": 17
+          },
+          "page": 0,
+          "confidence": 80.0
+        },
+        {
+          "text": "디",
+          "box": {
+            "x": 89,
+            "y": 508,
+            "width": 17,
+            "height": 18
+          },
+          "page": 0,
+          "confidence": 56.0
+        }
+      ]
+    },
+    {
+      "id": "night_contract/clean",
+      "image_hashes": [
+        "c5a92b5e3f25c9a138fd97c3c592babf01f196b8646acb4374cfc39265b49f5b"
+      ],
+      "page_reviews": [
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "근로계약서",
+          "box": {
+            "x": 76,
+            "y": 74,
+            "width": 212,
+            "height": 65
+          },
+          "page": 0,
+          "confidence": 93.6
+        },
+        {
+          "text": "근로자:김예시",
+          "box": {
+            "x": 76,
+            "y": 149,
+            "width": 237,
+            "height": 55
+          },
+          "page": 0,
+          "confidence": 93.57142857142857
+        },
+        {
+          "text": "월급:160만원",
+          "box": {
+            "x": 76,
+            "y": 224,
+            "width": 230,
+            "height": 54
+          },
+          "page": 0,
+          "confidence": 93.0
+        },
+        {
+          "text": "근로시 간:22:00~06:00",
+          "box": {
+            "x": 76,
+            "y": 301,
+            "width": 412,
+            "height": 53
+          },
+          "page": 0,
+          "confidence": 90.0
+        },
+        {
+          "text": "휴게시간:1시간",
+          "box": {
+            "x": 76,
+            "y": 381,
+            "width": 255,
+            "height": 36
+          },
+          "page": 0,
+          "confidence": 91.75
+        },
+        {
+          "text": "근무일: 주3일",
+          "box": {
+            "x": 76,
+            "y": 457,
+            "width": 224,
+            "height": 36
+          },
+          "page": 0,
+          "confidence": 92.42857142857143
+        },
+        {
+          "text": "근무 장소: 예시관리실",
+          "box": {
+            "x": 76,
+            "y": 529,
+            "width": 353,
+            "height": 56
+          },
+          "page": 0,
+          "confidence": 86.9
+        },
+        {
+          "text": "업무내용: 야간관리",
+          "box": {
+            "x": 77,
+            "y": 605,
+            "width": 331,
+            "height": 54
+          },
+          "page": 0,
+          "confidence": 92.0
+        }
+      ]
+    },
+    {
+      "id": "night_contract/desk",
+      "image_hashes": [
+        "608302f07ff2b41bc5c88f927f5a9b960d571eeea7e2d3468b6cc6e6f3c82380"
+      ],
+      "page_reviews": [
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "근로계약서",
+          "box": {
+            "x": 397,
+            "y": 235,
+            "width": 224,
+            "height": 103
+          },
+          "page": 0,
+          "confidence": 93.8
+        },
+        {
+          "text": "근로자:김예시",
+          "box": {
+            "x": 385,
+            "y": 309,
+            "width": 244,
+            "height": 96
+          },
+          "page": 0,
+          "confidence": 93.57142857142857
+        },
+        {
+          "text": "월 급: 160만원",
+          "box": {
+            "x": 376,
+            "y": 388,
+            "width": 234,
+            "height": 77
+          },
+          "page": 0,
+          "confidence": 93.16666666666667
+        },
+        {
+          "text": "근로시간:22:00~06:00",
+          "box": {
+            "x": 360,
+            "y": 459,
+            "width": 415,
+            "height": 124
+          },
+          "page": 0,
+          "confidence": 90.33333333333333
+        },
+        {
+          "text": "휴게시간:1시간",
+          "box": {
+            "x": 349,
+            "y": 538,
+            "width": 258,
+            "height": 82
+          },
+          "page": 0,
+          "confidence": 91.0
+        },
+        {
+          "text": "근무일: 주3일",
+          "box": {
+            "x": 336,
+            "y": 612,
+            "width": 228,
+            "height": 77
+          },
+          "page": 0,
+          "confidence": 93.0
+        },
+        {
+          "text": "근무 장소: 예시관리실",
+          "box": {
+            "x": 321,
+            "y": 683,
+            "width": 359,
+            "height": 118
+          },
+          "page": 0,
+          "confidence": 87.1
+        },
+        {
+          "text": "업무내용:야간관리",
+          "box": {
+            "x": 309,
+            "y": 758,
+            "width": 336,
+            "height": 113
+          },
+          "page": 0,
+          "confidence": 92.22222222222223
+        }
+      ]
+    },
+    {
+      "id": "inline_certificate/tiny_unreadable",
+      "image_hashes": [
+        "c6c11db84a78dadfa1d9437d4586425d865940e16c669fcb7925561a9fd6f355"
+      ],
+      "page_reviews": [
+        true
+      ],
+      "needs_review": true,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "계",
+          "box": {
+            "x": 9,
+            "y": 13,
+            "width": 1,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 85.0
+        },
+        {
+          "text": "0000",
+          "box": {
+            "x": 45,
+            "y": 19,
+            "width": 6,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 25.0
+        },
+        {
+          "text": "ㅋ~00>020>000》”\"",
+          "box": {
+            "x": 56,
+            "y": 19,
+            "width": 7,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 2.5
+        },
+        {
+          "text": "66",
+          "box": {
+            "x": 44,
+            "y": 27,
+            "width": 7,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 54.0
+        },
+        {
+          "text": "202666",
+          "box": {
+            "x": 8,
+            "y": 30,
+            "width": 6,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 34.0
+        }
+      ]
+    },
+    {
+      "id": "night_contract/dark_screen",
+      "image_hashes": [
+        "75cd525b5a68c518548ba96916fa57f753efb0df6a4d2719f983579c26bef61b"
+      ],
+      "page_reviews": [
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "근로계약서",
+          "box": {
+            "x": 76,
+            "y": 74,
+            "width": 212,
+            "height": 65
+          },
+          "page": 0,
+          "confidence": 93.8
+        },
+        {
+          "text": "근로자:김예시",
+          "box": {
+            "x": 76,
+            "y": 149,
+            "width": 237,
+            "height": 55
+          },
+          "page": 0,
+          "confidence": 93.57142857142857
+        },
+        {
+          "text": "월급:160만원",
+          "box": {
+            "x": 76,
+            "y": 224,
+            "width": 230,
+            "height": 54
+          },
+          "page": 0,
+          "confidence": 92.5
+        },
+        {
+          "text": "근로시 간:22:00~06:00",
+          "box": {
+            "x": 76,
+            "y": 301,
+            "width": 412,
+            "height": 53
+          },
+          "page": 0,
+          "confidence": 90.5
+        },
+        {
+          "text": "휴게시간:1시간",
+          "box": {
+            "x": 76,
+            "y": 381,
+            "width": 255,
+            "height": 36
+          },
+          "page": 0,
+          "confidence": 91.875
+        },
+        {
+          "text": "근무일: 주3일",
+          "box": {
+            "x": 76,
+            "y": 457,
+            "width": 224,
+            "height": 36
+          },
+          "page": 0,
+          "confidence": 92.71428571428571
+        },
+        {
+          "text": "근무 장소: 예시관리실",
+          "box": {
+            "x": 76,
+            "y": 529,
+            "width": 353,
+            "height": 56
+          },
+          "page": 0,
+          "confidence": 87.2
+        },
+        {
+          "text": "업무내용: 야간관리",
+          "box": {
+            "x": 77,
+            "y": 605,
+            "width": 331,
+            "height": 54
+          },
+          "page": 0,
+          "confidence": 92.0
+        }
+      ]
+    },
+    {
+      "id": "night_contract/handheld",
+      "image_hashes": [
+        "66816ba369a4b3cc155bd3cc6e3e3be020336c380800f2f1d94d5073fa98aefe"
+      ],
+      "page_reviews": [
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "근로계약서",
+          "box": {
+            "x": 51,
+            "y": 200,
+            "width": 143,
+            "height": 68
+          },
+          "page": 0,
+          "confidence": 92.4
+        },
+        {
+          "text": "。 _ 근로자:김예시",
+          "box": {
+            "x": 17,
+            "y": 238,
+            "width": 194,
+            "height": 78
+          },
+          "page": 0,
+          "confidence": 81.0
+        },
+        {
+          "text": "_ 월급: 160만원",
+          "box": {
+            "x": 26,
+            "y": 290,
+            "width": 187,
+            "height": 66
+          },
+          "page": 0,
+          "confidence": 82.42857142857143
+        },
+        {
+          "text": "、 근로시간:22:00~06:00",
+          "box": {
+            "x": 34,
+            "y": 314,
+            "width": 298,
+            "height": 91
+          },
+          "page": 0,
+          "confidence": 76.85714285714286
+        },
+        {
+          "text": "、 휴 게시간:1시간",
+          "box": {
+            "x": 42,
+            "y": 376,
+            "width": 195,
+            "height": 72
+          },
+          "page": 0,
+          "confidence": 82.0
+        },
+        {
+          "text": "일; 주3일",
+          "box": {
+            "x": 124,
+            "y": 435,
+            "width": 101,
+            "height": 54
+          },
+          "page": 0,
+          "confidence": 86.8
+        },
+        {
+          "text": "근무 장소: 예시관리실",
+          "box": {
+            "x": 82,
+            "y": 461,
+            "width": 226,
+            "height": 82
+          },
+          "page": 0,
+          "confidence": 93.4
+        },
+        {
+          "text": "업무 내용:야간관리",
+          "box": {
+            "x": 86,
+            "y": 512,
+            "width": 213,
+            "height": 76
+          },
+          "page": 0,
+          "confidence": 93.33333333333333
+        }
+      ]
+    },
+    {
+      "id": "weekday_contract/clean",
+      "image_hashes": [
+        "e0ef7d3293ddef932206348d9088c96e571b11f66743698a2f93cdfb47ec432e"
+      ],
+      "page_reviews": [
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "근로계약서",
+          "box": {
+            "x": 76,
+            "y": 78,
+            "width": 210,
+            "height": 45
+          },
+          "page": 0,
+          "confidence": 93.6
+        },
+        {
+          "text": "근로자:김예시",
+          "box": {
+            "x": 76,
+            "y": 148,
+            "width": 235,
+            "height": 53
+          },
+          "page": 0,
+          "confidence": 93.0
+        },
+        {
+          "text": "월 급:160만원",
+          "box": {
+            "x": 76,
+            "y": 224,
+            "width": 234,
+            "height": 52
+          },
+          "page": 0,
+          "confidence": 92.66666666666667
+        },
+        {
+          "text": "근로시간:오전 9시~오후6시",
+          "box": {
+            "x": 76,
+            "y": 301,
+            "width": 477,
+            "height": 53
+          },
+          "page": 0,
+          "confidence": 93.15384615384616
+        },
+        {
+          "text": "휴게시간:1시간",
+          "box": {
+            "x": 76,
+            "y": 381,
+            "width": 255,
+            "height": 36
+          },
+          "page": 0,
+          "confidence": 92.75
+        },
+        {
+          "text": "근무일:매주 월요일, 수요일",
+          "box": {
+            "x": 76,
+            "y": 453,
+            "width": 447,
+            "height": 53
+          },
+          "page": 0,
+          "confidence": 91.92307692307692
+        },
+        {
+          "text": "근무장소: 예시도서관",
+          "box": {
+            "x": 76,
+            "y": 528,
+            "width": 355,
+            "height": 53
+          },
+          "page": 0,
+          "confidence": 91.4
+        },
+        {
+          "text": "업무내용:자료정리",
+          "box": {
+            "x": 77,
+            "y": 604,
+            "width": 328,
+            "height": 53
+          },
+          "page": 0,
+          "confidence": 93.44444444444444
+        }
+      ]
+    },
+    {
+      "id": "night_contract/tiny_unreadable",
+      "image_hashes": [
+        "b32f829a4f9e04c16705a26d29057f24939832061d013651a7bb76a348a7857e"
+      ],
+      "page_reviews": [
+        true
+      ],
+      "needs_review": true,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "느 했는",
+          "box": {
+            "x": 22,
+            "y": 14,
+            "width": 5,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 38.5
+        },
+        {
+          "text": ".007헤",
+          "box": {
+            "x": 7,
+            "y": 22,
+            "width": 7,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 31.0
+        },
+        {
+          "text": "7…200~ㅋ",
+          "box": {
+            "x": 26,
+            "y": 41,
+            "width": 7,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 18.0
+        },
+        {
+          "text": "0",
+          "box": {
+            "x": 16,
+            "y": 57,
+            "width": 6,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 68.0
+        }
+      ]
+    },
+    {
+      "id": "weekday_contract/dark_screen",
+      "image_hashes": [
+        "36e01f05dd5160fa65e1190585612d086fb8622a73f39bdd5a838059622c100f"
+      ],
+      "page_reviews": [
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "근로계약서",
+          "box": {
+            "x": 76,
+            "y": 78,
+            "width": 210,
+            "height": 45
+          },
+          "page": 0,
+          "confidence": 93.6
+        },
+        {
+          "text": "근로자:김예시",
+          "box": {
+            "x": 76,
+            "y": 148,
+            "width": 235,
+            "height": 53
+          },
+          "page": 0,
+          "confidence": 93.0
+        },
+        {
+          "text": "월급:160만원",
+          "box": {
+            "x": 76,
+            "y": 224,
+            "width": 230,
+            "height": 52
+          },
+          "page": 0,
+          "confidence": 92.33333333333333
+        },
+        {
+          "text": "근로시간:오전 9시~오후6시",
+          "box": {
+            "x": 76,
+            "y": 301,
+            "width": 477,
+            "height": 53
+          },
+          "page": 0,
+          "confidence": 93.15384615384616
+        },
+        {
+          "text": "휴게시간:1시간",
+          "box": {
+            "x": 76,
+            "y": 381,
+            "width": 255,
+            "height": 36
+          },
+          "page": 0,
+          "confidence": 92.75
+        },
+        {
+          "text": "근무일:매주 월요일, 수요일",
+          "box": {
+            "x": 76,
+            "y": 453,
+            "width": 447,
+            "height": 53
+          },
+          "page": 0,
+          "confidence": 92.07692307692308
+        },
+        {
+          "text": "근무장소: 예시도서관",
+          "box": {
+            "x": 76,
+            "y": 528,
+            "width": 355,
+            "height": 53
+          },
+          "page": 0,
+          "confidence": 91.8
+        },
+        {
+          "text": "업무 내용:자료정리",
+          "box": {
+            "x": 77,
+            "y": 604,
+            "width": 328,
+            "height": 53
+          },
+          "page": 0,
+          "confidence": 92.44444444444444
+        }
+      ]
+    },
+    {
+      "id": "weekday_contract/desk",
+      "image_hashes": [
+        "b22c696b8e91b0407c58fb473c985da56722d8ef5d40d8605339e661644d633a"
+      ],
+      "page_reviews": [
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "근로계약서",
+          "box": {
+            "x": 414,
+            "y": 236,
+            "width": 225,
+            "height": 109
+          },
+          "page": 0,
+          "confidence": 93.8
+        },
+        {
+          "text": "근로자: 김예시",
+          "box": {
+            "x": 403,
+            "y": 310,
+            "width": 239,
+            "height": 101
+          },
+          "page": 0,
+          "confidence": 93.57142857142857
+        },
+        {
+          "text": "월급: 160만원",
+          "box": {
+            "x": 390,
+            "y": 389,
+            "width": 235,
+            "height": 83
+          },
+          "page": 0,
+          "confidence": 89.0
+        },
+        {
+          "text": "근로시간:오전 9시~오후6시",
+          "box": {
+            "x": 374,
+            "y": 457,
+            "width": 478,
+            "height": 151
+          },
+          "page": 0,
+          "confidence": 93.15384615384616
+        },
+        {
+          "text": "휴게시간:1시간",
+          "box": {
+            "x": 361,
+            "y": 538,
+            "width": 257,
+            "height": 89
+          },
+          "page": 0,
+          "confidence": 90.0
+        },
+        {
+          "text": "근무일: 매주 월요일, 수요일",
+          "box": {
+            "x": 343,
+            "y": 607,
+            "width": 453,
+            "height": 148
+          },
+          "page": 0,
+          "confidence": 93.0
+        },
+        {
+          "text": "근무 장소: 예시도서관",
+          "box": {
+            "x": 329,
+            "y": 682,
+            "width": 360,
+            "height": 127
+          },
+          "page": 0,
+          "confidence": 86.0
+        },
+        {
+          "text": "업무 내용:자료 정리",
+          "box": {
+            "x": 315,
+            "y": 757,
+            "width": 334,
+            "height": 121
+          },
+          "page": 0,
+          "confidence": 92.0
+        }
+      ]
+    },
+    {
+      "id": "weekday_contract/handheld",
+      "image_hashes": [
+        "b50c9252862848de688e476b34a8a167449b8ab3b98a9ec48d8c3e267ac13be4"
+      ],
+      "page_reviews": [
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "、근로계약서",
+          "box": {
+            "x": 7,
+            "y": 170,
+            "width": 192,
+            "height": 86
+          },
+          "page": 0,
+          "confidence": 76.33333333333333
+        },
+        {
+          "text": "、 큰로자:김예시",
+          "box": {
+            "x": 14,
+            "y": 216,
+            "width": 198,
+            "height": 81
+          },
+          "page": 0,
+          "confidence": 78.5
+        },
+        {
+          "text": "월급;160만원",
+          "box": {
+            "x": 64,
+            "y": 275,
+            "width": 148,
+            "height": 59
+          },
+          "page": 0,
+          "confidence": 93.0
+        },
+        {
+          "text": "줄| 근로시간:오전9시~오후6시",
+          "box": {
+            "x": 28,
+            "y": 289,
+            "width": 345,
+            "height": 105
+          },
+          "page": 0,
+          "confidence": 88.33333333333333
+        },
+        {
+          "text": "、 휴 게시간:1시간",
+          "box": {
+            "x": 39,
+            "y": 369,
+            "width": 194,
+            "height": 57
+          },
+          "page": 0,
+          "confidence": 87.88888888888889
+        },
+        {
+          "text": "_ 큰무일:매주 월요일, 수요일",
+          "box": {
+            "x": 44,
+            "y": 382,
+            "width": 318,
+            "height": 100
+          },
+          "page": 0,
+          "confidence": 86.92857142857143
+        },
+        {
+          "text": "_ 근무장소:예시도서관",
+          "box": {
+            "x": 51,
+            "y": 439,
+            "width": 254,
+            "height": 89
+          },
+          "page": 0,
+          "confidence": 82.0909090909091
+        },
+        {
+          "text": ". 업무내용:자료 정리",
+          "box": {
+            "x": 59,
+            "y": 491,
+            "width": 232,
+            "height": 86
+          },
+          "page": 0,
+          "confidence": 88.7
+        }
+      ]
+    },
+    {
+      "id": "party_contacts/clean",
+      "image_hashes": [
+        "90ddca8ac7d54b97c36f1869914220f2c80a7b2243df4ed0f7a42bc9ad6e40ec"
+      ],
+      "page_reviews": [
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "물품 수령 위임장",
+          "box": {
+            "x": 76,
+            "y": 51,
+            "width": 324,
+            "height": 97
+          },
+          "page": 0,
+          "confidence": 93.57142857142857
+        },
+        {
+          "text": "위임인 연락처:010-1111-2222",
+          "box": {
+            "x": 76,
+            "y": 149,
+            "width": 521,
+            "height": 51
+          },
+          "page": 0,
+          "confidence": 90.75
+        },
+        {
+          "text": "위임인성명: 김가상_ 대리인 성명: 이새봄",
+          "box": {
+            "x": 76,
+            "y": 225,
+            "width": 684,
+            "height": 55
+          },
+          "page": 0,
+          "confidence": 90.47368421052632
+        },
+        {
+          "text": "위임업무: 보관 물품수령",
+          "box": {
+            "x": 76,
+            "y": 301,
+            "width": 415,
+            "height": 54
+          },
+          "page": 0,
+          "confidence": 92.9090909090909
+        },
+        {
+          "text": "위임기간:2026년11월",
+          "box": {
+            "x": 76,
+            "y": 375,
+            "width": 395,
+            "height": 55
+          },
+          "page": 0,
+          "confidence": 90.0
+        },
+        {
+          "text": "대리인 연락처:010-3333-4444",
+          "box": {
+            "x": 78,
+            "y": 453,
+            "width": 556,
+            "height": 51
+          },
+          "page": 0,
+          "confidence": 91.625
+        },
+        {
+          "text": "작성일:2026년11월9일",
+          "box": {
+            "x": 77,
+            "y": 529,
+            "width": 418,
+            "height": 51
+          },
+          "page": 0,
+          "confidence": 92.3
+        }
+      ]
+    },
+    {
+      "id": "weekday_contract/tiny_unreadable",
+      "image_hashes": [
+        "0ebbb8b4b4b0edc1292882b4729b17a44e08c595afc534a90498c65a4adcd1d3"
+      ],
+      "page_reviews": [
+        true
+      ],
+      "needs_review": true,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "느 했는",
+          "box": {
+            "x": 22,
+            "y": 14,
+            "width": 6,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 38.5
+        },
+        {
+          "text": "0",
+          "box": {
+            "x": 7,
+            "y": 22,
+            "width": 7,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 66.0
+        },
+        {
+          "text": "“Ｌ090299-",
+          "box": {
+            "x": 8,
+            "y": 27,
+            "width": 7,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 0.0
+        },
+        {
+          "text": "4ㅡ^^1060",
+          "box": {
+            "x": 26,
+            "y": 29,
+            "width": 5,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 3.6666666666666665
+        },
+        {
+          "text": "2269999000000】 > 서",
+          "box": {
+            "x": 14,
+            "y": 49,
+            "width": 12,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 38.333333333333336
+        },
+        {
+          "text": ".-…ㅡ-0002-ㅡ",
+          "box": {
+            "x": 10,
+            "y": 52,
+            "width": 5,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 25.25
+        },
+        {
+          "text": "를 에",
+          "box": {
+            "x": 39,
+            "y": 57,
+            "width": 4,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 40.0
+        }
+      ]
+    },
+    {
+      "id": "party_contacts/dark_screen",
+      "image_hashes": [
+        "7bb9961af95952d490984063bd76ab25c695b9587e37ccd45cd6c934139897df"
+      ],
+      "page_reviews": [
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "물품 수령 위임장",
+          "box": {
+            "x": 76,
+            "y": 51,
+            "width": 324,
+            "height": 97
+          },
+          "page": 0,
+          "confidence": 93.57142857142857
+        },
+        {
+          "text": "위임인 연락처:010-1111-2222",
+          "box": {
+            "x": 76,
+            "y": 149,
+            "width": 521,
+            "height": 51
+          },
+          "page": 0,
+          "confidence": 90.0
+        },
+        {
+          "text": "위임인성명: 김가상_ 대리인 성명: 이새봄",
+          "box": {
+            "x": 76,
+            "y": 225,
+            "width": 684,
+            "height": 55
+          },
+          "page": 0,
+          "confidence": 91.3157894736842
+        },
+        {
+          "text": "위임 업무: 보관 물품수령",
+          "box": {
+            "x": 76,
+            "y": 301,
+            "width": 415,
+            "height": 54
+          },
+          "page": 0,
+          "confidence": 93.0
+        },
+        {
+          "text": "위임기간:2026년11월",
+          "box": {
+            "x": 76,
+            "y": 375,
+            "width": 395,
+            "height": 55
+          },
+          "page": 0,
+          "confidence": 89.0
+        },
+        {
+          "text": "대리인 연락처:010-3333-4444",
+          "box": {
+            "x": 78,
+            "y": 453,
+            "width": 556,
+            "height": 51
+          },
+          "page": 0,
+          "confidence": 89.25
+        },
+        {
+          "text": "작성일:2026년11월9일",
+          "box": {
+            "x": 77,
+            "y": 529,
+            "width": 418,
+            "height": 51
+          },
+          "page": 0,
+          "confidence": 92.2
+        }
+      ]
+    },
+    {
+      "id": "party_contacts/desk",
+      "image_hashes": [
+        "1e9ee1241e840cfad024ef1a98f61d486dff1fae61a63aa27eea300460e905f0"
+      ],
+      "page_reviews": [
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "물품 수령 위임장",
+          "box": {
+            "x": 369,
+            "y": 212,
+            "width": 338,
+            "height": 144
+          },
+          "page": 0,
+          "confidence": 93.57142857142857
+        },
+        {
+          "text": "위임인 연락처:010-1111-2222",
+          "box": {
+            "x": 361,
+            "y": 308,
+            "width": 524,
+            "height": 130
+          },
+          "page": 0,
+          "confidence": 91.25
+        },
+        {
+          "text": "위임인 성명: 김가상 대리인 성명: 이새봄",
+          "box": {
+            "x": 349,
+            "y": 383,
+            "width": 688,
+            "height": 158
+          },
+          "page": 0,
+          "confidence": 90.66666666666667
+        },
+        {
+          "text": "위임 업무: 보관 물품수령",
+          "box": {
+            "x": 338,
+            "y": 458,
+            "width": 417,
+            "height": 116
+          },
+          "page": 0,
+          "confidence": 92.9090909090909
+        },
+        {
+          "text": "위임 기간:2026년11월",
+          "box": {
+            "x": 326,
+            "y": 533,
+            "width": 401,
+            "height": 111
+          },
+          "page": 0,
+          "confidence": 91.77777777777777
+        },
+        {
+          "text": "대리 인연락처:010-3333-4444",
+          "box": {
+            "x": 317,
+            "y": 609,
+            "width": 559,
+            "height": 135
+          },
+          "page": 0,
+          "confidence": 91.625
+        },
+        {
+          "text": "작 성일:2026년11월9일",
+          "box": {
+            "x": 304,
+            "y": 684,
+            "width": 423,
+            "height": 113
+          },
+          "page": 0,
+          "confidence": 92.5
+        }
+      ]
+    },
+    {
+      "id": "signed_amount/clean",
+      "image_hashes": [
+        "ac7991ea8d17a050f5e887ad9305be060cecc6bba97ec4011a0f31a53e2571c1"
+      ],
+      "page_reviews": [
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "환불 영수증",
+          "box": {
+            "x": 76,
+            "y": 52,
+            "width": 225,
+            "height": 101
+          },
+          "page": 0,
+          "confidence": 93.6
+        },
+        {
+          "text": "상호: 예시문구점",
+          "box": {
+            "x": 77,
+            "y": 149,
+            "width": 268,
+            "height": 57
+          },
+          "page": 0,
+          "confidence": 92.25
+        },
+        {
+          "text": "거래일:2026년11월9일",
+          "box": {
+            "x": 77,
+            "y": 225,
+            "width": 418,
+            "height": 54
+          },
+          "page": 0,
+          "confidence": 92.5
+        },
+        {
+          "text": "결제금액:-3000원",
+          "box": {
+            "x": 77,
+            "y": 301,
+            "width": 329,
+            "height": 56
+          },
+          "page": 0,
+          "confidence": 92.42857142857143
+        },
+        {
+          "text": "거래내역:공책반품",
+          "box": {
+            "x": 77,
+            "y": 375,
+            "width": 334,
+            "height": 58
+          },
+          "page": 0,
+          "confidence": 92.625
+        },
+        {
+          "text": "결제 방법:카드취소",
+          "box": {
+            "x": 77,
+            "y": 452,
+            "width": 332,
+            "height": 56
+          },
+          "page": 0,
+          "confidence": 91.0
+        },
+        {
+          "text": "승인번호:12345678",
+          "box": {
+            "x": 76,
+            "y": 529,
+            "width": 368,
+            "height": 54
+          },
+          "page": 0,
+          "confidence": 88.0
+        }
+      ]
+    },
+    {
+      "id": "party_contacts/handheld",
+      "image_hashes": [
+        "15a4117b35663f07b0c599599cb9fbf99ccf93721afd9d7998fc09ee58f85a42"
+      ],
+      "page_reviews": [
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "、 물품수령 위임장",
+          "box": {
+            "x": 12,
+            "y": 207,
+            "width": 254,
+            "height": 92
+          },
+          "page": 0,
+          "confidence": 74.125
+        },
+        {
+          "text": "。_ 위임인 연락처:010-1111-2222",
+          "box": {
+            "x": 21,
+            "y": 226,
+            "width": 371,
+            "height": 110
+          },
+          "page": 0,
+          "confidence": 83.2
+        },
+        {
+          "text": "、 워임인 성명: 김가상_ 대리인 성명: 이새봄",
+          "box": {
+            "x": 29,
+            "y": 244,
+            "width": 476,
+            "height": 140
+          },
+          "page": 0,
+          "confidence": 84.35
+        },
+        {
+          "text": "호〃 .'위잉업무:보관물품수령",
+          "box": {
+            "x": 37,
+            "y": 323,
+            "width": 298,
+            "height": 105
+          },
+          "page": 0,
+          "confidence": 79.0
+        },
+        {
+          "text": "ㅣ '위임기간:2026년11월",
+          "box": {
+            "x": 46,
+            "y": 373,
+            "width": 286,
+            "height": 100
+          },
+          "page": 0,
+          "confidence": 84.81818181818181
+        },
+        {
+          "text": "、 대리인 연락처:010-3333-4444",
+          "box": {
+            "x": 60,
+            "y": 404,
+            "width": 378,
+            "height": 115
+          },
+          "page": 0,
+          "confidence": 85.88888888888889
+        },
+        {
+          "text": "힐:2026년11월9일",
+          "box": {
+            "x": 84,
+            "y": 469,
+            "width": 272,
+            "height": 94
+          },
+          "page": 0,
+          "confidence": 87.85714285714286
+        }
+      ]
+    },
+    {
+      "id": "signed_amount/desk",
+      "image_hashes": [
+        "2dbae87e972a93f082349c6cf4cd3ab3db69208b37cfea2749424ff67972d82b"
+      ],
+      "page_reviews": [
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "환불 영수증",
+          "box": {
+            "x": 380,
+            "y": 235,
+            "width": 234,
+            "height": 105
+          },
+          "page": 0,
+          "confidence": 93.6
+        },
+        {
+          "text": "상호: 예시문구점",
+          "box": {
+            "x": 370,
+            "y": 309,
+            "width": 275,
+            "height": 101
+          },
+          "page": 0,
+          "confidence": 93.375
+        },
+        {
+          "text": "거래일:2026년11월9일",
+          "box": {
+            "x": 358,
+            "y": 384,
+            "width": 422,
+            "height": 122
+          },
+          "page": 0,
+          "confidence": 92.1
+        },
+        {
+          "text": "결제금액:-3000원",
+          "box": {
+            "x": 345,
+            "y": 459,
+            "width": 336,
+            "height": 110
+          },
+          "page": 0,
+          "confidence": 92.42857142857143
+        },
+        {
+          "text": "거래내역: 공책반품",
+          "box": {
+            "x": 333,
+            "y": 534,
+            "width": 339,
+            "height": 110
+          },
+          "page": 0,
+          "confidence": 91.75
+        },
+        {
+          "text": "결제 방법:카드취소",
+          "box": {
+            "x": 320,
+            "y": 609,
+            "width": 340,
+            "height": 110
+          },
+          "page": 0,
+          "confidence": 92.5
+        },
+        {
+          "text": "승인번호:12345678",
+          "box": {
+            "x": 307,
+            "y": 683,
+            "width": 373,
+            "height": 114
+          },
+          "page": 0,
+          "confidence": 90.5
+        }
+      ]
+    },
+    {
+      "id": "party_contacts/tiny_unreadable",
+      "image_hashes": [
+        "51eb2bfd11a1d1df26b288a523eb6ecc8623acdd38a4664e5fa09f6527e62bb6"
+      ],
+      "page_reviews": [
+        true
+      ],
+      "needs_review": true,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "】 노 . >>”루",
+          "box": {
+            "x": 35,
+            "y": 14,
+            "width": 13,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 48.42857142857143
+        },
+        {
+          "text": "드 .어",
+          "box": {
+            "x": 29,
+            "y": 27,
+            "width": 4,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 41.0
+        },
+        {
+          "text": "000",
+          "box": {
+            "x": 35,
+            "y": 27,
+            "width": 4,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 15.0
+        },
+        {
+          "text": ".…0000~ㅋ",
+          "box": {
+            "x": 70,
+            "y": 27,
+            "width": 6,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 31.25
+        },
+        {
+          "text": "~…~ㅋ2000",
+          "box": {
+            "x": 43,
+            "y": 34,
+            "width": 6,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 38.333333333333336
+        },
+        {
+          "text": "200",
+          "box": {
+            "x": 17,
+            "y": 42,
+            "width": 7,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 65.0
+        },
+        {
+          "text": "들 서",
+          "box": {
+            "x": 45,
+            "y": 57,
+            "width": 5,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 33.5
+        }
+      ]
+    },
+    {
+      "id": "signed_amount/handheld",
+      "image_hashes": [
+        "64411f481c427acf5f5c28bdb2c42d2aa6f94096dd7a225fc885ca8a128b207a"
+      ],
+      "page_reviews": [
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "_ 환불 영수증",
+          "box": {
+            "x": 11,
+            "y": 201,
+            "width": 195,
+            "height": 85
+          },
+          "page": 0,
+          "confidence": 83.16666666666667
+        },
+        {
+          "text": "。 _ 상호: 예시문구점",
+          "box": {
+            "x": 19,
+            "y": 247,
+            "width": 217,
+            "height": 75
+          },
+          "page": 0,
+          "confidence": 83.3
+        },
+        {
+          "text": "__ 거래일:2026년1월9일",
+          "box": {
+            "x": 27,
+            "y": 270,
+            "width": 306,
+            "height": 98
+          },
+          "page": 0,
+          "confidence": 79.8
+        },
+        {
+          "text": "、 결제금액:-3000원",
+          "box": {
+            "x": 33,
+            "y": 323,
+            "width": 248,
+            "height": 92
+          },
+          "page": 0,
+          "confidence": 81.625
+        },
+        {
+          "text": "、 거래내역:공책반품",
+          "box": {
+            "x": 42,
+            "y": 367,
+            "width": 246,
+            "height": 98
+          },
+          "page": 0,
+          "confidence": 79.77777777777777
+        },
+        {
+          "text": "결제방법:카드취소",
+          "box": {
+            "x": 78,
+            "y": 428,
+            "width": 215,
+            "height": 73
+          },
+          "page": 0,
+          "confidence": 93.0
+        },
+        {
+          "text": ". 승인번호12345678",
+          "box": {
+            "x": 60,
+            "y": 462,
+            "width": 261,
+            "height": 91
+          },
+          "page": 0,
+          "confidence": 71.33333333333333
+        }
+      ]
+    },
+    {
+      "id": "signed_amount/dark_screen",
+      "image_hashes": [
+        "2e67ad9831ca92c1e1a05915bd3b2b48ec6b3509b50b4722ce7eeb57f19b1050"
+      ],
+      "page_reviews": [
+        false
+      ],
+      "needs_review": false,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "환불 영수증",
+          "box": {
+            "x": 76,
+            "y": 53,
+            "width": 225,
+            "height": 99
+          },
+          "page": 0,
+          "confidence": 93.6
+        },
+        {
+          "text": "상호: 예시문구점",
+          "box": {
+            "x": 77,
+            "y": 131,
+            "width": 268,
+            "height": 77
+          },
+          "page": 0,
+          "confidence": 93.5
+        },
+        {
+          "text": "거래 일:2026년11월9일",
+          "box": {
+            "x": 77,
+            "y": 225,
+            "width": 418,
+            "height": 51
+          },
+          "page": 0,
+          "confidence": 91.6
+        },
+        {
+          "text": "결제금액:-3000원",
+          "box": {
+            "x": 77,
+            "y": 282,
+            "width": 326,
+            "height": 78
+          },
+          "page": 0,
+          "confidence": 92.28571428571429
+        },
+        {
+          "text": "거래내역:공책 반품",
+          "box": {
+            "x": 77,
+            "y": 358,
+            "width": 333,
+            "height": 77
+          },
+          "page": 0,
+          "confidence": 89.125
+        },
+        {
+          "text": "결제 방법: 카드취소",
+          "box": {
+            "x": 77,
+            "y": 433,
+            "width": 333,
+            "height": 78
+          },
+          "page": 0,
+          "confidence": 91.375
+        },
+        {
+          "text": "승인번호:12345678",
+          "box": {
+            "x": 76,
+            "y": 529,
+            "width": 368,
+            "height": 51
+          },
+          "page": 0,
+          "confidence": 88.0
+        }
+      ]
+    },
+    {
+      "id": "signed_amount/tiny_unreadable",
+      "image_hashes": [
+        "fd5cd17a884c810d2e94a6b54b160822314ddfa1843f69f1b192a974759a431c"
+      ],
+      "page_reviews": [
+        true
+      ],
+      "needs_review": true,
+      "valid_boxes": true,
+      "blocks": [
+        {
+          "text": "쁘",
+          "box": {
+            "x": 25,
+            "y": 14,
+            "width": 1,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 94.0
+        },
+        {
+          "text": "들 04",
+          "box": {
+            "x": 30,
+            "y": 19,
+            "width": 5,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 36.0
+        },
+        {
+          "text": ".0007",
+          "box": {
+            "x": 13,
+            "y": 27,
+            "width": 6,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 49.0
+        },
+        {
+          "text": "26628",
+          "box": {
+            "x": 17,
+            "y": 30,
+            "width": 6,
+            "height": 1
+          },
+          "page": 0,
+          "confidence": 0.0
+        }
+      ]
+    }
+  ]
+}

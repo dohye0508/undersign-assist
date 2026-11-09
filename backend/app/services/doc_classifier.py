@@ -83,6 +83,14 @@ class DocumentClassifier:
             if any(heading.endswith(t) for t in titles)
             and (include_excluded or not any(normalize(term) in heading for term in self.rules[kind].get("excluded_title_terms", ())))
         }
+        # Recorded OCR can turn 동의서 into 통의서. Restore that spelling only
+        # when checking an explicitly excluded activity title.
+        if include_excluded and heading.endswith("통의서"):
+            excluded_terms = self.rules.get("activity_consent", {}).get("excluded_title_terms", ())
+            repaired = heading[:-3] + "동의서"
+            if (any(normalize(term) in heading for term in excluded_terms)
+                    and any(repaired.endswith(t) for t in self.titles.get("activity_consent", ()))):
+                found.add("activity_consent")
         if re.search(r"(?:개인정보|민감정보|고유식별정보)(?:수집|이용|활용|제공|처리|제3자|및|에대한)*동의서$", heading):
             found.add("consent")
         return found
@@ -98,19 +106,32 @@ class DocumentClassifier:
         return found
 
     def _reference_page(self, page: list[TextBlock]) -> bool:
+        previous = ""
         for block in page[:3]:
             if self._title_kinds(block.text):
                 return False
-            if any(normalize(block.text).endswith(marker) for marker in _REFERENCE_HEADINGS):
+            heading = normalize(block.text)
+            # OCR may split '작성 가이드' or '처리 방침' across two lines.
+            if any(heading.endswith(marker) or (previous + heading).endswith(marker)
+                   for marker in _REFERENCE_HEADINGS):
                 return True
+            previous = heading
         return False
 
+    @staticmethod
+    def _page_counter_only(page: list[TextBlock]) -> bool:
+        # A scanned blank back page can contain only its printed page counter.
+        # Keep numbers on real pages, including numeric field values.
+        return bool(page) and all(re.fullmatch(
+            r"(?:page\s*)?\d+\s*(?:/|of)\s*\d+(?:\s*페이지)?",
+            _unicode_text(block.text).strip(),
+        ) for block in page)
+
     def _cover_page(self, page: list[TextBlock]) -> bool:
-        # Skip only explicit, otherwise empty covers. A sparse continuation page
-        # still contributes its fields when no individual page is sufficient.
+        # A cover may list attached form titles, but contains no independent form
+        # fields. A sparse continuation page still contributes its evidence.
         return (
             any(normalize(b.text).endswith("표지") for b in page[:3])
-            and not self._titles(page, include_excluded=True)
             and not any(self._eligible(kind, groups) for kind, groups in self._evidence(page).items())
         )
 
@@ -180,25 +201,24 @@ class DocumentClassifier:
         for block in lines:
             by_page.setdefault(block.page, []).append(block)
         pages = [by_page[p] for p in sorted(by_page)] or [[]]
+        pages = [page for page in pages if not self._page_counter_only(page)] or [[]]
+        # A cover's attachment list is still cover metadata. Drop covers before
+        # deciding whether the first actual page is a guide or a form.
+        while pages and self._cover_page(pages[0]):
+            pages = pages[1:]
+        pages = pages or [[]]
         starts_with_reference = self._reference_page(pages[0])
         # Manuals and policies do not supply form fields, even when attached
         # after a real form or a neutral memo.
         pages = [page for page in pages if not self._reference_page(page)] or [[]]
-        while len(pages) > 1 and self._cover_page(pages[0]):
-            pages = pages[1:]
         first_page = pages[0]
         titles = self._titles(first_page)
-        excluded_titles = self._titles(first_page, include_excluded=True) - titles
         evidence = self._evidence([block for page in pages for block in page])
         primary = self._evidence(first_page)
         scores = {kind: GROUP_WEIGHT * len(groups) + (TITLE_WEIGHT if kind in titles else 0)
                   for kind, groups in evidence.items()}
 
         def result(kind: str, reason: str) -> Classification:
-            # An explicitly excluded heading cannot re-enter via generic body
-            # fields (e.g. a clinical trial also has participants and a schedule).
-            if kind in excluded_titles:
-                return Classification(DocType.UNKNOWN, scores, "unsupported_document")
             if kind != "unknown" and self._conflicting_pages(kind, pages):
                 return Classification(DocType.UNKNOWN, scores, "conflicting_documents")
             return Classification(DocType(kind), scores, reason)
@@ -206,6 +226,11 @@ class DocumentClassifier:
         # Check only the opening, so a list/reference inside a real form is harmless.
         if starts_with_reference:
             return result("unknown", "reference_material")
+
+        # An explicitly unsupported form anywhere in the active bundle cannot
+        # be rescued by a privacy appendix or accepted as a school reply form.
+        if any(self._titles(page, include_excluded=True) - self._titles(page) for page in pages):
+            return result("unknown", "unsupported_document")
 
         # Application/notice/summary headings sometimes sit on a privacy-only page.
         privacy = primary["consent"]

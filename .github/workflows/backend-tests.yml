@@ -88,6 +88,19 @@ jobs:
           name: camera-evaluation
           path: work/camera-*.json
           if-no-files-found: ignore
+      - name: Measure new boundary scenes including remaining OCR limitations
+        env:
+          OMP_THREAD_LIMIT: "1"
+        run: |
+          python backend/tests/boundary_ocr_samples.py ocr --cache work/boundary-ocr.json
+          python backend/tests/boundary_ocr_samples.py evaluate --cache work/boundary-ocr.json --output work/boundary-result.json
+      - name: Save boundary OCR measurements including failures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: boundary-evaluation
+          path: work/boundary-*.json
+          if-no-files-found: ignore
       - name: Mixed pages and identity ownership with saved real OCR inputs
         env:
           OMP_THREAD_LIMIT: "1"

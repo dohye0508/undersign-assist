@@ -124,25 +124,35 @@ def parse_percent(text: str) -> float | None:
 
 
 def parse_time_range(text: str) -> tuple[float, float] | None:
-    """'09:00~18:00' 같은 문장에서 (시작시, 끝시)를 시 단위 소수로."""
+    """Clock span in hours; an overnight end is placed on the next day."""
     if not text:
         return None
     t = _fix_ocr_digits(text)
-    m = re.search(
-        r"(\d{1,2})\s*[:시]\s*(\d{0,2})?\s*(?:분)?\s*[~\-–—]|부터",
-        t,
-    )
-    m = re.search(
-        r"(\d{1,2})\s*[:시]\s*(\d{0,2})?\s*(?:분)?\s*(?:[~\-–—]|부터)\s*"
-        r"(\d{1,2})\s*[:시]\s*(\d{0,2})?",
-        t,
-    )
+    clock = r"(오전|오후)?\s*(\d{1,2})\s*(?::\s*(\d{1,2})|시(?:\s*(\d{1,2})\s*분?)?)(?![\d:])"
+    m = re.search(r"(?<![\d:])" + clock + r"\s*(?:[~\-–—]|부터)\s*" + clock, t)
     if not m:
         return None
-    h1, m1, h2, m2 = m.groups()
-    start = int(h1) + (int(m1) / 60 if m1 else 0)
-    end = int(h2) + (int(m2) / 60 if m2 else 0)
-    return (start, end)
+    def value(parts, *, end=False):
+        marker, hour, colon_minute, korean_minute = parts
+        hour, minute = int(hour), int(colon_minute or korean_minute or 0)
+        if minute > 59:
+            return None
+        if marker:
+            if not 1 <= hour <= 12:
+                return None
+            hour = hour % 12 + (12 if marker == "오후" else 0)
+        elif hour > 23 and not (end and hour == 24 and minute == 0):
+            return None
+        return hour + minute / 60
+
+    parts = m.groups()
+    # A single AM/PM marker leaves the other clock ambiguous.
+    if bool(parts[0]) != bool(parts[4]):
+        return None
+    start, end = value(parts[:4]), value(parts[4:], end=True)
+    if start is None or end is None or start == end:
+        return None
+    return start, end + (24 if end < start else 0)
 
 
 def parse_minutes(text: str) -> int | None:
@@ -152,6 +162,8 @@ def parse_minutes(text: str) -> int | None:
     rng = parse_time_range(text)
     if rng:
         return max(int(round((rng[1] - rng[0]) * 60)), 0)
+    if re.search(r"\d\s*(?:시|:).*?(?:[~–—]|부터|-)", text):
+        return None  # Do not salvage a minute suffix from an invalid clock span.
     t = _fix_ocr_digits(text)
     h = re.search(r"(\d+)\s*시간", t)
     mi = re.search(r"(\d+)\s*분", t)
@@ -213,9 +225,12 @@ def parse_hours_per(text: str, unit: str) -> float | None:
     if not text:
         return None
     t = _fix_ocr_digits(text)
-    prefix = r"(?:(?<!\d)1\s*일|하루|일일|매일|(?<![가-힣\d])일)" if unit == "day" else r"(?:1\s*주|주|매주|일주일)"
+    prefix = r"(?:(?<!\d)1\s*일|하루|일일|매일|(?<![가-힣\d])일)" if unit == "day" else r"(?<![가-힣\d])(?:1\s*주|매주|일주일|주)"
     m = re.search(prefix + r"\s*(?:소정)?\s*(?:근로|근무)?\s*(?:시간)?\s*[:은는]?\s*(\d+(?:\.\d+)?)\s*시간", t)
-    return float(m.group(1)) if m else None
+    if m and re.search(r"(?:\d|격)\s*$", t[:m.start()]):
+        return None
+    hours = float(m.group(1)) if m else None
+    return hours if hours is not None and 0 <= hours <= (24 if unit == "day" else 168) else None
 
 
 def parse_days_per_week(text: str) -> int | None:
@@ -223,18 +238,21 @@ def parse_days_per_week(text: str) -> int | None:
     if not text:
         return None
     t = _fix_ocr_digits(text)
-    m = re.search(r"주\s*(\d)\s*일", t)
+    prefix = r"(?<![가-힣\d])(?:1\s*주|매주|일주일|주)"
+    m = re.search(prefix + r"\s*(\d+)\s*일", t)
     if m:
-        return int(m.group(1))
+        if re.search(r"(?:\d|격)\s*$", t[:m.start()]):
+            return None
+        count = int(m.group(1))
+        return count if 1 <= count <= 7 else None
     days = "월화수목금토일"
-    m = re.search(r"([월화수목금토일])\s*(?:요일)?\s*[~\-–부터]\s*([월화수목금토일])\s*요?일?", t)
+    m = re.search(r"([월화수목금토일])\s*(?:요일)?\s*(?:[~\-–]|부터)\s*([월화수목금토일])\s*(?:요일)?", t)
     if m:
         a, b = days.index(m.group(1)), days.index(m.group(2))
-        if b >= a:
-            return b - a + 1
-    m = re.search(r"(?:매주|주)\s*((?:[월화수목금토일]\s*(?:요일)?\s*[,ㆍ·、 ]\s*)+[월화수목금토일])", t)
+        return (b - a) % 7 + 1
+    m = re.search(prefix + r"\s*((?:[월화수목금토일]\s*(?:요일)?\s*[,ㆍ·、 ]\s*)+[월화수목금토일](?:요일)?)", t)
     if m:
-        listed = set(re.findall(r"[월화수목금토일]", m.group(1)))
+        listed = set(re.findall(r"([월화수목금토일])(?:요일)?", m.group(1)))
         if len(listed) >= 2:
             return len(listed)
     return None

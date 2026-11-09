@@ -78,7 +78,17 @@ List<FillTarget> findFillTargets(RecognizedDocument doc) {
   if (doc.needsReview) return [];
   final found = <_Found>[];
   for (final (i, block) in doc.blocks.indexed) {
-    found.addAll(_scanLine(block, i, _pageSize(doc, block.page), doc.blocks, questionnaire: doc.docType == 'questionnaire'));
+    // 잘못된 OCR 페이지/상자 하나가 정상 칸까지 막거나 사진 밖 칸을 만들지 않게 한다.
+    if (block.page < 0 || (doc.pages.isNotEmpty && block.page >= doc.pages.length)) continue;
+    final box = block.box;
+    if (box.width <= 0 || box.height <= 0) continue;
+    final page = _pageSize(doc, block.page);
+    if (page != null && (page.width <= 0 || page.height <= 0 ||
+        box.x >= page.width || box.y >= page.height ||
+        box.x + box.width <= 0 || box.y + box.height <= 0)) {
+      continue;
+    }
+    found.addAll(_scanLine(block, i, page, doc.blocks, questionnaire: doc.docType == 'questionnaire'));
   }
   found.sort((a, b) {
     if (a.page != b.page) return a.page.compareTo(b.page);
@@ -150,7 +160,12 @@ TextBlock? findCheckBlock(FillTarget target, List<TextBlock> blocks) {
 ({Rect yes, Rect no})? checkBoxRects(FillTarget target, TextBlock block) {
   final boxes = _yesNoBoxes(_Line(block));
   if (boxes == null) return null;
-  return (yes: boxes.yes, no: boxes.no);
+  // 사진 끝에서 칸이 잘리면 선택한 체크도 실제 저장되는 PNG 안에 넣는다.
+  final r = target.rect;
+  final span = Rect.fromLTWH(r.x.toDouble(), r.y.toDouble(), r.width.toDouble(), r.height.toDouble());
+  final yes = boxes.yes.intersect(span), no = boxes.no.intersect(span);
+  if (yes.isEmpty || no.isEmpty) return null;
+  return (yes: yes, no: no);
 }
 
 /// 글씨 칸에 글씨를 넣을 때 쓰는 자리: 칸 높이의 15%만큼 왼쪽을 비운다 (':' 바로 뒤에 붙지 않게).
@@ -394,9 +409,12 @@ List<_Found> _scanLine(TextBlock block, int lineNo, PageSize? page, List<TextBlo
   final pageHeight = page?.height.toDouble() ?? double.infinity;
 
   Box toBox(double left, double top, double width, double height) {
-    final l = left.clamp(0.0, math.max(0.0, pageWidth - width));
-    final t = top.clamp(0.0, math.max(0.0, pageHeight - height));
-    return Box(l.round(), t.round(), width.round(), height.round());
+    // 확대·잘라낸 사진에서는 서명 칸이 페이지보다 클 수 있다. 크기도 제한한다.
+    final w = math.min(width, pageWidth).round();
+    final h = math.min(height, pageHeight).round();
+    final l = left.clamp(0.0, math.max(0.0, pageWidth - w));
+    final t = top.clamp(0.0, math.max(0.0, pageHeight - h));
+    return Box(l.round(), t.round(), w, h);
   }
 
   final found = <_Found>[];

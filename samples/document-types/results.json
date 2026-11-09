@@ -2,8 +2,8 @@
   "baseline": "7263d75a1c259d6139614a198835a3ed4a16f17f",
   "comparison": "Same recorded real OCR blocks; classifier and extraction changes only.",
   "current_file_sha256": {
-    "backend/app/services/doc_classifier.py": "a270db6c8a7c778ebcac39465c6f37938ef7f6c75e7a4a788f013877332bdd29",
-    "backend/app/services/doc_reader.py": "10684094069fb42c8b2dd339e79e51c4400e2eb10bf6d76758d2e1457d9df83d",
+    "backend/app/services/doc_classifier.py": "22ad6bf2d84d7fca3db953484cf5877005c01b1d8ee4f75fded233d25a641db3",
+    "backend/app/services/doc_reader.py": "45d86d50c76c80335e65ea65912ef648a39d31ffa026d3038207f7856c4d77a1",
     "backend/app/rules/doc_types.json": "be53c731d4759ff9d93dbf4e563b65e2d7738e0236c4b7bbe92a6fd6dd2953e1"
   },
   "ocr_source": "samples\\document-types\\ocr.json",
@@ -11797,7 +11797,7 @@
         },
         {
           "label": "승인 번호",
-          "value": "2026110901",
+          "value": ".2026110901",
           "line": 7
         }
       ],
@@ -13024,7 +13024,7 @@
         },
         {
           "label": "결제 수단",
-          "value": "; 현금",
+          "value": "현금",
           "line": 4
         },
         {
@@ -14896,7 +14896,7 @@
         },
         {
           "label": "서약 기간",
-          "value": "2026년77월",
+          "value": ".2026년77월",
           "line": 6
         },
         {
@@ -20274,7 +20274,7 @@
       "fields": [
         {
           "label": "조사 목적",
-          "value": "; 다음교육의 운영 개선",
+          "value": "다음교육의 운영 개선",
           "line": 1
         },
         {
@@ -25240,7 +25240,7 @@
         },
         {
           "label": "장소",
-          "value": "; 가상생태공원",
+          "value": "가상생태공원",
           "line": 5
         },
         {

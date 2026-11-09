@@ -30,6 +30,21 @@ PARTY_ROLES = {
     "대상자", "본인", "근로자", "직원", "서약자", "확약자", "보고자", "작성자", "팀원",
 }
 PARTY_DETAILS = ("연락처", "전화번호", "휴대전화", "이메일", "전자우편", "소속", "생년월일", "주소")
+PARTY_SUFFIXES = ("성명", "이름", "서명") + PARTY_DETAILS
+PARTY_PREFIX_PATTERN = re.compile(
+    r"^\s*(?P<role>" + "|".join(
+        r"\s*".join(map(re.escape, role)) for role in sorted(PARTY_ROLES, key=len, reverse=True)
+    ) + r")(?=\s|[:：]|" + "|".join(r"\s*".join(map(re.escape, suffix)) for suffix in PARTY_SUFFIXES) + r"|$)"
+)
+ROW_LABELS = {key for rule in RULES.values() for spec in rule["fields"] for key in spec["keys"]}
+ROW_LABELS.update({"환불금액", "할인금액", "취소금액", "식비", "교통비", "고객번호"})
+ROW_LABELS.update(PARTY_ROLES)
+ROW_LABELS.update(role + detail for role in PARTY_ROLES for detail in PARTY_SUFFIXES)
+ROW_LABEL_PATTERN = re.compile(
+    r"(?<![가-힣A-Za-z0-9])(?:" + "|".join(
+        r"\s*".join(map(re.escape, key)) for key in sorted(ROW_LABELS, key=len, reverse=True)
+    ) + r")\s*[:：]"
+)
 
 
 def review_speech(pages: list[int]) -> str:
@@ -105,10 +120,9 @@ OCR 글자:
                 spec.get("preferred_subjects", ()),
             )
             source, target = _evidence_text(raw[0]) if raw else "", _evidence_text(value)
-            if not raw or not source.startswith(target) or (
-                target[-1].isdigit() and len(source) > len(target) and source[len(target)] in "0123456789."
-            ):
-                # Also protect rows with several amounts: 시급 5000원 식비 15000원.
+            if not raw or source != target:
+                # A prefix is not the complete value: 김 is not 김가상 and
+                # 5 is not 5만원. Formatting normalization is still allowed.
                 raise llm.LlmError("AI 값이 해당 항목의 원문 값과 달라요")
             # Locate evidence within this field, not an identical value owned by
             # another person/field earlier in the document.
@@ -171,56 +185,57 @@ def _find_value(lines: list[TextBlock], keys: list[str], all_keys: list[str] = (
     # 거래일시 must be tried before 거래일, 보호자성명 before 보호자.
     keys = sorted(keys, key=lambda key: len(compact(key)), reverse=True)
     ownership_keys = set(all_keys) | {compact(key) for key in keys}
-    preferred_declared = any(
-        re.match(r"^\s*" + r"\s*".join(map(re.escape, role)) + r"(?=\s|[:：]|성\s*명|이\s*름|소\s*속|$)", line.text)
-        for role in preferred_subjects for line in lines
-    )
+    preferred_declared = False
     fallback = None
     candidates = []
     for index, line in enumerate(lines):
-        if CLASSIFIER._title_kinds(line.text):
-            # "위임 업무 재직증명서" is a field, while "조사 결과 보고서"
-            # is a heading. A specific leading label can disambiguate a title suffix.
-            leading_label = any(
-                len(compact(key)) >= 3 and re.match(
-                    r"^\s*" + r"\s*".join(map(re.escape, compact(key))) + r"(?=\s|[:：])", line.text
-                ) and compact(value_after(line.text, key) or "") not in {
-                    "보고서", "요약서", "확인서", "증명서", "서약서", "신청서",
-                    "동의서", "위임장", "영수증", "설문지", "청구서", "고지서",
-                } for key in keys
-            )
-            if not leading_label:
-                continue
-        candidates.append((index, line))
+        cells = _row_cells(line.text)
+        for cell_index, (text, row_owner) in enumerate(cells):
+            if row_owner in preferred_subjects:
+                preferred_declared = True
+            if CLASSIFIER._title_kinds(text):
+                # "위임 업무 재직증명서" is a field, while "조사 결과 보고서"
+                # is a heading. A specific leading label can disambiguate a title suffix.
+                leading_label = any(
+                    len(compact(key)) >= 3 and re.match(
+                        r"^\s*" + r"\s*".join(map(re.escape, compact(key))) + r"(?=\s|[:：])", text
+                    ) and compact(value_after(text, key) or "") not in {
+                        "보고서", "요약서", "확인서", "증명서", "서약서", "신청서",
+                        "동의서", "위임장", "영수증", "설문지", "청구서", "고지서",
+                    } for key in keys
+                )
+                if not leading_label:
+                    continue
+            candidates.append((index, text, row_owner, cell_index == len(cells) - 1))
     for key in keys:
         pattern = re.compile(r"\s*".join(map(re.escape, compact(key))))
         longer_keys = [other for other in ownership_keys if len(other) > len(compact(key)) and other.startswith(compact(key))]
-        for index, line in candidates:
-            match = pattern.search(line.text)
+        for index, text, row_owner, last_cell in candidates:
+            match = pattern.search(text)
             if not match:
                 continue
-            remainder = compact(line.text[match.start():])
+            remainder = compact(text[match.start():])
             if any(remainder.startswith(other) for other in longer_keys):
                 continue  # 임금 지급일 is not an 임금 value.
-            owner = _subject_owner(lines, index, match.start(), key) if subjects else None
+            owner = _subject_owner(lines, index, match.start(), key, text, row_owner) if subjects else None
             if subjects and owner is not None and owner not in subjects:
                 continue
-            value = line.text[match.end():].strip(" :：.)]-|\t")
+            value = _clean_field_value(text[match.end():])
             if compact(key) in PARTY_ROLES and compact(value).startswith(PARTY_DETAILS):
                 continue  # 보호자 연락처 is not the guardian's name.
             if key == "금액":
-                prefix = re.split(r"금\s*액", line.text, maxsplit=1)[0]
+                prefix = re.split(r"금\s*액", text, maxsplit=1)[0]
                 if re.search(r"[가-힣A-Za-z]", prefix):
                     continue  # 환불 금액/할인 금액 is not an unspecified payment amount.
             # 항목 이름만 있고 값이 다음 줄에 있는 서식이 많다.
             # 단, 다음 줄이 다른 항목 이름이면(표 머리글이 줄마다 따로 읽힌 경우: "수집 목적" 다음 줄 "보유 기간") 값이 아니다
-            if not value and index + 1 < len(lines) and lines[index + 1].page == line.page:
+            if not value and last_cell and index + 1 < len(lines) and lines[index + 1].page == lines[index].page:
                 next_text = lines[index + 1].text
                 if (not CLASSIFIER._title_kinds(next_text) and not re.search(r"[:：]", next_text)
                         and compact(next_text).strip("[]() ") not in PARTY_ROLES
                         and not any(k in compact(next_text) for k in all_keys)):
-                    value = next_text
-            if value:
+                    value = _clean_field_value(next_text)
+            if value and not _is_placeholder(value):
                 if preferred_subjects and owner not in preferred_subjects:
                     if not preferred_declared and fallback is None:
                         fallback = value[:MAX_VALUE_LENGTH], index
@@ -229,13 +244,44 @@ def _find_value(lines: list[TextBlock], keys: list[str], all_keys: list[str] = (
     return fallback
 
 
-def _subject_owner(lines: list[TextBlock], index: int, start: int, key: str) -> str | None:
-    prefix = compact(lines[index].text[:start]).strip("0123456789 .:：()[]{}-·|、")
+def _row_cells(text: str) -> list[tuple[str, str | None]]:
+    """Split only explicit labels, keeping time colons and ordinary prose intact."""
+    starts = sorted({0} | {match.start() for match in ROW_LABEL_PATTERN.finditer(text)})
+    result = []
+    owner = None
+    for start, end in zip(starts, starts[1:] + [len(text)]):
+        cell = text[start:end].strip(" \t|;")
+        if end < len(text):
+            # OCR can read a table separator as _ or 、. Remove it only at
+            # the boundary we already established before the next label.
+            cell = cell.rstrip(" \t_、")
+        inline = PARTY_PREFIX_PATTERN.match(cell)
+        if inline:
+            owner = compact(inline.group("role"))
+        result.append((cell, owner))
+    return result
+
+
+def _clean_field_value(text: str) -> str:
+    # Keep signs, leading decimal points, and company/name parentheses.
+    return text.strip(" \t:：|;").rstrip(" .")
+
+
+def _is_placeholder(value: str) -> bool:
+    mark = re.sub(r"[\s_·.□○()（）\[\]{}\-–—]", "", value)
+    return mark in {"", "서명", "인", "날인", "서명또는인", "서명또는날인", "서명날인"}
+
+
+def _subject_owner(lines: list[TextBlock], index: int, start: int, key: str,
+                   text: str, row_owner: str | None) -> str | None:
+    prefix = compact(text[:start]).strip("0123456789 .:：()[]{}-·|、")
     if prefix:
         return prefix
     inline = [role for role in PARTY_ROLES if compact(key).startswith(role)]
     if inline:
         return max(inline, key=len)
+    if row_owner:
+        return row_owner
     # OCR often puts the section owner on a separate row above 성명/연락처.
     for previous in reversed(lines[:index]):
         if previous.page != lines[index].page or CLASSIFIER._title_kinds(previous.text):

@@ -1,5 +1,19 @@
 # 문서 분류 회귀 시험
 
+## 추가 경계 테스트와 실제 OCR 60건
+
+`test_document_boundaries.py`는 표지·페이지 번호·작성 가이드·미지원 문서의 부록 우회를, `test_field_boundaries.py`는 한 OCR 줄의 여러 칸·마지막 칸의 다음 줄 값·음수 부호·AI 전체 원문 일치를 검사합니다. `test_schedule_boundaries.py`는 자정을 넘는 시간·오전오후·요일 이름·불가능한 시간을 판단 단계까지 연결해 검사합니다. `app/test/fill_boundaries_test.dart`는 작은 사진·사진 끝 체크박스·잘못된 페이지·EXIF 회전과 실제 PDF 경계를 검사합니다.
+
+`samples/boundaries/`에는 12개 가상 문서 묶음을 5조건으로 만든 **60건/85장**을 저장했습니다. 실제 OCR 실행과 저장 OCR 재생은 별도 명령입니다.
+
+```sh
+python backend/tests/boundary_ocr_samples.py ocr
+python backend/tests/boundary_ocr_samples.py evaluate
+python backend/tests/boundary_ocr_samples.py report
+```
+
+이미지 생성은 `generate`를 명시할 때만 합니다. `evaluate --require-correct`는 남아 있는 분류·재촬영·좌표 실패가 있으면 종료 코드 1을 돌려줍니다. 기본 evaluate는 실패도 측정해 저장합니다. CI에서는 기존 강제 회귀 조건을 유지하고 새 60건을 측정 artifact로 남깁니다. 세부 수치·남은 실패는 [샘플 보고서](../../samples/boundaries/README.md)에 있습니다.
+
 ## 2026-11-09 추가 문서 8종
 
 `test_expanded_documents.py`는 새 종류의 제목, 제목이 잘린 본문, 공백·유니코드 변형, 개인정보 부록, 서로 다른 문서 묶음, 작성 안내·단순 언급과 실제 서식 구별, 종류별 값 추출 및 읽기→판단 연결을 검사합니다. `expanded_document_samples.py`는 `samples/document-types/`에 저장된 사진에 실제 로컬 Tesseract를 실행합니다. 원문·이미지 해시와 OCR 기록을 남기며, 같은 OCR 결과를 이전(7263d75)·현재 분류기에 입력합니다. OCR 엔진 자체는 이번 변경에서 수정하지 않았습니다.
