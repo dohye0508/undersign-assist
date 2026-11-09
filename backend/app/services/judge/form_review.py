@@ -10,6 +10,8 @@ from app.services.doc_classifier import normalize
 
 
 GUIDANCE = {
+    "application": "신청인, 신청 분야, 연락처와 제출 기한을 확인해 주세요. 접수 완료나 신청 자격을 판정한 결과는 아니에요.",
+    "summary": "작품명, 작성자, 요약 내용과 제출 조건을 확인해 주세요. 제출물의 심사 결과를 판단한 것은 아니에요.",
     "authorization": ("위임하는 사람·받는 사람, 위임할 업무와 기간을 원문에서 확인해 주세요. 위임 범위를 대신 결정하지 않아요."),
     "certificate": ("대상자, 증명 내용, 발급 기관과 발급일을 확인해 주세요. 문서의 진위나 발급 기관을 확인한 결과는 아니에요."),
     "invoice": ("청구 내역, 청구 금액, 납부 기한과 납부처를 확인해 주세요. 청구서를 읽은 것으로 납부 완료를 확인할 수는 없어요."),
@@ -19,6 +21,15 @@ GUIDANCE = {
     "questionnaire": ("조사 목적, 응답 방법과 제출 기한을 확인해 주세요. 응답이나 동의 여부를 대신 선택하지 않아요."),
     "activity_consent": ("활동 내용, 일정, 장소, 참가자와 보호자 확인 항목을 읽어 주세요. 개인정보 동의와 활동 참가 동의는 따로 확인해 주세요."),
 }
+
+
+def unavailable():
+    speech = "문서의 세부 종류에 맞는 판단 기준을 정하지 못했어요. 검토를 완료한 결과가 아니므로 문서 읽기에서 원문을 확인해 주세요."
+    return {"findings": [{"level": "info", "item": "판단 범위 확인", "reason": speech,
+                          "evidence": "", "rule_id": "unsupported_judgement", "severity": "info",
+                          "line": -1, "speech": speech, "basis": []}],
+            "speech": speech, "subtype": "", "counts": {"info": 1}, "questions": [],
+            "disclaimer": "자동 판단 결과가 제공되지 않았어요."}
 
 
 def run(document):

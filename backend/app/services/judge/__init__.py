@@ -34,19 +34,18 @@ def run(document, answers: dict[str, str] | None = None) -> dict:
     answers = answers or {}
 
     doc_subtype = S.determine_subtype(document)
+    if not doc_subtype:
+        return form_review.unavailable()
     values = E.extract(document)
+    weekly_hours = values.get("weekly_hours", {}).get("value")
 
     # 근로계약서는 주 근로시간을 계산해 15시간 미만이면 단시간으로 재분류한다.
-    if doc_subtype == "labor_full_time" and "daily_hours" in values:
-        weekly = values.get("weekly_hours", {}).get("value") or values["daily_hours"]["value"] * values.get("days_per_week", {}).get("value", 5)
-        if weekly < 15:
-            doc_subtype = "labor_part_time"
+    if doc_subtype == "labor_full_time" and weekly_hours is not None and 0 < weekly_hours < 15:
+        doc_subtype = "labor_part_time"
 
     # 월급만 있고 시급이 없으면 환산해서 hourly_wage를 만든다 (근거에 환산 사실을 남김).
-    if "hourly_wage" not in values and "monthly_wage" in values:
-        weekly_hours = values.get("weekly_hours", {}).get("value")
-        if weekly_hours is None:
-            weekly_hours = values.get("daily_hours", {}).get("value", 8) * values.get("days_per_week", {}).get("value", 5)
+    needs_conversion = doc_subtype.startswith("labor_") and "hourly_wage" not in values and "monthly_wage" in values
+    if needs_conversion and weekly_hours is not None and weekly_hours > 0:
         monthly = values["monthly_wage"]["value"]
         values["hourly_wage"] = {
             "value": round(F.hourly_from_monthly(monthly, weekly_hours)),
@@ -86,6 +85,11 @@ def run(document, answers: dict[str, str] | None = None) -> dict:
             )
 
     findings = _findings(rules, document, values, effective)
+    if needs_conversion and "hourly_wage" not in values:
+        speech = "주 근로시간을 확인하지 못해 월급을 시급으로 환산하지 않았어요. 근로시간과 주 근무일을 원문에서 확인해 주세요."
+        findings.append({"level": "info", "item": "시급 환산 보류", "reason": speech,
+                         "evidence": "", "rule_id": "work_hours_unread", "severity": "info",
+                         "line": -1, "speech": speech, "basis": []})
 
     counts: dict[str, int] = {}
     for f in findings:

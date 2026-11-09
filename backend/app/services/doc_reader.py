@@ -21,6 +21,16 @@ CLASSIFIER = DocumentClassifier(RULES)
 
 MAX_VALUE_LENGTH = 80
 
+# A generic 성명/연락처 belongs to the person named by its label or section.
+# Issuers and helpers must not silently become the document's subject.
+PARTY_ROLES = {
+    "대표자", "대표", "발급자", "발급담당자", "담당자", "담당교사", "학교장",
+    "보호자", "법정대리인", "대리인", "수임인", "수임자", "위임인", "위임자",
+    "신청인", "신청자", "지원자", "참가자", "참가학생", "참여자", "학생",
+    "대상자", "본인", "근로자", "직원", "서약자", "확약자", "보고자", "작성자", "팀원",
+}
+PARTY_DETAILS = ("연락처", "전화번호", "휴대전화", "이메일", "전자우편", "소속", "생년월일", "주소")
+
 
 def review_speech(pages: list[int]) -> str:
     numbers = ", ".join(str(page + 1) for page in pages)
@@ -88,20 +98,25 @@ OCR 글자:
         value = values.get(spec["label"])
         if isinstance(value, str) and value.strip():
             value = value.strip()[:MAX_VALUE_LENGTH]
-            line = _line_of(value, lines)
-            if line < 0:
-                raise llm.LlmError("AI 항목값을 OCR 원문에서 확인하지 못했어요")
-            # Matching a number elsewhere (e.g. 식비 instead of 시급) is not
-            # evidence for this field. A preceding empty label may own the value.
-            labelled = any(value_after(lines[line].text, key) is not None for key in spec["keys"])
-            if not labelled and line > 0 and lines[line - 1].page == lines[line].page:
-                labelled = any(value_after(lines[line - 1].text, key) == "" for key in spec["keys"])
-            if not labelled:
-                raise llm.LlmError("AI 항목과 OCR 원문의 항목 이름이 맞지 않아요")
-            raw = _find_value(lines, spec["keys"], [compact(k) for f in RULES[doc_type.value]["fields"] for k in f["keys"]])
-            if raw and not _evidence_text(raw[0]).startswith(_evidence_text(value)):
+            raw = _find_value(
+                lines, spec["keys"],
+                [compact(k) for f in RULES[doc_type.value]["fields"] for k in f["keys"]],
+                spec.get("subjects", ()),
+                spec.get("preferred_subjects", ()),
+            )
+            source, target = _evidence_text(raw[0]) if raw else "", _evidence_text(value)
+            if not raw or not source.startswith(target) or (
+                target[-1].isdigit() and len(source) > len(target) and source[len(target)] in "0123456789."
+            ):
                 # Also protect rows with several amounts: 시급 5000원 식비 15000원.
                 raise llm.LlmError("AI 값이 해당 항목의 원문 값과 달라요")
+            # Locate evidence within this field, not an identical value owned by
+            # another person/field earlier in the document.
+            line = raw[1]
+            if _line_of(value, [lines[line]]) < 0:
+                line += 1
+                if line >= len(lines) or lines[line].page != lines[raw[1]].page or _line_of(value, [lines[line]]) < 0:
+                    raise llm.LlmError("AI 항목값을 OCR 원문에서 확인하지 못했어요")
             fields.append(Field(label=spec["label"], value=value, line=line))
     return fields
 
@@ -138,18 +153,32 @@ def _extract_by_rules(lines: list[TextBlock], doc_type: DocType) -> list[Field]:
     all_keys = [compact(key) for spec in specs for key in spec["keys"]]
     fields = []
     for spec in specs:
-        found = _find_value(lines, spec["keys"], all_keys)
+        found = _find_value(lines, spec["keys"], all_keys, spec.get("subjects", ()), spec.get("preferred_subjects", ()))
         if found:
             value, index = found
             fields.append(Field(label=spec["label"], value=value, line=index))
     return fields
 
 
-def _find_value(lines: list[TextBlock], keys: list[str], all_keys: list[str] = ()) -> tuple[str, int] | None:
+def _find_value(lines: list[TextBlock], keys: list[str], all_keys: list[str] = (),
+                subjects: list[str] = (), preferred_subjects: list[str] = ()) -> tuple[str, int] | None:
+    # Prefer explicit subject labels over a generic 성명 elsewhere in the form.
+    keys = list(dict.fromkeys(
+        keys + [subject + key for subject in subjects for key in keys
+                if not any(key.startswith(role) for role in PARTY_ROLES)]
+        + [key + suffix for key in keys if key in PARTY_ROLES for suffix in ("성명", "이름", "서명")]
+    ))
     # 거래일시 must be tried before 거래일, 보호자성명 before 보호자.
     keys = sorted(keys, key=lambda key: len(compact(key)), reverse=True)
-    for key in keys:
-        for index, line in enumerate(lines):
+    ownership_keys = set(all_keys) | {compact(key) for key in keys}
+    preferred_declared = any(
+        re.match(r"^\s*" + r"\s*".join(map(re.escape, role)) + r"(?=\s|[:：]|성\s*명|이\s*름|소\s*속|$)", line.text)
+        for role in preferred_subjects for line in lines
+    )
+    fallback = None
+    candidates = []
+    for index, line in enumerate(lines):
+        if CLASSIFIER._title_kinds(line.text):
             # "위임 업무 재직증명서" is a field, while "조사 결과 보고서"
             # is a heading. A specific leading label can disambiguate a title suffix.
             leading_label = any(
@@ -160,11 +189,25 @@ def _find_value(lines: list[TextBlock], keys: list[str], all_keys: list[str] = (
                     "동의서", "위임장", "영수증", "설문지", "청구서", "고지서",
                 } for key in keys
             )
-            if CLASSIFIER._title_kinds(line.text) and not leading_label:
+            if not leading_label:
                 continue
-            value = value_after(line.text, key)
-            if value is None:
+        candidates.append((index, line))
+    for key in keys:
+        pattern = re.compile(r"\s*".join(map(re.escape, compact(key))))
+        longer_keys = [other for other in ownership_keys if len(other) > len(compact(key)) and other.startswith(compact(key))]
+        for index, line in candidates:
+            match = pattern.search(line.text)
+            if not match:
                 continue
+            remainder = compact(line.text[match.start():])
+            if any(remainder.startswith(other) for other in longer_keys):
+                continue  # 임금 지급일 is not an 임금 value.
+            owner = _subject_owner(lines, index, match.start(), key) if subjects else None
+            if subjects and owner is not None and owner not in subjects:
+                continue
+            value = line.text[match.end():].strip(" :：.)]-|\t")
+            if compact(key) in PARTY_ROLES and compact(value).startswith(PARTY_DETAILS):
+                continue  # 보호자 연락처 is not the guardian's name.
             if key == "금액":
                 prefix = re.split(r"금\s*액", line.text, maxsplit=1)[0]
                 if re.search(r"[가-힣A-Za-z]", prefix):
@@ -173,10 +216,33 @@ def _find_value(lines: list[TextBlock], keys: list[str], all_keys: list[str] = (
             # 단, 다음 줄이 다른 항목 이름이면(표 머리글이 줄마다 따로 읽힌 경우: "수집 목적" 다음 줄 "보유 기간") 값이 아니다
             if not value and index + 1 < len(lines) and lines[index + 1].page == line.page:
                 next_text = lines[index + 1].text
-                if not CLASSIFIER._title_kinds(next_text) and not re.search(r"[:：]", next_text) and not any(k in compact(next_text) for k in all_keys):
+                if (not CLASSIFIER._title_kinds(next_text) and not re.search(r"[:：]", next_text)
+                        and compact(next_text).strip("[]() ") not in PARTY_ROLES
+                        and not any(k in compact(next_text) for k in all_keys)):
                     value = next_text
             if value:
+                if preferred_subjects and owner not in preferred_subjects:
+                    if not preferred_declared and fallback is None:
+                        fallback = value[:MAX_VALUE_LENGTH], index
+                    continue
                 return value[:MAX_VALUE_LENGTH], index
+    return fallback
+
+
+def _subject_owner(lines: list[TextBlock], index: int, start: int, key: str) -> str | None:
+    prefix = compact(lines[index].text[:start]).strip("0123456789 .:：()[]{}-·|、")
+    if prefix:
+        return prefix
+    inline = [role for role in PARTY_ROLES if compact(key).startswith(role)]
+    if inline:
+        return max(inline, key=len)
+    # OCR often puts the section owner on a separate row above 성명/연락처.
+    for previous in reversed(lines[:index]):
+        if previous.page != lines[index].page or CLASSIFIER._title_kinds(previous.text):
+            break
+        heading = compact(previous.text).strip("0123456789 .:：()[]{}-·|、")
+        if heading in PARTY_ROLES:
+            return heading
     return None
 
 

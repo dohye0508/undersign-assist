@@ -2,9 +2,9 @@
   "baseline": "7263d75a1c259d6139614a198835a3ed4a16f17f",
   "comparison": "Same recorded real OCR blocks; classifier and extraction changes only.",
   "current_file_sha256": {
-    "backend/app/services/doc_classifier.py": "e3ed05a91bb35cbe75595dd14b7636101c2e35c2291b82180aa0bb4907275934",
-    "backend/app/services/doc_reader.py": "0eb7c901ee026d01fc767f64d66b711c1808f93245b7d9b1a7f21f7f59dc99a2",
-    "backend/app/rules/doc_types.json": "7cc7c788e457acf95d0aaa7dc11fa5b4461c3aaae196be0817f1d204bec96551"
+    "backend/app/services/doc_classifier.py": "a270db6c8a7c778ebcac39465c6f37938ef7f6c75e7a4a788f013877332bdd29",
+    "backend/app/services/doc_reader.py": "10684094069fb42c8b2dd339e79e51c4400e2eb10bf6d76758d2e1457d9df83d",
+    "backend/app/rules/doc_types.json": "be53c731d4759ff9d93dbf4e563b65e2d7738e0236c4b7bbe92a6fd6dd2953e1"
   },
   "ocr_source": "samples\\document-types\\ocr.json",
   "engine": "tesseract v5.5.0.20241111",
@@ -133,7 +133,7 @@
         {
           "label": "위임인",
           "value": "김하늘",
-          "line": 1
+          "line": 7
         },
         {
           "label": "대리인",
@@ -272,7 +272,7 @@
         {
           "label": "위임인",
           "value": "김하늘",
-          "line": 1
+          "line": 7
         },
         {
           "label": "대리인",
@@ -411,7 +411,7 @@
         {
           "label": "위임인",
           "value": "김하늘",
-          "line": 1
+          "line": 7
         },
         {
           "label": "대리인",
@@ -550,7 +550,7 @@
         {
           "label": "위임인",
           "value": "김하늘",
-          "line": 1
+          "line": 7
         },
         {
           "label": "대리인",
@@ -689,7 +689,7 @@
         {
           "label": "위임인",
           "value": "김하 늘",
-          "line": 1
+          "line": 7
         },
         {
           "label": "대리인",
@@ -817,7 +817,7 @@
         {
           "label": "위임인",
           "value": "김하늘",
-          "line": 0
+          "line": 6
         },
         {
           "label": "대리인",
@@ -956,7 +956,7 @@
         {
           "label": "위임인",
           "value": "김하늘",
-          "line": 1
+          "line": 7
         },
         {
           "label": "대리인",
@@ -23119,7 +23119,7 @@
         {
           "label": "보호자",
           "value": "김새봄",
-          "line": 3
+          "line": 8
         },
         {
           "label": "일시",
@@ -23274,7 +23274,7 @@
         {
           "label": "보호자",
           "value": "김새봄",
-          "line": 3
+          "line": 8
         },
         {
           "label": "일시",
@@ -23429,7 +23429,7 @@
         {
           "label": "보호자",
           "value": "김새봄",
-          "line": 3
+          "line": 8
         },
         {
           "label": "일시",
@@ -23584,7 +23584,7 @@
         {
           "label": "보호자",
           "value": "김새봄",
-          "line": 3
+          "line": 8
         },
         {
           "label": "일시",
@@ -23739,7 +23739,7 @@
         {
           "label": "보호자",
           "value": "김새봄",
-          "line": 3
+          "line": 8
         },
         {
           "label": "일시",
@@ -23883,7 +23883,7 @@
         {
           "label": "보호자",
           "value": "김새봄",
-          "line": 2
+          "line": 7
         },
         {
           "label": "일시",
@@ -24038,7 +24038,7 @@
         {
           "label": "보호자",
           "value": "김새봄",
-          "line": 3
+          "line": 8
         },
         {
           "label": "일시",
@@ -25455,7 +25455,7 @@
         {
           "label": "보호자",
           "value": "윤나래",
-          "line": 3
+          "line": 8
         },
         {
           "label": "장소",
@@ -25600,7 +25600,7 @@
         {
           "label": "보호자",
           "value": "윤나래",
-          "line": 3
+          "line": 8
         },
         {
           "label": "장소",
@@ -25750,7 +25750,7 @@
         {
           "label": "보호자",
           "value": "윤나래",
-          "line": 3
+          "line": 8
         },
         {
           "label": "장소",
@@ -25900,7 +25900,7 @@
         {
           "label": "보호자",
           "value": "윤나래",
-          "line": 3
+          "line": 8
         },
         {
           "label": "장소",
@@ -26050,7 +26050,7 @@
         {
           "label": "보호자",
           "value": "윤나래",
-          "line": 3
+          "line": 8
         },
         {
           "label": "장소",
@@ -26189,7 +26189,7 @@
         {
           "label": "보호자",
           "value": "윤나래",
-          "line": 2
+          "line": 7
         },
         {
           "label": "장소",
@@ -26339,7 +26339,7 @@
         {
           "label": "보호자",
           "value": "윤나래",
-          "line": 3
+          "line": 8
         },
         {
           "label": "장소",

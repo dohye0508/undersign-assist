@@ -19,6 +19,7 @@ import '../sign/signature_check.dart';
 import '../write/note_ink.dart';
 import 'fill_kind.dart';
 import 'fill_targets.dart';
+import 'filled_ink_preview.dart';
 import 'guide_text.dart';
 import 'progress_dots.dart';
 
@@ -912,12 +913,7 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
     );
   }
 
-  Widget _inkImage(FilledInk f) => Image.memory(
-        f.png,
-        fit: BoxFit.contain,
-        alignment: f.target.kind == FillKind.text ? Alignment.centerLeft : Alignment.center,
-        gaplessPlayback: true,
-      );
+  Widget _inkImage(FilledInk f) => FilledInkPreview(fill: f);
 
   Widget _writingButtons() {
     final enabled = _phase == _Phase.writing && !_busy;

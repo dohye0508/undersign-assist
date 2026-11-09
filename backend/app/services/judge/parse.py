@@ -213,7 +213,7 @@ def parse_hours_per(text: str, unit: str) -> float | None:
     if not text:
         return None
     t = _fix_ocr_digits(text)
-    prefix = r"(?:1\s*일|하루|일일|매일)" if unit == "day" else r"(?:1\s*주|주|매주|일주일)"
+    prefix = r"(?:(?<!\d)1\s*일|하루|일일|매일|(?<![가-힣\d])일)" if unit == "day" else r"(?:1\s*주|주|매주|일주일)"
     m = re.search(prefix + r"\s*(?:소정)?\s*(?:근로|근무)?\s*(?:시간)?\s*[:은는]?\s*(\d+(?:\.\d+)?)\s*시간", t)
     return float(m.group(1)) if m else None
 

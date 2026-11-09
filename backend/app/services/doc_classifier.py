@@ -2,7 +2,7 @@
 
 Repeated words, overlapping synonyms and duplicated pages count only once per
 evidence group. A title is stronger than incidental mentions in the body. The
-first page decides the main form; a privacy appendix does not replace it.
+first form page decides the main form; a privacy appendix does not replace it.
 Scores are diagnostic evidence weights, not probabilities.
 """
 
@@ -61,8 +61,11 @@ class DocumentClassifier:
         self.titles = {kind: tuple(normalize(t) for t in rule["titles"]) for kind, rule in self.rules.items()}
 
     def _evidence(self, lines: list[TextBlock]) -> dict[str, set[str]]:
-        text = normalize("\n".join(b.text for b in lines))
-        return {kind: {name for name, terms in groups.items() if any(t in text for t in terms)}
+        by_page: dict[int, list[str]] = {}
+        for block in lines:
+            by_page.setdefault(block.page, []).append(block.text)
+        texts = [normalize("\n".join(page)) for page in by_page.values()]
+        return {kind: {name for name, terms in groups.items() if any(t in text for text in texts for t in terms)}
                 for kind, groups in self.groups.items()}
 
     def _title_kinds(self, text: str, *, include_excluded: bool = False) -> set[str]:
@@ -102,6 +105,15 @@ class DocumentClassifier:
                 return True
         return False
 
+    def _cover_page(self, page: list[TextBlock]) -> bool:
+        # Skip only explicit, otherwise empty covers. A sparse continuation page
+        # still contributes its fields when no individual page is sufficient.
+        return (
+            any(normalize(b.text).endswith("표지") for b in page[:3])
+            and not self._titles(page, include_excluded=True)
+            and not any(self._eligible(kind, groups) for kind, groups in self._evidence(page).items())
+        )
+
     def _form_evidence(self, page: list[TextBlock]) -> dict[str, set[str]]:
         # '수집 목적: 신청자 확인' and '수집 항목: 성명, 소속, 연락처'
         # describe personal data, not application fields to complete.
@@ -120,8 +132,12 @@ class DocumentClassifier:
             if self._reference_page(page):
                 continue
             evidence = self._form_evidence(page)
-            for other in self._titles(page):
-                if other != kind and other not in _APPENDICES[kind] and self._substantive(other, evidence[other]):
+            titles = self._titles(page)
+            # A cropped heading must not hide a complete, unrelated second form.
+            kinds = titles or {other for other, groups in evidence.items() if self._eligible(other, groups)}
+            for other in kinds:
+                if (other != kind and other != "consent" and other not in _APPENDICES[kind]
+                        and self._substantive(other, evidence[other])):
                     return True
                 if kind == other == "contract":
                     families = self._contract_families(evidence["contract"])
@@ -164,10 +180,16 @@ class DocumentClassifier:
         for block in lines:
             by_page.setdefault(block.page, []).append(block)
         pages = [by_page[p] for p in sorted(by_page)] or [[]]
+        starts_with_reference = self._reference_page(pages[0])
+        # Manuals and policies do not supply form fields, even when attached
+        # after a real form or a neutral memo.
+        pages = [page for page in pages if not self._reference_page(page)] or [[]]
+        while len(pages) > 1 and self._cover_page(pages[0]):
+            pages = pages[1:]
         first_page = pages[0]
         titles = self._titles(first_page)
         excluded_titles = self._titles(first_page, include_excluded=True) - titles
-        evidence = self._evidence(lines)
+        evidence = self._evidence([block for page in pages for block in page])
         primary = self._evidence(first_page)
         scores = {kind: GROUP_WEIGHT * len(groups) + (TITLE_WEIGHT if kind in titles else 0)
                   for kind, groups in evidence.items()}
@@ -182,7 +204,7 @@ class DocumentClassifier:
             return Classification(DocType(kind), scores, reason)
 
         # Check only the opening, so a list/reference inside a real form is harmless.
-        if self._reference_page(first_page):
+        if starts_with_reference:
             return result("unknown", "reference_material")
 
         # Application/notice/summary headings sometimes sit on a privacy-only page.
@@ -204,10 +226,14 @@ class DocumentClassifier:
                 return result(next(iter(supported_titles)), "main_form_fields")
             return result("unknown", "conflicting_titles")
 
-        candidates = [kind for kind, groups in evidence.items() if self._eligible(kind, groups)]
-        candidates.sort(key=lambda kind: scores[kind], reverse=True)
+        # Prefer independently sufficient primary-page fields. Otherwise a long
+        # privacy appendix can outscore a complete form whose title was cropped.
+        # Pool continuation evidence only when the primary page is insufficient.
+        candidate_evidence = primary if any(self._eligible(kind, groups) for kind, groups in primary.items()) else evidence
+        candidates = [kind for kind, groups in candidate_evidence.items() if self._eligible(kind, groups)]
+        candidates.sort(key=lambda kind: len(candidate_evidence[kind]), reverse=True)
         if not candidates:
             return result("unknown", "insufficient_evidence")
-        if len(candidates) > 1 and scores[candidates[0]] - scores[candidates[1]] < MIN_MARGIN:
+        if len(candidates) > 1 and GROUP_WEIGHT * (len(candidate_evidence[candidates[0]]) - len(candidate_evidence[candidates[1]])) < MIN_MARGIN:
             return result("unknown", "ambiguous_evidence")
         return result(candidates[0], "body_evidence")

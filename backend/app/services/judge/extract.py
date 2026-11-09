@@ -115,6 +115,12 @@ def extract(doc) -> dict[str, dict]:
 
     # ── 근로시간·휴게·근무일 ──
     found = source("hours")
+    if not found or not compact(found[0]).strip(":："):
+        # Explicit standalone schedule lines are evidence too ("일 8시간 주 5일").
+        # Do not substitute a default daily or weekly schedule when absent.
+        found = next(((text, i) for i, text in enumerate(lines)
+                      if P.parse_hours_per(text, "day") is not None
+                      or P.parse_hours_per(text, "week") is not None), None)
     if found:
         txt, line = found
         whole = lines[line] if 0 <= line < len(lines) else txt

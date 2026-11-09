@@ -1,0 +1,167 @@
+{
+  "provenance": "Authored synthetic forms, clean and 5-degree skew. Not field photos.",
+  "cases": [
+    {
+      "id": "privacy_appendix/clean",
+      "expected": "authorization",
+      "fields": {},
+      "images": [
+        {
+          "path": "images/privacy_appendix/clean-1.jpg",
+          "sha256": "ec701eb560d36b5f6b3ab7dcd50406e3b7f1c9dd718eccc4e69226ea791a80d5",
+          "text": "위임인: 김가상\n대리인: 이예시\n위임 업무: 서류 수령\n위임 기간: 하루"
+        },
+        {
+          "path": "images/privacy_appendix/clean-2.jpg",
+          "sha256": "5faa9b86d69f46d12c7730e7093df367b958bdc3e6df18264c84b1c56dcaea2e",
+          "text": "개인정보 수집 이용 동의서\n수집 목적: 신청 확인\n수집 항목: 성명 연락처\n보유 기간: 한 달\n동의를 거부할 수 있습니다."
+        }
+      ]
+    },
+    {
+      "id": "privacy_appendix/skew",
+      "expected": "authorization",
+      "fields": {},
+      "images": [
+        {
+          "path": "images/privacy_appendix/skew-1.jpg",
+          "sha256": "79fc4ef5982c6b2479e401feb572f4c5f88a29cdbbf8b3920fee3fdb0a4a3d76",
+          "text": "위임인: 김가상\n대리인: 이예시\n위임 업무: 서류 수령\n위임 기간: 하루"
+        },
+        {
+          "path": "images/privacy_appendix/skew-2.jpg",
+          "sha256": "c2083278272d4bfdb2b48d03dec2f20f5496d6e484a34df453670089aa3116a3",
+          "text": "개인정보 수집 이용 동의서\n수집 목적: 신청 확인\n수집 항목: 성명 연락처\n보유 기간: 한 달\n동의를 거부할 수 있습니다."
+        }
+      ]
+    },
+    {
+      "id": "mixed_cropped/clean",
+      "expected": "unknown",
+      "fields": {},
+      "images": [
+        {
+          "path": "images/mixed_cropped/clean-1.jpg",
+          "sha256": "3438877514c8edec677e88d6cc1645c6cf532690a38466534e5c928688ab309f",
+          "text": "위임장\n위임인: 김가상\n대리인: 이예시\n위임 업무: 서류 수령\n위임 기간: 하루"
+        },
+        {
+          "path": "images/mixed_cropped/clean-2.jpg",
+          "sha256": "3674ba87b51eb09220856e7d69dfcee6fa77216d1b29eda5293e630d6c7026a0",
+          "text": "결제 금액: 20000원\n상호: 예시상점\n거래일: 오늘\n결제 완료"
+        }
+      ]
+    },
+    {
+      "id": "mixed_cropped/skew",
+      "expected": "unknown",
+      "fields": {},
+      "images": [
+        {
+          "path": "images/mixed_cropped/skew-1.jpg",
+          "sha256": "e7f3e9195bd4ceb2dddb5b2fa5c0c620d26c86e343054a12abb008cab2458bd6",
+          "text": "위임장\n위임인: 김가상\n대리인: 이예시\n위임 업무: 서류 수령\n위임 기간: 하루"
+        },
+        {
+          "path": "images/mixed_cropped/skew-2.jpg",
+          "sha256": "c4fab9f86acb933853b8e4bb3ec1238426437780e8fa8e4eece03af96e29981b",
+          "text": "결제 금액: 20000원\n상호: 예시상점\n거래일: 오늘\n결제 완료"
+        }
+      ]
+    },
+    {
+      "id": "reference_appendix/clean",
+      "expected": "unknown",
+      "fields": {},
+      "images": [
+        {
+          "path": "images/reference_appendix/clean-1.jpg",
+          "sha256": "2a3feee7f1b6bb88ea8cdd8c04b5c550a7d2660ed7cfb982ac436421da85d028",
+          "text": "보관 메모\n관리번호: 123\n이 자료는 작성 방법을 설명하기 위한 참고 자료입니다\n실제로 제출하는 서식이 아닙니다"
+        },
+        {
+          "path": "images/reference_appendix/clean-2.jpg",
+          "sha256": "667083e66f1bdbfadbc69e7c1019c39b9f746143d42a1d08951e8f9e312237df",
+          "text": "청구서 작성 가이드\n청구 금액: 20000원\n납부 기한: 다음 주\n청구 기관: 예시회사"
+        }
+      ]
+    },
+    {
+      "id": "reference_appendix/skew",
+      "expected": "unknown",
+      "fields": {},
+      "images": [
+        {
+          "path": "images/reference_appendix/skew-1.jpg",
+          "sha256": "131f360414b000b5feb2937f011eea3c17ac7763071d95d1d5476e82b19ce502",
+          "text": "보관 메모\n관리번호: 123\n이 자료는 작성 방법을 설명하기 위한 참고 자료입니다\n실제로 제출하는 서식이 아닙니다"
+        },
+        {
+          "path": "images/reference_appendix/skew-2.jpg",
+          "sha256": "b2d79dae9de6214e6ef165a55feebe77a23512b03995bb76e34d4ae5d681e7f0",
+          "text": "청구서 작성 가이드\n청구 금액: 20000원\n납부 기한: 다음 주\n청구 기관: 예시회사"
+        }
+      ]
+    },
+    {
+      "id": "certificate_subject/clean",
+      "expected": "certificate",
+      "fields": {
+        "성명": "김신청",
+        "소속": "예시회사 개발팀"
+      },
+      "images": [
+        {
+          "path": "images/certificate_subject/clean-1.jpg",
+          "sha256": "f43011bfa41a8699c0b31f367dc31f4b90f8a4b8a510fdc8e5296661b0bf2806",
+          "text": "재직증명서\n대표자 성명: 박대표\n대표자 연락처: 02-123-4567\n신청인 성명: 김신청\n신청인 소속: 예시회사 개발팀\n재직 기간: 2024년 3월부터 현재\n발급 기관: 예시회사\n발급일: 2026년 11월 9일\n위 사실을 증명합니다."
+        }
+      ]
+    },
+    {
+      "id": "certificate_subject/skew",
+      "expected": "certificate",
+      "fields": {
+        "성명": "김신청",
+        "소속": "예시회사 개발팀"
+      },
+      "images": [
+        {
+          "path": "images/certificate_subject/skew-1.jpg",
+          "sha256": "2a837faab67718799753b2fcb290af7cae52f4ea2d5a4b7bdb71bcddc8f908e4",
+          "text": "재직증명서\n대표자 성명: 박대표\n대표자 연락처: 02-123-4567\n신청인 성명: 김신청\n신청인 소속: 예시회사 개발팀\n재직 기간: 2024년 3월부터 현재\n발급 기관: 예시회사\n발급일: 2026년 11월 9일\n위 사실을 증명합니다."
+        }
+      ]
+    },
+    {
+      "id": "applicant_contact/clean",
+      "expected": "application",
+      "fields": {
+        "성명": "김신청",
+        "연락처": "010-1111-2222"
+      },
+      "images": [
+        {
+          "path": "images/applicant_contact/clean-1.jpg",
+          "sha256": "8b6c3951b1e177c67dae8b4c5279a345af6879961d34ec97134553a24e9ff47c",
+          "text": "체험학습 참가 신청서\n보호자 성명: 박보호\n담당자 연락처: 02-123-4567\n신청인 성명: 김신청\n신청인 연락처: 010-1111-2222\n소속: 예시학교\n참가 부문: 역사 탐방\n신청합니다."
+        }
+      ]
+    },
+    {
+      "id": "applicant_contact/skew",
+      "expected": "application",
+      "fields": {
+        "성명": "김신청",
+        "연락처": "010-1111-2222"
+      },
+      "images": [
+        {
+          "path": "images/applicant_contact/skew-1.jpg",
+          "sha256": "f23df73143a2f52c747a68cd363ed0b4fb4aef1ef9cdc20818a8bc5638371a60",
+          "text": "체험학습 참가 신청서\n보호자 성명: 박보호\n담당자 연락처: 02-123-4567\n신청인 성명: 김신청\n신청인 연락처: 010-1111-2222\n소속: 예시학교\n참가 부문: 역사 탐방\n신청합니다."
+        }
+      ]
+    }
+  ]
+}

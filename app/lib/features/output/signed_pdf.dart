@@ -116,7 +116,7 @@ pw.Widget _placeSignature(TextBlock block, Uint8List png, double scale, PdfPageF
   return pw.Positioned(
     left: _clamp(left, format.width - width),
     top: _clamp(top, format.height - height),
-    child: pw.Image(pw.MemoryImage(png), width: width, height: height, fit: pw.BoxFit.contain),
+    child: _containedImage(png, width, height),
   );
 }
 
@@ -169,15 +169,28 @@ pw.Widget _placeFill(FilledInk fill, double scale) {
   return pw.Positioned(
     left: rect.left * scale,
     top: rect.top * scale,
-    child: pw.Image(
-      pw.MemoryImage(fill.png),
-      width: rect.width * scale,
-      height: rect.height * scale,
-      fit: pw.BoxFit.contain,
+    child: _containedImage(
+      fill.png,
+      rect.width * scale,
+      rect.height * scale,
       alignment: isText ? pw.Alignment.centerLeft : pw.Alignment.center,
     ),
   );
 }
+
+// pw.Image with contain shrinks its layout box to the image aspect ratio.
+// Keep the full target box so alignment centers the ink within that target.
+pw.Widget _containedImage(
+  Uint8List png,
+  double width,
+  double height, {
+  pw.Alignment alignment = pw.Alignment.center,
+}) => pw.Container(
+  width: width,
+  height: height,
+  alignment: alignment,
+  child: pw.Image(pw.MemoryImage(png), fit: pw.BoxFit.contain),
+);
 
 /// "1페이지 학생 성명, 보호자 서명을 채웠어요. PDF를 내려받았어요." (들려줄 말)
 /// 페이지가 하나면 페이지 번호는 말하지 않는다
