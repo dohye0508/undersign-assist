@@ -7,6 +7,7 @@ import '../../theme/app_theme.dart';
 import '../read/read_panel.dart' show ListenButton;
 import '../../widgets/tap_feedback.dart';
 import 'judgement_summary.dart';
+import 'full_bleed.dart';
 
 /// 판단("검토하세요!").
 ///
@@ -136,7 +137,7 @@ class _JudgePanelState extends State<JudgePanel> {
         const SizedBox(height: 16),
         for (var i = 0; i < findings.length; i++) ...[
           if (i > 0) const SizedBox(height: 4), // 칸 사이 흰 틈
-          _FullBleed(child: _findingRow(context, i + 1, findings[i])),
+          FullBleed(inset: SectionBleed.size, child: _findingRow(context, i + 1, findings[i])),
         ],
         if (disclaimer.isNotEmpty) ...[
           const SizedBox(height: 18),
@@ -398,25 +399,6 @@ class _JudgePanelState extends State<JudgePanel> {
 /// 분석 화면 본문의 좌우 여백. 결과 칸 색 띠는 이만큼 바깥으로 늘려 화면 끝까지 닿게 한다
 class SectionBleed {
   static const size = 16.0;
-}
-
-/// 자식을 좌우로 [SectionBleed.size]씩 넓혀 화면 끝까지 닿게 그린다 (높이는 자식 그대로)
-class _FullBleed extends StatelessWidget {
-  const _FullBleed({required this.child});
-
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    // 가로만 제약을 풀고 가운데 정렬해 좌우로 같은 만큼 넘친다. 넘친 띠 가장자리에는 버튼이 없어 눌림 영역 문제는 없다
-    return LayoutBuilder(
-      builder: (context, c) => UnconstrainedBox(
-        constrainedAxis: Axis.vertical,
-        clipBehavior: Clip.none,
-        child: SizedBox(width: c.maxWidth + SectionBleed.size * 2, child: child),
-      ),
-    );
-  }
 }
 
 /// 결과 항목이 마지막 답 전과 비교해 어떻게 달라졌는지

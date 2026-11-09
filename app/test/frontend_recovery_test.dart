@@ -153,9 +153,7 @@ void main() {
           camera: camera,
           pickImages: () async {
             if (attempts++ == 0) throw StateError('synthetic picker failure');
-            return [
-              XFile.fromData(Uint8List.fromList([1]), name: 'retry.png'),
-            ];
+            return [_MemoryFile('retry.png')];
           },
         ),
       ),
@@ -182,10 +180,7 @@ void main() {
           home: WorkspaceScreen(
             state: state,
             camera: camera,
-            pickImages: () async => [
-              XFile.fromData(Uint8List.fromList([1]), name: 'first.png'),
-              _BrokenFile(),
-            ],
+            pickImages: () async => [_MemoryFile('first.png'), _BrokenFile()],
           ),
         ),
       );
@@ -246,7 +241,12 @@ Future<void> _panel(
     home: Scaffold(
       body: ListenableBuilder(
         listenable: state,
-        builder: (_, _) => SingleChildScrollView(child: panel()),
+        builder: (_, _) => SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: panel(),
+          ),
+        ),
       ),
     ),
   ),
@@ -306,4 +306,15 @@ class _PendingFile extends XFile {
   final Future<Uint8List> bytes;
   @override
   Future<Uint8List> readAsBytes() => bytes;
+}
+
+// FileReader runs outside widget tests' fake clock. Keep successful reads in
+// the same controlled Future path as the explicitly failed/delayed fixtures.
+class _MemoryFile extends XFile {
+  _MemoryFile(this.filename) : super(filename);
+  final String filename;
+  @override
+  String get name => filename;
+  @override
+  Future<Uint8List> readAsBytes() async => Uint8List.fromList([1]);
 }
