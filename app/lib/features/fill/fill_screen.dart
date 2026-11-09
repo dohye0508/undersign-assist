@@ -100,7 +100,7 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
   double _pathLength = 0;
 
   // 넣기 움직임
-  late final AnimationController _move = AnimationController(vsync: this, duration: const Duration(milliseconds: 600));
+  late final AnimationController _move;
   List<List<PenPoint>> _flying = const [];
   Rect _flyingBounds = Rect.zero;
   Rect _from = Rect.zero, _to = Rect.zero, _targetOnScreen = Rect.zero, _pageOnScreen = Rect.zero;
@@ -115,6 +115,7 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
   @override
   void initState() {
     super.initState();
+    _move = AnimationController(vsync: this, duration: const Duration(milliseconds: 600));
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       _precache();
@@ -712,6 +713,7 @@ class _FillScreenState extends State<FillScreen> with SingleTickerProviderStateM
               : '${target.label} 쓰는 칸. 화면 가득 쓰세요. 다 쓰면 다음을 누르세요. 지금까지 ${_strokes.length}획.'
                   '${guide == null ? '' : ' 회색 보조 글씨: ${guide.text}.'}',
           child: Listener(
+            key: const ValueKey('fill-writing-surface'),
             behavior: HitTestBehavior.opaque,
             onPointerDown: _down,
             onPointerMove: _moveTo,

@@ -159,123 +159,146 @@ void main() {
   );
 
   testWidgets('screen reader can invoke a next-step button', (tester) async {
-    final handle = tester.ensureSemantics();
-    addTearDown(handle.dispose);
-    var calls = 0;
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: NextStepButton(
-            title: '검토하세요',
-            subtitle: '빠진 항목 확인',
-            onPressed: () => calls++,
+    await _withSemantics(tester, () async {
+      var calls = 0;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: NextStepButton(
+              title: '검토하세요',
+              subtitle: '빠진 항목 확인',
+              onPressed: () => calls++,
+            ),
           ),
         ),
-      ),
-    );
-    _activate(tester, '검토하세요. 빠진 항목 확인');
-    expect(calls, 1);
+      );
+      _activate(tester, '검토하세요. 빠진 항목 확인');
+      expect(calls, 1);
+    });
   });
 
   testWidgets(
     'camera actions expose enabled taps and disable them while capturing',
     (tester) async {
-      final handle = tester.ensureSemantics();
-      addTearDown(handle.dispose);
-      final captured = Completer<DocumentPhoto?>();
-      final camera = _Camera(() => captured.future);
-      final state = WorkspaceState();
-      addTearDown(camera.dispose);
-      addTearDown(state.dispose);
-      await tester.pumpWidget(
-        MaterialApp(
-          home: WorkspaceScreen(camera: camera, state: state),
-        ),
-      );
-      await tester.pumpAndSettle();
-      expect(_canTap(tester, '사진 불러오기'), isTrue);
-      expect(_canTap(tester, '분석하기'), isFalse);
-      _activate(tester, '찍기');
-      await tester.pump();
-      expect(_canTap(tester, '찍기'), isFalse);
-      expect(_canTap(tester, '사진 불러오기'), isFalse);
-      captured.complete(_photo('captured'));
-      await tester.pumpAndSettle();
-      expect(_canTap(tester, '분석하기 (1장)'), isTrue);
+      await _withSemantics(tester, () async {
+        final captured = Completer<DocumentPhoto?>();
+        final camera = _Camera(() => captured.future);
+        final state = WorkspaceState();
+        addTearDown(camera.dispose);
+        addTearDown(state.dispose);
+        await tester.pumpWidget(
+          MaterialApp(
+            home: WorkspaceScreen(camera: camera, state: state),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(_canTap(tester, '사진 불러오기'), isTrue);
+        expect(_canTap(tester, '분석하기'), isFalse);
+        _activate(tester, '찍기');
+        await tester.pump();
+        expect(_canTap(tester, '찍기'), isFalse);
+        expect(_canTap(tester, '사진 불러오기'), isFalse);
+        captured.complete(_photo('captured'));
+        await tester.pumpAndSettle();
+        expect(_canTap(tester, '분석하기 (1장)'), isTrue);
+      });
     },
   );
 
   testWidgets(
     'screen reader can open page controls, remove one page and clear all',
     (tester) async {
-      final handle = tester.ensureSemantics();
-      addTearDown(handle.dispose);
-      var toggles = 0, removed = -1, clears = 0;
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: PageTray(
-              pages: [_photo('first')],
-              open: true,
-              onToggle: () => toggles++,
-              onRemove: (index) => removed = index,
-              onClearAll: () => clears++,
+      await _withSemantics(tester, () async {
+        var toggles = 0, removed = -1, clears = 0;
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: PageTray(
+                pages: [_photo('first')],
+                open: true,
+                onToggle: () => toggles++,
+                onRemove: (index) => removed = index,
+                onClearAll: () => clears++,
+              ),
             ),
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
-      _activate(tester, '업로드한 페이지 1장, 목록 닫기');
-      _activate(tester, '1페이지 사진. 누르면 지워요');
-      _activate(tester, '찍은 페이지 모두 지우기');
-      expect(toggles, 1);
-      expect(removed, 0);
-      expect(clears, 1);
+        );
+        await tester.pumpAndSettle();
+        _activate(tester, '업로드한 페이지 1장, 목록 닫기');
+        _activate(tester, '1페이지 사진. 누르면 지워요');
+        _activate(tester, '찍은 페이지 모두 지우기');
+        expect(toggles, 1);
+        expect(removed, 0);
+        expect(clears, 1);
+      });
     },
   );
 
   testWidgets('screen reader can choose speech speed from settings', (
     tester,
   ) async {
-    final handle = tester.ensureSemantics();
-    addTearDown(handle.dispose);
-    await tester.pumpWidget(const MaterialApp(home: SettingsScreen()));
-    await tester.pumpAndSettle();
-    _activate(tester, RegExp('말하기 속도. 지금은'));
-    await tester.pumpAndSettle();
-      _activate(tester, '말하기 속도 느리게');
-    await tester.pumpAndSettle();
-    expect(Speech.lastMessage.value, contains('말하기 속도를 느리게로 바꿨어요'));
+    await _withSemantics(tester, () async {
+      await tester.pumpWidget(const MaterialApp(home: SettingsScreen()));
+      await tester.pumpAndSettle();
+      _activate(tester, RegExp('말하기 속도. 지금은'));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text('아주 빠르게'));
+      await tester.pumpAndSettle();
+      _activate(tester, '말하기 속도 아주 빠르게');
+      await tester.pumpAndSettle();
+      expect(Speech.lastMessage.value, contains('말하기 속도를 아주 빠르게로 바꿨어요'));
+    });
   });
 
   testWidgets('screen reader can open practice menus and save a profile', (
     tester,
   ) async {
-    final handle = tester.ensureSemantics();
-    addTearDown(handle.dispose);
-    final store = ScoreStore(MemoryStorage());
-    addTearDown(store.dispose);
-    await tester.pumpWidget(MaterialApp(home: PracticeFlow(store: store)));
-    await tester.pumpAndSettle();
-    _activate(tester, RegExp('^내 정보 등록\\.'));
-    await tester.pumpAndSettle();
+    await _withSemantics(tester, () async {
+      final store = ScoreStore(MemoryStorage());
+      addTearDown(store.dispose);
+      await tester.pumpWidget(MaterialApp(home: PracticeFlow(store: store)));
+      await tester.pumpAndSettle();
+      _activate(tester, RegExp('^내 정보 등록\\.'));
+      await tester.pumpAndSettle();
       expect(
-        tester.getSemantics(find.byType(TextField).first).getSemanticsData().label,
+        tester
+            .getSemantics(find.byType(TextField).first)
+            .getSemanticsData()
+            .label,
         contains('이름'),
       );
-    await tester.enterText(find.byType(TextField).first, '가상 사용자');
+      await tester.enterText(find.byType(TextField).first, '가상사용자');
       await tester.ensureVisible(find.text('저장'));
       await tester.pumpAndSettle();
-    _activate(tester, '내 정보 저장');
-    await tester.pumpAndSettle();
-    expect(store.name, '가상 사용자');
-    _activate(tester, RegExp('^학습하기\\.'));
-    await tester.pumpAndSettle();
-    expect(_canTap(tester, RegExp('^자음\\.')), isTrue);
-    _activate(tester, '받아쓰기 돌아가기');
-    await tester.pumpAndSettle();
-    expect(find.text('학습하기'), findsOneWidget);
+      _activate(tester, '내 정보 저장');
+      await tester.pumpAndSettle();
+      expect(store.name, '가상사용자');
+      _activate(tester, RegExp('^학습하기\\.'));
+      await tester.pumpAndSettle();
+      expect(_canTap(tester, RegExp('^자음\\.')), isTrue);
+      _activate(tester, RegExp('^자음\\.'));
+      await tester.pumpAndSettle();
+      _activate(tester, '학습하기 돌아가기');
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      _activate(tester, '받아쓰기 돌아가기');
+      await tester.pumpAndSettle();
+      expect(find.text('학습하기'), findsOneWidget);
+    });
   });
+}
+
+Future<void> _withSemantics(
+  WidgetTester tester,
+  Future<void> Function() body,
+) async {
+  final handle = tester.ensureSemantics();
+  try {
+    await body();
+  } finally {
+    // Flutter verifies handles before package:test's addTearDown callbacks.
+    handle.dispose();
+  }
 }
 
 void _activate(WidgetTester tester, Pattern label) {

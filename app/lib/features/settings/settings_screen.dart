@@ -311,7 +311,8 @@ class _LevelSheet extends StatelessWidget {
     final bottom = MediaQuery.paddingOf(context).bottom;
     return SafeArea(
       top: false,
-      child: Padding(
+      child: SingleChildScrollView(
+        child: Padding(
         padding: EdgeInsets.fromLTRB(16, 20, 16, 16 + bottom),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -332,6 +333,7 @@ class _LevelSheet extends StatelessWidget {
               ),
             ],
           ],
+        ),
         ),
       ),
     );

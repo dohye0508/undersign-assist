@@ -33,51 +33,61 @@ void main() {
       'screen reader opens a ${filled ? 'filled' : 'blank'} field exactly once',
       (tester) async {
         final semantics = tester.ensureSemantics();
-        addTearDown(semantics.dispose);
-        final state = WorkspaceState(readDocument: (_) async => _document);
-        addTearDown(state.dispose);
-        final png = base64Decode(_png);
-        state.addPage(DocumentPhoto(bytes: png, name: 'synthetic.png'));
-        await state.read();
-        final targets = findFillTargets(_document);
-        expect(targets, hasLength(2));
-        state.setFill(FilledInk(target: targets.first, png: png));
-        final observer = _Routes();
-        await tester.pumpWidget(
-          MaterialApp(
-            navigatorObservers: [observer],
-            home: Scaffold(
-              body: SingleChildScrollView(child: FillPanel(state: state)),
+        try {
+          final state = WorkspaceState(readDocument: (_) async => _document);
+          addTearDown(state.dispose);
+          final png = base64Decode(_png);
+          state.addPage(DocumentPhoto(bytes: png, name: 'synthetic.png'));
+          await state.read();
+          final targets = findFillTargets(_document);
+          expect(targets, hasLength(2));
+          state.setFill(FilledInk(target: targets.first, png: png));
+          final observer = _Routes();
+          await tester.pumpWidget(
+            MaterialApp(
+              navigatorObservers: [observer],
+              home: Scaffold(
+                body: SingleChildScrollView(child: FillPanel(state: state)),
+              ),
             ),
-          ),
-        );
-        await tester.pumpAndSettle();
-        final label = filled
-            ? '${targets.first.label}, 채웠어요. 누르면 다시 써요.'
-            : '${targets.last.label}, 아직 비었어요. 누르면 써요.';
-        final finder = find.bySemanticsLabel(label);
-        expect(finder, findsOneWidget);
-        final node = tester.getSemantics(finder);
-        expect(node.getSemanticsData().hasAction(SemanticsAction.tap), isTrue);
-        final before = observer.pushes;
-        node.owner!.performAction(node.id, SemanticsAction.tap);
-        await tester.pumpAndSettle();
-        expect(find.byType(FillScreen), findsOneWidget);
-        expect(observer.pushes, before + 1);
-        expect(
-          tester.widget<FillScreen>(find.byType(FillScreen)).start,
-          filled ? 0 : 1,
-        );
-        expect(tester.takeException(), isNull);
+          );
+          await tester.pumpAndSettle();
+          final label = filled
+              ? '${targets.first.label}, 채웠어요. 누르면 다시 써요.'
+              : '${targets.last.label}, 아직 비었어요. 누르면 써요.';
+          final finder = find.bySemanticsLabel(label);
+          expect(finder, findsOneWidget);
+          final node = tester.getSemantics(finder);
+          expect(
+            node.getSemanticsData().hasAction(SemanticsAction.tap),
+            isTrue,
+          );
+          final before = observer.pushes;
+          node.owner!.performAction(node.id, SemanticsAction.tap);
+          await tester.pumpAndSettle();
+          expect(find.byType(FillScreen), findsOneWidget);
+          expect(observer.pushes, before + 1);
+          expect(
+            tester.widget<FillScreen>(find.byType(FillScreen)).start,
+            filled ? 0 : 1,
+          );
+          expect(tester.takeException(), isNull);
+          await tester.tap(find.byTooltip('닫기'));
+          await tester.pumpAndSettle();
+          expect(find.byType(FillScreen), findsNothing);
+          expect(tester.takeException(), isNull);
+        } finally {
+          semantics.dispose();
+        }
       },
     );
   }
 
-  testWidgets(
-    'a new document does not inherit the previous signers stroke count',
-    (tester) async {
-      final semantics = tester.ensureSemantics();
-      addTearDown(semantics.dispose);
+  testWidgets('a new document does not inherit the previous signers stroke count', (
+    tester,
+  ) async {
+    final semantics = tester.ensureSemantics();
+    try {
       for (final strokeCount in [8, 1]) {
         final document = RecognizedDocument.fromJson({
           ..._document.toJson(),
@@ -108,7 +118,9 @@ void main() {
         await tester.pumpAndSettle();
         final surface = find.bySemanticsLabel(RegExp(r'서명 쓰는 칸\.'));
         expect(surface, findsOneWidget);
-        final area = tester.getRect(surface);
+        final area = tester.getRect(
+          find.byKey(const ValueKey('fill-writing-surface')),
+        );
         final start = area.topLeft + Offset(area.width * .2, area.height * .2);
         final end = area.topLeft + Offset(area.width * .8, area.height * .8);
         for (var i = 0; i < strokeCount; i++) {
@@ -124,18 +136,29 @@ void main() {
           await gesture.up(timeStamp: Duration(milliseconds: i * 1000 + 700));
         }
         await tester.pump();
+        expect(
+          tester.getSemantics(surface).label,
+          contains('지금까지 $strokeCount획'),
+        );
         await tester.tap(find.text('다음'));
         await tester.pump();
         expect(Speech.lastMessage.value, isNot(contains('획 수가 많이 달라요')));
         // A valid signature enters PNG creation/placement. A rejected one leaves
         // Next enabled with an error, before any browser image work is needed.
         final next = find.widgetWithText(FilledButton, '다음');
-        expect(tester.widget<FilledButton>(next).onPressed, isNull);
+        expect(
+          tester.widget<FilledButton>(next).onPressed,
+          isNull,
+          reason:
+              '$strokeCount strokes; ${Speech.lastMessage.value}; surface=$area',
+        );
         await tester.pumpWidget(const SizedBox.shrink());
         await tester.pumpAndSettle();
       }
-    },
-  );
+    } finally {
+      semantics.dispose();
+    }
+  });
 }
 
 class _Routes extends NavigatorObserver {

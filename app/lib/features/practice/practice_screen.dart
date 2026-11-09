@@ -55,8 +55,7 @@ class _PracticeScreenState extends State<PracticeScreen> with SingleTickerProvid
   late final HapticGuide _haptic = HapticGuide(widget.store.settings);
 
   /// 쓰기 칸이 옆으로 움직이는 값: 밀 때는 손가락을 따라가고, 넘길 때는 나가고, 못 넘길 때는 제자리로 돌아온다
-  late final AnimationController _anim = AnimationController(vsync: this, duration: const Duration(milliseconds: 240))
-    ..addListener(_onAnim);
+  late final AnimationController _anim;
   double _cardDx = 0;
   double _animFrom = 0;
   double _animTo = 0;
@@ -94,6 +93,8 @@ class _PracticeScreenState extends State<PracticeScreen> with SingleTickerProvid
   @override
   void initState() {
     super.initState();
+    _anim = AnimationController(vsync: this, duration: const Duration(milliseconds: 240))
+      ..addListener(_onAnim);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _announceItem(0, first: true);
     });
@@ -392,7 +393,7 @@ class _PracticeScreenState extends State<PracticeScreen> with SingleTickerProvid
     final n = widget.items.length;
     return PracticeFrame(
       title: '',
-      backLabel: widget.title,
+      backLabel: _learn ? '학습하기' : '연습하기',
       onBack: widget.onExit,
       shortcuts: {
         const SingleActivator(LogicalKeyboardKey.enter): _submit,
